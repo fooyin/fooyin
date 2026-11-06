@@ -2362,7 +2362,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="108"/>
         <source>&amp;Format</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Formatera</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="110"/>
@@ -2383,7 +2383,8 @@
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="137"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates.
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>När på: Autospellistan ordnas om efter dess sorteringsmönster när det regenereras.
+När av: Existerande spårordning bevaras och endast nyligen tillagda matchande spår är sorterade och sedan tillagda.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="142"/>
@@ -2398,12 +2399,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="161"/>
         <source>Sort:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="163"/>
         <source>Format the query with line breaks and indentation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatera frågan med radbrytningar och indrag.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="166"/>
@@ -2443,12 +2444,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="503"/>
         <source>This query uses expressions that are not supported by the rule editor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här frågan använder uttryck som inte stöds av regelredigeraren.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="540"/>
         <source>This query cannot be represented as rules. Continue editing it in Script mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här regeln kan inte representeras som regler. Fortsätt redigera den i skriptläge.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="565"/>
@@ -2473,7 +2474,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="687"/>
         <source>Recently Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Nyligen spelade</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="690"/>
@@ -2483,7 +2484,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="691"/>
         <source>Highly Rated</source>
-        <translation type="unfinished"></translation>
+        <translation>Högt betygsatta</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="692"/>
@@ -2698,7 +2699,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="972"/>
         <source>Enter a query.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in en fråga.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="982"/>
@@ -2716,7 +2717,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="48"/>
         <source>Match any rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Matcha vilken regel som helst</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="49"/>
@@ -2801,19 +2802,19 @@ Clear to disable sorting.</source>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="210"/>
         <source>Enter at least one valid value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in minst ett giltigt värde för regel %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="217"/>
         <source>Enter a value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in ett värde för regel %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="226"/>
         <source>Enter a number for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in en siffra för regel %1.</translation>
     </message>
 </context>
 <context>
@@ -2842,7 +2843,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="233"/>
         <source>Remove rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort regel</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="70"/>
@@ -5290,7 +5291,7 @@ Automatic uses the available processor threads.</source>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1159"/>
         <source>64-bit floating point</source>
-        <translation type="unfinished"></translation>
+        <translation>64-bitars flyttal</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
