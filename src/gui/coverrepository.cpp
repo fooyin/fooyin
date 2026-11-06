@@ -48,6 +48,7 @@
 #include <QMimeDatabase>
 #include <QPromise>
 #include <QSaveFile>
+#include <QThreadPool>
 
 #include <algorithm>
 #include <array>
@@ -374,6 +375,17 @@ struct CoverLoader
     QImage cover;
 };
 
+QImage loadCachedThumbnail(const CoverLoader& loader)
+{
+    if(loader.isThumb) {
+        const QString cachePath = coverThumbnailPath(loader.key);
+        if(QFileInfo::exists(cachePath)) {
+            return readImage(cachePath, coverThumbnailPixelSize(loader.size), u"cached"_s);
+        }
+    }
+    return {};
+}
+
 std::optional<CoverLoader> fallbackCoverLoader(const CoverLoader& loader)
 {
     if(!loader.fallbackType) {
@@ -518,11 +530,7 @@ CoverLoader loadCoverImage(const CoverLoader& loader)
 
     const QString cachePath = coverThumbnailPath(loader.key);
 
-    // First check disk cache
-    if(result.isThumb && QFileInfo::exists(cachePath)) {
-        result.cover = readImage(cachePath, coverThumbnailPixelSize(loader.size), u"cached"_s);
-    }
-
+    result.cover = loadCachedThumbnail(loader);
     if(result.cover.isNull()) {
         result.cover = loadLocalCoverImage(loader, cachePath);
     }
@@ -575,6 +583,7 @@ struct PendingPixmapRequest
     std::vector<QPromise<QPixmap>> promises;
     std::vector<std::shared_ptr<RemoteDownloadHandle>> downloads;
     bool notifyOnFinished{false};
+    uint64_t sequence{0};
 };
 
 struct QueuedPixmapRequest
@@ -610,6 +619,7 @@ public:
     QFuture<QPixmap> requestPixmap(const CoverRequestKey& requestKey, const CoverLoader& loader,
                                    bool notifyOnFinished = false);
     void finishPixmapRequest(const CoverRequestKey& requestKey, const CoverLoader& result);
+    void finishActivePixmapRequest(const CoverRequestKey& requestKey, const CoverLoader& result);
     void finishPixmapRequestFromLocalLoad(const CoverRequestKey& requestKey, const CoverLoader& loader);
     void requestRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader,
                               const CoverLoader& remoteLoader, std::vector<QUrl> urls, size_t index = 0);
@@ -650,6 +660,7 @@ public:
     PendingTrackCoverProvider* m_pendingCoverProvider{nullptr};
     SettingsManager* m_settings;
 
+    QThreadPool m_thumbnailCachePool;
     std::map<CoverRequestKey, PendingPixmapRequest> m_pendingPixmapRequests;
     std::vector<QueuedPixmapRequest> m_queuedPixmapRequests;
     int m_activePixmapRequests{0};
@@ -679,6 +690,8 @@ CoverRepositoryPrivate::CoverRepositoryPrivate(CoverRepository* self, std::share
     , m_artistFallbackToFront{m_settings->value<Settings::Gui::Internal::ArtistCoverFallbackToFront>()}
     , m_thumbnailGroupScript{m_settings->value<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>()}
 {
+    m_thumbnailCachePool.setMaxThreadCount(2);
+
     auto updateCache = [this](const int sizeMb) {
         m_coverCache.setMaxCost(sizeMb * 1024LL * 1024LL);
     };
@@ -875,23 +888,49 @@ QFuture<QPixmap> CoverRepositoryPrivate::requestPixmap(const CoverRequestKey& re
 
     PendingPixmapRequest pendingRequest;
     pendingRequest.notifyOnFinished = notifyOnFinished;
+    pendingRequest.sequence         = m_nextPixmapRequestSequence++;
 
     auto& promise = pendingRequest.promises.emplace_back();
     promise.start();
     const QFuture<QPixmap> future = promise.future();
 
+    QueuedPixmapRequest request{
+        .key = requestKey, .loader = loader, .priority = priority, .sequence = pendingRequest.sequence};
     m_pendingPixmapRequests.emplace(requestKey, std::move(pendingRequest));
-    m_queuedPixmapRequests.emplace_back(QueuedPixmapRequest{
-        .key = requestKey, .loader = loader, .priority = priority, .sequence = m_nextPixmapRequestSequence++});
-    processPixmapQueue();
+
+    if(loader.isThumb) {
+        auto cachedResult = QtConcurrent::run(&m_thumbnailCachePool, [loader]() {
+            CoverLoader result{loader};
+            result.cover = loadCachedThumbnail(loader);
+            return result;
+        });
+        cachedResult.then(m_self, [this, request = std::move(request)](const CoverLoader& result) mutable {
+            const auto pending = m_pendingPixmapRequests.find(request.key);
+            if(pending == m_pendingPixmapRequests.end() || pending->second.sequence != request.sequence) {
+                return;
+            }
+
+            if(!result.cover.isNull()) {
+                finishPixmapRequest(request.key, result);
+                return;
+            }
+
+            request.priority = requestPriority(request.key, pending->second.notifyOnFinished);
+            m_queuedPixmapRequests.emplace_back(std::move(request));
+            reprioritiseQueuedThumbnails();
+            processPixmapQueue();
+        });
+    }
+    else {
+        m_queuedPixmapRequests.emplace_back(std::move(request));
+        processPixmapQueue();
+    }
 
     return future;
 }
 
 void CoverRepositoryPrivate::finishPixmapRequest(const CoverRequestKey& requestKey, const CoverLoader& result)
 {
-    --m_activePixmapRequests;
-
     const auto pendingIt = m_pendingPixmapRequests.find(requestKey);
     if(pendingIt == m_pendingPixmapRequests.cend()) {
         processPixmapQueue();
@@ -931,6 +970,12 @@ void CoverRepositoryPrivate::finishPixmapRequest(const CoverRequestKey& requestK
     processPixmapQueue();
 }
 
+void CoverRepositoryPrivate::finishActivePixmapRequest(const CoverRequestKey& requestKey, const CoverLoader& result)
+{
+    --m_activePixmapRequests;
+    finishPixmapRequest(requestKey, result);
+}
+
 void CoverRepositoryPrivate::finishPixmapRequestFromLocalLoad(const CoverRequestKey& requestKey,
                                                               const CoverLoader& loader)
 {
@@ -939,7 +984,7 @@ void CoverRepositoryPrivate::finishPixmapRequestFromLocalLoad(const CoverRequest
         return result;
     });
     loaderResult.then(m_self,
-                      [this, requestKey](const CoverLoader& result) { finishPixmapRequest(requestKey, result); });
+                      [this, requestKey](const CoverLoader& result) { finishActivePixmapRequest(requestKey, result); });
 }
 
 void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader,
@@ -952,7 +997,7 @@ void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& request
 
     const auto pendingIt = m_pendingPixmapRequests.find(requestKey);
     if(pendingIt == m_pendingPixmapRequests.end()) {
-        finishPixmapRequest(requestKey, {});
+        finishActivePixmapRequest(requestKey, {});
         return;
     }
 
@@ -963,7 +1008,7 @@ void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& request
         [this, requestKey, loader, remoteLoader, urls = std::move(urls), index](std::optional<QByteArray> data,
                                                                                 const QString& error) mutable {
             if(!m_pendingPixmapRequests.contains(requestKey)) {
-                finishPixmapRequest(requestKey, {});
+                finishActivePixmapRequest(requestKey, {});
                 return;
             }
 
@@ -973,7 +1018,7 @@ void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& request
                     = loadImageFromRemoteArtworkData(remoteLoader, coverThumbnailPath(loader.key), data.value());
                 if(!result.cover.isNull()) {
                     result.pendingCover = remoteLoader.pendingCover;
-                    finishPixmapRequest(requestKey, result);
+                    finishActivePixmapRequest(requestKey, result);
                     return;
                 }
             }
@@ -997,7 +1042,7 @@ void CoverRepositoryPrivate::requestFallbackRemoteArtwork(const CoverRequestKey&
     auto loaderResult = Utils::asyncExec([primary]() -> CoverLoader { return loadCoverImage(primary); });
     loaderResult.then(m_self, [this, requestKey, loader, fallback](const CoverLoader& result) {
         if(!result.cover.isNull()) {
-            finishPixmapRequest(requestKey, result);
+            finishActivePixmapRequest(requestKey, result);
             return;
         }
 
@@ -1578,10 +1623,7 @@ void CoverRepository::removeFromCache(const Track& track, const SettingsManager&
         p->cancelPendingPixmapRequest(CoverRequestKey{.key = key, .kind = CoverRequestKind::Full});
         p->cancelPendingPixmapRequest(CoverRequestKey{.key = key, .kind = CoverRequestKind::Original});
 
-        for(const auto size :
-            {ThumbnailSize::Tiny, ThumbnailSize::Small, ThumbnailSize::MediumSmall, ThumbnailSize::Medium,
-             ThumbnailSize::Large, ThumbnailSize::VeryLarge, ThumbnailSize::ExtraLarge, ThumbnailSize::XxLarge,
-             ThumbnailSize::Huge, ThumbnailSize::Full}) {
+        for(const auto size : placeholderSizes() | std::views::drop(1)) {
             const QString thumbKey = generateThumbCoverKey(key, size);
             p->m_coverCache.remove(thumbKey);
             p->m_pinnedThumbnails.erase(thumbKey);
