@@ -287,6 +287,12 @@ std::optional<ScriptEvaluator::FuncRet> trackMetadataValue(const VariableKind ki
             return formatDateTime(track.lastModified());
         case VariableKind::FilePath:
             return track.filepath();
+        case VariableKind::IsRemote:
+            return track.isRemote() ? u"1"_s : QString{};
+        case VariableKind::IsVirtual:
+            return track.isVirtual() ? u"1"_s : QString{};
+        case VariableKind::IsInArchive:
+            return track.isInArchive() ? u"1"_s : QString{};
         case VariableKind::FileName:
             return track.filename();
         case VariableKind::Extension:

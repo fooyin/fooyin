@@ -483,6 +483,12 @@ void ScriptRegistryPrivate::addDefaultVariables()
                 QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Last modified timestamp"));
     addVariable(VariableKind::FilePath, QString::fromLatin1(MetaData::FilePath),
                 QT_TRANSLATE_NOOP("Fooyin", "Metadata"), QT_TRANSLATE_NOOP("Fooyin", "Full file path"));
+    addVariable(VariableKind::IsRemote, u"ISREMOTE"_s, QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for an HTTP(S) source"));
+    addVariable(VariableKind::IsVirtual, u"ISVIRTUAL"_s, QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for a source handled by a specialised URI backend"));
+    addVariable(VariableKind::IsInArchive, u"ISINARCHIVE"_s, QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
+                QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for a track inside an archive"));
     addVariable(VariableKind::RelativePath, QString::fromLatin1(MetaData::RelativePath),
                 QT_TRANSLATE_NOOP("Fooyin", "Metadata"),
                 QT_TRANSLATE_NOOP("Fooyin", "Path relative to the library root"));
@@ -573,6 +579,15 @@ void ScriptRegistryPrivate::addDefaultVariables()
                 QT_TRANSLATE_NOOP("Fooyin", "Returns 1 while playback is paused"));
     addVariable(VariableKind::IsStopped, u"ISSTOPPED"_s, QT_TRANSLATE_NOOP("Fooyin", "Playback"),
                 QT_TRANSLATE_NOOP("Fooyin", "Returns 1 while playback is stopped"));
+    registerVariable(
+        {.kind        = VariableKind::IsLiveStream,
+         .name        = u"ISLIVESTREAM"_s,
+         .category    = QString::fromUtf8(QT_TRANSLATE_NOOP("Fooyin", "Playback")),
+         .description = QString::fromUtf8(QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for a suspected livestream")),
+         .dependencies
+         = {.sources = {ScriptSources::TrackMetadata, ScriptSources::PlaybackTrack}, .unclassified = false},
+         .contextual     = true,
+         .playbackScoped = true});
     addVariable(VariableKind::IsQueueCurrent, u"IS_QUEUE_CURRENT"_s, QT_TRANSLATE_NOOP("Fooyin", "Queue"),
                 QT_TRANSLATE_NOOP("Fooyin", "Returns 1 for the current queue viewer entry, including while paused"),
                 makeScriptVariableInvoker<queueItemState<ScriptQueueItemState::Current>>());

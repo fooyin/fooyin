@@ -37,6 +37,7 @@ namespace Fooyin {
 class CoverProvider;
 class NetworkAccessManager;
 class SignalThrottler;
+class ScriptContextService;
 
 namespace Discord {
 class DiscordArtworkUploader;
@@ -86,6 +87,7 @@ private:
 
     PlayerController* m_player;
     SettingsManager* m_settings;
+    ScriptContextService* m_scriptContext;
     std::shared_ptr<NetworkAccessManager> m_networkAccess;
     CoverProvider* m_coverProvider;
 

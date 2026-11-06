@@ -544,6 +544,22 @@ TEST_F(ScriptParserTest, MetadataTest)
     EXPECT_EQ(u" - 7", m_parser.evaluate(u"[%disc% - %track%]"_s, track));
 }
 
+TEST_F(ScriptParserTest, TrackClassificationTest)
+{
+    const Track local{u"/music/track.flac"_s};
+    const Track remote{u"https://example.com/stream"_s};
+    const Track virtualTrack{u"cdda:///disc"_s};
+    const QString archivePath = u"/music/archive.zip"_s;
+    const Track archived{u"unpack://zip|%1|file://%2!track.flac"_s.arg(archivePath.size()).arg(archivePath)};
+    const QString sourceFlags = u"$if(%isremote%,remote,local)$if(%isvirtual%, virtual)$if(%isinarchive%, archive)"_s;
+
+    EXPECT_EQ(u"local", m_parser.evaluate(sourceFlags, local));
+    EXPECT_EQ(u"remote", m_parser.evaluate(sourceFlags, remote));
+    EXPECT_EQ(u"local virtual", m_parser.evaluate(sourceFlags, virtualTrack));
+    EXPECT_EQ(u"local archive", m_parser.evaluate(sourceFlags, archived));
+    EXPECT_EQ(u"", m_parser.evaluate(u"%isremote%%isvirtual%%isinarchive%"_s));
+}
+
 TEST_F(ScriptParserTest, RegexTest)
 {
     EXPECT_EQ(u"true", m_parser.evaluate(uR"REGEX($if($regex_test(Track 42,"^Track \d+$"),true,false))REGEX"_s));

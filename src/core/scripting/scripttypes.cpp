@@ -22,6 +22,8 @@
 #include <core/player/playbackqueue.h>
 #include <core/player/playercontroller.h>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
 ScriptContextData makePlaybackScriptData(PlayerController* playerController, Playlist* playlist)
 {
@@ -74,6 +76,16 @@ ScriptContextData makePlaybackScriptData(PlayerController* playerController, Pla
         .queueMode  = queueMode,
         .track      = playerController ? playerController->currentTrack() : Track{},
     };
+
+    if(playerController && context.playback.track.isValid()) {
+        const auto& track = context.playback.track;
+        // This isn't definitive, but it will cover most cases with few misclassicfications
+        const bool isLiveStream = playState != Player::PlayState::Stopped && track.isRemote() && track.duration() == 0
+                               && !playerController->currentTrackSeekable();
+        context.values.push_back({.name   = u"ISLIVESTREAM"_s,
+                                  .result = {.value = isLiveStream ? u"1"_s : QString{}, .cond = isLiveStream},
+                                  .track  = track});
+    }
 
     return context;
 }

@@ -277,6 +277,8 @@ ScriptContextService::ScriptContextService(PlayerController* player, PlaylistHan
         }
         p->m_playbackTrack.track = track;
     });
+    QObject::connect(player, &PlayerController::currentTrackSeekableChanged, this,
+                     [this]() { p->publishPlaybackChange(ScriptSources::PlaybackTrack); });
     QObject::connect(player, &PlayerController::playStateChanged, this,
                      [this](Player::PlayState state, Player::PlayState previous) {
                          if(state == previous) {

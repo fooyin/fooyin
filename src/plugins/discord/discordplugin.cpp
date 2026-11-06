@@ -28,6 +28,7 @@
 
 #include <core/network/networkaccessmanager.h>
 #include <core/player/playercontroller.h>
+#include <core/scripting/scriptcontextservice.h>
 #include <gui/coverprovider.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
@@ -97,6 +98,7 @@ void DiscordPlugin::initialise(const CorePluginContext& context)
 {
     m_player           = context.playerController;
     m_settings         = context.settingsManager;
+    m_scriptContext    = context.scriptContext;
     m_networkAccess    = context.networkAccess;
     m_artworkUploader  = new DiscordArtworkUploader(m_networkAccess.get(), this);
     m_coverArtResolver = new DiscordCoverArtResolver(m_networkAccess.get(), this);
@@ -117,6 +119,7 @@ void DiscordPlugin::initialise(const CorePluginContext& context)
     });
     QObject::connect(m_player, &PlayerController::positionChanged, this, &DiscordPlugin::positionChanged);
     QObject::connect(m_player, &PlayerController::positionMoved, m_throttler, &SignalThrottler::throttle);
+    QObject::connect(m_player, &PlayerController::currentTrackSeekableChanged, m_throttler, &SignalThrottler::throttle);
     QObject::connect(m_player, &PlayerController::playStateChanged, this, [this](Player::PlayState state) {
         if(state == Player::PlayState::Stopped) {
             m_positionSyncedTrackId = -1;
@@ -233,9 +236,11 @@ void DiscordPlugin::startUpdateActivityTask()
 
     PresenceData data;
 
-    data.largeText = m_scriptParser.evaluate(m_settings->value<Settings::Discord::AlbumField>(), track);
-    data.details   = m_scriptParser.evaluate(m_settings->value<Settings::Discord::TitleField>(), track);
-    data.state     = m_scriptParser.evaluate(m_settings->value<Settings::Discord::ArtistField>(), track);
+    const auto scriptData    = m_scriptContext->playbackContext();
+    const auto scriptContext = scriptData.context();
+    data.largeText = m_scriptParser.evaluate(m_settings->value<Settings::Discord::AlbumField>(), track, scriptContext);
+    data.details   = m_scriptParser.evaluate(m_settings->value<Settings::Discord::TitleField>(), track, scriptContext);
+    data.state     = m_scriptParser.evaluate(m_settings->value<Settings::Discord::ArtistField>(), track, scriptContext);
 
     if(m_artworkTrackKey == track.identityKey()) {
         data.largeImage = m_artworkUrl;

@@ -244,6 +244,10 @@ enum class VariableKind : uint8_t
     IsQueuePlayed,
     QueueMode,
     AverageBitrate,
+    IsRemote,
+    IsVirtual,
+    IsInArchive,
+    IsLiveStream,
 };
 
 struct Expression;
