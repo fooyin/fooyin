@@ -32,6 +32,7 @@
 #include <QDir>
 #include <QFile>
 #include <QIODevice>
+#include <QSaveFile>
 #include <QTimerEvent>
 
 using namespace Qt::StringLiterals;
@@ -253,14 +254,17 @@ bool LyricsSaver::saveLyricsToFile(const Lyrics& lyrics, const Track& track)
         return true;
     }
 
-    QFile file{filepath};
+    QSaveFile file{filepath};
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qCInfo(LYRICS) << "Unable open file" << filepath << "to save lyrics";
         return false;
     }
 
     lyricsToLrc(lyrics, &file, static_cast<SaveOptions>(m_settings->fileValue(Settings::SaveOptions, 0).toInt()));
-    file.close();
+    if(!file.commit()) {
+        qCWarning(LYRICS) << "Unable to save lyrics to file" << filepath << file.errorString();
+        return false;
+    }
 
     if(changedFile) {
         removeFile(lyrics.filepath);

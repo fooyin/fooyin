@@ -24,6 +24,7 @@
 #include <QFileInfo>
 #include <QObject>
 #include <QRegularExpression>
+#include <QSaveFile>
 #include <QTextStream>
 
 using namespace Qt::StringLiterals;
@@ -127,8 +128,8 @@ bool writeRadioStationM3u(const QString& filePath, const RadioStationList& stati
         return false;
     }
 
-    QFile file{filePath};
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+    QSaveFile file{filePath};
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         if(error) {
             *error = QObject::tr("Unable to open file for writing.");
         }
@@ -152,6 +153,13 @@ bool writeRadioStationM3u(const QString& filePath, const RadioStationList& stati
         }
         stream << "#EXTINF:-1," << station.name << "\n";
         stream << streamUrl << "\n\n";
+    }
+
+    if(!file.commit()) {
+        if(error) {
+            *error = QObject::tr("Unable to write file.");
+        }
+        return false;
     }
 
     return true;

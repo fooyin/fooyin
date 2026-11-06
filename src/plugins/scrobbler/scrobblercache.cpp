@@ -29,6 +29,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLoggingCategory>
+#include <QSaveFile>
 #include <QTimerEvent>
 
 Q_LOGGING_CATEGORY(SCROBBLER_CACHE, "fy.scrobbler")
@@ -246,7 +247,7 @@ void ScrobblerCache::writeCache()
     object["Tracks"_L1] = array;
     const QJsonDocument doc{object};
 
-    QFile file{m_filepath};
+    QSaveFile file{m_filepath};
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qCDebug(SCROBBLER_CACHE) << "Unable to open cache file" << m_filepath;
         return;
@@ -256,6 +257,9 @@ void ScrobblerCache::writeCache()
     stream.setEncoding(QStringConverter::Encoding::Utf8);
 
     stream << doc.toJson();
+    if(!file.commit()) {
+        qCWarning(SCROBBLER_CACHE) << "Unable to write cache file" << m_filepath << file.errorString();
+    }
 }
 
 void ScrobblerCache::timerEvent(QTimerEvent* event)

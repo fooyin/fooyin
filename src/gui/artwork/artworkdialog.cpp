@@ -35,12 +35,12 @@
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QDir>
-#include <QFile>
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
 #include <QPushButton>
+#include <QSaveFile>
 
 using namespace Qt::StringLiterals;
 
@@ -191,8 +191,9 @@ void ArtworkDialog::accept()
             = m_parser.evaluate(u"%1/%2.%3"_s.arg(method.dir, method.filename, saveResult.suffix), m_tracks.front());
         const QString cleanPath = QDir::cleanPath(path);
 
-        QFile file{cleanPath};
-        if(file.open(QIODevice::WriteOnly) && file.write(saveResult.image) == saveResult.image.size()) {
+        QSaveFile file{cleanPath};
+        if(file.open(QIODevice::WriteOnly) && file.write(saveResult.image) == saveResult.image.size()
+           && file.commit()) {
             for(const Track& track : m_tracks) {
                 m_coverRepository->removeFromCache(track, *m_settings);
             }

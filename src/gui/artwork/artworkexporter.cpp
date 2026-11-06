@@ -29,6 +29,7 @@
 #include <QMainWindow>
 #include <QMimeDatabase>
 #include <QObject>
+#include <QSaveFile>
 #include <ranges>
 
 using namespace Qt::StringLiterals;
@@ -139,8 +140,8 @@ bool writeArtwork(const Fooyin::Track& track, Fooyin::Track::Cover type, const F
     }
 
     const QString path{u"%1/%2.%3"_s.arg(dir, exportBaseName(type), exportSuffix(artwork))};
-    QFile file{QDir::cleanPath(path)};
-    return file.open(QIODevice::WriteOnly) && file.write(artwork.image) == artwork.image.size();
+    QSaveFile file{QDir::cleanPath(path)};
+    return file.open(QIODevice::WriteOnly) && file.write(artwork.image) == artwork.image.size() && file.commit();
 }
 
 bool writeArtwork(const QString& path, const Fooyin::ArtworkResult& artwork)
@@ -149,8 +150,8 @@ bool writeArtwork(const QString& path, const Fooyin::ArtworkResult& artwork)
         return false;
     }
 
-    QFile file{QDir::cleanPath(path)};
-    return file.open(QIODevice::WriteOnly) && file.write(artwork.image) == artwork.image.size();
+    QSaveFile file{QDir::cleanPath(path)};
+    return file.open(QIODevice::WriteOnly) && file.write(artwork.image) == artwork.image.size() && file.commit();
 }
 } // namespace
 

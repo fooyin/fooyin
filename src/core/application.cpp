@@ -63,6 +63,7 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 #include <QProcess>
+#include <QSaveFile>
 #include <QTimerEvent>
 
 Q_LOGGING_CATEGORY(APP, "fy.app")
@@ -547,7 +548,7 @@ bool Application::exportPlaylist(const Playlist& playlist, const QString& filepa
         return false;
     }
 
-    QFile file{filepath};
+    QSaveFile file{filepath};
     if(!file.open(QIODevice::WriteOnly)) {
         qCWarning(APP) << "Could not open playlist file" << filepath << "for writing:" << file.errorString();
         return false;
@@ -559,6 +560,10 @@ bool Application::exportPlaylist(const Playlist& playlist, const QString& filepa
     const bool writeMetadata = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
 
     parser->savePlaylist(&file, extension, playlist.tracks(), playlistDir, pathType, writeMetadata);
+    if(!file.commit()) {
+        qCWarning(APP) << "Could not save playlist file" << filepath << ":" << file.errorString();
+        return false;
+    }
     return true;
 }
 

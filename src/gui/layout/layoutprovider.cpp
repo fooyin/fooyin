@@ -34,6 +34,7 @@
 #include <QJsonObject>
 #include <QLoggingCategory>
 #include <QRegularExpression>
+#include <QSaveFile>
 #include <QString>
 
 Q_LOGGING_CATEGORY(LAYOUT_PROV, "fy.layoutprovider")
@@ -81,17 +82,14 @@ bool writeLayout(const FyLayout& layout, const QString& path)
     }
 
     QDir{}.mkpath(QFileInfo{path}.absolutePath());
-    QFile file{path};
+    QSaveFile file{path};
     if(!file.open(QIODevice::WriteOnly)) {
         qCWarning(LAYOUT_PROV) << "Couldn't open layout file";
         return false;
     }
 
     const QByteArray json = QJsonDocument(layout.json()).toJson();
-    const auto written    = file.write(json);
-    file.close();
-
-    return written >= 0;
+    return file.write(json) == json.size() && file.commit();
 }
 
 QString activeLayoutName()
@@ -672,17 +670,14 @@ bool LayoutProvider::exportLayout(const FyLayout& layout, const QString& path)
         filepath += u".fyl"_s;
     }
 
-    QFile file{filepath};
+    QSaveFile file{filepath};
     if(!file.open(QIODevice::WriteOnly)) {
         return false;
     }
 
     const QByteArray json = QJsonDocument(layout.json()).toJson();
 
-    const auto bytesWritten = file.write(json);
-    file.close();
-
-    if(bytesWritten < 0) {
+    if(file.write(json) != json.size() || !file.commit()) {
         return false;
     }
 

@@ -43,6 +43,7 @@
 #include <QMessageBox>
 #include <QPainter>
 #include <QPushButton>
+#include <QSaveFile>
 #include <QSettings>
 #include <QSignalBlocker>
 #include <QSizePolicy>
@@ -1131,8 +1132,8 @@ void EqualiserSettingsWidget::exportPreset()
     }
 
     const QString filePath = selectedFiles.constFirst();
-    QFile file(filePath);
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+    QSaveFile file{filePath};
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::warning(this, tr("Export Equaliser Preset"), tr("Unable to open ‘%1’ for writing.").arg(filePath));
         return;
     }
@@ -1143,7 +1144,7 @@ void EqualiserSettingsWidget::exportPreset()
         stream << value << '\n';
     }
 
-    if(stream.status() != QTextStream::Ok) {
+    if(!file.commit()) {
         QMessageBox::warning(this, tr("Export Equaliser Preset"),
                              tr("An error occurred while writing ‘%1’.").arg(filePath));
         return;

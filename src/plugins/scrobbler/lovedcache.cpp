@@ -26,6 +26,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLoggingCategory>
+#include <QSaveFile>
 #include <QTextStream>
 #include <QTimerEvent>
 
@@ -111,7 +112,7 @@ void LovedCache::writeCache()
         tracks.append(object);
     }
 
-    QFile file{m_filepath};
+    QSaveFile file{m_filepath};
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qCWarning(LOVED_CACHE) << "Unable to open Loved cache" << m_filepath;
         return;
@@ -120,6 +121,9 @@ void LovedCache::writeCache()
     QTextStream stream{&file};
     stream.setEncoding(QStringConverter::Encoding::Utf8);
     stream << QJsonDocument{QJsonObject{{"Tracks"_L1, tracks}}}.toJson();
+    if(!file.commit()) {
+        qCWarning(LOVED_CACHE) << "Unable to write Loved cache" << m_filepath << file.errorString();
+    }
 }
 
 void LovedCache::timerEvent(QTimerEvent* event)

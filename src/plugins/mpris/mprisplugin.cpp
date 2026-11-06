@@ -39,6 +39,7 @@
 #include <QFile>
 #include <QLoggingCategory>
 #include <QRegularExpression>
+#include <QSaveFile>
 
 Q_LOGGING_CATEGORY(MPRIS, "fy.mpris")
 
@@ -621,12 +622,12 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
                 }
 
                 if(!cover.isNull()) {
-                    m_currCoverKey = coverKey;
-                    QFile file{currentCoverPath()};
-                    if(file.open(QIODevice::WriteOnly)) {
-                        if(!cover.save(&file, "JPG", 85)) {
-                            qCInfo(MPRIS) << "Failed to save MPRIS cover for track:" << track.filepath();
-                        }
+                    QSaveFile file{Gui::coverPath() + coverKey + u".jpg"_s};
+                    if(file.open(QIODevice::WriteOnly) && cover.save(&file, "JPG", 85) && file.commit()) {
+                        m_currCoverKey = coverKey;
+                    }
+                    else {
+                        qCInfo(MPRIS) << "Failed to save MPRIS cover for track:" << track.filepath();
                     }
                 }
                 loadArtAndReload();

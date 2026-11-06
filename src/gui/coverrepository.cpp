@@ -47,6 +47,7 @@
 #include <QLoggingCategory>
 #include <QMimeDatabase>
 #include <QPromise>
+#include <QSaveFile>
 
 #include <algorithm>
 #include <array>
@@ -175,9 +176,9 @@ QFuture<T> makeReadyFuture(T value)
 
 bool saveThumbnail(const QImage& cover, const QString& key)
 {
-    QFile file{coverThumbnailPath(key)};
+    QSaveFile file{coverThumbnailPath(key)};
     if(file.open(QIODevice::WriteOnly)) {
-        return cover.save(&file, "JPG", 85);
+        return cover.save(&file, "JPG", 85) && file.commit();
     }
     return false;
 }

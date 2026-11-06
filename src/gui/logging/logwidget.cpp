@@ -38,6 +38,7 @@
 #include <QLoggingCategory>
 #include <QMenu>
 #include <QPushButton>
+#include <QSaveFile>
 #include <QScrollBar>
 #include <QSettings>
 #include <QTimerEvent>
@@ -309,7 +310,7 @@ void LogWidget::saveLog()
         return;
     }
 
-    QFile logFile{saveFile};
+    QSaveFile logFile{saveFile};
     if(!logFile.open(QIODevice::WriteOnly)) {
         qCWarning(LOG_WIDGET) << "Failed to open file for writing";
         return;
@@ -324,6 +325,8 @@ void LogWidget::saveLog()
                                        entry.message);
     }
 
-    logFile.close();
+    if(!logFile.commit()) {
+        qCWarning(LOG_WIDGET) << "Failed to save log file" << saveFile << logFile.errorString();
+    }
 }
 } // namespace Fooyin

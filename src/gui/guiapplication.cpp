@@ -133,6 +133,7 @@
 #include <QPixmapCache>
 #include <QPointer>
 #include <QPushButton>
+#include <QSaveFile>
 #include <QSignalBlocker>
 #include <QStyle>
 #include <QStyleFactory>
@@ -514,8 +515,9 @@ void GuiApplication::searchForArtwork(const TrackList& tracks, Track::Cover type
                     u"%1/%2.%3"_s.arg(frontMethod.dir, frontMethod.filename, saveResult.suffix), tracks.front());
                 const QString cleanPath = QDir::cleanPath(path);
 
-                QFile file{cleanPath};
-                if(file.open(QIODevice::WriteOnly) && file.write(saveResult.image) == saveResult.image.size()) {
+                QSaveFile file{cleanPath};
+                if(file.open(QIODevice::WriteOnly) && file.write(saveResult.image) == saveResult.image.size()
+                   && file.commit()) {
                     for(const Track& updatedTrack : tracks) {
                         m_coverRepository->removeFromCache(updatedTrack, *m_settings);
                     }
