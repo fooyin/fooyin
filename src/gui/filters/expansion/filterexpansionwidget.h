@@ -165,6 +165,9 @@ private:
     QMargins m_artworkMargins;
     QMargins m_effectiveArtworkMargins;
     QPixmap m_artwork;
+    QPixmap m_scaledArtwork;
+    QSize m_scaledArtworkSize;
+    qint64 m_scaledArtworkKey;
     QRect m_artworkRect;
     uint64_t m_coverRequest;
 };

@@ -137,6 +137,7 @@ FilterExpansionWidget::FilterExpansionWidget(TrackSelectionController* selection
     , m_artworkSize{100}
     , m_artworkMargins{10, 10, 10, 10}
     , m_effectiveArtworkMargins{10, 10, 10, 10}
+    , m_scaledArtworkKey{0}
     , m_coverRequest{0}
 {
     m_populator.moveToThread(&m_populatorThread);
@@ -523,7 +524,8 @@ void FilterExpansionWidget::clear()
     ++m_coverRequest;
     m_coverTrack = {};
     m_backgroundSource->setTrack({});
-    m_artwork = {};
+    m_artwork       = {};
+    m_scaledArtwork = {};
     m_model->setContent({});
     m_footer->setContent({});
     updateSelection();
@@ -605,21 +607,26 @@ void FilterExpansionWidget::paintEvent(QPaintEvent* /*event*/)
     painter.restore();
 
     if(m_artworkRect.isValid() && !m_artwork.isNull()) {
-        const auto scaled = Utils::scalePixmap(m_artwork, m_artworkRect.size(), devicePixelRatioF(), true);
+        const qreal dpr = devicePixelRatioF();
+        if(m_scaledArtwork.isNull() || m_scaledArtworkKey != m_artwork.cacheKey()
+           || m_scaledArtworkSize != m_artworkRect.size() || m_scaledArtwork.devicePixelRatio() != dpr) {
+            m_scaledArtwork     = Utils::scalePixmap(m_artwork, m_artworkRect.size(), dpr, true);
+            m_scaledArtworkSize = m_artworkRect.size();
+            m_scaledArtworkKey  = m_artwork.cacheKey();
+        }
 
-        QRect target{QPoint{}, scaled.deviceIndependentSize().toSize()};
+        QRect target{QPoint{}, m_scaledArtwork.deviceIndependentSize().toSize()};
         target.moveCenter(m_artworkRect.center());
 
-        painter.drawPixmap(target.topLeft(), scaled);
+        painter.drawPixmap(target.topLeft(), m_scaledArtwork);
 
         if(m_artworkReflection.enabled) {
-            const qreal dpr = scaled.devicePixelRatio();
             const qreal reflectionHeight
                 = std::ceil(Gui::artworkReflectionHeight(target.height(), m_artworkReflection) * dpr) / dpr;
             const qreal bottom = target.bottom() + 1 + m_artworkReflection.gap + reflectionHeight;
 
             if(bottom <= height()) {
-                Gui::drawArtworkReflection(painter, m_artwork, scaled, target, 0, m_artworkReflection);
+                Gui::drawArtworkReflection(painter, m_artwork, m_scaledArtwork, target, 0, m_artworkReflection);
             }
         }
     }
