@@ -77,12 +77,24 @@ elseif(UNIX)
             RENAME org.fooyin.fooyin.png
             COMPONENT fooyin
         )
+        install(
+            FILES ${ICON_SRC_PATH}/${SIZE}-fooyin.png
+            DESTINATION ${ICON_INSTALL_DIR}/hicolor/${SIZE}x${SIZE}/apps
+            RENAME fooyin.png
+            COMPONENT fooyin
+        )
     endforeach(SIZE)
 
     install(
         FILES ${ICON_SRC_PATH}/sc-fooyin.svg
         DESTINATION ${ICON_INSTALL_DIR}/hicolor/scalable/apps
         RENAME org.fooyin.fooyin.svg
+        COMPONENT fooyin
+    )
+    install(
+        FILES ${ICON_SRC_PATH}/sc-fooyin.svg
+        DESTINATION ${ICON_INSTALL_DIR}/hicolor/scalable/apps
+        RENAME fooyin.svg
         COMPONENT fooyin
     )
 
