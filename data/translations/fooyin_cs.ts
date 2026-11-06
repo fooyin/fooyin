@@ -1567,12 +1567,12 @@
     <message>
         <location filename="../../src/gui/filters/filterscripting.cpp" line="63"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtr</translation>
+        <translation>Filtr</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterscripting.cpp" line="64"/>
         <source>Filter column value at a one-based index; empty outside the current range</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtruje hodnotu sloupce na indexu (počítáno od 1); mimo současný rozsah prázdné</translation>
     </message>
 </context>
 <context>
@@ -1928,7 +1928,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="112"/>
         <source>Maximum memory used for scaled artwork and reflections in each cover flow widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximální paměť používaná zmenšenými a zrcadlenými přebaly alb v každém widgetu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="114"/>
@@ -3350,12 +3350,12 @@ Vymaž pro vypnutí řazení.</translation>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="62"/>
         <source>Uses the image and appearance settings from Interface → Background, aligned across the main window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Používá obrázek a nastavení vzhledu z Rozhraní → Pozadí, zarovnáno přes hlavní okno.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="156"/>
         <source>Use track artwork as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít jako pozadí přebal alba skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="157"/>
@@ -3371,13 +3371,13 @@ Vymaž pro vypnutí řazení.</translation>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="159"/>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="331"/>
         <source>Global background</source>
-        <translation type="unfinished"></translation>
+        <translation>Globální pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="160"/>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="332"/>
         <source>Use the shared main window background</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít sdílené pozadí hlavního okna</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="162"/>
