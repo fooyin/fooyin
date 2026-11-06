@@ -2063,7 +2063,7 @@ private:
     int m_segmentSize{0};
     int m_itemSpacing{MinItemSpacing};
     int m_rowSpacing{IconRowSpacing};
-    int m_horizontalInset{0};
+    int m_horizontalMargins{0};
     bool m_needsVerticalScrollBar{false};
     QSize m_fittedIconSize;
     FittedMeasurements m_fullWidthMeasurements;
@@ -2166,7 +2166,7 @@ bool IconView::resizeIcons(int steps)
     }
 
     const int padding    = std::max(0, indexSizeHint(viewItem(0).index, iconSize()).width() - iconSize().width());
-    const int width      = viewport()->width() - (2 * m_horizontalInset) + m_itemSpacing;
+    const int width      = viewport()->width() - m_horizontalMargins + m_itemSpacing;
     const int minWidth   = iconSizeForWidth(std::max(16, m_view->minimumIconSize().width())).width();
     const int maxWidth   = iconSizeForWidth(m_view->maximumIconSize().width()).width();
     const int maxPitch   = maxWidth + padding + m_itemSpacing;
@@ -2527,7 +2527,9 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
     // Use the full width first to decide whether a scrollbar is needed
     m_layoutBounds = QRect{{}, QSize{width, viewport()->height()}};
 
-    const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
+    const auto& gridMargins = m_p->m_iconGridMargins;
+    const int verticalInset = haveSideCaptions() ? 0 : MinItemSpacing;
+    const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + (gridMargins ? gridMargins->top() : verticalInset)};
 
     int segStartPosition{m_layoutBounds.left()};
     int segEndPosition{m_layoutBounds.right() + 1};
@@ -2539,12 +2541,16 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
     const bool autoFit                  = useAutoFitArtwork();
     const bool fixedGridSpacing         = useConfiguredGridSpacing && (autoFit || m_p->m_iconHorizontalGap >= 0);
 
-    m_horizontalInset
+    const int horizontalInset
         = haveSideCaptions() ? 0 : std::min(MinItemSpacing, std::max(0, (m_layoutBounds.width() - 1) / 2));
-    segStartPosition += m_horizontalInset;
-    segEndPosition -= m_horizontalInset;
+    const int leftMargin = gridMargins ? std::min(gridMargins->left(), std::max(0, width - 1)) : horizontalInset;
+    const int rightMargin
+        = gridMargins ? std::min(gridMargins->right(), std::max(0, width - leftMargin - 1)) : horizontalInset;
+    m_horizontalMargins = leftMargin + rightMargin;
+    segStartPosition += leftMargin;
+    segEndPosition -= rightMargin;
 
-    if(useConfiguredGridSpacing && !fixedGridSpacing) {
+    if(!gridMargins && useConfiguredGridSpacing && !fixedGridSpacing) {
         segStartPosition += m_itemSpacing;
         segEndPosition -= m_itemSpacing;
     }
@@ -2595,14 +2601,15 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
             const int remainingWidth = totalWidthAvailable - gridWidth;
             gridStartPosition += std::max(0, remainingWidth / 2);
         }
-        else {
+        else if(!gridMargins) {
             gridStartPosition += MinItemSpacing;
         }
     }
 
     if(!fixedGridSpacing) {
         const int totalPadding = totalWidthAvailable - totalItemWidth;
-        m_itemSpacing          = std::max(0, totalPadding / (m_segmentSize + 1));
+        const int gapCount     = gridMargins ? std::max(1, m_segmentSize - 1) : m_segmentSize + 1;
+        m_itemSpacing          = std::max(0, totalPadding / gapCount);
 
         if(maxPadding > 0 && m_itemSpacing > maxPadding) {
             m_itemSpacing = MinItemSpacing;
@@ -2615,6 +2622,7 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
         = autoFit ? iconSizeForWidth(((fittedWidth + m_segmentSize - 1) / m_segmentSize) - artworkPadding) : QSize{};
 
     QRect rect{{}, topLeft};
+    QRect gridBounds;
     const bool animating   = m_p->m_expansionAnimationHeight >= 0;
     const auto expanded    = animating ? m_p->m_expansionAnimationIndex : m_p->m_expandedIndex;
     const int expandedItem = m_p->m_expansionWidget ? m_p->viewIndex(expanded) : -1;
@@ -2649,7 +2657,7 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
             item.x = gridStartPosition + (segColumn * (itmWidth + m_itemSpacing));
         }
         else {
-            item.x = segStartPosition + m_itemSpacing + (segColumn * (itmWidth + m_itemSpacing));
+            item.x = segStartPosition + (gridMargins ? 0 : m_itemSpacing) + (segColumn * (itmWidth + m_itemSpacing));
         }
 
         item.y = segPosition;
@@ -2664,13 +2672,22 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
         deltaSegPosition = std::max(deltaSegPosition, currentHeight + spacing());
         rect |= item.rect();
 
+        if(i < m_segmentSize) {
+            gridBounds |= item.rect();
+        }
+
         if(i / m_segmentSize == expandedRow && (segColumn == m_segmentSize - 1 || i == count - 1)) {
-            const int expansionWidth = viewport()->width();
+            const int expansionLeft
+                = m_p->m_expansionMatchGridMargins ? std::clamp(gridBounds.left(), 0, std::max(0, width - 1)) : 0;
+            const int expansionRight = m_p->m_expansionMatchGridMargins
+                                         ? std::min(segEndPosition - (gridBounds.left() - segStartPosition), width)
+                                         : width;
+            const int expansionWidth = std::max(1, expansionRight - expansionLeft);
             const int height     = animating ? m_p->m_expansionAnimationHeight
                                              : std::max(1, m_p->m_expansionWidget->hasHeightForWidth()
                                                                ? m_p->m_expansionWidget->heightForWidth(expansionWidth)
                                                                : m_p->m_expansionWidget->sizeHint().height());
-            m_p->m_expansionRect = {0, segPosition + deltaSegPosition, viewport()->width(), height};
+            m_p->m_expansionRect = {expansionLeft, segPosition + deltaSegPosition, expansionWidth, height};
             int gap              = std::max(spacing(), IconRowSpacing);
             if(animating) {
                 const int fullHeight = std::max(1, m_p->animationSnapshot().deviceIndependentSize().toSize().height());
@@ -2682,7 +2699,10 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
     }
 
     m_contentsSize = rect.size();
-    m_contentsSize.rheight() += m_rowSpacing;
+    m_contentsSize.rheight() += gridMargins ? gridMargins->bottom() : verticalInset;
+    if(gridMargins) {
+        m_contentsSize.rwidth() = std::max(m_contentsSize.width(), gridBounds.right() + 1 + rightMargin);
+    }
 }
 
 void IconView::resetGrid()
@@ -2692,9 +2712,6 @@ void IconView::resetGrid()
     const bool useConfiguredGridSpacing = useIconGaps();
     m_itemSpacing
         = useConfiguredGridSpacing && m_p->m_iconHorizontalGap >= 0 ? m_p->m_iconHorizontalGap : MinItemSpacing;
-    if(useAutoFitArtwork() && m_p->m_iconHorizontalGap < 0) {
-        m_itemSpacing = 0;
-    }
     m_rowSpacing = useConfiguredGridSpacing ? m_p->m_iconVerticalGap : 0;
 }
 
@@ -4806,7 +4823,7 @@ void ExpandedTreeViewPrivate::updateExpansionGeometry()
         const int item = viewIndex(index);
         if(item >= 0) {
             const QRect anchor = m_view->mapToViewport(m_viewItems.at(item).rect());
-            m_expansionWidget->setProperty("expansionAnchor", anchor.center().x());
+            m_expansionWidget->setProperty("expansionAnchor", anchor.center().x() - m_expansionRect.left());
         }
         if(!animating) {
             m_expansionWidget->setGeometry(m_expansionRect.translated(0, -m_self->verticalScrollBar()->value()));
@@ -5346,6 +5363,32 @@ void ExpandedTreeView::setIconVerticalGap(int gap)
     viewport()->update();
 }
 
+void ExpandedTreeView::setIconGridMargins(const QMargins& margins)
+{
+    const QMargins clamped{std::clamp(margins.left(), 0, 999), std::clamp(margins.top(), 0, 999),
+                           std::clamp(margins.right(), 0, 999), std::clamp(margins.bottom(), 0, 999)};
+    if(p->m_iconGridMargins == clamped) {
+        return;
+    }
+
+    p->stopExpansionAnimation();
+    p->m_iconGridMargins = clamped;
+    p->doDelayedItemsLayout();
+    viewport()->update();
+}
+
+void ExpandedTreeView::resetIconGridMargins()
+{
+    if(!p->m_iconGridMargins) {
+        return;
+    }
+
+    p->stopExpansionAnimation();
+    p->m_iconGridMargins.reset();
+    p->doDelayedItemsLayout();
+    viewport()->update();
+}
+
 int ExpandedTreeView::iconItemCornerRadius() const
 {
     const auto& margins = p->m_iconItemArtworkMargins;
@@ -5587,6 +5630,17 @@ void ExpandedTreeView::setExpansionAnimated(bool enabled)
 void ExpandedTreeView::setExpansionAnimationDuration(int duration)
 {
     p->m_expansionAnimation.setDuration(std::clamp(duration, 50, 2000));
+}
+
+void ExpandedTreeView::setExpansionMatchGridMargins(bool enabled)
+{
+    if(p->m_expansionMatchGridMargins == enabled) {
+        return;
+    }
+
+    p->stopExpansionAnimation();
+    p->m_expansionMatchGridMargins = enabled;
+    refreshExpansion();
 }
 
 void ExpandedTreeView::refreshExpansion()

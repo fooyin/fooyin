@@ -87,6 +87,7 @@ private:
     QCheckBox* m_expansionAnimated;
     QSpinBox* m_expansionAnimationDuration;
     QCheckBox* m_expansionAlternatingRows;
+    QCheckBox* m_expansionMatchGridMargins;
     QCheckBox* m_expandedArtwork;
     QCheckBox* m_expansionCloseButton;
     QCheckBox* m_expansionArtworkReflection;

@@ -88,11 +88,14 @@ constexpr auto FilterIconVerticalGapKey        = u"Filters/IconVerticalGap";
 constexpr auto FilterArtworkRadiusKey          = u"Filters/ArtworkCornerRadius";
 constexpr auto FilterOverrideArtworkMarginsKey = u"Filters/OverrideArtworkMargins";
 constexpr auto FilterArtworkMarginsKey         = u"Filters/ArtworkMargins";
+constexpr auto FilterOverrideGridMarginsKey    = u"Filters/OverrideGridMargins";
+constexpr auto FilterGridMarginsKey            = u"Filters/GridMargins";
 
 constexpr auto FilterExpandGroupsKey                = u"Filters/ExpandGroups";
 constexpr auto FilterExpansionAnimatedKey           = u"Filters/ExpansionAnimated";
 constexpr auto FilterExpansionAnimationDurationKey  = u"Filters/ExpansionAnimationDuration";
 constexpr auto FilterExpansionAlternatingRowsKey    = u"Filters/ExpansionAlternatingRows";
+constexpr auto FilterExpansionMatchGridMarginsKey   = u"Filters/ExpansionMatchGridMargins";
 constexpr auto FilterExpandedArtworkKey             = u"Filters/ExpandedArtwork";
 constexpr auto FilterExpansionDoubleClickKey        = u"Filters/ExpansionDoubleClickBehaviour";
 constexpr auto FilterExpansionMiddleClickKey        = u"Filters/ExpansionMiddleClickBehaviour";
@@ -659,6 +662,10 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
         = m_settings
               ->fileValue(FilterOverrideArtworkMarginsKey, config.artworkMargins != factoryConfig().artworkMargins)
               .toBool();
+    config.overrideGridMargins
+        = m_settings->fileValue(FilterOverrideGridMarginsKey, config.overrideGridMargins).toBool();
+    config.gridMargins = Gui::marginsFromJson(
+        QJsonObject::fromVariantMap(m_settings->fileValue(FilterGridMarginsKey).toMap()), config.gridMargins);
     config.expandGroups      = m_settings->fileValue(FilterExpandGroupsKey, config.expandGroups).toBool();
     config.expansionAnimated = m_settings->fileValue(FilterExpansionAnimatedKey, config.expansionAnimated).toBool();
     config.expansionAnimationDuration = std::clamp(
@@ -666,6 +673,8 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
         2000);
     config.expansionAlternatingRows
         = m_settings->fileValue(FilterExpansionAlternatingRowsKey, config.expansionAlternatingRows).toBool();
+    config.expansionMatchGridMargins
+        = m_settings->fileValue(FilterExpansionMatchGridMarginsKey, config.expansionMatchGridMargins).toBool();
     config.expandedArtwork         = m_settings->fileValue(FilterExpandedArtworkKey, config.expandedArtwork).toBool();
     config.expansionArtworkMargins = Gui::marginsFromJson(
         QJsonObject::fromVariantMap(m_settings->fileValue(FilterExpansionArtworkMarginsKey).toMap()), {10, 10, 10, 10});
@@ -754,10 +763,13 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterArtworkRadiusKey, config.artworkCornerRadius);
     m_settings->fileSet(FilterOverrideArtworkMarginsKey, config.overrideArtworkMargins);
     m_settings->fileSet(FilterArtworkMarginsKey, Gui::marginsToJson(config.artworkMargins).toVariantMap());
+    m_settings->fileSet(FilterOverrideGridMarginsKey, config.overrideGridMargins);
+    m_settings->fileSet(FilterGridMarginsKey, Gui::marginsToJson(config.gridMargins).toVariantMap());
     m_settings->fileSet(FilterExpandGroupsKey, config.expandGroups);
     m_settings->fileSet(FilterExpansionAnimatedKey, config.expansionAnimated);
     m_settings->fileSet(FilterExpansionAnimationDurationKey, config.expansionAnimationDuration);
     m_settings->fileSet(FilterExpansionAlternatingRowsKey, config.expansionAlternatingRows);
+    m_settings->fileSet(FilterExpansionMatchGridMarginsKey, config.expansionMatchGridMargins);
     m_settings->fileSet(FilterExpandedArtworkKey, config.expandedArtwork);
     m_settings->fileSet(FilterExpansionArtworkMarginsKey,
                         Gui::marginsToJson(config.expansionArtworkMargins).toVariantMap());
@@ -818,10 +830,13 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterArtworkRadiusKey);
     m_settings->fileRemove(FilterOverrideArtworkMarginsKey);
     m_settings->fileRemove(FilterArtworkMarginsKey);
+    m_settings->fileRemove(FilterOverrideGridMarginsKey);
+    m_settings->fileRemove(FilterGridMarginsKey);
     m_settings->fileRemove(FilterExpandGroupsKey);
     m_settings->fileRemove(FilterExpansionAnimatedKey);
     m_settings->fileRemove(FilterExpansionAnimationDurationKey);
     m_settings->fileRemove(FilterExpansionAlternatingRowsKey);
+    m_settings->fileRemove(FilterExpansionMatchGridMarginsKey);
     m_settings->fileRemove(FilterExpandedArtworkKey);
     m_settings->fileRemove(FilterExpansionArtworkMarginsKey);
     m_settings->fileRemove(FilterExpansionArtworkAutoMarginsKey);
@@ -891,6 +906,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     validated.iconVerticalGap     = std::max(validated.iconVerticalGap, 0);
     validated.artworkCornerRadius = std::clamp(validated.artworkCornerRadius, 0, 100);
     validated.artworkMargins      = Gui::marginsFromJson({}, validated.artworkMargins);
+    validated.gridMargins         = Gui::marginsFromJson({}, validated.gridMargins);
 
     if(!validated.iconSize.isValid()) {
         validated.iconSize = factoryConfig().iconSize;
@@ -920,6 +936,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
                                 || m_config.expansionBackground != validated.expansionBackground
                                 || m_config.expansionBackgroundColour != validated.expansionBackgroundColour;
     const bool layoutChanged     = m_config.expansionMinimumRows != validated.expansionMinimumRows
+                                || m_config.expansionMatchGridMargins != validated.expansionMatchGridMargins
                                 || m_config.expansionMaximumColumns != validated.expansionMaximumColumns
                                 || m_config.expansionStretchColumns != validated.expansionStretchColumns
                                 || m_config.expansionMinimumColumnWidth != validated.expansionMinimumColumnWidth
@@ -945,6 +962,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.autoFitArtwork != validated.autoFitArtwork
        || m_config.iconHorizontalGap != validated.iconHorizontalGap
        || m_config.iconVerticalGap != validated.iconVerticalGap
+       || m_config.overrideGridMargins != validated.overrideGridMargins || m_config.gridMargins != validated.gridMargins
        || m_config.artworkCornerRadius != validated.artworkCornerRadius
        || m_config.overrideArtworkMargins != validated.overrideArtworkMargins
        || m_config.artworkMargins != validated.artworkMargins || m_config.expandGroups != validated.expandGroups
@@ -961,6 +979,8 @@ void FilterWidget::applyConfig(const ConfigData& config)
 
     m_config = std::move(validated);
 
+    m_view->setAutoFitArtwork(m_config.autoFitArtwork);
+
     if(m_view->viewMode() != m_config.viewMode) {
         updateViewMode(m_config.viewMode);
     }
@@ -974,6 +994,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     m_view->setCollapseDelayEnabled(doubleClickAction() != TrackAction::None);
     m_view->setExpansionAnimated(m_config.expansionAnimated);
     m_view->setExpansionAnimationDuration(m_config.expansionAnimationDuration);
+    m_view->setExpansionMatchGridMargins(m_config.expansionMatchGridMargins);
     m_view->setBackgroundConfig(m_config.background);
     m_view->setCoverFlowSettings(m_config.coverFlow);
     m_backgroundSource->setConfig(m_config.background);
@@ -992,9 +1013,16 @@ void FilterWidget::applyConfig(const ConfigData& config)
         m_view->setMinimumIconSize({minIconSize, minIconSize});
         m_view->setMaximumIconSize({maxIconSize, maxIconSize});
     }
-    m_view->setAutoFitArtwork(m_config.autoFitArtwork);
     m_view->setIconHorizontalGap(m_config.iconHorizontalGap);
     m_view->setIconVerticalGap(m_config.iconVerticalGap);
+
+    if(m_config.overrideGridMargins) {
+        m_view->setIconGridMargins(m_config.gridMargins);
+    }
+    else {
+        m_view->resetIconGridMargins();
+    }
+
     m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
     updateArtworkMargins();
     m_view->changeIconSize(m_config.iconSize);
@@ -1058,6 +1086,8 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     config.iconHorizontalGap   = layout.value("IconHorizontalGap"_L1).toInt(config.iconHorizontalGap);
     config.autoFitArtwork      = layout.value("AutoFitArtwork"_L1).toBool(config.autoFitArtwork);
     config.iconVerticalGap     = layout.value("IconVerticalGap"_L1).toInt(config.iconVerticalGap);
+    config.overrideGridMargins = layout.value("OverrideGridMargins"_L1).toBool(config.overrideGridMargins);
+    config.gridMargins         = Gui::marginsFromJson(layout.value("GridMargins"_L1).toObject(), config.gridMargins);
     config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
     config.artworkMargins = Gui::marginsFromJson(layout.value("ArtworkMargins"_L1).toObject(), config.artworkMargins);
     config.overrideArtworkMargins
@@ -1080,6 +1110,8 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
         = layout.value("ExpansionShowCloseButton"_L1).toBool(config.expansionShowCloseButton);
     config.expansionAlternatingRows
         = layout.value("ExpansionAlternatingRows"_L1).toBool(config.expansionAlternatingRows);
+    config.expansionMatchGridMargins
+        = layout.value("ExpansionMatchGridMargins"_L1).toBool(config.expansionMatchGridMargins);
     config.expansionArtworkOnLeft = layout.value("ExpansionArtworkOnLeft"_L1).toBool(config.expansionArtworkOnLeft);
     config.expansionArtworkSize
         = std::clamp(layout.value("ExpansionArtworkSize"_L1).toInt(config.expansionArtworkSize), 50, 200);
@@ -1151,6 +1183,8 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["IconHorizontalGap"_L1]                 = config.iconHorizontalGap;
     layout["AutoFitArtwork"_L1]                    = config.autoFitArtwork;
     layout["IconVerticalGap"_L1]                   = config.iconVerticalGap;
+    layout["OverrideGridMargins"_L1]               = config.overrideGridMargins;
+    layout["GridMargins"_L1]                       = Gui::marginsToJson(config.gridMargins);
     layout["ArtworkCornerRadius"_L1]               = config.artworkCornerRadius;
     layout["OverrideArtworkMargins"_L1]            = config.overrideArtworkMargins;
     layout["ArtworkMargins"_L1]                    = Gui::marginsToJson(config.artworkMargins);
@@ -1158,6 +1192,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["ExpansionAnimated"_L1]                 = config.expansionAnimated;
     layout["ExpansionAnimationDuration"_L1]        = config.expansionAnimationDuration;
     layout["ExpansionAlternatingRows"_L1]          = config.expansionAlternatingRows;
+    layout["ExpansionMatchGridMargins"_L1]         = config.expansionMatchGridMargins;
     layout["ExpandedArtwork"_L1]                   = config.expandedArtwork;
     layout["ExpansionArtworkMargins"_L1]           = Gui::marginsToJson(config.expansionArtworkMargins);
     layout["ExpansionArtworkAutoMargins"_L1]       = config.expansionArtworkAutoMargins;

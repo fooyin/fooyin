@@ -95,6 +95,11 @@ private:
     QCheckBox* m_autoFitArtwork;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
+    QCheckBox* m_overrideGridMargins;
+    QSpinBox* m_gridLeftMargin;
+    QSpinBox* m_gridTopMargin;
+    QSpinBox* m_gridRightMargin;
+    QSpinBox* m_gridBottomMargin;
     QSpinBox* m_artworkCornerRadius;
     QCheckBox* m_overrideArtworkMargins;
     QSpinBox* m_artworkLeftMargin;

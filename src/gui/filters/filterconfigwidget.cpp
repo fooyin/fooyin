@@ -34,6 +34,7 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -82,6 +83,11 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_autoFitArtwork{new QCheckBox(tr("Fit artwork to available width"), this)}
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
+    , m_overrideGridMargins{new QCheckBox(tr("Custom grid margins"), this)}
+    , m_gridLeftMargin{new QSpinBox(this)}
+    , m_gridTopMargin{new QSpinBox(this)}
+    , m_gridRightMargin{new QSpinBox(this)}
+    , m_gridBottomMargin{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
     , m_overrideArtworkMargins{new QCheckBox(tr("Custom margins"), this)}
     , m_artworkLeftMargin{new QSpinBox(this)}
@@ -117,16 +123,17 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalTab);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
-    clickBehaviourLayout->addWidget(new QLabel(tr("Filter items"), clickBehaviour), 0, 1);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Expanded tracks"), clickBehaviour), 0, 2);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + u":"_s, clickBehaviour), 1, 0);
-    clickBehaviourLayout->addWidget(m_doubleClick, 1, 1);
-    clickBehaviourLayout->addWidget(m_expansionDoubleClick, 1, 2);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, clickBehaviour), 2, 0);
-    clickBehaviourLayout->addWidget(m_middleClick, 2, 1);
-    clickBehaviourLayout->addWidget(m_expansionMiddleClick, 2, 2);
-    clickBehaviourLayout->addWidget(m_playbackOnSend, 3, 0, 1, 3);
-    clickBehaviourLayout->addWidget(playlistClickHint, 4, 0, 1, 3);
+    int row{0};
+    clickBehaviourLayout->addWidget(new QLabel(tr("Filter items"), clickBehaviour), row, 1);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Expanded tracks"), clickBehaviour), row++, 2);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + u":"_s, clickBehaviour), row, 0);
+    clickBehaviourLayout->addWidget(m_doubleClick, row, 1);
+    clickBehaviourLayout->addWidget(m_expansionDoubleClick, row++, 2);
+    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, clickBehaviour), row, 0);
+    clickBehaviourLayout->addWidget(m_middleClick, row, 1);
+    clickBehaviourLayout->addWidget(m_expansionMiddleClick, row++, 2);
+    clickBehaviourLayout->addWidget(m_playbackOnSend, row++, 0, 1, 3);
+    clickBehaviourLayout->addWidget(playlistClickHint, row++, 0, 1, 3);
     clickBehaviourLayout->setColumnStretch(1, 1);
     clickBehaviourLayout->setColumnStretch(2, 1);
 
@@ -140,11 +147,12 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     selectionPlaylist->setToolTip(
         tr("In current playlist mode, matching tracks are selected directly in the playlist."));
 
-    selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_preservePlaybackPlaylist, 2, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + u":"_s, this), 3, 0);
-    selectionPlaylistLayout->addWidget(m_playlistName, 3, 1, 1, 2);
+    row = 0;
+    selectionPlaylistLayout->addWidget(m_playlistEnabled, row++, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(m_autoSwitch, row++, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(m_preservePlaybackPlaylist, row++, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + u":"_s, this), row, 0);
+    selectionPlaylistLayout->addWidget(m_playlistName, row++, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
 
     const auto updateSourceMode = [this, selectionPlaylist]() {
@@ -181,7 +189,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     auto* displayOptions       = new QGroupBox(tr("Display options"), appearanceTab);
     auto* displayOptionsLayout = new QGridLayout(displayOptions);
 
-    int row{0};
+    row = 0;
     displayOptionsLayout->addWidget(m_showSummary, row++, 0, 1, 3);
     displayOptionsLayout->addWidget(m_showHeader, row++, 0, 1, 3);
     displayOptionsLayout->addWidget(m_showScrollbar, row++, 0, 1, 3);
@@ -207,48 +215,75 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
-    for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin}) {
+    for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin,
+                        m_gridLeftMargin, m_gridTopMargin, m_gridRightMargin, m_gridBottomMargin}) {
         margin->setRange(0, 999);
         margin->setSuffix(u" px"_s);
     }
 
+    m_overrideGridMargins->setToolTip(tr("Set the space around the entire artwork grid."));
+
     auto* artworkGroup = new QGroupBox(tr("Artwork"), appearanceTab);
 
     auto* sizeLayout = new QGridLayout();
-    sizeLayout->addWidget(new QLabel(tr("Width") + u":"_s, artworkGroup), 0, 0);
-    sizeLayout->addWidget(m_iconWidth, 0, 1);
-    sizeLayout->addWidget(new QLabel(tr("Height") + u":"_s, artworkGroup), 0, 2);
-    sizeLayout->addWidget(m_iconHeight, 0, 3);
-    sizeLayout->setColumnStretch(4, 1);
-
-    auto* spacingGroup = new QGroupBox(tr("Artwork spacing"), appearanceTab);
-
-    auto* gapsLayout = new QGridLayout();
-    gapsLayout->addWidget(new QLabel(tr("Horizontal") + u":"_s, spacingGroup), 0, 0);
-    gapsLayout->addWidget(m_iconHorizontalGap, 0, 1);
-    gapsLayout->addWidget(new QLabel(tr("Vertical") + u":"_s, spacingGroup), 0, 2);
-    gapsLayout->addWidget(m_iconVerticalGap, 0, 3);
-    gapsLayout->setColumnStretch(4, 1);
-
-    auto* marginsLayout = new QGridLayout();
 
     row = 0;
-    marginsLayout->addWidget(new QLabel(tr("Left") + u":"_s, spacingGroup), row, 0);
+    sizeLayout->addWidget(new QLabel(tr("Width") + u":"_s, artworkGroup), row, 0);
+    sizeLayout->addWidget(m_iconWidth, row, 1);
+    sizeLayout->addWidget(new QLabel(tr("Height") + u":"_s, artworkGroup), row, 2);
+    sizeLayout->addWidget(m_iconHeight, row++, 3);
+    sizeLayout->setColumnStretch(4, 1);
+
+    auto* gapsGroup  = new QGroupBox(tr("Gaps"), appearanceTab);
+    auto* gapsLayout = new QGridLayout(gapsGroup);
+
+    row = 0;
+    gapsLayout->addWidget(new QLabel(tr("Horizontal") + u":"_s, gapsGroup), row, 0);
+    gapsLayout->addWidget(m_iconHorizontalGap, row++, 1);
+    gapsLayout->addWidget(new QLabel(tr("Vertical") + u":"_s, gapsGroup), row, 0);
+    gapsLayout->addWidget(m_iconVerticalGap, row++, 1);
+    gapsLayout->setColumnStretch(2, 1);
+    gapsLayout->setRowStretch(row, 1);
+
+    auto* marginsGroup  = new QGroupBox(tr("Artwork margins"), appearanceTab);
+    auto* marginsLayout = new QGridLayout(marginsGroup);
+
+    row = 0;
+    marginsLayout->addWidget(m_overrideArtworkMargins, row++, 0, 1, 5);
+    marginsLayout->addWidget(new QLabel(tr("Left") + u":"_s, marginsGroup), row, 0);
     marginsLayout->addWidget(m_artworkLeftMargin, row, 1);
-    marginsLayout->addWidget(new QLabel(tr("Right") + u":"_s, spacingGroup), row, 2);
+    marginsLayout->addWidget(new QLabel(tr("Right") + u":"_s, marginsGroup), row, 2);
     marginsLayout->addWidget(m_artworkRightMargin, row++, 3);
-    marginsLayout->addWidget(new QLabel(tr("Top") + u":"_s, spacingGroup), row, 0);
+    marginsLayout->addWidget(new QLabel(tr("Top") + u":"_s, marginsGroup), row, 0);
     marginsLayout->addWidget(m_artworkTopMargin, row, 1);
-    marginsLayout->addWidget(new QLabel(tr("Bottom") + u":"_s, spacingGroup), row, 2);
+    marginsLayout->addWidget(new QLabel(tr("Bottom") + u":"_s, marginsGroup), row, 2);
     marginsLayout->addWidget(m_artworkBottomMargin, row++, 3);
     marginsLayout->setColumnStretch(4, 1);
+    marginsLayout->setRowStretch(row, 1);
 
-    auto* iconSizeHint = new HintLabel(
-        tr("Use <b>Ctrl+Scroll</b> in the widget to resize icons when manual sizing is enabled."), this);
+    auto* gridMarginsGroup  = new QGroupBox(tr("Grid margins"), appearanceTab);
+    auto* gridMarginsLayout = new QGridLayout(gridMarginsGroup);
 
-    m_autoFitArtwork->setToolTip(
-        tr("Resize artwork to fill the available width using the preferred size.\n"
-           "Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated as zero."));
+    row = 0;
+    gridMarginsLayout->addWidget(m_overrideGridMargins, row++, 0, 1, 5);
+    gridMarginsLayout->addWidget(new QLabel(tr("Left") + u":"_s, gridMarginsGroup), row, 0);
+    gridMarginsLayout->addWidget(m_gridLeftMargin, row, 1);
+    gridMarginsLayout->addWidget(new QLabel(tr("Right") + u":"_s, gridMarginsGroup), row, 2);
+    gridMarginsLayout->addWidget(m_gridRightMargin, row++, 3);
+    gridMarginsLayout->addWidget(new QLabel(tr("Top") + u":"_s, gridMarginsGroup), row, 0);
+    gridMarginsLayout->addWidget(m_gridTopMargin, row, 1);
+    gridMarginsLayout->addWidget(new QLabel(tr("Bottom") + u":"_s, gridMarginsGroup), row, 2);
+    gridMarginsLayout->addWidget(m_gridBottomMargin, row++, 3);
+    gridMarginsLayout->setColumnStretch(4, 1);
+    gridMarginsLayout->setRowStretch(row, 1);
+
+    auto* iconSizeHint = new HintLabel(tr("Use <b>Ctrl+Scroll</b> in the widget to resize artwork. "
+                                          "When fitting to the available width, it changes the number of columns."),
+                                       this);
+    iconSizeHint->setWordWrap(true);
+
+    m_autoFitArtwork->setToolTip(tr("Resize artwork to fill the available width.\n"
+                                    "Ctrl+Scroll changes the number of columns."));
 
     auto* artworkLayout = new QGridLayout(artworkGroup);
 
@@ -266,17 +301,6 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     artworkLayout->setColumnStretch(4, 1);
     artworkLayout->setRowStretch(row, 1);
 
-    auto* spacingLayout = new QGridLayout(spacingGroup);
-
-    row = 0;
-    spacingLayout->addWidget(Gui::createSectionHeader(tr("Gaps"), spacingGroup), row++, 0, 1, 5);
-    spacingLayout->addLayout(gapsLayout, row++, 0, 1, 5);
-    spacingLayout->addWidget(Gui::createSectionHeader(tr("Margins"), spacingGroup), row++, 0, 1, 5);
-    spacingLayout->addWidget(m_overrideArtworkMargins, row++, 0, 1, 5);
-    spacingLayout->addLayout(marginsLayout, row++, 0, 1, 5);
-    spacingLayout->setColumnStretch(4, 1);
-    spacingLayout->setRowStretch(row, 1);
-
     auto* playlistSourceHint
         = new HintLabel(tr("Current playlist mode uses the displayed playlist as its source and selects the matching "
                            "tracks in that playlist."),
@@ -289,11 +313,12 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_source->addItem(tr("Library"), static_cast<int>(FilterSource::Library));
     m_source->addItem(tr("Current playlist"), static_cast<int>(FilterSource::CurrentPlaylist));
 
-    generalGroupLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), 0, 0);
-    generalGroupLayout->addWidget(m_source, 0, 1);
-    generalGroupLayout->addWidget(playlistSourceHint, 1, 0, 1, 3);
-    generalGroupLayout->addWidget(m_restoreState, 2, 0, 1, 3);
-    generalGroupLayout->addWidget(m_manageColumns, 3, 0, 1, 3);
+    row = 0;
+    generalGroupLayout->addWidget(new QLabel(tr("Source") + u":"_s, this), row, 0);
+    generalGroupLayout->addWidget(m_source, row++, 1);
+    generalGroupLayout->addWidget(playlistSourceHint, row++, 0, 1, 3);
+    generalGroupLayout->addWidget(m_restoreState, row++, 0, 1, 3);
+    generalGroupLayout->addWidget(m_manageColumns, row++, 0, 1, 3);
     generalGroupLayout->setColumnStretch(2, 1);
 
     auto* generalLayout = new QGridLayout(generalTab);
@@ -305,16 +330,21 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     generalLayout->setColumnStretch(0, 1);
     generalLayout->setRowStretch(row, 1);
 
+    auto* spacingLayout = new QHBoxLayout();
+    spacingLayout->addWidget(gapsGroup, 1);
+    spacingLayout->addWidget(marginsGroup, 2);
+    spacingLayout->addWidget(gridMarginsGroup, 2);
+
     auto* appearanceTabLayout = new QGridLayout(appearanceTab);
 
     row = 0;
     appearanceTabLayout->addWidget(viewMode, row, 0);
-    appearanceTabLayout->addWidget(artworkGroup, row++, 1);
-    appearanceTabLayout->addWidget(displayOptions, row, 0);
-    appearanceTabLayout->addWidget(spacingGroup, row++, 1);
+    appearanceTabLayout->addWidget(artworkGroup, row++, 1, 2, 1);
+    appearanceTabLayout->addWidget(displayOptions, row++, 0);
+    appearanceTabLayout->addLayout(spacingLayout, row++, 0, 1, 2);
     appearanceTabLayout->setColumnStretch(0, 1);
     appearanceTabLayout->setColumnStretch(1, 1);
-    appearanceTabLayout->setRowStretch(2, 1);
+    appearanceTabLayout->setRowStretch(row, 1);
 
     auto* mainLayout{contentLayout()};
     mainLayout->addWidget(tabs, 0, 0);
@@ -371,6 +401,9 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
     result.autoFitArtwork         = m_autoFitArtwork->isChecked();
     result.iconHorizontalGap      = m_iconHorizontalGap->value();
     result.iconVerticalGap        = m_iconVerticalGap->value();
+    result.overrideGridMargins    = m_overrideGridMargins->isChecked();
+    result.gridMargins            = {m_gridLeftMargin->value(), m_gridTopMargin->value(), m_gridRightMargin->value(),
+                                     m_gridBottomMargin->value()};
     result.artworkCornerRadius    = m_artworkCornerRadius->value();
     result.overrideArtworkMargins = m_overrideArtworkMargins->isChecked();
     result.artworkMargins = {m_artworkLeftMargin->value(), m_artworkTopMargin->value(), m_artworkRightMargin->value(),
@@ -431,6 +464,14 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_autoFitArtwork->setChecked(config.autoFitArtwork);
     m_iconHorizontalGap->setValue(config.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.iconVerticalGap);
+    m_overrideGridMargins->setChecked(config.overrideGridMargins);
+    for(auto* margin : {m_gridLeftMargin, m_gridTopMargin, m_gridRightMargin, m_gridBottomMargin}) {
+        margin->setEnabled(config.viewMode == ExpandedTreeView::ViewMode::Icon && config.overrideGridMargins);
+    }
+    m_gridLeftMargin->setValue(config.gridMargins.left());
+    m_gridTopMargin->setValue(config.gridMargins.top());
+    m_gridRightMargin->setValue(config.gridMargins.right());
+    m_gridBottomMargin->setValue(config.gridMargins.bottom());
     m_artworkCornerRadius->setValue(config.artworkCornerRadius);
     m_overrideArtworkMargins->setChecked(config.overrideArtworkMargins);
     for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin}) {
@@ -466,15 +507,16 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
         &FilterWidget::ConfigData::alternatingRows, &FilterWidget::ConfigData::rowHeight,
         &FilterWidget::ConfigData::iconSize, &FilterWidget::ConfigData::iconHorizontalGap,
         &FilterWidget::ConfigData::autoFitArtwork, &FilterWidget::ConfigData::iconVerticalGap,
+        &FilterWidget::ConfigData::overrideGridMargins, &FilterWidget::ConfigData::gridMargins,
         &FilterWidget::ConfigData::artworkCornerRadius, &FilterWidget::ConfigData::overrideArtworkMargins,
         &FilterWidget::ConfigData::artworkMargins, &FilterWidget::ConfigData::coverFlow,
         &FilterWidget::ConfigData::expandGroups, &FilterWidget::ConfigData::expansionAnimated,
         &FilterWidget::ConfigData::expansionAnimationDuration, &FilterWidget::ConfigData::expansionAlternatingRows,
-        &FilterWidget::ConfigData::expandedArtwork, &FilterWidget::ConfigData::expansionMinimumRows,
-        &FilterWidget::ConfigData::expansionMaximumColumns, &FilterWidget::ConfigData::expansionArtworkOnLeft,
-        &FilterWidget::ConfigData::expansionStretchColumns, &FilterWidget::ConfigData::expansionMinimumColumnWidth,
-        &FilterWidget::ConfigData::expansionArtworkSize, &FilterWidget::ConfigData::expansionShowCloseButton,
-        &FilterWidget::ConfigData::expansionArtworkReflection,
+        &FilterWidget::ConfigData::expansionMatchGridMargins, &FilterWidget::ConfigData::expandedArtwork,
+        &FilterWidget::ConfigData::expansionMinimumRows, &FilterWidget::ConfigData::expansionMaximumColumns,
+        &FilterWidget::ConfigData::expansionArtworkOnLeft, &FilterWidget::ConfigData::expansionStretchColumns,
+        &FilterWidget::ConfigData::expansionMinimumColumnWidth, &FilterWidget::ConfigData::expansionArtworkSize,
+        &FilterWidget::ConfigData::expansionShowCloseButton, &FilterWidget::ConfigData::expansionArtworkReflection,
         &FilterWidget::ConfigData::expansionArtworkReflectionHeight,
         &FilterWidget::ConfigData::expansionArtworkReflectionOpacity,
         &FilterWidget::ConfigData::expansionArtworkReflectionGap,
@@ -490,7 +532,8 @@ void FilterConfigDialog::setupConnections()
         const bool coverFlow    = m_coverFlowMode->isChecked();
         const bool gridArtwork  = m_artworkBottomMode->isChecked() || m_artworkOverlayMode->isChecked()
                                || m_artworkNoLabelsMode->isChecked();
-        const bool manualSizing = !coverFlow || !m_coverFlowConfig->settings().autoFitArtwork;
+        const bool manualSizing = coverFlow ? !m_coverFlowConfig->settings().autoFitArtwork
+                                            : !gridArtwork || !m_autoFitArtwork->isChecked();
         const auto viewMode     = m_columnsMode->isChecked() ? ExpandedTreeView::ViewMode::Tree
                                 : coverFlow                  ? ExpandedTreeView::ViewMode::CoverFlow
                                                              : ExpandedTreeView::ViewMode::Icon;
@@ -509,6 +552,12 @@ void FilterConfigDialog::setupConnections()
         m_iconHeight->setEnabled(manualSizing);
         m_iconHorizontalGap->setEnabled(gridArtwork);
         m_iconVerticalGap->setEnabled(gridArtwork);
+
+        const bool iconMode = !m_columnsMode->isChecked() && !coverFlow;
+        m_overrideGridMargins->setEnabled(iconMode);
+        for(auto* margin : {m_gridLeftMargin, m_gridTopMargin, m_gridRightMargin, m_gridBottomMargin}) {
+            margin->setEnabled(iconMode && m_overrideGridMargins->isChecked());
+        }
         m_overrideArtworkMargins->setEnabled(!coverFlow);
 
         for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin}) {
@@ -523,7 +572,9 @@ void FilterConfigDialog::setupConnections()
     QObject::connect(m_artworkRightMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_artworkOverlayMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_artworkNoLabelsMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
+    QObject::connect(m_autoFitArtwork, &QCheckBox::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_coverFlowConfig, &CoverFlowConfigWidget::settingsChanged, this, updateAutoFitArtwork);
+    QObject::connect(m_overrideGridMargins, &QCheckBox::toggled, this, updateAutoFitArtwork);
 
     const auto updateCoverFlowArtwork = [this]() {
         m_coverFlowConfig->setArtworkSettings({m_iconWidth->value(), m_iconHeight->value()},

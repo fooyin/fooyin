@@ -180,6 +180,9 @@ public:
     void setIconHorizontalGap(int gap);
     [[nodiscard]] int iconVerticalGap() const;
     void setIconVerticalGap(int gap);
+    //! Overrides the automatic margins around the icon grid.
+    void setIconGridMargins(const QMargins& margins);
+    void resetIconGridMargins();
 
     //! Corner radius of icon item backgrounds, as a percentage from 0 to 100.
     [[nodiscard]] int iconItemCornerRadius() const;
@@ -207,6 +210,8 @@ public:
     void setExpansionWidget(QWidget* widget);
     void setExpansionAnimated(bool enabled);
     void setExpansionAnimationDuration(int duration);
+    //! Aligns the expanded panel with the outer bounds of the icon grid.
+    void setExpansionMatchGridMargins(bool enabled);
     void refreshExpansion();
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;

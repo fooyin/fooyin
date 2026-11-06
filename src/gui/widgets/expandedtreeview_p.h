@@ -25,6 +25,7 @@
 #include <QPointer>
 #include <QVariantAnimation>
 
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
@@ -171,6 +172,7 @@ public:
     int m_iconItemColumn{-1};
     int m_iconHorizontalGap{-1};
     int m_iconVerticalGap{10};
+    std::optional<QMargins> m_iconGridMargins;
     int m_iconItemCornerRadius{0};
     QMargins m_iconItemArtworkMargins;
     bool m_autoFitArtwork{false};
@@ -211,6 +213,7 @@ public:
     QPersistentModelIndex m_expandedIndex;
     QRect m_expansionRect;
     bool m_expansionAnimated{true};
+    bool m_expansionMatchGridMargins{false};
     QVariantAnimation m_expansionAnimation;
     QPersistentModelIndex m_expansionAnimationIndex;
     QPersistentModelIndex m_expansionAnimationNextIndex;

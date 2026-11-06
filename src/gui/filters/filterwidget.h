@@ -154,9 +154,11 @@ public:
         bool alternatingRows{false};
         int rowHeight{0};
         QSize iconSize{100, 100};
-        bool autoFitArtwork{false};
+        bool autoFitArtwork{true};
         int iconHorizontalGap{-1};
         int iconVerticalGap{10};
+        bool overrideGridMargins{false};
+        QMargins gridMargins{10, 10, 10, 10};
         int artworkCornerRadius{0};
         bool overrideArtworkMargins{false};
         QMargins artworkMargins{8, 8, 8, 8};
@@ -166,6 +168,7 @@ public:
         bool expansionAnimated{true};
         int expansionAnimationDuration{250};
         bool expansionAlternatingRows{false};
+        bool expansionMatchGridMargins{false};
         bool expandedArtwork{true};
         int expansionMinimumRows{4};
         int expansionMaximumColumns{0};
