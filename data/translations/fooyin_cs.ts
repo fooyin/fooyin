@@ -9046,27 +9046,27 @@ Delší obsah může toto minimum překročit.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="82"/>
         <source>Fit artwork to available width</source>
-        <translation type="unfinished"></translation>
+        <translation>Přizpůsobit přebal alba dostupné šířce</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="86"/>
         <source>Custom margins</source>
-        <translation type="unfinished"></translation>
+        <translation>Přizpůsobit okraje</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="105"/>
         <source>Display</source>
-        <translation type="unfinished">Zobrazení</translation>
+        <translation>Zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="106"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="107"/>
         <source>Expansion</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="111"/>
@@ -9081,12 +9081,12 @@ Delší obsah může toto minimum překročit.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="120"/>
         <source>Filter items</source>
-        <translation type="unfinished"></translation>
+        <translation>Položky filtru</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="121"/>
         <source>Expanded tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalené skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="122"/>
