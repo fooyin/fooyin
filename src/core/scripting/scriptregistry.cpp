@@ -797,11 +797,15 @@ void ScriptRegistryPrivate::addDefaultFunctions()
                 QT_TRANSLATE_NOOP("Fooyin", "Builds an abbreviation"), makeScriptFunctionInvoker<Scripting::abbr>());
     addFunction(u"caps"_s, u"$caps(text)"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
                 QT_TRANSLATE_NOOP("Fooyin", "Capitalises words"), makeScriptFunctionInvoker<Scripting::caps>());
-    addFunction(u"directory"_s, u"$directory(path,level)"_s, QT_TRANSLATE_NOOP("Fooyin", "Path"),
-                QT_TRANSLATE_NOOP("Fooyin", "Returns a directory name from a path"),
+    addFunction(u"directory"_s, u"$directory(path[,level])"_s, QT_TRANSLATE_NOOP("Fooyin", "Path"),
+                QT_TRANSLATE_NOOP(
+                    "Fooyin", "Returns a parent directory name. Level defaults to 1; negative levels count from the "
+                              "root."),
                 makeScriptFunctionInvoker<Scripting::directory>());
-    addFunction(u"directory_path"_s, u"$directory_path(path,level)"_s, QT_TRANSLATE_NOOP("Fooyin", "Path"),
-                QT_TRANSLATE_NOOP("Fooyin", "Returns a parent directory path"),
+    addFunction(u"directory_path"_s, u"$directory_path(path[,level])"_s, QT_TRANSLATE_NOOP("Fooyin", "Path"),
+                QT_TRANSLATE_NOOP(
+                    "Fooyin", "Returns an absolute parent directory path. Level defaults to 1; negative levels count "
+                              "from the root."),
                 makeScriptFunctionInvoker<Scripting::directoryPath>());
     addFunction(u"elide_end"_s, u"$elide_end(text,width[,delim])"_s, QT_TRANSLATE_NOOP("Fooyin", "String"),
                 QT_TRANSLATE_NOOP("Fooyin", "Elides text at the end"),

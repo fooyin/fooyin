@@ -24,12 +24,14 @@
 
 #include <QCache>
 #include <QDir>
+#include <QFileInfo>
 #include <QRegularExpression>
 #include <QUrl>
 #include <QUrlQuery>
 
 #include <optional>
 #include <ranges>
+#include <vector>
 
 #include <zlib.h>
 
@@ -806,36 +808,52 @@ QString caps(const QStringList& vec)
 
 QString directory(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count < 2) {
-        return {};
-    }
-
-    QDir dir{vec.front()};
-
-    if(count == 2) {
-        bool numSuccess{false};
-        int level = vec.at(1).toInt(&numSuccess);
-        if(numSuccess) {
-            while(level > 0) {
-                --level;
-                dir.cdUp();
-            }
-        }
-    }
-
-    return dir.dirName();
+    const QString path = directoryPath(vec);
+    return path.isEmpty() ? QString{} : QDir{path}.dirName();
 }
 
 QString directoryPath(const QStringList& vec)
 {
-    if(vec.empty()) {
+    if(vec.empty() || vec.size() > 2 || vec.front().isEmpty()) {
         return {};
     }
 
-    const QDir dir{vec.front()};
-    return dir.absolutePath();
+    bool numSuccess{true};
+    const auto level = vec.size() == 2 ? vec.at(1).toLongLong(&numSuccess) : 1;
+    if(!numSuccess || level == 0) {
+        return {};
+    }
+
+    QString path = QDir{QFileInfo{vec.front()}.path()}.absolutePath();
+    if(level == 1) {
+        return path;
+    }
+
+    // Omit the filesystem root so that level -1 selects its first dir
+    std::vector<qsizetype> dirEnds;
+    QDir dir{path};
+    while(!dir.isRoot()) {
+        const QString parent = QFileInfo{dir.path()}.path();
+#ifdef Q_OS_WIN
+        // A UNC share is the root of its dir hierarchy
+        if(dir.path().startsWith("//"_L1) && QDir{parent}.isRoot()) {
+            break;
+        }
+#endif
+        dirEnds.push_back(dir.path().size());
+        if(parent == dir.path()) {
+            break;
+        }
+        dir.setPath(parent);
+    }
+
+    const auto depth = static_cast<qint64>(dirEnds.size());
+    if(level > depth || level < -depth) {
+        return {};
+    }
+
+    const auto index = level > 0 ? level - 1 : depth + level;
+    return path.first(dirEnds.at(index));
 }
 
 QString ext(const QStringList& vec)
