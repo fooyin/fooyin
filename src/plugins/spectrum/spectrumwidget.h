@@ -106,6 +106,8 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
     [[nodiscard]] QSize minimumSizeHint() const override;
     [[nodiscard]] QSize sizeHint() const override;
@@ -118,8 +120,6 @@ protected:
     void openConfigDialog() override;
 
 private:
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
     void showContextMenu(const QPoint& globalPos);
 
     SettingsManager* m_settings;

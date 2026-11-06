@@ -102,6 +102,8 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
 Q_SIGNALS:
     void configChanged();
@@ -116,8 +118,6 @@ protected:
 
 private:
     [[nodiscard]] QString settingsKey(QStringView key) const;
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
     SettingsManager* m_settings;
     BackgroundImageSource* m_backgroundSource;

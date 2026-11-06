@@ -293,6 +293,81 @@ void OscilloscopeWidget::applyConfig(const ConfigData& config)
     Q_EMIT configChanged();
 }
 
+OscilloscopeWidget::ConfigData OscilloscopeWidget::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+
+    config.curveDurationMs = layout.value("CurveDurationMs"_L1).toInt(config.curveDurationMs);
+    config.zoomPercent     = layout.value("ZoomPercent"_L1).toInt(config.zoomPercent);
+    config.updateFps       = layout.value("UpdateFps"_L1).toInt(config.updateFps);
+    config.downmixMode
+        = static_cast<DownmixMode>(layout.value("DownmixMode"_L1).toInt(static_cast<int>(config.downmixMode)));
+    config.showZeroLine = layout.value("ShowZeroLine"_L1).toBool(config.showZeroLine);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
+
+    if(layout.contains("UseCustomColours"_L1)) {
+        if(layout.value("UseCustomColours"_L1).toBool()) {
+            Colours colours;
+
+            const auto setColour = [&layout, &colours](const QString& key, Colours::Type type) {
+                if(!layout.contains(key)) {
+                    return;
+                }
+
+                const QColor colour{layout.value(key).toString()};
+                if(colour.isValid()) {
+                    colours.setColour(type, colour);
+                }
+            };
+
+            setColour(u"BackgroundColour"_s, Colours::Type::Background);
+            setColour(u"WaveformColour"_s, Colours::Type::Waveform);
+            setColour(u"ZeroLineColour"_s, Colours::Type::ZeroLine);
+
+            if(!colours.isEmpty()) {
+                config.colours = QVariant::fromValue(colours);
+            }
+        }
+        else {
+            config.colours = QVariant{};
+        }
+    }
+
+    return config;
+}
+
+void OscilloscopeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
+{
+    layout["CurveDurationMs"_L1] = config.curveDurationMs;
+    layout["ZoomPercent"_L1]     = config.zoomPercent;
+    layout["UpdateFps"_L1]       = config.updateFps;
+    layout["DownmixMode"_L1]     = static_cast<int>(config.downmixMode);
+    layout["ShowZeroLine"_L1]    = config.showZeroLine;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
+
+    const bool customColours      = config.colours.isValid() && config.colours.canConvert<Colours>()
+                                 && !config.colours.value<Colours>().isEmpty();
+    layout["UseCustomColours"_L1] = customColours;
+
+    const Colours colours = customColours ? config.colours.value<Colours>() : Colours{};
+    const auto saveColour = [&layout, &colours](const QString& key, Colours::Type type) {
+        const QColor colour = colours.customColour(type);
+        if(colour.isValid()) {
+            layout[key] = colour.name(QColor::HexArgb);
+        }
+        else {
+            layout.remove(key);
+        }
+    };
+
+    saveColour(u"BackgroundColour"_s, Colours::Type::Background);
+    saveColour(u"WaveformColour"_s, Colours::Type::Waveform);
+    saveColour(u"ZeroLineColour"_s, Colours::Type::ZeroLine);
+}
+
 QSize OscilloscopeWidget::minimumSizeHint() const
 {
     if(m_autoOrientation && !findToolbar()) {
@@ -595,81 +670,6 @@ void OscilloscopeWidget::paint(QPainter& painter, const QRect& rect, const QPale
         }
         painter.setPen(zeroPen);
     }
-}
-
-OscilloscopeWidget::ConfigData OscilloscopeWidget::configFromLayout(const QJsonObject& layout) const
-{
-    ConfigData config{defaultConfig()};
-
-    config.curveDurationMs = layout.value("CurveDurationMs"_L1).toInt(config.curveDurationMs);
-    config.zoomPercent     = layout.value("ZoomPercent"_L1).toInt(config.zoomPercent);
-    config.updateFps       = layout.value("UpdateFps"_L1).toInt(config.updateFps);
-    config.downmixMode
-        = static_cast<DownmixMode>(layout.value("DownmixMode"_L1).toInt(static_cast<int>(config.downmixMode)));
-    config.showZeroLine = layout.value("ShowZeroLine"_L1).toBool(config.showZeroLine);
-    config.background.loadLayout(layout.value("Background"_L1).toObject());
-
-    if(layout.contains("UseCustomColours"_L1)) {
-        if(layout.value("UseCustomColours"_L1).toBool()) {
-            Colours colours;
-
-            const auto setColour = [&layout, &colours](const QString& key, Colours::Type type) {
-                if(!layout.contains(key)) {
-                    return;
-                }
-
-                const QColor colour{layout.value(key).toString()};
-                if(colour.isValid()) {
-                    colours.setColour(type, colour);
-                }
-            };
-
-            setColour(u"BackgroundColour"_s, Colours::Type::Background);
-            setColour(u"WaveformColour"_s, Colours::Type::Waveform);
-            setColour(u"ZeroLineColour"_s, Colours::Type::ZeroLine);
-
-            if(!colours.isEmpty()) {
-                config.colours = QVariant::fromValue(colours);
-            }
-        }
-        else {
-            config.colours = QVariant{};
-        }
-    }
-
-    return config;
-}
-
-void OscilloscopeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
-{
-    layout["CurveDurationMs"_L1] = config.curveDurationMs;
-    layout["ZoomPercent"_L1]     = config.zoomPercent;
-    layout["UpdateFps"_L1]       = config.updateFps;
-    layout["DownmixMode"_L1]     = static_cast<int>(config.downmixMode);
-    layout["ShowZeroLine"_L1]    = config.showZeroLine;
-
-    QJsonObject background;
-    config.background.saveLayout(background);
-    layout["Background"_L1] = background;
-
-    const bool customColours      = config.colours.isValid() && config.colours.canConvert<Colours>()
-                                 && !config.colours.value<Colours>().isEmpty();
-    layout["UseCustomColours"_L1] = customColours;
-
-    const Colours colours = customColours ? config.colours.value<Colours>() : Colours{};
-    const auto saveColour = [&layout, &colours](const QString& key, Colours::Type type) {
-        const QColor colour = colours.customColour(type);
-        if(colour.isValid()) {
-            layout[key] = colour.name(QColor::HexArgb);
-        }
-        else {
-            layout.remove(key);
-        }
-    };
-
-    saveColour(u"BackgroundColour"_s, Colours::Type::Background);
-    saveColour(u"WaveformColour"_s, Colours::Type::Waveform);
-    saveColour(u"ZeroLineColour"_s, Colours::Type::ZeroLine);
 }
 } // namespace Fooyin::Oscilloscope
 

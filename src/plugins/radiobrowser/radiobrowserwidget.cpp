@@ -83,6 +83,12 @@ constexpr auto DoubleClickActionKey          = "RadioBrowser/DoubleClickAction";
 constexpr auto MiddleClickActionKey          = "RadioBrowser/MiddleClickAction";
 constexpr auto PlaybackOnSendKey             = "RadioBrowser/PlaybackOnSend";
 constexpr auto SendClicksKey                 = "RadioBrowser/SendClicks";
+constexpr auto ShowFilterBarKey              = "RadioBrowser/ShowFilterBar";
+constexpr auto DisplayModeKey                = "RadioBrowser/DisplayMode";
+constexpr auto CaptionsKey                   = "RadioBrowser/Captions";
+constexpr auto ShowHeaderKey                 = "RadioBrowser/ShowHeader";
+constexpr auto ShowScrollbarKey              = "RadioBrowser/ShowScrollbar";
+constexpr auto AlternatingRowsKey            = "RadioBrowser/AlternatingRows";
 constexpr auto RowHeightKey                  = "RadioBrowser/RowHeight";
 constexpr auto IconSizeKey                   = "RadioBrowser/IconSize";
 constexpr auto AutoFitArtworkKey             = "RadioBrowser/AutoFitArtwork";
@@ -272,7 +278,8 @@ RadioBrowserWidget::RadioBrowserWidget(RadioBrowserController* controller, Actio
     auto* toggleFilterBarCmd
         = m_actionManager->registerAction(m_toggleFilterBarAction, ToggleFilterBarAction, actionContext);
     toggleFilterBarCmd->setCategories(radioBrowserCategory);
-    QObject::connect(m_toggleFilterBarAction, &QAction::triggered, this, &RadioBrowserWidget::setFilterBarVisible);
+    QObject::connect(m_toggleFilterBarAction, &QAction::triggered, this,
+                     [this](bool visible) { setFilterBarVisible(visible); });
 
     mainLayout->addWidget(m_resultsView, 1);
 
@@ -387,72 +394,21 @@ void RadioBrowserWidget::saveLayoutData(QJsonObject& layout)
 {
     saveCurrentViewState();
 
-    layout["Display"_L1]                    = static_cast<int>(m_browseViewState.viewMode);
-    layout["Captions"_L1]                   = static_cast<int>(m_browseViewState.captions);
-    layout["SavedDisplay"_L1]               = static_cast<int>(m_savedStationsViewState.viewMode);
-    layout["SavedCaptions"_L1]              = static_cast<int>(m_savedStationsViewState.captions);
-    layout["SeparateSavedView"_L1]          = m_viewConfig.separateSavedStationsViewState;
-    layout["ShowHeader"_L1]                 = m_viewConfig.showHeader;
-    layout["ShowScrollbar"_L1]              = m_viewConfig.showScrollbar;
-    layout["AlternatingRows"_L1]            = m_viewConfig.alternatingRows;
-    layout["ShowIcons"_L1]                  = m_viewConfig.showIcons;
-    layout["ShowSavedIcons"_L1]             = m_viewConfig.showSavedStationIcons;
-    layout["ShowToolTips"_L1]               = m_viewConfig.showToolTips;
-    layout["RowHeight"_L1]                  = m_viewConfig.rowHeight;
-    layout["IconSize"_L1]                   = m_viewConfig.iconSize.width();
-    layout["AutoFitArtwork"_L1]             = m_viewConfig.autoFitArtwork;
-    layout["IconHorizontalGap"_L1]          = m_viewConfig.iconHorizontalGap;
-    layout["IconVerticalGap"_L1]            = m_viewConfig.iconVerticalGap;
-    layout["UseIconGapsForSideCaptions"_L1] = m_viewConfig.useIconGapsForSideCaptions;
-    layout["IconMargins"_L1]                = Gui::marginsToJson(m_viewConfig.iconMargins);
-    layout["IconCornerRadius"_L1]           = m_viewConfig.iconCornerRadius;
-    layout["UniformIcons"_L1]               = m_viewConfig.uniformStationIcons;
-    layout["DoubleClickAction"_L1]          = m_doubleClickAction;
-    layout["MiddleClickAction"_L1]          = m_middleClickAction;
-    layout["PlaybackOnSend"_L1]             = m_playbackOnSend;
-    layout["HideBroken"_L1]                 = m_hideBroken;
-    layout["State"_L1]                      = encodeHeaderState(m_browseViewState.headerState);
-    layout["SavedState"_L1]                 = encodeHeaderState(m_savedStationsViewState.headerState);
-
-    QJsonObject background;
-    m_config.background.saveLayout(background);
-    layout["Background"_L1] = background;
-
-    layout.insert(u"ShowFilterBar"_s, m_toggleFilterBarAction->isChecked());
+    layout["SavedDisplay"_L1]  = static_cast<int>(m_savedStationsViewState.viewMode);
+    layout["SavedCaptions"_L1] = static_cast<int>(m_savedStationsViewState.captions);
+    saveConfigToLayout(m_config, layout);
+    layout["Display"_L1]    = static_cast<int>(m_browseViewState.viewMode);
+    layout["Captions"_L1]   = static_cast<int>(m_browseViewState.captions);
+    layout["State"_L1]      = encodeHeaderState(m_browseViewState.headerState);
+    layout["SavedState"_L1] = encodeHeaderState(m_savedStationsViewState.headerState);
 }
 
 void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
 {
     const QScopedValueRollback loadingLayout{m_loadingLayout, true};
 
-    m_viewConfig.viewMode = static_cast<ExpandedTreeView::ViewMode>(
-        layout.value("Display"_L1).toInt(static_cast<int>(m_viewConfig.viewMode)));
-    m_viewConfig.captions = static_cast<ExpandedTreeView::CaptionDisplay>(
-        layout.value("Captions"_L1).toInt(static_cast<int>(m_viewConfig.captions)));
-    m_viewConfig.separateSavedStationsViewState
-        = layout.value("SeparateSavedView"_L1).toBool(m_viewConfig.separateSavedStationsViewState);
-    m_viewConfig.showHeader            = layout.value("ShowHeader"_L1).toBool(m_viewConfig.showHeader);
-    m_viewConfig.showScrollbar         = layout.value("ShowScrollbar"_L1).toBool(m_viewConfig.showScrollbar);
-    m_viewConfig.alternatingRows       = layout.value("AlternatingRows"_L1).toBool(m_viewConfig.alternatingRows);
-    m_viewConfig.showIcons             = layout.value("ShowIcons"_L1).toBool(m_viewConfig.showIcons);
-    m_viewConfig.showSavedStationIcons = layout.value("ShowSavedIcons"_L1).toBool(m_viewConfig.showSavedStationIcons);
-    m_viewConfig.showToolTips          = layout.value("ShowToolTips"_L1).toBool(m_viewConfig.showToolTips);
-    m_viewConfig.rowHeight             = layout.value("RowHeight"_L1).toInt(m_viewConfig.rowHeight);
-
-    if(layout.contains("IconSize"_L1)) {
-        const int iconSize    = layout.value("IconSize"_L1).toInt();
-        m_viewConfig.iconSize = {iconSize, iconSize};
-    }
-
-    m_viewConfig.autoFitArtwork    = layout.value("AutoFitArtwork"_L1).toBool(m_viewConfig.autoFitArtwork);
-    m_viewConfig.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt(m_viewConfig.iconHorizontalGap);
-    m_viewConfig.iconVerticalGap   = layout.value("IconVerticalGap"_L1).toInt(m_viewConfig.iconVerticalGap);
-    m_viewConfig.useIconGapsForSideCaptions
-        = layout.value("UseIconGapsForSideCaptions"_L1).toBool(m_viewConfig.useIconGapsForSideCaptions);
-    m_viewConfig.iconMargins
-        = Gui::marginsFromJson(layout.value("IconMargins"_L1).toObject(), m_viewConfig.iconMargins);
-    m_viewConfig.iconCornerRadius    = layout.value("IconCornerRadius"_L1).toInt(m_viewConfig.iconCornerRadius);
-    m_viewConfig.uniformStationIcons = layout.value("UniformIcons"_L1).toBool(m_viewConfig.uniformStationIcons);
+    const auto config{configFromLayout(layout)};
+    m_viewConfig = config.view;
 
     m_browseViewState.viewMode = m_viewConfig.viewMode;
     m_browseViewState.captions = m_viewConfig.captions;
@@ -473,14 +429,13 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
 
     applyActiveViewState();
 
-    m_doubleClickAction = layout.value("DoubleClickAction"_L1).toInt(m_doubleClickAction);
-    m_middleClickAction = layout.value("MiddleClickAction"_L1).toInt(m_middleClickAction);
-    m_playbackOnSend    = layout.value("PlaybackOnSend"_L1).toBool(m_playbackOnSend);
-    m_hideBroken        = layout.value("HideBroken"_L1).toBool(m_hideBroken);
+    m_doubleClickAction = config.doubleClickAction;
+    m_middleClickAction = config.middleClickAction;
+    m_playbackOnSend    = config.playbackOnSend;
+    m_hideBroken        = config.hideBroken;
     m_controller->setHideBroken(m_hideBroken);
 
-    auto background{m_config.background};
-    background.loadLayout(layout.value("Background"_L1).toObject());
+    const auto background{config.background};
     m_resultsView->setBackgroundConfig(background);
     m_backgroundSource->setConfig(background);
 
@@ -491,9 +446,10 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
         .middleClickAction = m_middleClickAction,
         .playbackOnSend    = m_playbackOnSend,
         .hideBroken        = m_hideBroken,
+        .showFilterBar     = config.showFilterBar,
     };
 
-    setFilterBarVisible(layout.value("ShowFilterBar"_L1).toBool(true));
+    setFilterBarVisible(config.showFilterBar);
     updateSavedSearchState();
 }
 
@@ -637,10 +593,18 @@ RadioBrowserWidget::ConfigData RadioBrowserWidget::defaultConfig() const
 {
     auto config{factoryConfig()};
 
-    config.doubleClickAction      = m_settings->fileValue(DoubleClickActionKey, config.doubleClickAction).toInt();
-    config.middleClickAction      = m_settings->fileValue(MiddleClickActionKey, config.middleClickAction).toInt();
-    config.playbackOnSend         = m_settings->fileValue(PlaybackOnSendKey, config.playbackOnSend).toBool();
-    config.hideBroken             = m_settings->fileValue(HideBrokenKey, config.hideBroken).toBool();
+    config.doubleClickAction = m_settings->fileValue(DoubleClickActionKey, config.doubleClickAction).toInt();
+    config.middleClickAction = m_settings->fileValue(MiddleClickActionKey, config.middleClickAction).toInt();
+    config.playbackOnSend    = m_settings->fileValue(PlaybackOnSendKey, config.playbackOnSend).toBool();
+    config.hideBroken        = m_settings->fileValue(HideBrokenKey, config.hideBroken).toBool();
+    config.showFilterBar     = m_settings->fileValue(ShowFilterBarKey, config.showFilterBar).toBool();
+    config.view.viewMode     = static_cast<ExpandedTreeView::ViewMode>(
+        m_settings->fileValue(DisplayModeKey, static_cast<int>(config.view.viewMode)).toInt());
+    config.view.captions = static_cast<ExpandedTreeView::CaptionDisplay>(
+        m_settings->fileValue(CaptionsKey, static_cast<int>(config.view.captions)).toInt());
+    config.view.showHeader        = m_settings->fileValue(ShowHeaderKey, config.view.showHeader).toBool();
+    config.view.showScrollbar     = m_settings->fileValue(ShowScrollbarKey, config.view.showScrollbar).toBool();
+    config.view.alternatingRows   = m_settings->fileValue(AlternatingRowsKey, config.view.alternatingRows).toBool();
     config.view.rowHeight         = m_settings->fileValue(RowHeightKey, config.view.rowHeight).toInt();
     config.view.iconSize          = m_settings->fileValue(IconSizeKey, config.view.iconSize).toSize();
     config.view.autoFitArtwork    = m_settings->fileValue(AutoFitArtworkKey, config.view.autoFitArtwork).toBool();
@@ -677,6 +641,12 @@ void RadioBrowserWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(MiddleClickActionKey, config.middleClickAction);
     m_settings->fileSet(PlaybackOnSendKey, config.playbackOnSend);
     m_settings->fileSet(HideBrokenKey, config.hideBroken);
+    m_settings->fileSet(ShowFilterBarKey, config.showFilterBar);
+    m_settings->fileSet(DisplayModeKey, static_cast<int>(config.view.viewMode));
+    m_settings->fileSet(CaptionsKey, static_cast<int>(config.view.captions));
+    m_settings->fileSet(ShowHeaderKey, config.view.showHeader);
+    m_settings->fileSet(ShowScrollbarKey, config.view.showScrollbar);
+    m_settings->fileSet(AlternatingRowsKey, config.view.alternatingRows);
     m_settings->fileSet(RowHeightKey, config.view.rowHeight);
     m_settings->fileSet(IconSizeKey, config.view.iconSize);
     m_settings->fileSet(AutoFitArtworkKey, config.view.autoFitArtwork);
@@ -701,6 +671,12 @@ void RadioBrowserWidget::clearSavedDefaults() const
     m_settings->fileRemove(MiddleClickActionKey);
     m_settings->fileRemove(PlaybackOnSendKey);
     m_settings->fileRemove(HideBrokenKey);
+    m_settings->fileRemove(ShowFilterBarKey);
+    m_settings->fileRemove(DisplayModeKey);
+    m_settings->fileRemove(CaptionsKey);
+    m_settings->fileRemove(ShowHeaderKey);
+    m_settings->fileRemove(ShowScrollbarKey);
+    m_settings->fileRemove(AlternatingRowsKey);
     m_settings->fileRemove(RowHeightKey);
     m_settings->fileRemove(IconSizeKey);
     m_settings->fileRemove(AutoFitArtworkKey);
@@ -739,6 +715,8 @@ void RadioBrowserWidget::applyConfig(const ConfigData& config)
     m_resultsView->setBackgroundConfig(m_config.background);
     m_backgroundSource->setConfig(m_config.background);
 
+    setFilterBarVisible(config.showFilterBar, false);
+
     if(searchConfigChanged && !m_loadingLayout) {
         applyFilterSearch();
     }
@@ -748,9 +726,85 @@ void RadioBrowserWidget::applyConfig(const ConfigData& config)
     }
 }
 
+RadioBrowserWidget::ConfigData RadioBrowserWidget::configFromLayout(const QJsonObject& layout) const
+{
+    auto config{defaultConfig()};
+    config.view.viewMode = static_cast<ExpandedTreeView::ViewMode>(
+        layout.value("Display"_L1).toInt(static_cast<int>(config.view.viewMode)));
+    config.view.captions = static_cast<ExpandedTreeView::CaptionDisplay>(
+        layout.value("Captions"_L1).toInt(static_cast<int>(config.view.captions)));
+    config.view.separateSavedStationsViewState
+        = layout.value("SeparateSavedView"_L1).toBool(config.view.separateSavedStationsViewState);
+    config.view.showHeader            = layout.value("ShowHeader"_L1).toBool(config.view.showHeader);
+    config.view.showScrollbar         = layout.value("ShowScrollbar"_L1).toBool(config.view.showScrollbar);
+    config.view.alternatingRows       = layout.value("AlternatingRows"_L1).toBool(config.view.alternatingRows);
+    config.view.showIcons             = layout.value("ShowIcons"_L1).toBool(config.view.showIcons);
+    config.view.showSavedStationIcons = layout.value("ShowSavedIcons"_L1).toBool(config.view.showSavedStationIcons);
+    config.view.showToolTips          = layout.value("ShowToolTips"_L1).toBool(config.view.showToolTips);
+    config.view.rowHeight             = layout.value("RowHeight"_L1).toInt(config.view.rowHeight);
+
+    if(layout.contains("IconSize"_L1)) {
+        const int iconSize   = layout.value("IconSize"_L1).toInt();
+        config.view.iconSize = {iconSize, iconSize};
+    }
+
+    config.view.autoFitArtwork    = layout.value("AutoFitArtwork"_L1).toBool(config.view.autoFitArtwork);
+    config.view.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt(config.view.iconHorizontalGap);
+    config.view.iconVerticalGap   = layout.value("IconVerticalGap"_L1).toInt(config.view.iconVerticalGap);
+    config.view.useIconGapsForSideCaptions
+        = layout.value("UseIconGapsForSideCaptions"_L1).toBool(config.view.useIconGapsForSideCaptions);
+    config.view.iconMargins = Gui::marginsFromJson(layout.value("IconMargins"_L1).toObject(), config.view.iconMargins);
+    config.view.iconCornerRadius    = layout.value("IconCornerRadius"_L1).toInt(config.view.iconCornerRadius);
+    config.view.uniformStationIcons = layout.value("UniformIcons"_L1).toBool(config.view.uniformStationIcons);
+
+    config.doubleClickAction = layout.value("DoubleClickAction"_L1).toInt(config.doubleClickAction);
+    config.middleClickAction = layout.value("MiddleClickAction"_L1).toInt(config.middleClickAction);
+    config.playbackOnSend    = layout.value("PlaybackOnSend"_L1).toBool(config.playbackOnSend);
+    config.hideBroken        = layout.value("HideBroken"_L1).toBool(config.hideBroken);
+    config.showFilterBar     = layout.value("ShowFilterBar"_L1).toBool(config.showFilterBar);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
+    return config;
+}
+
+void RadioBrowserWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
+{
+    layout["Display"_L1]                    = static_cast<int>(config.view.viewMode);
+    layout["Captions"_L1]                   = static_cast<int>(config.view.captions);
+    layout["SeparateSavedView"_L1]          = config.view.separateSavedStationsViewState;
+    layout["ShowHeader"_L1]                 = config.view.showHeader;
+    layout["ShowScrollbar"_L1]              = config.view.showScrollbar;
+    layout["AlternatingRows"_L1]            = config.view.alternatingRows;
+    layout["ShowIcons"_L1]                  = config.view.showIcons;
+    layout["ShowSavedIcons"_L1]             = config.view.showSavedStationIcons;
+    layout["ShowToolTips"_L1]               = config.view.showToolTips;
+    layout["RowHeight"_L1]                  = config.view.rowHeight;
+    layout["IconSize"_L1]                   = config.view.iconSize.width();
+    layout["AutoFitArtwork"_L1]             = config.view.autoFitArtwork;
+    layout["IconHorizontalGap"_L1]          = config.view.iconHorizontalGap;
+    layout["IconVerticalGap"_L1]            = config.view.iconVerticalGap;
+    layout["UseIconGapsForSideCaptions"_L1] = config.view.useIconGapsForSideCaptions;
+    layout["IconMargins"_L1]                = Gui::marginsToJson(config.view.iconMargins);
+    layout["IconCornerRadius"_L1]           = config.view.iconCornerRadius;
+    layout["UniformIcons"_L1]               = config.view.uniformStationIcons;
+    layout["DoubleClickAction"_L1]          = config.doubleClickAction;
+    layout["MiddleClickAction"_L1]          = config.middleClickAction;
+    layout["PlaybackOnSend"_L1]             = config.playbackOnSend;
+    layout["HideBroken"_L1]                 = config.hideBroken;
+    layout["ShowFilterBar"_L1]              = config.showFilterBar;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
+}
+
 bool RadioBrowserWidget::sendClicks() const
 {
     return m_sendClicks;
+}
+
+bool RadioBrowserWidget::filterBarToggleAllowed() const
+{
+    return m_filterBarMode == FilterBarMode::Toggleable && m_filterBar;
 }
 
 void RadioBrowserWidget::setSendClicks(const bool enabled)
@@ -782,16 +836,16 @@ void RadioBrowserWidget::setSeparateSavedStationsViewStateAllowed(bool allowed)
     }
 }
 
-void RadioBrowserWidget::showEvent(QShowEvent* event)
-{
-    FyWidget::showEvent(event);
-    scheduleVisibleIconRequest();
-}
-
 void RadioBrowserWidget::hideEvent(QHideEvent* event)
 {
     m_model->clearVisibleIcons(this);
     FyWidget::hideEvent(event);
+}
+
+void RadioBrowserWidget::showEvent(QShowEvent* event)
+{
+    FyWidget::showEvent(event);
+    scheduleVisibleIconRequest();
 }
 
 void RadioBrowserWidget::openConfigDialog()
@@ -1236,15 +1290,21 @@ void RadioBrowserWidget::resetFilters()
     updateSavedSearchState();
 }
 
-void RadioBrowserWidget::setFilterBarVisible(bool visible)
+void RadioBrowserWidget::setFilterBarVisible(bool visible, bool notify)
 {
-    visible = visible && m_filterBarMode != FilterBarMode::Hidden;
+    visible = m_filterBarMode == FilterBarMode::Fixed || (visible && m_filterBarMode != FilterBarMode::Hidden);
 
     if(m_filterBar) {
         m_filterBar->setVisible(visible);
     }
     if(m_toggleFilterBarAction->isChecked() != visible) {
         m_toggleFilterBarAction->setChecked(visible);
+    }
+    if(m_config.showFilterBar != visible) {
+        m_config.showFilterBar = visible;
+        if(notify) {
+            Q_EMIT configChanged();
+        }
     }
 }
 
@@ -1421,16 +1481,6 @@ void RadioBrowserWidget::addCustomStation()
     }
 }
 
-void RadioBrowserWidget::importSavedStations()
-{
-    RadioStationImportExportDialog::importStations(m_controller, this);
-}
-
-void RadioBrowserWidget::exportSavedStations()
-{
-    RadioStationImportExportDialog::exportStations(m_controller, this);
-}
-
 void RadioBrowserWidget::editSelectedStation()
 {
     const RadioStationList stations = selectedStations();
@@ -1450,6 +1500,16 @@ void RadioBrowserWidget::editSelectedStation()
     if(dialog.exec() == QDialog::Accepted) {
         m_controller->updateSavedStation(station, dialog.station());
     }
+}
+
+void RadioBrowserWidget::importSavedStations()
+{
+    RadioStationImportExportDialog::importStations(m_controller, this);
+}
+
+void RadioBrowserWidget::exportSavedStations()
+{
+    RadioStationImportExportDialog::exportStations(m_controller, this);
 }
 
 void RadioBrowserWidget::handleDoubleClick(const QModelIndex& index)

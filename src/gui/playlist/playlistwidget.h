@@ -178,6 +178,8 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
     void searchEvent(const SearchRequest& request) override;
     bool openIntegratedSearch();
@@ -279,8 +281,6 @@ private:
     void saveRememberedLayout(Playlist* playlist);
     [[nodiscard]] bool remembersLayout(const Playlist* playlist) const;
     void updateSpans();
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
     void updateVisibleCoverPins();
     void executeClickAction(TrackAction action);
 

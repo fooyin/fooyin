@@ -40,6 +40,7 @@ class TrackSelectionController;
 
 namespace Spectrogram {
 class SpectrogramView;
+
 class SpectrogramWidget : public FyWidget
 {
     Q_OBJECT
@@ -59,6 +60,8 @@ public:
     void saveDefaults(const SpectrogramConfig& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const SpectrogramConfig& config);
+    [[nodiscard]] SpectrogramConfig configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const SpectrogramConfig& config, QJsonObject& layout) const;
 
     [[nodiscard]] QSize minimumSizeHint() const override;
     [[nodiscard]] QSize sizeHint() const override;
@@ -71,9 +74,6 @@ protected:
     void openConfigDialog() override;
 
 private:
-    [[nodiscard]] SpectrogramConfig configFromLayout(const QJsonObject& layout) const;
-    void saveConfigToLayout(const SpectrogramConfig& config, QJsonObject& layout) const;
-
     std::shared_ptr<AudioLoader> m_audioLoader;
     ActionManager* m_actionManager;
     PlayerController* m_playerController;

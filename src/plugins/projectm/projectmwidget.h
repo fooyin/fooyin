@@ -79,6 +79,8 @@ public:
     void applyConfig(const ConfigData& config);
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
 
     void showDetachedWindow();
 

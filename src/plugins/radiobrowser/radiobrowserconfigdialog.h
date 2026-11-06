@@ -47,11 +47,20 @@ protected:
                              const RadioBrowserWidget::ConfigData& current) override;
 
 private:
+    void updateAppearanceControls();
+
     QComboBox* m_middleClick;
     QComboBox* m_doubleClick;
     QCheckBox* m_playbackOnSend;
     QCheckBox* m_hideBroken;
     QCheckBox* m_sendClicks;
+    QCheckBox* m_showSearchBar;
+    QComboBox* m_displayMode;
+    QComboBox* m_captions;
+    QCheckBox* m_showHeader;
+    QCheckBox* m_showScrollbar;
+    QCheckBox* m_alternatingRows;
+    QCheckBox* m_showStationIcons;
     QCheckBox* m_showSavedStationIcons;
     QCheckBox* m_showToolTips;
     QCheckBox* m_separateSavedStationsViewState;

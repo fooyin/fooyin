@@ -75,6 +75,8 @@ public:
     void applyConfig(const ConfigData& config);
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
 
     void rescaleCover();
     void reloadCover();
@@ -101,9 +103,6 @@ protected:
     void openConfigDialog() override;
 
 private:
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
-
     [[nodiscard]] bool coversMatch(const QPixmap& lhs, const QPixmap& rhs) const;
     [[nodiscard]] QPixmap effectiveCover(const QPixmap& cover) const;
     [[nodiscard]] QPixmap scaledCover(const QPixmap& cover) const;

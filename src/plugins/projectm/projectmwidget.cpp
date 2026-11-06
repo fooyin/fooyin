@@ -124,6 +124,37 @@ ProjectMSettings normaliseSettings(ProjectMSettings settings)
     return settings;
 }
 
+ProjectMSettings settingsFromLayout(const QJsonObject& layout, ProjectMSettings settings)
+{
+    settings.scanRecursive      = layout.value(ScanRecursiveLayoutKey).toBool(settings.scanRecursive);
+    settings.maxFps             = layout.value(MaxFpsLayoutKey).toInt(settings.maxFps);
+    settings.meshWidth          = layout.value(MeshWidthLayoutKey).toInt(settings.meshWidth);
+    settings.meshHeight         = layout.value(MeshHeightLayoutKey).toInt(settings.meshHeight);
+    settings.aspectCorrection   = layout.value(AspectCorrectionLayoutKey).toBool(settings.aspectCorrection);
+    settings.presetDuration     = layout.value(PresetDurationKey).toDouble(settings.presetDuration);
+    settings.softCutDuration    = layout.value(SoftCutDurationLayoutKey).toDouble(settings.softCutDuration);
+    settings.hardCutsEnabled    = layout.value(HardCutsEnabledLayoutKey).toBool(settings.hardCutsEnabled);
+    settings.hardCutDuration    = layout.value(HardCutDurationLayoutKey).toDouble(settings.hardCutDuration);
+    settings.hardCutSensitivity = layout.value(HardCutSensitivityLayoutKey).toDouble(settings.hardCutSensitivity);
+    settings.beatSensitivity    = layout.value(BeatSensitivityLayoutKey).toDouble(settings.beatSensitivity);
+    return normaliseSettings(settings);
+}
+
+void saveSettingsToLayout(const ProjectMSettings& settings, QJsonObject& layout)
+{
+    layout[ScanRecursiveLayoutKey]      = settings.scanRecursive;
+    layout[MaxFpsLayoutKey]             = settings.maxFps;
+    layout[MeshWidthLayoutKey]          = settings.meshWidth;
+    layout[MeshHeightLayoutKey]         = settings.meshHeight;
+    layout[AspectCorrectionLayoutKey]   = settings.aspectCorrection;
+    layout[PresetDurationKey]           = settings.presetDuration;
+    layout[SoftCutDurationLayoutKey]    = settings.softCutDuration;
+    layout[HardCutsEnabledLayoutKey]    = settings.hardCutsEnabled;
+    layout[HardCutDurationLayoutKey]    = settings.hardCutDuration;
+    layout[HardCutSensitivityLayoutKey] = settings.hardCutSensitivity;
+    layout[BeatSensitivityLayoutKey]    = settings.beatSensitivity;
+}
+
 ProjectMWidget::ConfigData normaliseConfig(ProjectMWidget::ConfigData config)
 {
     config.presetDir = ProjectMPresetLibrary::normalisePath(config.presetDir);
@@ -283,21 +314,13 @@ void ProjectMWidget::saveLayoutData(QJsonObject& layout)
 {
     saveSelectedPreset();
 
-    layout[PresetLockKey]               = m_view->presetLocked();
-    layout[PresetShuffleKey]            = m_view->shuffle();
-    layout[RememberPresetKey]           = m_rememberPreset;
-    layout[CycleFavouritesOnlyKey]      = m_cycleFavouritesOnly;
-    layout[ScanRecursiveLayoutKey]      = m_config.settings.scanRecursive;
-    layout[MaxFpsLayoutKey]             = m_config.settings.maxFps;
-    layout[MeshWidthLayoutKey]          = m_config.settings.meshWidth;
-    layout[MeshHeightLayoutKey]         = m_config.settings.meshHeight;
-    layout[AspectCorrectionLayoutKey]   = m_config.settings.aspectCorrection;
-    layout[PresetDurationKey]           = m_config.settings.presetDuration;
-    layout[SoftCutDurationLayoutKey]    = m_config.settings.softCutDuration;
-    layout[HardCutsEnabledLayoutKey]    = m_config.settings.hardCutsEnabled;
-    layout[HardCutDurationLayoutKey]    = m_config.settings.hardCutDuration;
-    layout[HardCutSensitivityLayoutKey] = m_config.settings.hardCutSensitivity;
-    layout[BeatSensitivityLayoutKey]    = m_config.settings.beatSensitivity;
+    layout[PresetLockKey]          = m_view->presetLocked();
+    layout[PresetShuffleKey]       = m_view->shuffle();
+    layout[RememberPresetKey]      = m_rememberPreset;
+    layout[CycleFavouritesOnlyKey] = m_cycleFavouritesOnly;
+
+    saveSettingsToLayout(m_config.settings, layout);
+
     if(m_rememberPreset && !m_presetPath.isEmpty()) {
         layout[PresetPathKey] = m_presetPath;
     }
@@ -315,24 +338,8 @@ void ProjectMWidget::loadLayoutData(const QJsonObject& layout)
     m_rememberPreset      = layout.value(RememberPresetKey).toBool(m_rememberPreset);
     m_cycleFavouritesOnly = layout.value(CycleFavouritesOnlyKey).toBool(false);
 
-    m_config.settings.scanRecursive = layout.value(ScanRecursiveLayoutKey).toBool(m_config.settings.scanRecursive);
-    m_config.settings.maxFps        = layout.value(MaxFpsLayoutKey).toInt(m_config.settings.maxFps);
-    m_config.settings.meshWidth     = layout.value(MeshWidthLayoutKey).toInt(m_config.settings.meshWidth);
-    m_config.settings.meshHeight    = layout.value(MeshHeightLayoutKey).toInt(m_config.settings.meshHeight);
-    m_config.settings.aspectCorrection
-        = layout.value(AspectCorrectionLayoutKey).toBool(m_config.settings.aspectCorrection);
-    m_config.settings.presetDuration = layout.value(PresetDurationKey).toDouble(m_config.settings.presetDuration);
-    m_config.settings.softCutDuration
-        = layout.value(SoftCutDurationLayoutKey).toDouble(m_config.settings.softCutDuration);
-    m_config.settings.hardCutsEnabled
-        = layout.value(HardCutsEnabledLayoutKey).toBool(m_config.settings.hardCutsEnabled);
-    m_config.settings.hardCutDuration
-        = layout.value(HardCutDurationLayoutKey).toDouble(m_config.settings.hardCutDuration);
-    m_config.settings.hardCutSensitivity
-        = layout.value(HardCutSensitivityLayoutKey).toDouble(m_config.settings.hardCutSensitivity);
-    m_config.settings.beatSensitivity
-        = layout.value(BeatSensitivityLayoutKey).toDouble(m_config.settings.beatSensitivity);
-    m_config = normaliseConfig(m_config);
+    m_config.settings = settingsFromLayout(layout, m_config.settings);
+
     scanPresetLibrary();
     m_view->applySettings(m_config.settings);
 
@@ -445,6 +452,20 @@ void ProjectMWidget::clearSavedDefaults() const
     m_settings->fileRemove(SelectedCategoriesKey);
     m_settings->fileRemove(SelectedFavouriteCategoriesKey);
     m_settings->fileRemove(FavouritesKey);
+}
+
+ProjectMWidget::ConfigData ProjectMWidget::configFromLayout(const QJsonObject& layout) const
+{
+    auto config{defaultConfig()};
+    config.presetDir = layout.value("PresetDirectory"_L1).toString(config.presetDir);
+    config.settings  = settingsFromLayout(layout, config.settings);
+    return normaliseConfig(std::move(config));
+}
+
+void ProjectMWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
+{
+    layout["PresetDirectory"_L1] = config.presetDir;
+    saveSettingsToLayout(config.settings, layout);
 }
 
 void ProjectMWidget::showDetachedWindow()

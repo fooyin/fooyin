@@ -376,6 +376,157 @@ void WaveBarWidget::applyConfig(const ConfigData& config)
     Q_EMIT configChanged();
 }
 
+WaveBarWidget::ConfigData WaveBarWidget::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+
+    config.showLabels = layout.value("ShowLabels"_L1).toBool(config.showLabels);
+
+    if(layout.contains("ShowRemainingTime"_L1) || layout.contains("ElapsedTotal"_L1)) {
+        const auto key           = layout.contains("ShowRemainingTime"_L1) ? "ShowRemainingTime"_L1 : "ElapsedTotal"_L1;
+        config.showRemainingTime = layout.value(key).toBool();
+    }
+
+    config.showPlayedThreshold = layout.value("ShowPlayedThreshold"_L1).toBool(config.showPlayedThreshold);
+    config.trackPreference     = layout.value("TrackPreference"_L1).toInt(config.trackPreference);
+    config.showCursor          = layout.value("ShowCursor"_L1).toBool(config.showCursor);
+    config.cursorWidth         = layout.value("CursorWidth"_L1).toInt(config.cursorWidth);
+    config.mode                = layout.value("Mode"_L1).toInt(config.mode);
+    config.downmix             = layout.value("Downmix"_L1).toInt(config.downmix);
+    config.barWidth            = layout.value("BarWidth"_L1).toInt(config.barWidth);
+    config.barGap              = layout.value("BarGap"_L1).toInt(config.barGap);
+    config.supersampleFactor   = layout.value("SupersampleFactor"_L1).toInt(config.supersampleFactor);
+    config.peakDisplayMode     = layout.value("PeakDisplayMode"_L1).toInt(config.peakDisplayMode);
+    config.normaliseToPeak     = layout.value("NormaliseToPeak"_L1).toBool(config.normaliseToPeak);
+    config.decibelScale        = layout.value("DecibelScale"_L1).toBool(config.decibelScale);
+    config.maxScale            = layout.value("MaxScale"_L1).toDouble(config.maxScale);
+    config.centreGap           = layout.value("CentreGap"_L1).toInt(config.centreGap);
+    config.channelScale        = layout.value("ChannelScale"_L1).toDouble(config.channelScale);
+    config.background.loadLayout(layout.value("Background"_L1).toObject());
+
+    if(layout.contains("UseCustomColours"_L1)) {
+        if(layout.value("UseCustomColours"_L1).toBool()) {
+            auto colours = Colours{};
+
+            const auto setColour = [&layout, &colours](const QString& key, Colours::Type type) {
+                if(!layout.contains(key)) {
+                    return;
+                }
+
+                const QColor loadedColour{layout.value(key).toString()};
+                if(loadedColour.isValid()) {
+                    colours.setColour(type, loadedColour);
+                }
+            };
+
+            setColour(u"BgUnplayedColour"_s, Colours::Type::BgUnplayed);
+            setColour(u"BgPlayedColour"_s, Colours::Type::BgPlayed);
+            setColour(u"MaxUnplayedColour"_s, Colours::Type::MaxUnplayed);
+            setColour(u"MaxPlayedColour"_s, Colours::Type::MaxPlayed);
+            setColour(u"MaxBorderColour"_s, Colours::Type::MaxBorder);
+            setColour(u"MinUnplayedColour"_s, Colours::Type::MinUnplayed);
+            setColour(u"MinPlayedColour"_s, Colours::Type::MinPlayed);
+            setColour(u"MinBorderColour"_s, Colours::Type::MinBorder);
+            setColour(u"RmsMaxUnplayedColour"_s, Colours::Type::RmsMaxUnplayed);
+            setColour(u"RmsMaxPlayedColour"_s, Colours::Type::RmsMaxPlayed);
+            setColour(u"RmsMaxBorderColour"_s, Colours::Type::RmsMaxBorder);
+            setColour(u"RmsMinUnplayedColour"_s, Colours::Type::RmsMinUnplayed);
+            setColour(u"RmsMinPlayedColour"_s, Colours::Type::RmsMinPlayed);
+            setColour(u"RmsMinBorderColour"_s, Colours::Type::RmsMinBorder);
+            setColour(u"CursorColour"_s, Colours::Type::Cursor);
+            setColour(u"SeekingCursorColour"_s, Colours::Type::SeekingCursor);
+            setColour(u"PlayedThresholdColour"_s, Colours::Type::PlayedThreshold);
+
+            if(!colours.isEmpty()) {
+                config.colourOptions = QVariant::fromValue(colours);
+            }
+        }
+        else {
+            config.colourOptions = QVariant{};
+        }
+    }
+
+    return config;
+}
+
+void WaveBarWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
+{
+    layout["ShowLabels"_L1]          = config.showLabels;
+    layout["ShowRemainingTime"_L1]   = config.showRemainingTime;
+    layout["ShowPlayedThreshold"_L1] = config.showPlayedThreshold;
+    layout["TrackPreference"_L1]     = config.trackPreference;
+    layout.remove("ElapsedTotal"_L1);
+    layout["ShowCursor"_L1]        = config.showCursor;
+    layout["CursorWidth"_L1]       = config.cursorWidth;
+    layout["Mode"_L1]              = config.mode;
+    layout["Downmix"_L1]           = config.downmix;
+    layout["BarWidth"_L1]          = config.barWidth;
+    layout["BarGap"_L1]            = config.barGap;
+    layout["SupersampleFactor"_L1] = config.supersampleFactor;
+    layout["PeakDisplayMode"_L1]   = config.peakDisplayMode;
+    layout["NormaliseToPeak"_L1]   = config.normaliseToPeak;
+    layout["DecibelScale"_L1]      = config.decibelScale;
+    layout["MaxScale"_L1]          = config.maxScale;
+    layout["CentreGap"_L1]         = config.centreGap;
+    layout["ChannelScale"_L1]      = config.channelScale;
+
+    QJsonObject background;
+    config.background.saveLayout(background);
+    layout["Background"_L1] = background;
+
+    const bool customColours      = config.colourOptions.isValid() && config.colourOptions.canConvert<Colours>()
+                                 && !config.colourOptions.value<Colours>().isEmpty();
+    layout["UseCustomColours"_L1] = customColours;
+    if(!customColours) {
+        layout.remove("BgUnplayedColour"_L1);
+        layout.remove("BgPlayedColour"_L1);
+        layout.remove("MaxUnplayedColour"_L1);
+        layout.remove("MaxPlayedColour"_L1);
+        layout.remove("MaxBorderColour"_L1);
+        layout.remove("MinUnplayedColour"_L1);
+        layout.remove("MinPlayedColour"_L1);
+        layout.remove("MinBorderColour"_L1);
+        layout.remove("RmsMaxUnplayedColour"_L1);
+        layout.remove("RmsMaxPlayedColour"_L1);
+        layout.remove("RmsMaxBorderColour"_L1);
+        layout.remove("RmsMinUnplayedColour"_L1);
+        layout.remove("RmsMinPlayedColour"_L1);
+        layout.remove("RmsMinBorderColour"_L1);
+        layout.remove("CursorColour"_L1);
+        layout.remove("SeekingCursorColour"_L1);
+        layout.remove("PlayedThresholdColour"_L1);
+        return;
+    }
+
+    const auto colours    = config.colourOptions.value<Colours>();
+    const auto saveColour = [&layout, &colours](const QString& key, Colours::Type type) {
+        if(colours.hasOverride(type)) {
+            layout[key] = colours.waveColours.value(type).name(QColor::HexArgb);
+        }
+        else {
+            layout.remove(key);
+        }
+    };
+
+    saveColour(u"BgUnplayedColour"_s, Colours::Type::BgUnplayed);
+    saveColour(u"BgPlayedColour"_s, Colours::Type::BgPlayed);
+    saveColour(u"MaxUnplayedColour"_s, Colours::Type::MaxUnplayed);
+    saveColour(u"MaxPlayedColour"_s, Colours::Type::MaxPlayed);
+    saveColour(u"MaxBorderColour"_s, Colours::Type::MaxBorder);
+    saveColour(u"MinUnplayedColour"_s, Colours::Type::MinUnplayed);
+    saveColour(u"MinPlayedColour"_s, Colours::Type::MinPlayed);
+    saveColour(u"MinBorderColour"_s, Colours::Type::MinBorder);
+    saveColour(u"RmsMaxUnplayedColour"_s, Colours::Type::RmsMaxUnplayed);
+    saveColour(u"RmsMaxPlayedColour"_s, Colours::Type::RmsMaxPlayed);
+    saveColour(u"RmsMaxBorderColour"_s, Colours::Type::RmsMaxBorder);
+    saveColour(u"RmsMinUnplayedColour"_s, Colours::Type::RmsMinUnplayed);
+    saveColour(u"RmsMinPlayedColour"_s, Colours::Type::RmsMinPlayed);
+    saveColour(u"RmsMinBorderColour"_s, Colours::Type::RmsMinBorder);
+    saveColour(u"CursorColour"_s, Colours::Type::Cursor);
+    saveColour(u"SeekingCursorColour"_s, Colours::Type::SeekingCursor);
+    saveColour(u"PlayedThresholdColour"_s, Colours::Type::PlayedThreshold);
+}
+
 int WaveBarWidget::globalNumSamples() const
 {
     return m_settings->value<Settings::WaveBar::NumSamples>();
@@ -621,157 +772,6 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     addConfigureAction(menu);
 
     menu->popup(event->globalPos());
-}
-
-WaveBarWidget::ConfigData WaveBarWidget::configFromLayout(const QJsonObject& layout) const
-{
-    ConfigData config{defaultConfig()};
-
-    config.showLabels = layout.value("ShowLabels"_L1).toBool(config.showLabels);
-
-    if(layout.contains("ShowRemainingTime"_L1) || layout.contains("ElapsedTotal"_L1)) {
-        const auto key           = layout.contains("ShowRemainingTime"_L1) ? "ShowRemainingTime"_L1 : "ElapsedTotal"_L1;
-        config.showRemainingTime = layout.value(key).toBool();
-    }
-
-    config.showPlayedThreshold = layout.value("ShowPlayedThreshold"_L1).toBool(config.showPlayedThreshold);
-    config.trackPreference     = layout.value("TrackPreference"_L1).toInt(config.trackPreference);
-    config.showCursor          = layout.value("ShowCursor"_L1).toBool(config.showCursor);
-    config.cursorWidth         = layout.value("CursorWidth"_L1).toInt(config.cursorWidth);
-    config.mode                = layout.value("Mode"_L1).toInt(config.mode);
-    config.downmix             = layout.value("Downmix"_L1).toInt(config.downmix);
-    config.barWidth            = layout.value("BarWidth"_L1).toInt(config.barWidth);
-    config.barGap              = layout.value("BarGap"_L1).toInt(config.barGap);
-    config.supersampleFactor   = layout.value("SupersampleFactor"_L1).toInt(config.supersampleFactor);
-    config.peakDisplayMode     = layout.value("PeakDisplayMode"_L1).toInt(config.peakDisplayMode);
-    config.normaliseToPeak     = layout.value("NormaliseToPeak"_L1).toBool(config.normaliseToPeak);
-    config.decibelScale        = layout.value("DecibelScale"_L1).toBool(config.decibelScale);
-    config.maxScale            = layout.value("MaxScale"_L1).toDouble(config.maxScale);
-    config.centreGap           = layout.value("CentreGap"_L1).toInt(config.centreGap);
-    config.channelScale        = layout.value("ChannelScale"_L1).toDouble(config.channelScale);
-    config.background.loadLayout(layout.value("Background"_L1).toObject());
-
-    if(layout.contains("UseCustomColours"_L1)) {
-        if(layout.value("UseCustomColours"_L1).toBool()) {
-            auto colours = Colours{};
-
-            const auto setColour = [&layout, &colours](const QString& key, Colours::Type type) {
-                if(!layout.contains(key)) {
-                    return;
-                }
-
-                const QColor loadedColour{layout.value(key).toString()};
-                if(loadedColour.isValid()) {
-                    colours.setColour(type, loadedColour);
-                }
-            };
-
-            setColour(u"BgUnplayedColour"_s, Colours::Type::BgUnplayed);
-            setColour(u"BgPlayedColour"_s, Colours::Type::BgPlayed);
-            setColour(u"MaxUnplayedColour"_s, Colours::Type::MaxUnplayed);
-            setColour(u"MaxPlayedColour"_s, Colours::Type::MaxPlayed);
-            setColour(u"MaxBorderColour"_s, Colours::Type::MaxBorder);
-            setColour(u"MinUnplayedColour"_s, Colours::Type::MinUnplayed);
-            setColour(u"MinPlayedColour"_s, Colours::Type::MinPlayed);
-            setColour(u"MinBorderColour"_s, Colours::Type::MinBorder);
-            setColour(u"RmsMaxUnplayedColour"_s, Colours::Type::RmsMaxUnplayed);
-            setColour(u"RmsMaxPlayedColour"_s, Colours::Type::RmsMaxPlayed);
-            setColour(u"RmsMaxBorderColour"_s, Colours::Type::RmsMaxBorder);
-            setColour(u"RmsMinUnplayedColour"_s, Colours::Type::RmsMinUnplayed);
-            setColour(u"RmsMinPlayedColour"_s, Colours::Type::RmsMinPlayed);
-            setColour(u"RmsMinBorderColour"_s, Colours::Type::RmsMinBorder);
-            setColour(u"CursorColour"_s, Colours::Type::Cursor);
-            setColour(u"SeekingCursorColour"_s, Colours::Type::SeekingCursor);
-            setColour(u"PlayedThresholdColour"_s, Colours::Type::PlayedThreshold);
-
-            if(!colours.isEmpty()) {
-                config.colourOptions = QVariant::fromValue(colours);
-            }
-        }
-        else {
-            config.colourOptions = QVariant{};
-        }
-    }
-
-    return config;
-}
-
-void WaveBarWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const
-{
-    layout["ShowLabels"_L1]          = config.showLabels;
-    layout["ShowRemainingTime"_L1]   = config.showRemainingTime;
-    layout["ShowPlayedThreshold"_L1] = config.showPlayedThreshold;
-    layout["TrackPreference"_L1]     = config.trackPreference;
-    layout.remove("ElapsedTotal"_L1);
-    layout["ShowCursor"_L1]        = config.showCursor;
-    layout["CursorWidth"_L1]       = config.cursorWidth;
-    layout["Mode"_L1]              = config.mode;
-    layout["Downmix"_L1]           = config.downmix;
-    layout["BarWidth"_L1]          = config.barWidth;
-    layout["BarGap"_L1]            = config.barGap;
-    layout["SupersampleFactor"_L1] = config.supersampleFactor;
-    layout["PeakDisplayMode"_L1]   = config.peakDisplayMode;
-    layout["NormaliseToPeak"_L1]   = config.normaliseToPeak;
-    layout["DecibelScale"_L1]      = config.decibelScale;
-    layout["MaxScale"_L1]          = config.maxScale;
-    layout["CentreGap"_L1]         = config.centreGap;
-    layout["ChannelScale"_L1]      = config.channelScale;
-
-    QJsonObject background;
-    config.background.saveLayout(background);
-    layout["Background"_L1] = background;
-
-    const bool customColours      = config.colourOptions.isValid() && config.colourOptions.canConvert<Colours>()
-                                 && !config.colourOptions.value<Colours>().isEmpty();
-    layout["UseCustomColours"_L1] = customColours;
-    if(!customColours) {
-        layout.remove("BgUnplayedColour"_L1);
-        layout.remove("BgPlayedColour"_L1);
-        layout.remove("MaxUnplayedColour"_L1);
-        layout.remove("MaxPlayedColour"_L1);
-        layout.remove("MaxBorderColour"_L1);
-        layout.remove("MinUnplayedColour"_L1);
-        layout.remove("MinPlayedColour"_L1);
-        layout.remove("MinBorderColour"_L1);
-        layout.remove("RmsMaxUnplayedColour"_L1);
-        layout.remove("RmsMaxPlayedColour"_L1);
-        layout.remove("RmsMaxBorderColour"_L1);
-        layout.remove("RmsMinUnplayedColour"_L1);
-        layout.remove("RmsMinPlayedColour"_L1);
-        layout.remove("RmsMinBorderColour"_L1);
-        layout.remove("CursorColour"_L1);
-        layout.remove("SeekingCursorColour"_L1);
-        layout.remove("PlayedThresholdColour"_L1);
-        return;
-    }
-
-    const auto colours    = config.colourOptions.value<Colours>();
-    const auto saveColour = [&layout, &colours](const QString& key, Colours::Type type) {
-        if(colours.hasOverride(type)) {
-            layout[key] = colours.waveColours.value(type).name(QColor::HexArgb);
-        }
-        else {
-            layout.remove(key);
-        }
-    };
-
-    saveColour(u"BgUnplayedColour"_s, Colours::Type::BgUnplayed);
-    saveColour(u"BgPlayedColour"_s, Colours::Type::BgPlayed);
-    saveColour(u"MaxUnplayedColour"_s, Colours::Type::MaxUnplayed);
-    saveColour(u"MaxPlayedColour"_s, Colours::Type::MaxPlayed);
-    saveColour(u"MaxBorderColour"_s, Colours::Type::MaxBorder);
-    saveColour(u"MinUnplayedColour"_s, Colours::Type::MinUnplayed);
-    saveColour(u"MinPlayedColour"_s, Colours::Type::MinPlayed);
-    saveColour(u"MinBorderColour"_s, Colours::Type::MinBorder);
-    saveColour(u"RmsMaxUnplayedColour"_s, Colours::Type::RmsMaxUnplayed);
-    saveColour(u"RmsMaxPlayedColour"_s, Colours::Type::RmsMaxPlayed);
-    saveColour(u"RmsMaxBorderColour"_s, Colours::Type::RmsMaxBorder);
-    saveColour(u"RmsMinUnplayedColour"_s, Colours::Type::RmsMinUnplayed);
-    saveColour(u"RmsMinPlayedColour"_s, Colours::Type::RmsMinPlayed);
-    saveColour(u"RmsMinBorderColour"_s, Colours::Type::RmsMinBorder);
-    saveColour(u"CursorColour"_s, Colours::Type::Cursor);
-    saveColour(u"SeekingCursorColour"_s, Colours::Type::SeekingCursor);
-    saveColour(u"PlayedThresholdColour"_s, Colours::Type::PlayedThreshold);
 }
 
 void WaveBarWidget::rescaleWaveform()

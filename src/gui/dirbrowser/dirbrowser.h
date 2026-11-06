@@ -115,6 +115,8 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
 
 Q_SIGNALS:
     void configChanged();
@@ -168,9 +170,6 @@ private:
     void updateControlState() const;
     void goUp();
     [[nodiscard]] QString tempPlaylistName() const;
-
-    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
 
     QStringList m_supportedExtensions;
     ActionManager* m_actionManager;

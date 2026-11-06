@@ -440,6 +440,39 @@ void PlaylistOrganiser::applyConfig(const ConfigData& config)
     m_model->setColours(playingTextColour, playingBackgroundColour);
 }
 
+PlaylistOrganiser::ConfigData PlaylistOrganiser::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+
+    if(layout.contains("DisplayScript"_L1)) {
+        config.displayScript = layout.value("DisplayScript"_L1).toString();
+    }
+    else if(layout.contains("LeftScript"_L1) || layout.contains("RightScript"_L1)) {
+        const QString left   = layout.contains("LeftScript"_L1)
+                                 ? layout.value("LeftScript"_L1).toString()
+                                 : m_settings->fileValue(OrganiserLeftScript, LegacyLeftScript).toString();
+        const QString right  = layout.contains("RightScript"_L1)
+                                 ? layout.value("RightScript"_L1).toString()
+                                 : m_settings->fileValue(OrganiserRightScript, LegacyRightScript).toString();
+        config.displayScript = combineAlignedScripts(left, right);
+    }
+
+    config.playingTextColour = normaliseColour(layout.value("PlayingTextColour"_L1).toString(config.playingTextColour));
+    config.playingBackgroundColour
+        = normaliseColour(layout.value("PlayingBackgroundColour"_L1).toString(config.playingBackgroundColour));
+
+    return config;
+}
+
+void PlaylistOrganiser::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
+{
+    layout.remove("LeftScript"_L1);
+    layout.remove("RightScript"_L1);
+    layout["DisplayScript"_L1]           = config.displayScript;
+    layout["PlayingTextColour"_L1]       = normaliseColour(config.playingTextColour);
+    layout["PlayingBackgroundColour"_L1] = normaliseColour(config.playingBackgroundColour);
+}
+
 void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
@@ -816,39 +849,6 @@ void PlaylistOrganiser::tracksToGroup(const std::vector<int>& trackIds, const QS
     if(auto* playlist = m_playlistInteractor->handler()->createNewPlaylist(name, tracks)) {
         m_model->playlistInserted(playlist, group, index);
     }
-}
-
-PlaylistOrganiser::ConfigData PlaylistOrganiser::configFromLayout(const QJsonObject& layout) const
-{
-    ConfigData config{defaultConfig()};
-
-    if(layout.contains("DisplayScript"_L1)) {
-        config.displayScript = layout.value("DisplayScript"_L1).toString();
-    }
-    else if(layout.contains("LeftScript"_L1) || layout.contains("RightScript"_L1)) {
-        const QString left   = layout.contains("LeftScript"_L1)
-                                 ? layout.value("LeftScript"_L1).toString()
-                                 : m_settings->fileValue(OrganiserLeftScript, LegacyLeftScript).toString();
-        const QString right  = layout.contains("RightScript"_L1)
-                                 ? layout.value("RightScript"_L1).toString()
-                                 : m_settings->fileValue(OrganiserRightScript, LegacyRightScript).toString();
-        config.displayScript = combineAlignedScripts(left, right);
-    }
-
-    config.playingTextColour = normaliseColour(layout.value("PlayingTextColour"_L1).toString(config.playingTextColour));
-    config.playingBackgroundColour
-        = normaliseColour(layout.value("PlayingBackgroundColour"_L1).toString(config.playingBackgroundColour));
-
-    return config;
-}
-
-void PlaylistOrganiser::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
-{
-    layout.remove("LeftScript"_L1);
-    layout.remove("RightScript"_L1);
-    layout["DisplayScript"_L1]           = config.displayScript;
-    layout["PlayingTextColour"_L1]       = normaliseColour(config.playingTextColour);
-    layout["PlayingBackgroundColour"_L1] = normaliseColour(config.playingBackgroundColour);
 }
 } // namespace Fooyin
 

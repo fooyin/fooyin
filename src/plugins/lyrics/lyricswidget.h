@@ -102,6 +102,8 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
 Q_SIGNALS:
     void configChanged();
@@ -117,9 +119,6 @@ private:
     void changeLyrics(const Lyrics& lyrics, const Track* sourceTrack = nullptr);
     void openEditor(const Lyrics& lyrics);
     void openSearchDialog();
-
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
     void playStateChanged(Player::PlayState state);
 

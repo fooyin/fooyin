@@ -22,7 +22,9 @@
 #include "fygui_export.h"
 
 #include <QDialog>
+#include <QJsonObject>
 
+#include <functional>
 #include <optional>
 
 class QGridLayout;
@@ -34,7 +36,7 @@ namespace Fooyin {
  * ConfigDialog provides a shared button layout for applying the current config to
  * the active widget instance, saving the current values as defaults for new
  * instances, and restoring the editor to either saved defaults or the original
- * factory defaults.
+ * factory defaults. Dialogs can also enable named presets using @fn addPresets().
  *
  * Subclasses are responsible for building their controls in @fn contentLayout()
  * and implementing the four actions below.
@@ -45,7 +47,7 @@ class FYGUI_EXPORT ConfigDialog : public QDialog
 
 public:
     explicit ConfigDialog(const QString& title, QWidget* parent = nullptr);
-    ~ConfigDialog() override = default;
+    ~ConfigDialog() override;
 
     /*!
      * Applies the dialog's current values to the target widget instance.
@@ -74,9 +76,18 @@ protected:
      */
     [[nodiscard]] QGridLayout* contentLayout() const;
 
+    /*!
+     * Adds named presets shared by all instances of @p widgetType.
+     * The callbacks serialise the editor's draft and restore it without applying it.
+     */
+    void addPresets(const QString& widgetType, std::function<QJsonObject()> save,
+                    std::function<void(const QJsonObject&)> restore);
+
 private:
     QGridLayout* m_contentLayout;
 };
+
+inline ConfigDialog::~ConfigDialog() = default;
 
 /*!
  * Convenience base for dialogs that edit a widget-specific config struct.
@@ -87,6 +98,9 @@ private:
  * - `const ConfigType& currentConfig() const`
  * - `void applyConfig(const ConfigType&)`
  * - `void saveDefaults(const ConfigType&) const`
+ *
+ * Widgets can also provide `layoutName()`, `saveConfigToLayout()` and
+ * `configFromLayout()` to enable named presets using their config serialisation.
  *
  * Subclasses only need to translate between UI controls and the config value by
  * implementing @fn config() and @fn setConfig(). Call @fn loadCurrentConfig()
@@ -101,7 +115,22 @@ public:
     WidgetConfigDialog(WidgetType* widget, const QString& title, QWidget* parent = nullptr)
         : ConfigDialog{title, parent}
         , m_widget{widget}
-    { }
+    {
+        if constexpr(requires(QJsonObject& layout, const ConfigType& config) {
+                         widget->layoutName();
+                         widget->saveConfigToLayout(config, layout);
+                         widget->configFromLayout(layout);
+                     }) {
+            addPresets(
+                widget->layoutName(),
+                [this]() {
+                    QJsonObject layout;
+                    m_widget->saveConfigToLayout(config(), layout);
+                    return layout;
+                },
+                [this](const QJsonObject& layout) { setConfig(m_widget->configFromLayout(layout)); });
+        }
+    }
 
     void apply() override
     {

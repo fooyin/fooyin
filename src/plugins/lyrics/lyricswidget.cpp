@@ -281,40 +281,6 @@ QString LyricsWidget::defaultNoLyricsScript()
     return u"[%1: %artist%$crlf(2)][%2: %album%$crlf(2)]%3: %title%"_s.arg(tr("Artist"), tr("Album"), tr("Title"));
 }
 
-void LyricsWidget::syncLyrics()
-{
-    const Track track = m_lyricsService->track();
-
-    const bool sameTrack = m_currentTrack.sameIdentityAs(track);
-    const auto& lyrics   = m_lyricsService->lyrics();
-    if(sameTrack && lyrics.isValid() && m_currentLyrics == lyrics) {
-        m_currentTrack  = track;
-        m_currentLyrics = lyrics;
-        m_model->setTrackDuration(track.duration());
-        return;
-    }
-
-    m_currentTrack     = track;
-    m_currentLyrics    = lyrics;
-    m_currentLineStart = -1;
-    m_currentLineEnd   = -1;
-
-    if(!sameTrack) {
-        if(m_scrollAnim) {
-            m_scrollAnim->stop();
-        }
-        m_lyricsView->verticalScrollBar()->setValue(0);
-    }
-
-    m_model->setLyrics(lyrics);
-    m_model->setTrackDuration(track.duration());
-    m_lyricsView->setDisplayString(lyrics.isValid() || !track.isValid() ? RichText{} : noLyricsDisplayText(track));
-
-    updateEdgeFadeState();
-    setCurrentTime(m_playerController->currentPosition());
-    updateViewportPadding();
-}
-
 QString LyricsWidget::name() const
 {
     return tr("Lyrics");
@@ -499,155 +465,6 @@ void LyricsWidget::applyConfig(const ConfigData& config)
     Q_EMIT configChanged();
 }
 
-void LyricsWidget::timerEvent(QTimerEvent* event)
-{
-    if(event->timerId() == m_scrollTimer.timerId()) {
-        m_scrollTimer.stop();
-        m_isUserScrolling = false;
-        resumeAutoScroll();
-    }
-    FyWidget::timerEvent(event);
-}
-
-void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
-{
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    const auto& candidates = m_lyricsService->candidates();
-    if(!candidates.empty()) {
-        auto* selectLyrics = new QMenu(tr("Select lyrics"), menu);
-        for(const auto& lyric : candidates) {
-            const auto actionTitle = u"%1 - %2 (%3)"_s.arg(lyric.metadata.artist, lyric.metadata.title, lyric.source);
-            auto* lyricAction      = new QAction(actionTitle, selectLyrics);
-            QObject::connect(lyricAction, &QAction::triggered, this, [this, lyric]() { changeLyrics(lyric); });
-            selectLyrics->addAction(lyricAction);
-        }
-        menu->addMenu(selectLyrics);
-    }
-
-    auto* searchLyrics = new QAction(tr("Auto-search for lyrics"), menu);
-    searchLyrics->setStatusTip(tr("Search for lyrics for the current track"));
-    QObject::connect(searchLyrics, &QAction::triggered, this, [this]() { m_lyricsService->search(); });
-    menu->addAction(searchLyrics);
-
-    auto* searchLyricsDialog = new QAction(tr("Search for lyrics…"), menu);
-    searchLyricsDialog->setStatusTip(tr("Open the lyrics search dialog for the current track"));
-    QObject::connect(searchLyricsDialog, &QAction::triggered, this, &LyricsWidget::openSearchDialog);
-    searchLyricsDialog->setEnabled(m_currentTrack.isValid() && !m_currentTrack.isInArchive());
-    menu->addAction(searchLyricsDialog);
-
-    auto* editLyrics = new QAction(tr("Edit lyrics"), menu);
-    editLyrics->setStatusTip(tr("Open editor for the current lyrics"));
-    QObject::connect(editLyrics, &QAction::triggered, this, [this]() { openEditor(m_currentLyrics); });
-    editLyrics->setEnabled(!m_currentTrack.isInArchive());
-    menu->addAction(editLyrics);
-
-    if(m_currentLyrics.isValid()) {
-        auto* saveLyrics = new QAction(tr("Save lyrics"), menu);
-        saveLyrics->setStatusTip(tr("Save lyrics using current settings"));
-        QObject::connect(saveLyrics, &QAction::triggered, this,
-                         [this]() { m_lyricsSaver->saveLyrics(m_currentLyrics, m_currentTrack); });
-        saveLyrics->setEnabled(!m_currentTrack.isInArchive());
-        menu->addAction(saveLyrics);
-    }
-
-    menu->addSeparator();
-
-    auto* showScrollbar = new QAction(tr("Show scrollbar"), menu);
-    showScrollbar->setCheckable(true);
-    showScrollbar->setChecked(m_config.showScrollbar);
-    QObject::connect(showScrollbar, &QAction::triggered, this, [this](const bool checked) {
-        auto config          = m_config;
-        config.showScrollbar = checked;
-        applyConfig(config);
-    });
-
-    auto* alignMenu      = new QMenu(tr("Text-align"), menu);
-    auto* alignmentGroup = new QActionGroup(menu);
-
-    auto* alignCenter = new QAction(tr("Align to centre"), alignmentGroup);
-    auto* alignLeft   = new QAction(tr("Align to left"), alignmentGroup);
-    auto* alignRight  = new QAction(tr("Align to right"), alignmentGroup);
-
-    alignCenter->setCheckable(true);
-    alignLeft->setCheckable(true);
-    alignRight->setCheckable(true);
-
-    const auto currentAlignment = static_cast<Qt::Alignment>(m_config.alignment);
-    alignCenter->setChecked(currentAlignment == Qt::AlignCenter);
-    alignLeft->setChecked(currentAlignment == Qt::AlignLeft);
-    alignRight->setChecked(currentAlignment == Qt::AlignRight);
-
-    auto changeAlignment = [this](Qt::Alignment alignment) {
-        auto config      = m_config;
-        config.alignment = static_cast<int>(alignment);
-        applyConfig(config);
-    };
-
-    QObject::connect(alignCenter, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignCenter); });
-    QObject::connect(alignLeft, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignLeft); });
-    QObject::connect(alignRight, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignRight); });
-
-    alignMenu->addAction(alignCenter);
-    alignMenu->addAction(alignLeft);
-    alignMenu->addAction(alignRight);
-
-    menu->addAction(showScrollbar);
-    menu->addMenu(alignMenu);
-    menu->addSeparator();
-
-    auto* lyricsSettings = new QAction(tr("Lyrics settings…"), menu);
-    QObject::connect(lyricsSettings, &QAction::triggered, this, [this]() {
-        if(m_settings && m_settings->settingsDialog()) {
-            m_settings->settingsDialog()->openAtPage(Constants::Page::LyricsSearching);
-        }
-    });
-    menu->addAction(lyricsSettings);
-
-    addConfigureAction(menu, false);
-
-    menu->popup(event->globalPos());
-}
-
-void LyricsWidget::openConfigDialog()
-{
-    showConfigDialog(new LyricsConfigDialog(this, m_styleProvider, this), Qt::NonModal);
-}
-
-void LyricsWidget::changeLyrics(const Lyrics& lyrics, const Track* sourceTrack)
-{
-    m_lyricsService->selectLyrics(sourceTrack ? *sourceTrack : m_currentTrack, lyrics);
-}
-
-void LyricsWidget::openEditor(const Lyrics& lyrics)
-{
-    auto* dlg
-        = new LyricsEditorDialog(m_currentTrack, lyrics, m_playerController, m_lyricsSaver, Utils::getMainWindow());
-    dlg->setAttribute(Qt::WA_DeleteOnClose);
-
-    QObject::connect(dlg, &QDialog::finished, dlg, &LyricsEditorDialog::saveState);
-    QObject::connect(dlg, &LyricsEditorDialog::lyricsEdited, this,
-                     [this, editingTrack = m_currentTrack](const Lyrics& updatedLyrics) {
-                         changeLyrics(updatedLyrics, &editingTrack);
-                     });
-
-    dlg->restoreState();
-    dlg->show();
-}
-
-void LyricsWidget::openSearchDialog()
-{
-    if(!m_currentTrack.isValid() || m_currentTrack.isInArchive()) {
-        return;
-    }
-
-    auto* dialog = new LyricsSearchDialog(m_currentTrack, m_lyricsService->finder()->networkManager(), m_lyricsSaver,
-                                          m_settings, Utils::getMainWindow());
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->open();
-}
-
 LyricsWidget::ConfigData LyricsWidget::configFromLayout(const QJsonObject& layout) const
 {
     ConfigData config{defaultConfig()};
@@ -769,6 +586,189 @@ void LyricsWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["LineFont"_L1]     = config.lineFont;
     layout["WordLineFont"_L1] = config.wordLineFont;
     layout["WordFont"_L1]     = config.wordFont;
+}
+
+void LyricsWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_scrollTimer.timerId()) {
+        m_scrollTimer.stop();
+        m_isUserScrolling = false;
+        resumeAutoScroll();
+    }
+    FyWidget::timerEvent(event);
+}
+
+void LyricsWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    const auto& candidates = m_lyricsService->candidates();
+    if(!candidates.empty()) {
+        auto* selectLyrics = new QMenu(tr("Select lyrics"), menu);
+        for(const auto& lyric : candidates) {
+            const auto actionTitle = u"%1 - %2 (%3)"_s.arg(lyric.metadata.artist, lyric.metadata.title, lyric.source);
+            auto* lyricAction      = new QAction(actionTitle, selectLyrics);
+            QObject::connect(lyricAction, &QAction::triggered, this, [this, lyric]() { changeLyrics(lyric); });
+            selectLyrics->addAction(lyricAction);
+        }
+        menu->addMenu(selectLyrics);
+    }
+
+    auto* searchLyrics = new QAction(tr("Auto-search for lyrics"), menu);
+    searchLyrics->setStatusTip(tr("Search for lyrics for the current track"));
+    QObject::connect(searchLyrics, &QAction::triggered, this, [this]() { m_lyricsService->search(); });
+    menu->addAction(searchLyrics);
+
+    auto* searchLyricsDialog = new QAction(tr("Search for lyrics…"), menu);
+    searchLyricsDialog->setStatusTip(tr("Open the lyrics search dialog for the current track"));
+    QObject::connect(searchLyricsDialog, &QAction::triggered, this, &LyricsWidget::openSearchDialog);
+    searchLyricsDialog->setEnabled(m_currentTrack.isValid() && !m_currentTrack.isInArchive());
+    menu->addAction(searchLyricsDialog);
+
+    auto* editLyrics = new QAction(tr("Edit lyrics"), menu);
+    editLyrics->setStatusTip(tr("Open editor for the current lyrics"));
+    QObject::connect(editLyrics, &QAction::triggered, this, [this]() { openEditor(m_currentLyrics); });
+    editLyrics->setEnabled(!m_currentTrack.isInArchive());
+    menu->addAction(editLyrics);
+
+    if(m_currentLyrics.isValid()) {
+        auto* saveLyrics = new QAction(tr("Save lyrics"), menu);
+        saveLyrics->setStatusTip(tr("Save lyrics using current settings"));
+        QObject::connect(saveLyrics, &QAction::triggered, this,
+                         [this]() { m_lyricsSaver->saveLyrics(m_currentLyrics, m_currentTrack); });
+        saveLyrics->setEnabled(!m_currentTrack.isInArchive());
+        menu->addAction(saveLyrics);
+    }
+
+    menu->addSeparator();
+
+    auto* showScrollbar = new QAction(tr("Show scrollbar"), menu);
+    showScrollbar->setCheckable(true);
+    showScrollbar->setChecked(m_config.showScrollbar);
+    QObject::connect(showScrollbar, &QAction::triggered, this, [this](const bool checked) {
+        auto config          = m_config;
+        config.showScrollbar = checked;
+        applyConfig(config);
+    });
+
+    auto* alignMenu      = new QMenu(tr("Text-align"), menu);
+    auto* alignmentGroup = new QActionGroup(menu);
+
+    auto* alignCenter = new QAction(tr("Align to centre"), alignmentGroup);
+    auto* alignLeft   = new QAction(tr("Align to left"), alignmentGroup);
+    auto* alignRight  = new QAction(tr("Align to right"), alignmentGroup);
+
+    alignCenter->setCheckable(true);
+    alignLeft->setCheckable(true);
+    alignRight->setCheckable(true);
+
+    const auto currentAlignment = static_cast<Qt::Alignment>(m_config.alignment);
+    alignCenter->setChecked(currentAlignment == Qt::AlignCenter);
+    alignLeft->setChecked(currentAlignment == Qt::AlignLeft);
+    alignRight->setChecked(currentAlignment == Qt::AlignRight);
+
+    auto changeAlignment = [this](Qt::Alignment alignment) {
+        auto config      = m_config;
+        config.alignment = static_cast<int>(alignment);
+        applyConfig(config);
+    };
+
+    QObject::connect(alignCenter, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignCenter); });
+    QObject::connect(alignLeft, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignLeft); });
+    QObject::connect(alignRight, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignRight); });
+
+    alignMenu->addAction(alignCenter);
+    alignMenu->addAction(alignLeft);
+    alignMenu->addAction(alignRight);
+
+    menu->addAction(showScrollbar);
+    menu->addMenu(alignMenu);
+    menu->addSeparator();
+
+    auto* lyricsSettings = new QAction(tr("Lyrics settings…"), menu);
+    QObject::connect(lyricsSettings, &QAction::triggered, this, [this]() {
+        if(m_settings && m_settings->settingsDialog()) {
+            m_settings->settingsDialog()->openAtPage(Constants::Page::LyricsSearching);
+        }
+    });
+    menu->addAction(lyricsSettings);
+
+    addConfigureAction(menu, false);
+
+    menu->popup(event->globalPos());
+}
+
+void LyricsWidget::openConfigDialog()
+{
+    showConfigDialog(new LyricsConfigDialog(this, m_styleProvider, this), Qt::NonModal);
+}
+
+void LyricsWidget::syncLyrics()
+{
+    const Track track = m_lyricsService->track();
+
+    const bool sameTrack = m_currentTrack.sameIdentityAs(track);
+    const auto& lyrics   = m_lyricsService->lyrics();
+    if(sameTrack && lyrics.isValid() && m_currentLyrics == lyrics) {
+        m_currentTrack  = track;
+        m_currentLyrics = lyrics;
+        m_model->setTrackDuration(track.duration());
+        return;
+    }
+
+    m_currentTrack     = track;
+    m_currentLyrics    = lyrics;
+    m_currentLineStart = -1;
+    m_currentLineEnd   = -1;
+
+    if(!sameTrack) {
+        if(m_scrollAnim) {
+            m_scrollAnim->stop();
+        }
+        m_lyricsView->verticalScrollBar()->setValue(0);
+    }
+
+    m_model->setLyrics(lyrics);
+    m_model->setTrackDuration(track.duration());
+    m_lyricsView->setDisplayString(lyrics.isValid() || !track.isValid() ? RichText{} : noLyricsDisplayText(track));
+
+    updateEdgeFadeState();
+    setCurrentTime(m_playerController->currentPosition());
+    updateViewportPadding();
+}
+
+void LyricsWidget::changeLyrics(const Lyrics& lyrics, const Track* sourceTrack)
+{
+    m_lyricsService->selectLyrics(sourceTrack ? *sourceTrack : m_currentTrack, lyrics);
+}
+
+void LyricsWidget::openEditor(const Lyrics& lyrics)
+{
+    auto* dlg
+        = new LyricsEditorDialog(m_currentTrack, lyrics, m_playerController, m_lyricsSaver, Utils::getMainWindow());
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+
+    QObject::connect(dlg, &QDialog::finished, dlg, &LyricsEditorDialog::saveState);
+    QObject::connect(dlg, &LyricsEditorDialog::lyricsEdited, this,
+                     [this, editingTrack = m_currentTrack](const Lyrics& updatedLyrics) {
+                         changeLyrics(updatedLyrics, &editingTrack);
+                     });
+
+    dlg->restoreState();
+    dlg->show();
+}
+
+void LyricsWidget::openSearchDialog()
+{
+    if(!m_currentTrack.isValid() || m_currentTrack.isInArchive()) {
+        return;
+    }
+
+    auto* dialog = new LyricsSearchDialog(m_currentTrack, m_lyricsService->finder()->networkManager(), m_lyricsSaver,
+                                          m_settings, Utils::getMainWindow());
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->open();
 }
 
 void LyricsWidget::playStateChanged(Player::PlayState state)

@@ -80,6 +80,7 @@ RadioGuideConfigDialog::RadioGuideConfigDialog(RadioGuideWidget* guideWidget, QW
     , m_moveUpAction{new QAction(tr("Move Up"), this)}
     , m_moveDownAction{new QAction(tr("Move Down"), this)}
     , m_countries{new QCheckBox(tr("Show Countries"), this)}
+    , m_showScrollbar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_startupEntry{new QComboBox(this)}
 {
     resize(600, 500);
@@ -107,6 +108,7 @@ RadioGuideConfigDialog::RadioGuideConfigDialog(RadioGuideWidget* guideWidget, QW
 
     int row{0};
     generalLayout->addWidget(m_countries, row++, 0, 1, 2);
+    generalLayout->addWidget(m_showScrollbar, row++, 0, 1, 2);
     generalLayout->addWidget(new QLabel(tr("Startup selection") + u":"_s, this), row, 0);
     generalLayout->addWidget(m_startupEntry, row++, 1);
     generalLayout->setColumnStretch(1, 1);
@@ -133,6 +135,7 @@ RadioGuideConfigDialog::RadioGuideConfigDialog(RadioGuideWidget* guideWidget, QW
     QObject::connect(m_moveUpAction, &QAction::triggered, this, [this]() { moveCurrentRow(-1); });
     QObject::connect(m_moveDownAction, &QAction::triggered, this, [this]() { moveCurrentRow(1); });
     QObject::connect(m_model, &QAbstractItemModel::rowsMoved, this, &RadioGuideConfigDialog::updateActionState);
+    QObject::connect(guideWidget, &RadioGuideWidget::configChanged, this, &RadioGuideConfigDialog::syncCurrentConfig);
 
     loadCurrentConfig();
     updateActionState();
@@ -142,6 +145,7 @@ RadioGuideWidget::ConfigData RadioGuideConfigDialog::config() const
 {
     return {.sections        = m_model->sections(),
             .showCountries   = m_countries->isChecked(),
+            .showScrollbar   = m_showScrollbar->isChecked(),
             .startupEntryKey = m_startupEntry->currentData().toString()};
 }
 
@@ -151,6 +155,7 @@ void RadioGuideConfigDialog::setConfig(const RadioGuideWidget::ConfigData& confi
 
     m_model->setSections(config.sections);
     m_countries->setChecked(config.showCountries);
+    m_showScrollbar->setChecked(config.showScrollbar);
     populateStartupEntries(config.startupEntryKey);
 
     if(expanded.empty()) {
@@ -161,6 +166,12 @@ void RadioGuideConfigDialog::setConfig(const RadioGuideWidget::ConfigData& confi
     }
 
     updateActionState();
+}
+
+void RadioGuideConfigDialog::mergeExternalConfig(const RadioGuideWidget::ConfigData& previous,
+                                                 const RadioGuideWidget::ConfigData& current)
+{
+    mergeExternalFields(previous, current, &RadioGuideWidget::ConfigData::showScrollbar);
 }
 
 void RadioGuideConfigDialog::updateActionState()

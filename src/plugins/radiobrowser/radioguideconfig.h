@@ -46,6 +46,7 @@ struct RadioGuideConfig
 {
     RadioGuideTagSections sections;
     bool showCountries{false};
+    bool showScrollbar{true};
     QString startupEntryKey;
 };
 

@@ -308,6 +308,47 @@ void ScriptDisplay::clearSavedDefaults() const
     m_settings->fileRemove(BackgroundKey);
 }
 
+ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+    config.background.loadLayout(layout);
+
+    config.script              = layout.value("Script"_L1).toString(config.script);
+    config.font                = layout.value("Font"_L1).toString(config.font);
+    config.bgColour            = normaliseColour(layout.value("BackgroundColour"_L1).toString(config.bgColour));
+    config.fgColour            = normaliseColour(layout.value("ForegroundColour"_L1).toString(config.fgColour));
+    config.linkColour          = normaliseColour(layout.value("LinkColour"_L1).toString(config.linkColour));
+    config.horizontalAlignment = layout.value("HorizontalAlignment"_L1).toInt(config.horizontalAlignment);
+    config.verticalAlignment   = layout.value("VerticalAlignment"_L1).toInt(config.verticalAlignment);
+    config.showScrollBar       = layout.value("ShowScrollbar"_L1).toBool(config.showScrollBar);
+
+    if(layout.contains("TrackPreference"_L1)) {
+        config.trackPreference = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
+    }
+    else if(layout.contains("ShowStoppedTrack"_L1)) {
+        config.trackPreference = layout.value("ShowStoppedTrack"_L1).toBool()
+                                   ? TrackDisplayPreference::PlayingTrack
+                                   : TrackDisplayPreference::PlayingTrackBlankWhenStopped;
+    }
+
+    return config;
+}
+
+void ScriptDisplay::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
+{
+    config.background.saveLayout(layout);
+    layout["Script"_L1]              = config.script;
+    layout["Font"_L1]                = config.font;
+    layout["BackgroundColour"_L1]    = normaliseColour(config.bgColour);
+    layout["ForegroundColour"_L1]    = normaliseColour(config.fgColour);
+    layout["LinkColour"_L1]          = normaliseColour(config.linkColour);
+    layout["HorizontalAlignment"_L1] = config.horizontalAlignment;
+    layout["VerticalAlignment"_L1]   = config.verticalAlignment;
+    layout["ShowScrollbar"_L1]       = config.showScrollBar;
+    layout["TrackPreference"_L1]     = static_cast<int>(config.trackPreference);
+    layout.remove("ShowStoppedTrack"_L1);
+}
+
 void ScriptDisplay::saveLayoutData(QJsonObject& layout)
 {
     saveConfigToLayout(m_config, layout);
@@ -410,47 +451,6 @@ void ScriptDisplay::paintEvent(QPaintEvent*)
 {
     QPainter painter{this};
     m_background->draw(painter);
-}
-
-ScriptDisplay::ConfigData ScriptDisplay::configFromLayout(const QJsonObject& layout) const
-{
-    ConfigData config{defaultConfig()};
-    config.background.loadLayout(layout);
-
-    config.script              = layout.value("Script"_L1).toString(config.script);
-    config.font                = layout.value("Font"_L1).toString(config.font);
-    config.bgColour            = normaliseColour(layout.value("BackgroundColour"_L1).toString(config.bgColour));
-    config.fgColour            = normaliseColour(layout.value("ForegroundColour"_L1).toString(config.fgColour));
-    config.linkColour          = normaliseColour(layout.value("LinkColour"_L1).toString(config.linkColour));
-    config.horizontalAlignment = layout.value("HorizontalAlignment"_L1).toInt(config.horizontalAlignment);
-    config.verticalAlignment   = layout.value("VerticalAlignment"_L1).toInt(config.verticalAlignment);
-    config.showScrollBar       = layout.value("ShowScrollbar"_L1).toBool(config.showScrollBar);
-
-    if(layout.contains("TrackPreference"_L1)) {
-        config.trackPreference = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
-    }
-    else if(layout.contains("ShowStoppedTrack"_L1)) {
-        config.trackPreference = layout.value("ShowStoppedTrack"_L1).toBool()
-                                   ? TrackDisplayPreference::PlayingTrack
-                                   : TrackDisplayPreference::PlayingTrackBlankWhenStopped;
-    }
-
-    return config;
-}
-
-void ScriptDisplay::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
-{
-    config.background.saveLayout(layout);
-    layout["Script"_L1]              = config.script;
-    layout["Font"_L1]                = config.font;
-    layout["BackgroundColour"_L1]    = normaliseColour(config.bgColour);
-    layout["ForegroundColour"_L1]    = normaliseColour(config.fgColour);
-    layout["LinkColour"_L1]          = normaliseColour(config.linkColour);
-    layout["HorizontalAlignment"_L1] = config.horizontalAlignment;
-    layout["VerticalAlignment"_L1]   = config.verticalAlignment;
-    layout["ShowScrollbar"_L1]       = config.showScrollBar;
-    layout["TrackPreference"_L1]     = static_cast<int>(config.trackPreference);
-    layout.remove("ShowStoppedTrack"_L1);
 }
 
 void ScriptDisplay::applyAppearance()

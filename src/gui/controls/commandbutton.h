@@ -64,6 +64,8 @@ public:
     void applyConfig(const ConfigData& config);
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
 
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
@@ -77,9 +79,6 @@ protected:
     void openConfigDialog() override;
 
 private:
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
-
     void rebindAction();
     void updateButton();
     void updateButtonStyle() const;

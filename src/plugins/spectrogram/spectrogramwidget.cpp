@@ -352,6 +352,95 @@ void SpectrogramWidget::applyConfig(const SpectrogramConfig& config)
     Q_EMIT configChanged();
 }
 
+SpectrogramConfig SpectrogramWidget::configFromLayout(const QJsonObject& layout) const
+{
+    SpectrogramConfig config{defaultConfig()};
+
+    config.trackPreference = layout.value("TrackPreference"_L1).toInt(config.trackPreference);
+
+    config.channelMode
+        = static_cast<ChannelMode>(layout.value("ChannelMode"_L1).toInt(static_cast<int>(config.channelMode)));
+    config.presentationMode = static_cast<PresentationMode>(
+        layout.value("PresentationMode"_L1).toInt(static_cast<int>(config.presentationMode)));
+
+    config.logFrequency       = layout.value("LogFrequency"_L1).toBool(config.logFrequency);
+    config.clearOnTrackChange = layout.value("ClearOnTrackChange"_L1).toBool(config.clearOnTrackChange);
+    config.showTopLabels      = layout.value("ShowTopLabels"_L1).toBool(config.showTopLabels);
+    config.showBottomLabels   = layout.value("ShowBottomLabels"_L1).toBool(config.showBottomLabels);
+    config.showLeftLabels     = layout.value("ShowLeftLabels"_L1).toBool(config.showLeftLabels);
+    config.showRightLabels    = layout.value("ShowRightLabels"_L1).toBool(config.showRightLabels);
+    config.showCursor         = layout.value("ShowCursor"_L1).toBool(config.showCursor);
+    config.cursorWidth        = layout.value("CursorWidth"_L1).toInt(config.cursorWidth);
+
+    if(layout.contains("CursorColour"_L1)) {
+        config.cursorColour = QColor{layout.value("CursorColour"_L1).toString()};
+    }
+    if(layout.contains("SeekingCursorColour"_L1)) {
+        config.seekingCursorColour = QColor{layout.value("SeekingCursorColour"_L1).toString()};
+    }
+    if(layout.contains("PlayedOverlayColour"_L1)) {
+        config.playedOverlayColour = QColor{layout.value("PlayedOverlayColour"_L1).toString()};
+    }
+    if(layout.contains("UnplayedOverlayColour"_L1)) {
+        config.unplayedOverlayColour = QColor{layout.value("UnplayedOverlayColour"_L1).toString()};
+    }
+
+    config.channelSpacing = layout.value("ChannelSpacing"_L1).toInt(config.channelSpacing);
+    config.fftSize        = layout.value("FftSize"_L1).toInt(config.fftSize);
+    config.timeColumns    = layout.value("TimeColumns"_L1).toInt(config.timeColumns);
+    config.minDb          = layout.value("MinDb"_L1).toInt(config.minDb);
+    config.maxDb          = layout.value("MaxDb"_L1).toInt(config.maxDb);
+    config.windowFunction = layout.value("WindowFunction"_L1).toInt(config.windowFunction);
+
+    if(layout.contains("Colours"_L1) && layout.value("Colours"_L1).isArray()) {
+        QStringList values;
+        const auto colours = layout.value("Colours"_L1).toArray();
+        for(const auto& value : colours) {
+            if(value.isString()) {
+                values.push_back(value.toString());
+            }
+        }
+        config.colours = deserialiseColours(values, config.colours);
+    }
+
+    return config;
+}
+
+void SpectrogramWidget::saveConfigToLayout(const SpectrogramConfig& config, QJsonObject& layout) const
+{
+    layout["TrackPreference"_L1]    = config.trackPreference;
+    layout["ChannelMode"_L1]        = static_cast<int>(config.channelMode);
+    layout["PresentationMode"_L1]   = static_cast<int>(config.presentationMode);
+    layout["LogFrequency"_L1]       = config.logFrequency;
+    layout["ClearOnTrackChange"_L1] = config.clearOnTrackChange;
+    layout["ShowTopLabels"_L1]      = config.showTopLabels;
+    layout["ShowBottomLabels"_L1]   = config.showBottomLabels;
+    layout["ShowLeftLabels"_L1]     = config.showLeftLabels;
+    layout["ShowRightLabels"_L1]    = config.showRightLabels;
+    layout["ShowCursor"_L1]         = config.showCursor;
+    layout["CursorWidth"_L1]        = config.cursorWidth;
+    layout["CursorColour"_L1] = config.cursorColour.isValid() ? config.cursorColour.name(QColor::HexArgb) : QString{};
+    layout["SeekingCursorColour"_L1]
+        = config.seekingCursorColour.isValid() ? config.seekingCursorColour.name(QColor::HexArgb) : QString{};
+    layout["PlayedOverlayColour"_L1]
+        = config.playedOverlayColour.isValid() ? config.playedOverlayColour.name(QColor::HexArgb) : QString{};
+    layout["UnplayedOverlayColour"_L1]
+        = config.unplayedOverlayColour.isValid() ? config.unplayedOverlayColour.name(QColor::HexArgb) : QString{};
+    layout["ChannelSpacing"_L1] = config.channelSpacing;
+    layout["FftSize"_L1]        = config.fftSize;
+    layout["TimeColumns"_L1]    = config.timeColumns;
+    layout["MinDb"_L1]          = config.minDb;
+    layout["MaxDb"_L1]          = config.maxDb;
+    layout["WindowFunction"_L1] = config.windowFunction;
+
+    QJsonArray colours;
+    const auto configColours = serialiseColours(config.colours);
+    for(const QString& colour : configColours) {
+        colours.push_back(colour);
+    }
+    layout["Colours"_L1] = colours;
+}
+
 QSize SpectrogramWidget::minimumSizeHint() const
 {
     return {120, 40};
@@ -471,95 +560,6 @@ void SpectrogramWidget::contextMenuEvent(QContextMenuEvent* event)
 void SpectrogramWidget::openConfigDialog()
 {
     showConfigDialog(new SpectrogramConfigDialog(this, this), Qt::NonModal);
-}
-
-SpectrogramConfig SpectrogramWidget::configFromLayout(const QJsonObject& layout) const
-{
-    SpectrogramConfig config{defaultConfig()};
-
-    config.trackPreference = layout.value("TrackPreference"_L1).toInt(config.trackPreference);
-
-    config.channelMode
-        = static_cast<ChannelMode>(layout.value("ChannelMode"_L1).toInt(static_cast<int>(config.channelMode)));
-    config.presentationMode = static_cast<PresentationMode>(
-        layout.value("PresentationMode"_L1).toInt(static_cast<int>(config.presentationMode)));
-
-    config.logFrequency       = layout.value("LogFrequency"_L1).toBool(config.logFrequency);
-    config.clearOnTrackChange = layout.value("ClearOnTrackChange"_L1).toBool(config.clearOnTrackChange);
-    config.showTopLabels      = layout.value("ShowTopLabels"_L1).toBool(config.showTopLabels);
-    config.showBottomLabels   = layout.value("ShowBottomLabels"_L1).toBool(config.showBottomLabels);
-    config.showLeftLabels     = layout.value("ShowLeftLabels"_L1).toBool(config.showLeftLabels);
-    config.showRightLabels    = layout.value("ShowRightLabels"_L1).toBool(config.showRightLabels);
-    config.showCursor         = layout.value("ShowCursor"_L1).toBool(config.showCursor);
-    config.cursorWidth        = layout.value("CursorWidth"_L1).toInt(config.cursorWidth);
-
-    if(layout.contains("CursorColour"_L1)) {
-        config.cursorColour = QColor{layout.value("CursorColour"_L1).toString()};
-    }
-    if(layout.contains("SeekingCursorColour"_L1)) {
-        config.seekingCursorColour = QColor{layout.value("SeekingCursorColour"_L1).toString()};
-    }
-    if(layout.contains("PlayedOverlayColour"_L1)) {
-        config.playedOverlayColour = QColor{layout.value("PlayedOverlayColour"_L1).toString()};
-    }
-    if(layout.contains("UnplayedOverlayColour"_L1)) {
-        config.unplayedOverlayColour = QColor{layout.value("UnplayedOverlayColour"_L1).toString()};
-    }
-
-    config.channelSpacing = layout.value("ChannelSpacing"_L1).toInt(config.channelSpacing);
-    config.fftSize        = layout.value("FftSize"_L1).toInt(config.fftSize);
-    config.timeColumns    = layout.value("TimeColumns"_L1).toInt(config.timeColumns);
-    config.minDb          = layout.value("MinDb"_L1).toInt(config.minDb);
-    config.maxDb          = layout.value("MaxDb"_L1).toInt(config.maxDb);
-    config.windowFunction = layout.value("WindowFunction"_L1).toInt(config.windowFunction);
-
-    if(layout.contains("Colours"_L1) && layout.value("Colours"_L1).isArray()) {
-        QStringList values;
-        const auto colours = layout.value("Colours"_L1).toArray();
-        for(const auto& value : colours) {
-            if(value.isString()) {
-                values.push_back(value.toString());
-            }
-        }
-        config.colours = deserialiseColours(values, config.colours);
-    }
-
-    return config;
-}
-
-void SpectrogramWidget::saveConfigToLayout(const SpectrogramConfig& config, QJsonObject& layout) const
-{
-    layout["TrackPreference"_L1]    = config.trackPreference;
-    layout["ChannelMode"_L1]        = static_cast<int>(config.channelMode);
-    layout["PresentationMode"_L1]   = static_cast<int>(config.presentationMode);
-    layout["LogFrequency"_L1]       = config.logFrequency;
-    layout["ClearOnTrackChange"_L1] = config.clearOnTrackChange;
-    layout["ShowTopLabels"_L1]      = config.showTopLabels;
-    layout["ShowBottomLabels"_L1]   = config.showBottomLabels;
-    layout["ShowLeftLabels"_L1]     = config.showLeftLabels;
-    layout["ShowRightLabels"_L1]    = config.showRightLabels;
-    layout["ShowCursor"_L1]         = config.showCursor;
-    layout["CursorWidth"_L1]        = config.cursorWidth;
-    layout["CursorColour"_L1] = config.cursorColour.isValid() ? config.cursorColour.name(QColor::HexArgb) : QString{};
-    layout["SeekingCursorColour"_L1]
-        = config.seekingCursorColour.isValid() ? config.seekingCursorColour.name(QColor::HexArgb) : QString{};
-    layout["PlayedOverlayColour"_L1]
-        = config.playedOverlayColour.isValid() ? config.playedOverlayColour.name(QColor::HexArgb) : QString{};
-    layout["UnplayedOverlayColour"_L1]
-        = config.unplayedOverlayColour.isValid() ? config.unplayedOverlayColour.name(QColor::HexArgb) : QString{};
-    layout["ChannelSpacing"_L1] = config.channelSpacing;
-    layout["FftSize"_L1]        = config.fftSize;
-    layout["TimeColumns"_L1]    = config.timeColumns;
-    layout["MinDb"_L1]          = config.minDb;
-    layout["MaxDb"_L1]          = config.maxDb;
-    layout["WindowFunction"_L1] = config.windowFunction;
-
-    QJsonArray colours;
-    const auto configColours = serialiseColours(config.colours);
-    for(const QString& colour : configColours) {
-        colours.push_back(colour);
-    }
-    layout["Colours"_L1] = colours;
 }
 
 } // namespace Fooyin::Spectrogram

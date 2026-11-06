@@ -40,6 +40,8 @@ public:
 protected:
     [[nodiscard]] RadioGuideWidget::ConfigData config() const override;
     void setConfig(const RadioGuideWidget::ConfigData& config) override;
+    void mergeExternalConfig(const RadioGuideWidget::ConfigData& previous,
+                             const RadioGuideWidget::ConfigData& current) override;
 
 private:
     void updateActionState();
@@ -64,6 +66,7 @@ private:
     QAction* m_moveDownAction;
 
     QCheckBox* m_countries;
+    QCheckBox* m_showScrollbar;
     QComboBox* m_startupEntry;
 };
 } // namespace Fooyin::RadioBrowser

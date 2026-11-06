@@ -91,6 +91,8 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
 
     [[nodiscard]] int globalNumSamples() const;
     bool setGlobalNumSamples(int samples) const;
@@ -109,9 +111,6 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    void saveConfigToLayout(const ConfigData& config, QJsonObject& layout) const;
-
     void rescaleWaveform();
     void refreshTrack(bool update = false, bool force = false);
     [[nodiscard]] Track preferredTrack() const;

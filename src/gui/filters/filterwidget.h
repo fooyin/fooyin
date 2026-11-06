@@ -193,6 +193,9 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
+
     void openConfigDialog() override;
 
     void addFilterHeaderMenu(QMenu* menu, const QPoint& pos, bool includeWidgetActions = true);
@@ -249,9 +252,6 @@ private:
     [[nodiscard]] bool hasColumn(int id) const;
     void columnChanged(const FilterColumn& changedColumn);
     void columnRemoved(int id);
-
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
 
     ActionManager* m_actionManager;
     FilterColumnRegistry* m_columnRegistry;

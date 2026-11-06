@@ -164,7 +164,6 @@ RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsM
     , m_config{defaultConfig()}
     , m_savedSearchCount{0}
     , m_savedSearchesLoaded{false}
-    , m_showScrollbar{true}
     , m_showCountries{m_config.showCountries}
 {
     setObjectName(RadioGuideWidget::name());
@@ -183,6 +182,7 @@ RadioGuideWidget::RadioGuideWidget(RadioBrowserController* controller, SettingsM
     m_treeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
     m_treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_treeView->setAlternatingRowColors(false);
+    setScrollbarVisible(m_config.showScrollbar);
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});
@@ -243,7 +243,7 @@ void RadioGuideWidget::saveLayoutData(QJsonObject& layout)
     saveState();
     layout["CollapsedSections"_L1]
         = QJsonArray::fromStringList(Utils::saveCollapsedExpansionState(m_treeView, sectionExpansionKey));
-    layout["ShowScrollbar"_L1] = m_showScrollbar;
+    layout["ShowScrollbar"_L1] = m_config.showScrollbar;
 }
 
 void RadioGuideWidget::loadLayoutData(const QJsonObject& layout)
@@ -308,6 +308,49 @@ void RadioGuideWidget::applyConfig(const ConfigData& config)
     reloadGuideConfig(config);
 }
 
+RadioGuideWidget::ConfigData RadioGuideWidget::configFromLayout(const QJsonObject& layout) const
+{
+    auto config{factoryConfig()};
+
+    if(layout.value("Sections"_L1).isArray()) {
+        config.sections.clear();
+
+        for(const auto& sectionValue : layout.value("Sections"_L1).toArray()) {
+            const auto sectionData = sectionValue.toObject();
+            RadioGuideTagSection section{.name = sectionData.value("Name"_L1).toString(), .tags = {}};
+
+            for(const auto& tagValue : sectionData.value("Tags"_L1).toArray()) {
+                const auto tag = tagValue.toObject();
+                section.tags.push_back(
+                    {.name = tag.value("Name"_L1).toString(), .tag = tag.value("Tag"_L1).toString()});
+            }
+            config.sections.push_back(std::move(section));
+        }
+    }
+
+    config.showCountries   = layout.value("ShowCountries"_L1).toBool(config.showCountries);
+    config.showScrollbar   = layout.value("ShowScrollbar"_L1).toBool(config.showScrollbar);
+    config.startupEntryKey = layout.value("StartupEntry"_L1).toString(config.startupEntryKey);
+    return config;
+}
+
+void RadioGuideWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
+{
+    QJsonArray sections;
+    for(const auto& section : config.sections) {
+        QJsonArray tags;
+        for(const auto& tag : section.tags) {
+            tags.append(QJsonObject{{"Name"_L1, tag.name}, {"Tag"_L1, tag.tag}});
+        }
+        sections.append(QJsonObject{{"Name"_L1, section.name}, {"Tags"_L1, tags}});
+    }
+    layout["Sections"_L1] = sections;
+
+    layout["ShowCountries"_L1] = config.showCountries;
+    layout["ShowScrollbar"_L1] = config.showScrollbar;
+    layout["StartupEntry"_L1]  = config.startupEntryKey;
+}
+
 void RadioGuideWidget::openConfigDialog()
 {
     showConfigDialog(new RadioGuideConfigDialog(this, this), Qt::NonModal);
@@ -323,7 +366,8 @@ void RadioGuideWidget::reloadGuideConfig(const RadioGuideConfig& config)
 {
     const QString currentEntry = discoverEntryKey(m_treeView->currentIndex().siblingAtColumn(0));
 
-    m_config        = config;
+    m_config = config;
+    setScrollbarVisible(config.showScrollbar);
     m_showCountries = config.showCountries;
     m_model->setTagPresets(config.sections, config.showCountries);
 
@@ -617,31 +661,17 @@ void RadioGuideWidget::showContextMenu(const QPoint& pos)
     auto* collapseAllAction = menu->addAction(tr("Collapse all"));
     QObject::connect(collapseAllAction, &QAction::triggered, m_treeView, &QTreeView::collapseAll);
 
-    menu->addSeparator();
-
-    addDisplayMenu(menu);
     addConfigureAction(menu);
-
     menu->popup(m_treeView->viewport()->mapToGlobal(pos));
-}
-
-void RadioGuideWidget::addDisplayMenu(QMenu* menu)
-{
-    auto* displayMenu = new QMenu(tr("Display"), menu);
-
-    auto* showScrollbar = new QAction(tr("Show scrollbar"), displayMenu);
-    showScrollbar->setCheckable(true);
-    showScrollbar->setChecked(m_showScrollbar);
-    QObject::connect(showScrollbar, &QAction::triggered, this, &RadioGuideWidget::setScrollbarVisible);
-
-    displayMenu->addAction(showScrollbar);
-    menu->addMenu(displayMenu);
 }
 
 void RadioGuideWidget::setScrollbarVisible(const bool visible)
 {
-    m_showScrollbar = visible;
-    m_treeView->setVerticalScrollBarPolicy(m_showScrollbar ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    m_treeView->setVerticalScrollBarPolicy(visible ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    if(m_config.showScrollbar != visible) {
+        m_config.showScrollbar = visible;
+        Q_EMIT configChanged();
+    }
 }
 
 void RadioGuideWidget::refreshThemeIcons()

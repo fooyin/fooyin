@@ -72,10 +72,13 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
+
     void searchEvent(const SearchRequest& request) override;
+
     void browseSavedStations();
     void showFilterBar();
     void hideFilterBar();
@@ -116,6 +119,7 @@ public:
         int middleClickAction{0};
         bool playbackOnSend{true};
         bool hideBroken{true};
+        bool showFilterBar{true};
 
         bool operator==(const ConfigData&) const = default;
     };
@@ -126,7 +130,11 @@ public:
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
+
     [[nodiscard]] bool sendClicks() const;
+    [[nodiscard]] bool filterBarToggleAllowed() const;
     void setSendClicks(bool enabled);
     [[nodiscard]] bool separateSavedStationsViewStateAllowed() const;
     void setSeparateSavedStationsViewStateAllowed(bool allowed);
@@ -175,7 +183,7 @@ private:
     [[nodiscard]] QString defaultSearchName(const RadioSearchRequest& request) const;
 
     void resetFilters();
-    void setFilterBarVisible(bool visible);
+    void setFilterBarVisible(bool visible, bool notify = true);
 
     void refreshThemeIcons();
     void scheduleVisibleIconRequest();

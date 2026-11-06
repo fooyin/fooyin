@@ -67,6 +67,9 @@ public:
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
 
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
+
 Q_SIGNALS:
     void newAutoPlaylistRequested(std::function<void(Fooyin::Playlist*)> onFinished = {});
     void editAutoPlaylistRequested(const Fooyin::UId& playlistId);
@@ -90,8 +93,6 @@ private:
     void importPlaylists(const QList<QUrl>& urls, const QString& group, int index);
     void tracksToPlaylist(const std::vector<int>& trackIds, const UId& id);
     void tracksToGroup(const std::vector<int>& trackIds, const QString& group, int index);
-    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
-    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
 
     ActionManager* m_actionManager;
     SettingsManager* m_settings;

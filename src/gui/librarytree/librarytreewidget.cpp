@@ -677,26 +677,6 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
     Q_EMIT configChanged();
 }
 
-void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
-{
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-    Utils::forwardMenuStatusTips(menu);
-
-    populateContextMenu(menu);
-    menu->popup(event->globalPos());
-}
-
-void LibraryTreeWidget::keyPressEvent(QKeyEvent* event)
-{
-    const auto key = event->key();
-    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        handleDoubleClick(m_libraryTree->currentIndex());
-    }
-
-    FyWidget::keyPressEvent(event);
-}
-
 LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObject& layout) const
 {
     ConfigData config{defaultConfig()};
@@ -779,6 +759,26 @@ void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject
     QJsonObject background;
     config.background.saveLayout(background);
     layout["Background"_L1] = background;
+}
+
+void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    Utils::forwardMenuStatusTips(menu);
+
+    populateContextMenu(menu);
+    menu->popup(event->globalPos());
+}
+
+void LibraryTreeWidget::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+        handleDoubleClick(m_libraryTree->currentIndex());
+    }
+
+    FyWidget::keyPressEvent(event);
 }
 
 void LibraryTreeWidget::openConfigDialog()

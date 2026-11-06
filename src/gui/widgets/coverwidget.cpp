@@ -248,161 +248,6 @@ void CoverWidget::clearSavedDefaults() const
     m_settings->fileRemove(CoverWidgetMiddleClickKey);
 }
 
-QPixmap CoverWidget::effectiveCover(const QPixmap& cover) const
-{
-    return cover.isNull() ? m_noCover : cover;
-}
-
-bool CoverWidget::coversMatch(const QPixmap& lhs, const QPixmap& rhs) const
-{
-    const QPixmap effectiveLhs = effectiveCover(lhs);
-    const QPixmap effectiveRhs = effectiveCover(rhs);
-
-    return PixmapFadeController::pixmapsMatch(effectiveLhs, effectiveRhs);
-}
-
-QPixmap CoverWidget::scaledCover(const QPixmap& cover) const
-{
-    const auto aspectRatio = m_keepAspectRatio ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
-    const double dpr       = devicePixelRatioF();
-    const QSize scaledSize = size() * dpr;
-
-    QPixmap scaled = effectiveCover(cover).scaled(scaledSize, aspectRatio, Qt::SmoothTransformation);
-    scaled.setDevicePixelRatio(dpr);
-
-    return scaled;
-}
-
-Track CoverWidget::displayTrack() const
-{
-    const auto source = preferredTrackSource(m_config.trackPreference, m_playerController->playState(),
-                                             m_playerController->playbackStarted());
-    if(source == PreferredTrackSource::None) {
-        return {};
-    }
-
-    const auto playingTrack = [this]() {
-        if(const Track track = m_playerController->currentTrack(); track.isValid()) {
-            return track;
-        }
-        if(const PlaylistTrack track = m_playlistHandler->currentTrack(); track.isValid()) {
-            return track.track;
-        }
-        return Track{};
-    };
-
-    const auto selectedTrack = [this]() {
-        return m_trackSelection->hasDisplayTracks() ? m_trackSelection->displayTrack() : Track{};
-    };
-
-    if(source == PreferredTrackSource::Selected) {
-        if(const Track track = selectedTrack(); track.isValid()) {
-            return track;
-        }
-        return playingTrack();
-    }
-
-    if(const Track track = playingTrack(); track.isValid()) {
-        return track;
-    }
-
-    return selectedTrack();
-}
-
-bool CoverWidget::sameDisplayTrack(const Track& lhs, const Track& rhs)
-{
-    if(!lhs.isValid() || !rhs.isValid()) {
-        return lhs.isValid() == rhs.isValid();
-    }
-
-    return lhs.filepath() == rhs.filepath() && lhs.subsong() == rhs.subsong() && lhs.offset() == rhs.offset();
-}
-
-void CoverWidget::rescaleCover()
-{
-    m_scaledCover = scaledCover(m_fadeController->pixmap());
-
-    if(!m_fadeController->previousPixmap().isNull()) {
-        m_previousScaledCover = scaledCover(m_fadeController->previousPixmap());
-    }
-    else {
-        m_previousScaledCover = {};
-    }
-
-    update();
-}
-
-void CoverWidget::setFadeCoverChanges(const bool enabled)
-{
-    m_fadeCoverChanges = enabled;
-    m_fadeController->setEnabled(enabled);
-}
-
-void CoverWidget::stopCoverFade()
-{
-    m_fadeController->stop();
-}
-
-void CoverWidget::setCoverPixmap(const QPixmap& cover)
-{
-    if(coversMatch(m_cover, cover)) {
-        m_cover = cover;
-        if(m_fadeController->progress() < 1.0
-           && PixmapFadeController::pixmapsMatch(m_fadeController->pixmap(), effectiveCover(cover))) {
-            return;
-        }
-        m_fadeController->setPixmap(effectiveCover(cover));
-        rescaleCover();
-        return;
-    }
-
-    m_cover = cover;
-    m_fadeController->setPixmap(effectiveCover(cover));
-    rescaleCover();
-}
-
-void CoverWidget::reloadCover()
-{
-    const int requestId = ++m_coverRequestId;
-    m_track             = displayTrack();
-
-    if(!m_track.isValid()) {
-        setCoverPixmap({});
-        return;
-    }
-
-    if(m_cover.isNull()) {
-        setCoverPixmap({});
-    }
-
-    m_coverProvider->trackCoverFull(m_track, m_coverType).then(this, [this, requestId](const QPixmap& cover) {
-        if(requestId != m_coverRequestId) {
-            return;
-        }
-
-        setCoverPixmap(cover);
-    });
-}
-
-void CoverWidget::handleSelectionChanged()
-{
-    if(sameDisplayTrack(displayTrack(), m_track)) {
-        return;
-    }
-
-    reloadCover();
-}
-
-QString CoverWidget::name() const
-{
-    return tr("Artwork Panel");
-}
-
-QString CoverWidget::layoutName() const
-{
-    return u"ArtworkPanel"_s;
-}
-
 CoverWidget::ConfigData CoverWidget::configFromLayout(const QJsonObject& layout) const
 {
     ConfigData config{defaultConfig()};
@@ -445,6 +290,53 @@ void CoverWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layo
     layout["FadeDurationMs"_L1]    = config.fadeDurationMs;
     layout["DoubleClickAction"_L1] = static_cast<int>(config.doubleClickAction);
     layout["MiddleClickAction"_L1] = static_cast<int>(config.middleClickAction);
+}
+
+void CoverWidget::rescaleCover()
+{
+    m_scaledCover = scaledCover(m_fadeController->pixmap());
+
+    if(!m_fadeController->previousPixmap().isNull()) {
+        m_previousScaledCover = scaledCover(m_fadeController->previousPixmap());
+    }
+    else {
+        m_previousScaledCover = {};
+    }
+
+    update();
+}
+
+void CoverWidget::reloadCover()
+{
+    const int requestId = ++m_coverRequestId;
+    m_track             = displayTrack();
+
+    if(!m_track.isValid()) {
+        setCoverPixmap({});
+        return;
+    }
+
+    if(m_cover.isNull()) {
+        setCoverPixmap({});
+    }
+
+    m_coverProvider->trackCoverFull(m_track, m_coverType).then(this, [this, requestId](const QPixmap& cover) {
+        if(requestId != m_coverRequestId) {
+            return;
+        }
+
+        setCoverPixmap(cover);
+    });
+}
+
+QString CoverWidget::name() const
+{
+    return tr("Artwork Panel");
+}
+
+QString CoverWidget::layoutName() const
+{
+    return u"ArtworkPanel"_s;
 }
 
 void CoverWidget::saveLayoutData(QJsonObject& layout)
@@ -632,17 +524,6 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 
-void CoverWidget::mouseDoubleClickEvent(QMouseEvent* event)
-{
-    if(event->button() == Qt::LeftButton) {
-        performAction(m_config.doubleClickAction);
-        event->accept();
-        return;
-    }
-
-    FyWidget::mouseDoubleClickEvent(event);
-}
-
 void CoverWidget::mousePressEvent(QMouseEvent* event)
 {
     if(event->button() == Qt::MiddleButton) {
@@ -652,6 +533,17 @@ void CoverWidget::mousePressEvent(QMouseEvent* event)
     }
 
     FyWidget::mousePressEvent(event);
+}
+
+void CoverWidget::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::LeftButton) {
+        performAction(m_config.doubleClickAction);
+        event->accept();
+        return;
+    }
+
+    FyWidget::mouseDoubleClickEvent(event);
 }
 
 void CoverWidget::timerEvent(QTimerEvent* event)
@@ -681,6 +573,114 @@ void CoverWidget::paintEvent(QPaintEvent* /*event*/)
 void CoverWidget::openConfigDialog()
 {
     showConfigDialog(new CoverWidgetConfigDialog(this, this), Qt::NonModal);
+}
+
+bool CoverWidget::coversMatch(const QPixmap& lhs, const QPixmap& rhs) const
+{
+    const QPixmap effectiveLhs = effectiveCover(lhs);
+    const QPixmap effectiveRhs = effectiveCover(rhs);
+
+    return PixmapFadeController::pixmapsMatch(effectiveLhs, effectiveRhs);
+}
+
+QPixmap CoverWidget::effectiveCover(const QPixmap& cover) const
+{
+    return cover.isNull() ? m_noCover : cover;
+}
+
+QPixmap CoverWidget::scaledCover(const QPixmap& cover) const
+{
+    const auto aspectRatio = m_keepAspectRatio ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
+    const double dpr       = devicePixelRatioF();
+    const QSize scaledSize = size() * dpr;
+
+    QPixmap scaled = effectiveCover(cover).scaled(scaledSize, aspectRatio, Qt::SmoothTransformation);
+    scaled.setDevicePixelRatio(dpr);
+
+    return scaled;
+}
+
+Track CoverWidget::displayTrack() const
+{
+    const auto source = preferredTrackSource(m_config.trackPreference, m_playerController->playState(),
+                                             m_playerController->playbackStarted());
+    if(source == PreferredTrackSource::None) {
+        return {};
+    }
+
+    const auto playingTrack = [this]() {
+        if(const Track track = m_playerController->currentTrack(); track.isValid()) {
+            return track;
+        }
+        if(const PlaylistTrack track = m_playlistHandler->currentTrack(); track.isValid()) {
+            return track.track;
+        }
+        return Track{};
+    };
+
+    const auto selectedTrack = [this]() {
+        return m_trackSelection->hasDisplayTracks() ? m_trackSelection->displayTrack() : Track{};
+    };
+
+    if(source == PreferredTrackSource::Selected) {
+        if(const Track track = selectedTrack(); track.isValid()) {
+            return track;
+        }
+        return playingTrack();
+    }
+
+    if(const Track track = playingTrack(); track.isValid()) {
+        return track;
+    }
+
+    return selectedTrack();
+}
+
+bool CoverWidget::sameDisplayTrack(const Track& lhs, const Track& rhs)
+{
+    if(!lhs.isValid() || !rhs.isValid()) {
+        return lhs.isValid() == rhs.isValid();
+    }
+
+    return lhs.filepath() == rhs.filepath() && lhs.subsong() == rhs.subsong() && lhs.offset() == rhs.offset();
+}
+
+void CoverWidget::setFadeCoverChanges(const bool enabled)
+{
+    m_fadeCoverChanges = enabled;
+    m_fadeController->setEnabled(enabled);
+}
+
+void CoverWidget::stopCoverFade()
+{
+    m_fadeController->stop();
+}
+
+void CoverWidget::setCoverPixmap(const QPixmap& cover)
+{
+    if(coversMatch(m_cover, cover)) {
+        m_cover = cover;
+        if(m_fadeController->progress() < 1.0
+           && PixmapFadeController::pixmapsMatch(m_fadeController->pixmap(), effectiveCover(cover))) {
+            return;
+        }
+        m_fadeController->setPixmap(effectiveCover(cover));
+        rescaleCover();
+        return;
+    }
+
+    m_cover = cover;
+    m_fadeController->setPixmap(effectiveCover(cover));
+    rescaleCover();
+}
+
+void CoverWidget::handleSelectionChanged()
+{
+    if(sameDisplayTrack(displayTrack(), m_track)) {
+        return;
+    }
+
+    reloadCover();
 }
 
 void CoverWidget::performAction(const CoverAction action)

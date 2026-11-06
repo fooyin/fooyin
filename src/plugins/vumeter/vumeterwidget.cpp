@@ -1228,85 +1228,6 @@ void VuMeterWidget::applyConfig(const ConfigData& config)
     Q_EMIT configChanged();
 }
 
-void VuMeterWidget::resizeEvent(QResizeEvent* event)
-{
-    if(p->m_autoOrientation) {
-        p->setOrientation(automaticOrientation());
-    }
-    p->updateSize();
-    FyWidget::resizeEvent(event);
-    update();
-}
-
-void VuMeterWidget::timerEvent(QTimerEvent* event)
-{
-    if(event->timerId() == p->m_updateTimer.timerId()) {
-        p->calculatePeak();
-        p->m_updateTimer.scheduleNext(this);
-    }
-    FyWidget::timerEvent(event);
-}
-
-void VuMeterWidget::paintEvent(QPaintEvent* event)
-{
-    QPainter painter{this};
-    painter.fillRect(rect(), p->m_colours.colour(Colours::Type::Background, palette()));
-    m_background->draw(painter);
-    p->ensureStaticLayer();
-
-    const QRect dirty = event->rect();
-
-    if(!p->m_staticLayer.isNull()) {
-        painter.drawPixmap(QRectF{dirty}, p->m_staticLayer, p->staticLayerSourceRect(dirty));
-    }
-    else {
-        p->drawLegend(painter);
-    }
-
-    const auto first = static_cast<float>(p->isHorizontal() ? dirty.left() : dirty.bottom());
-
-    const int channels = p->m_format.channelCount();
-    if(channels <= 0) {
-        return;
-    }
-
-    const float channelSize = p->barSize();
-    for(int channel{0}; channel < channels; ++channel) {
-        QRect channelRect;
-
-        if(p->isHorizontal()) {
-            channelRect = QRect{0, static_cast<int>(p->channelY(channel)), width(), static_cast<int>(channelSize) + 1};
-        }
-        else {
-            channelRect = QRect{static_cast<int>(p->channelX(channel)), 0, static_cast<int>(channelSize) + 1, height()};
-        }
-        if(!channelRect.intersects(dirty)) {
-            continue;
-        }
-
-        p->drawChannel(painter, first, channel, channelSize);
-    }
-}
-
-void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
-{
-    auto* menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-    populateContextMenu(menu);
-    menu->popup(event->globalPos());
-}
-
-void VuMeterWidget::openConfigDialog()
-{
-    showConfigDialog(new VuMeterConfigDialog(this, this), Qt::NonModal);
-}
-
-QString VuMeterWidget::settingsKey(QStringView key) const
-{
-    const QString group = p->m_type == Type::Peak ? u"PeakMeter/"_s : u"VuMeter/"_s;
-    return group + key;
-}
-
 VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& layout) const
 {
     ConfigData config{defaultConfig()};
@@ -1469,6 +1390,85 @@ void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
         layout.remove("Gradient1Colour"_L1);
         layout.remove("Gradient2Colour"_L1);
     }
+}
+
+void VuMeterWidget::resizeEvent(QResizeEvent* event)
+{
+    if(p->m_autoOrientation) {
+        p->setOrientation(automaticOrientation());
+    }
+    p->updateSize();
+    FyWidget::resizeEvent(event);
+    update();
+}
+
+void VuMeterWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == p->m_updateTimer.timerId()) {
+        p->calculatePeak();
+        p->m_updateTimer.scheduleNext(this);
+    }
+    FyWidget::timerEvent(event);
+}
+
+void VuMeterWidget::paintEvent(QPaintEvent* event)
+{
+    QPainter painter{this};
+    painter.fillRect(rect(), p->m_colours.colour(Colours::Type::Background, palette()));
+    m_background->draw(painter);
+    p->ensureStaticLayer();
+
+    const QRect dirty = event->rect();
+
+    if(!p->m_staticLayer.isNull()) {
+        painter.drawPixmap(QRectF{dirty}, p->m_staticLayer, p->staticLayerSourceRect(dirty));
+    }
+    else {
+        p->drawLegend(painter);
+    }
+
+    const auto first = static_cast<float>(p->isHorizontal() ? dirty.left() : dirty.bottom());
+
+    const int channels = p->m_format.channelCount();
+    if(channels <= 0) {
+        return;
+    }
+
+    const float channelSize = p->barSize();
+    for(int channel{0}; channel < channels; ++channel) {
+        QRect channelRect;
+
+        if(p->isHorizontal()) {
+            channelRect = QRect{0, static_cast<int>(p->channelY(channel)), width(), static_cast<int>(channelSize) + 1};
+        }
+        else {
+            channelRect = QRect{static_cast<int>(p->channelX(channel)), 0, static_cast<int>(channelSize) + 1, height()};
+        }
+        if(!channelRect.intersects(dirty)) {
+            continue;
+        }
+
+        p->drawChannel(painter, first, channel, channelSize);
+    }
+}
+
+void VuMeterWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    populateContextMenu(menu);
+    menu->popup(event->globalPos());
+}
+
+void VuMeterWidget::openConfigDialog()
+{
+    showConfigDialog(new VuMeterConfigDialog(this, this), Qt::NonModal);
+}
+
+QString VuMeterWidget::settingsKey(QStringView key) const
+{
+    const QString group = p->m_type == Type::Peak ? u"PeakMeter/"_s : u"VuMeter/"_s;
+    return group + key;
 }
 } // namespace Fooyin::VuMeter
 

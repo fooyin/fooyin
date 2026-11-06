@@ -250,6 +250,30 @@ void CommandButton::clearSavedDefaults() const
     m_settings->fileRemove(TargetKey);
 }
 
+CommandButton::ConfigData CommandButton::configFromLayout(const QJsonObject& layout) const
+{
+    ConfigData config{defaultConfig()};
+
+    config.commandId       = layout.value("CommandId"_L1).toString(config.commandId).trimmed();
+    config.text            = layout.value("Text"_L1).toString(config.text);
+    config.iconName        = layout.value("IconName"_L1).toString(config.iconName).trimmed();
+    config.iconPath        = layout.value("IconPath"_L1).toString(config.iconPath).trimmed();
+    config.toolButtonStyle = layout.value("ToolButtonStyle"_L1).toInt(config.toolButtonStyle);
+    config.target          = commandTarget(layout.value("Target"_L1).toInt(static_cast<int>(config.target)));
+
+    return config;
+}
+
+void CommandButton::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
+{
+    layout["CommandId"_L1]       = config.commandId.trimmed();
+    layout["Text"_L1]            = config.text;
+    layout["IconName"_L1]        = config.iconName.trimmed();
+    layout["IconPath"_L1]        = config.iconPath.trimmed();
+    layout["ToolButtonStyle"_L1] = config.toolButtonStyle;
+    layout["Target"_L1]          = static_cast<int>(config.target);
+}
+
 void CommandButton::saveLayoutData(QJsonObject& layout)
 {
     saveConfigToLayout(m_config, layout);
@@ -283,30 +307,6 @@ void CommandButton::contextMenuEvent(QContextMenuEvent* event)
 void CommandButton::openConfigDialog()
 {
     showConfigDialog(new CommandButtonConfigDialog(this, m_actionManager, this), Qt::NonModal);
-}
-
-CommandButton::ConfigData CommandButton::configFromLayout(const QJsonObject& layout) const
-{
-    ConfigData config{defaultConfig()};
-
-    config.commandId       = layout.value("CommandId"_L1).toString(config.commandId).trimmed();
-    config.text            = layout.value("Text"_L1).toString(config.text);
-    config.iconName        = layout.value("IconName"_L1).toString(config.iconName).trimmed();
-    config.iconPath        = layout.value("IconPath"_L1).toString(config.iconPath).trimmed();
-    config.toolButtonStyle = layout.value("ToolButtonStyle"_L1).toInt(config.toolButtonStyle);
-    config.target          = commandTarget(layout.value("Target"_L1).toInt(static_cast<int>(config.target)));
-
-    return config;
-}
-
-void CommandButton::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
-{
-    layout["CommandId"_L1]       = config.commandId.trimmed();
-    layout["Text"_L1]            = config.text;
-    layout["IconName"_L1]        = config.iconName.trimmed();
-    layout["IconPath"_L1]        = config.iconPath.trimmed();
-    layout["ToolButtonStyle"_L1] = config.toolButtonStyle;
-    layout["Target"_L1]          = static_cast<int>(config.target);
 }
 
 void CommandButton::rebindAction()

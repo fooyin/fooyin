@@ -601,26 +601,6 @@ void SpectrumWidget::applyConfig(const ConfigData& config)
     Q_EMIT configChanged();
 }
 
-QSize SpectrumWidget::minimumSizeHint() const
-{
-    return findToolbar() ? QSize{32, 12} : QSize{32, 24};
-}
-
-QSize SpectrumWidget::sizeHint() const
-{
-    return findToolbar() ? QSize{200, 32} : QSize{100, 60};
-}
-
-void SpectrumWidget::contextMenuEvent(QContextMenuEvent* event)
-{
-    showContextMenu(event->globalPos());
-}
-
-void SpectrumWidget::openConfigDialog()
-{
-    showConfigDialog(new SpectrumConfigDialog(this, this), Qt::NonModal);
-}
-
 SpectrumWidget::ConfigData SpectrumWidget::configFromLayout(const QJsonObject& layout) const
 {
     ConfigData config{defaultConfig()};
@@ -821,6 +801,26 @@ void SpectrumWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& l
 
     layout.remove("BarTopColour"_L1);
     layout.remove("BarBottomColour"_L1);
+}
+
+QSize SpectrumWidget::minimumSizeHint() const
+{
+    return findToolbar() ? QSize{32, 12} : QSize{32, 24};
+}
+
+QSize SpectrumWidget::sizeHint() const
+{
+    return findToolbar() ? QSize{200, 32} : QSize{100, 60};
+}
+
+void SpectrumWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    showContextMenu(event->globalPos());
+}
+
+void SpectrumWidget::openConfigDialog()
+{
+    showConfigDialog(new SpectrumConfigDialog(this, this), Qt::NonModal);
 }
 
 void SpectrumWidget::showContextMenu(const QPoint& globalPos)

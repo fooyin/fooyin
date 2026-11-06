@@ -50,15 +50,22 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
+
     [[nodiscard]] ConfigData factoryConfig() const;
     [[nodiscard]] ConfigData defaultConfig() const;
     [[nodiscard]] const ConfigData& currentConfig() const;
     void saveDefaults(const ConfigData& config) const;
     void clearSavedDefaults() const;
     void applyConfig(const ConfigData& config);
+    [[nodiscard]] ConfigData configFromLayout(const QJsonObject& layout) const;
+    static void saveConfigToLayout(const ConfigData& config, QJsonObject& layout);
+
+Q_SIGNALS:
+    void configChanged();
 
 protected:
     void openConfigDialog() override;
@@ -79,7 +86,6 @@ private:
     void activateCurrentIndex();
     void activateIndex(const QModelIndex& index);
     void showContextMenu(const QPoint& pos);
-    void addDisplayMenu(QMenu* menu);
     void setScrollbarVisible(bool visible);
     void refreshThemeIcons();
     void addCustomStation();
@@ -98,7 +104,6 @@ private:
     QString m_pendingRestoreEntryKey;
     size_t m_savedSearchCount;
     bool m_savedSearchesLoaded;
-    bool m_showScrollbar;
     bool m_showCountries;
 };
 } // namespace RadioBrowser

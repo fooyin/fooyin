@@ -28,6 +28,7 @@ using namespace Qt::StringLiterals;
 
 constexpr auto GuideTagsKey          = "RadioBrowser/GuideTags";
 constexpr auto GuideShowCountriesKey = "RadioBrowser/GuideShowCountries";
+constexpr auto GuideShowScrollbarKey = "RadioBrowser/GuideShowScrollbar";
 constexpr auto GuideStartupEntryKey  = "RadioBrowser/GuideStartupEntry";
 
 namespace Fooyin::RadioBrowser {
@@ -69,6 +70,7 @@ RadioGuideConfig configFromSettings(const SettingsManager& settings, const Radio
     return {
         .sections        = normaliseSections(sections),
         .showCountries   = settings.fileValue(GuideShowCountriesKey, true).toBool(),
+        .showScrollbar   = settings.fileValue(GuideShowScrollbarKey, true).toBool(),
         .startupEntryKey = settings.fileValue(GuideStartupEntryKey).toString().trimmed(),
     };
 }
@@ -243,6 +245,7 @@ void RadioGuideConfigStore::save(SettingsManager& settings, const RadioGuideConf
 
     settings.fileSet(GuideTagsKey, qCompress(data, 9));
     settings.fileSet(GuideShowCountriesKey, config.showCountries);
+    settings.fileSet(GuideShowScrollbarKey, config.showScrollbar);
     settings.fileSet(GuideStartupEntryKey, config.startupEntryKey.trimmed());
 }
 
@@ -250,6 +253,7 @@ void RadioGuideConfigStore::reset(SettingsManager& settings)
 {
     settings.fileRemove(GuideTagsKey);
     settings.fileRemove(GuideShowCountriesKey);
+    settings.fileRemove(GuideShowScrollbarKey);
     settings.fileRemove(GuideStartupEntryKey);
 }
 } // namespace Fooyin::RadioBrowser
