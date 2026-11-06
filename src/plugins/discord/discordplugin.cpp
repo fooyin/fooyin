@@ -111,6 +111,10 @@ void DiscordPlugin::initialise(const CorePluginContext& context)
         m_throttler->throttle();
         scheduleArtworkLoad();
     });
+    QObject::connect(m_player, &PlayerController::currentTrackUpdated, this, [this] {
+        restartArtwork();
+        m_throttler->throttle();
+    });
     QObject::connect(m_player, &PlayerController::positionChanged, this, &DiscordPlugin::positionChanged);
     QObject::connect(m_player, &PlayerController::positionMoved, m_throttler, &SignalThrottler::throttle);
     QObject::connect(m_player, &PlayerController::playStateChanged, this, [this](Player::PlayState state) {
@@ -259,7 +263,9 @@ void DiscordPlugin::startUpdateActivityTask()
             const auto endMs         = static_cast<quint64>(track.duration());
 
             data.start = (currentTimeMs - startMs) / 1000;
-            data.end   = (currentTimeMs + (endMs - startMs)) / 1000;
+            if(endMs > 0) {
+                data.end = (currentTimeMs - startMs + endMs) / 1000;
+            }
             break;
         }
         case Player::PlayState::Paused: {
