@@ -106,9 +106,14 @@ Track mergeTrackUpdate(const Track& currentTrack, const Track& updatedTrack, Lib
             mergeTrackStats(mergedTrack, updatedTrack, Track::Stat::All);
             mergedTrack.setModifiedTime(updatedTrack.modifiedTime());
             if(updatedStats.testFlag(Track::Stat::Rating)) {
-                const QString tag = ratingTagPolicy().effectiveWriteTag();
-                if(!tag.isEmpty()) {
-                    mergedTrack.setRawRatingTag(tag, updatedTrack.rawRatingTag(tag));
+                const QString writeTag = ratingTagPolicy().effectiveWriteTag();
+                for(const auto& tag : {u"RATING"_s, u"FMPS_RATING"_s, u"POPM"_s, writeTag}) {
+                    if(!tag.isEmpty()) {
+                        mergedTrack.setRawRatingTag(tag, updatedTrack.rawRatingTag(tag));
+                        if(mergedTrack.hasExtraTag(tag)) {
+                            mergedTrack.replaceExtraTag(tag, updatedTrack.extraTag(tag));
+                        }
+                    }
                 }
             }
             break;

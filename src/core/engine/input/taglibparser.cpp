@@ -1418,22 +1418,22 @@ void readDiscTotalPair(const QString& discNumbers, Track& track)
     }
 }
 
-TagLib::ID3v2::UserTextIdentificationFrame* userTextFrame(TagLib::ID3v2::Tag* id3Tags,
-                                                          const TagLib::String& description)
-{
-    return TagLib::ID3v2::UserTextIdentificationFrame::find(id3Tags, description);
-}
-
 void removeUserTextFrame(TagLib::ID3v2::Tag* id3Tags, const TagLib::String& description)
 {
-    while(auto* frame = userTextFrame(id3Tags, description)) {
-        id3Tags->removeFrame(frame, true);
+    const TagLib::String upperDescription = description.upper();
+    const auto frames                     = id3Tags->frameList("TXXX");
+    for(auto* frame : frames) {
+        const auto* textFrame = dynamic_cast<TagLib::ID3v2::UserTextIdentificationFrame*>(frame);
+        if(textFrame && textFrame->description().upper() == upperDescription) {
+            id3Tags->removeFrame(frame, true);
+        }
     }
 }
 
 void writeId3TextRating(TagLib::ID3v2::Tag* id3Tags, const TextRatingWrite& rating)
 {
     id3Tags->removeFrames("FMPS_Rating");
+    removeUserTextFrame(id3Tags, "FMPS_Rating");
     removeUserTextFrame(id3Tags, "RATING");
     if(!rating.tag.isEmpty() && rating.tag != "FMPS_RATING"_L1 && rating.tag != "RATING"_L1) {
         removeUserTextFrame(id3Tags, convertString(rating.tag));
@@ -1443,25 +1443,11 @@ void writeId3TextRating(TagLib::ID3v2::Tag* id3Tags, const TextRatingWrite& rati
         return;
     }
 
-    if(rating.tag == "FMPS_RATING"_L1) {
-        auto ratingFrame
-            = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("FMPS_Rating", TagLib::String::UTF8);
-        ratingFrame->setText(convertString(rating.value));
-        id3Tags->addFrame(ratingFrame.release());
-    }
-    else if(rating.tag == "RATING"_L1) {
-        auto ratingFrame = std::make_unique<TagLib::ID3v2::UserTextIdentificationFrame>(TagLib::String::UTF8);
-        ratingFrame->setDescription("RATING");
-        ratingFrame->setText(convertString(rating.value));
-        id3Tags->addFrame(ratingFrame.release());
-    }
-    else {
-        removeUserTextFrame(id3Tags, convertString(rating.tag));
-        auto ratingFrame = std::make_unique<TagLib::ID3v2::UserTextIdentificationFrame>(TagLib::String::UTF8);
-        ratingFrame->setDescription(convertString(rating.tag));
-        ratingFrame->setText(convertString(rating.value));
-        id3Tags->addFrame(ratingFrame.release());
-    }
+    const QString description = rating.tag == "FMPS_RATING"_L1 ? u"FMPS_Rating"_s : rating.tag;
+    auto ratingFrame          = std::make_unique<TagLib::ID3v2::UserTextIdentificationFrame>(TagLib::String::UTF8);
+    ratingFrame->setDescription(convertString(description));
+    ratingFrame->setText(convertString(rating.value));
+    id3Tags->addFrame(ratingFrame.release());
 }
 
 void writeId3TextPlaycount(TagLib::ID3v2::Tag* id3Tags, const TextPlaycountWrite& playcount)
@@ -1628,17 +1614,23 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Track& track, AudioReader
         }
     }
 
+    const bool updatePopmRating = id3PopmSupported && (options & AudioReader::Rating);
+    const bool writePopmRating  = updatePopmRating && policy.rating.writeId3Popm;
+
     if(options & AudioReader::Rating) {
-        writeId3TextRating(id3Tags, textRatingWrite(track, policy.rating));
+        auto rating = textRatingWrite(track, policy.rating);
+        if(writePopmRating) {
+            rating.value.clear();
+        }
+        writeId3TextRating(id3Tags, rating);
     }
     if(options & AudioReader::Playcount) {
         writeId3TextPlaycount(id3Tags, textPlaycountWrite(track, policy.playcount));
     }
 
-    const bool writePopmRating = id3PopmSupported && (options & AudioReader::Rating) && policy.rating.writeId3Popm;
     const bool writePopmPlaycount
         = id3PopmSupported && (options & AudioReader::Playcount) && policy.playcount.writeId3Popm;
-    if(writePopmRating || writePopmPlaycount) {
+    if(updatePopmRating || writePopmPlaycount) {
         const TagLib::String owner = convertString(policy.rating.popmOwner);
         auto* frame                = popmFrameByOwner(id3Tags, owner);
         const bool needsFrame
@@ -1651,9 +1643,8 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Track& track, AudioReader
         }
 
         if(frame) {
-            frame->setEmail(owner);
-            if(writePopmRating) {
-                frame->setRating(ratingToPopm(track.rating(), policy.rating.popmMapping));
+            if(updatePopmRating) {
+                frame->setRating(writePopmRating ? ratingToPopm(track.rating(), policy.rating.popmMapping) : 0);
             }
             if(writePopmPlaycount) {
                 frame->setCounter(static_cast<unsigned int>(track.playCount()));

@@ -35,6 +35,7 @@
 #include <taglib/opusfile.h>
 #include <taglib/popularimeterframe.h>
 #include <taglib/textidentificationframe.h>
+#include <taglib/tpropertymap.h>
 #include <taglib/vorbisfile.h>
 
 #include <QBuffer>
@@ -817,10 +818,31 @@ TEST_F(TagWriterTest, Mp3WriteHonoursPopmSettings)
     ASSERT_TRUE(m_parser.init(source));
 
     {
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+        tag->removeFrames("POPM");
+        auto* frame = new TagLib::ID3v2::PopularimeterFrame();
+        frame->setEmail("owner@example.com");
+        frame->setRating(100);
+        frame->setCounter(12);
+        tag->addFrame(frame);
+
+        for(const auto* description : {"rating", "FMPS_Rating", "CUSTOM_RATING"}) {
+            auto* textFrame = new TagLib::ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+            textFrame->setDescription(description);
+            textFrame->setText("1");
+            tag->addFrame(textFrame);
+        }
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    {
         FySettings settings;
         settings.setValue(RatingSettings::WriteId3Popm, true);
         settings.setValue(RatingSettings::PopmOwner, u"owner@example.com"_s);
         settings.setValue(RatingSettings::PopmMapping, u"CommonFiveStar"_s);
+        settings.setValue(RatingSettings::WriteTag, u"CUSTOM_RATING"_s);
         settings.sync();
         EXPECT_EQ(settings.status(), QSettings::NoError);
     }
@@ -842,6 +864,151 @@ TEST_F(TagWriterTest, Mp3WriteHonoursPopmSettings)
         ASSERT_NE(frame, nullptr);
         EXPECT_EQ(QString::fromUtf8(frame->email().toCString(true)), u"owner@example.com"_s);
         EXPECT_EQ(frame->rating(), 196);
+        EXPECT_EQ(frame->counter(), 12);
+        const auto properties = mp3File.ID3v2Tag()->properties();
+        EXPECT_FALSE(properties.contains("RATING"));
+        EXPECT_FALSE(properties.contains("FMPS_RATING"));
+        EXPECT_FALSE(properties.contains("CUSTOM_RATING"));
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::PopmOwner, QString{});
+        settings.sync();
+    }
+    track.setRating(1.0F);
+    ASSERT_TRUE(m_parser.writeTrack(source, track, Fooyin::AudioReader::Rating));
+    ASSERT_TRUE(file.flush());
+
+    {
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
+        auto* frame = popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s);
+        ASSERT_NE(frame, nullptr);
+        EXPECT_EQ(frame->rating(), 255);
+        EXPECT_EQ(frame->counter(), 12);
+        EXPECT_EQ(mp3File.ID3v2Tag()->frameList("POPM").size(), 1);
+    }
+
+    Track rereadTrack{file.closeAndGetFileName()};
+    ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+    EXPECT_FLOAT_EQ(rereadTrack.rating(), 1.0F);
+    EXPECT_TRUE(rereadTrack.rawRatingTag(u"RATING"_s).isEmpty());
+    EXPECT_TRUE(rereadTrack.rawRatingTag(u"FMPS_RATING"_s).isEmpty());
+
+    resetTagWriterRatingSettings();
+}
+
+TEST_F(TagWriterTest, Mp3SwitchingRatingStorageAvoidsDuplicateRatings)
+{
+    resetTagWriterRatingSettings();
+
+    TempResource file{u":/audio/audiotest.mp3"_s};
+    file.checkValid();
+
+    AudioSource source;
+    source.filepath = file.closeAndGetFileName();
+    source.device   = &file;
+    ASSERT_TRUE(file.seek(0));
+    ASSERT_TRUE(m_parser.init(source));
+
+    {
+        TagLib::MPEG::File mp3File(source.filepath.toLocal8Bit().constData());
+        ASSERT_TRUE(mp3File.isValid());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+        tag->removeFrames("POPM");
+
+        auto* selected = new TagLib::ID3v2::PopularimeterFrame();
+        selected->setEmail("Windows Media Player 9 Series");
+        selected->setRating(196);
+        selected->setCounter(12);
+        tag->addFrame(selected);
+
+        auto* other = new TagLib::ID3v2::PopularimeterFrame();
+        other->setEmail("other@example.com");
+        other->setRating(100);
+        other->setCounter(7);
+        tag->addFrame(other);
+
+        auto* rating = new TagLib::ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+        rating->setDescription("RATING");
+        rating->setText("4");
+        tag->addFrame(rating);
+
+        auto* fmps = new TagLib::ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+        fmps->setDescription("FMPS_Rating");
+        fmps->setText("0.8");
+        tag->addFrame(fmps);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    {
+        FySettings settings;
+        settings.setValue(RatingSettings::WriteTag, u"RATING"_s);
+        settings.setValue(RatingSettings::WriteScale, u"OneToFive"_s);
+        settings.setValue(RatingSettings::PopmOwner, QString{});
+        settings.setValue(RatingSettings::PopmMapping, u"CommonFiveStar"_s);
+        settings.sync();
+    }
+
+    Track track{source.filepath};
+    ASSERT_TRUE(m_parser.readTrack(source, track));
+    ASSERT_FLOAT_EQ(track.rating(), 0.8F);
+
+    struct Case
+    {
+        bool writePopm;
+        float rating;
+        int popmRating;
+        QString textRating;
+    };
+
+    const std::array cases{
+        Case{.writePopm = true, .rating = 1.0F, .popmRating = 255, .textRating = {}},
+        Case{.writePopm = true, .rating = 0.6F, .popmRating = 128, .textRating = {}},
+        Case{.writePopm = false, .rating = 0.3F, .popmRating = 0, .textRating = u"1.5"_s},
+        Case{.writePopm = true, .rating = 0.8F, .popmRating = 196, .textRating = {}},
+    };
+
+    for(const auto& testCase : cases) {
+        SCOPED_TRACE(::testing::Message() << "POPM: " << testCase.writePopm << ", rating: " << testCase.rating);
+        {
+            FySettings settings;
+            settings.setValue(RatingSettings::WriteId3Popm, testCase.writePopm);
+            settings.sync();
+        }
+
+        track.setRating(testCase.rating);
+        ASSERT_TRUE(m_parser.writeTrack(source, track, AudioReader::Rating));
+        ASSERT_TRUE(file.flush());
+
+        {
+            TagLib::MPEG::File mp3File(source.filepath.toLocal8Bit().constData());
+            ASSERT_TRUE(mp3File.isValid());
+            auto* tag = mp3File.ID3v2Tag();
+            ASSERT_NE(tag, nullptr);
+            ASSERT_EQ(tag->frameList("POPM").size(), 2);
+
+            auto* selected = popmFrameByOwner(tag, u"Windows Media Player 9 Series"_s);
+            ASSERT_NE(selected, nullptr);
+            EXPECT_EQ(selected->rating(), testCase.popmRating);
+            EXPECT_EQ(selected->counter(), 12);
+
+            auto* other = popmFrameByOwner(tag, u"other@example.com"_s);
+            ASSERT_NE(other, nullptr);
+            EXPECT_EQ(other->rating(), 100);
+            EXPECT_EQ(other->counter(), 7);
+
+            const auto properties = tag->properties();
+            EXPECT_EQ(properties["RATING"].size(), testCase.writePopm ? 0 : 1);
+            EXPECT_EQ(id3UserTextFrameValue(tag, "RATING"), testCase.textRating);
+            EXPECT_FALSE(properties.contains("FMPS_RATING"));
+        }
+
+        Track rereadTrack{source.filepath};
+        ASSERT_TRUE(m_parser.readTrack(source, rereadTrack));
+        EXPECT_FLOAT_EQ(rereadTrack.rating(), testCase.rating);
+        EXPECT_EQ(rereadTrack.rawRatingTag(u"RATING"_s), testCase.textRating);
     }
 
     resetTagWriterRatingSettings();
@@ -888,6 +1055,8 @@ TEST_F(TagWriterTest, Mp3WriteCanSkipPopm)
         ASSERT_TRUE(mp3File.isValid());
         ASSERT_NE(mp3File.ID3v2Tag(), nullptr);
         EXPECT_EQ(popmFrameByOwner(mp3File.ID3v2Tag(), u"owner@example.com"_s), nullptr);
+        EXPECT_EQ(id3UserTextFrameValue(mp3File.ID3v2Tag(), "FMPS_Rating"), u"0.8"_s);
+        EXPECT_FALSE(mp3File.ID3v2Tag()->frameListMap().contains("FMPS"));
     }
 
     resetTagWriterRatingSettings();
@@ -955,6 +1124,18 @@ TEST_F(TagWriterTest, Mp3WriteHonoursTextRatingTagSettings)
     ASSERT_TRUE(m_parser.init(source));
 
     {
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
+        auto* tag = mp3File.ID3v2Tag(true);
+        ASSERT_NE(tag, nullptr);
+        tag->removeFrames("POPM");
+        auto* frame = new TagLib::ID3v2::PopularimeterFrame();
+        frame->setRating(196);
+        frame->setCounter(12);
+        tag->addFrame(frame);
+        ASSERT_TRUE(mp3File.save());
+    }
+
+    {
         FySettings settings;
         settings.setValue(RatingSettings::WriteId3Popm, false);
         settings.setValue(RatingSettings::WriteTag, u"RATING"_s);
@@ -976,6 +1157,10 @@ TEST_F(TagWriterTest, Mp3WriteHonoursTextRatingTagSettings)
 
         EXPECT_EQ(id3UserTextFrameValue(mp3File.ID3v2Tag(), "RATING"), u"7"_s);
         EXPECT_FALSE(mp3File.ID3v2Tag()->frameListMap().contains("FMPS_Rating"));
+        auto* frame = popmFrameByOwner(mp3File.ID3v2Tag(), QString{});
+        ASSERT_NE(frame, nullptr);
+        EXPECT_EQ(frame->rating(), 0);
+        EXPECT_EQ(frame->counter(), 12);
     }
 
     resetTagWriterRatingSettings();

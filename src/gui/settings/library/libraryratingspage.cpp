@@ -197,9 +197,11 @@ LibraryRatingsPageWidget::LibraryRatingsPageWidget(SettingsManager* settings)
         "writing zero."));
     m_ratingReadPopm->setToolTip(tr("Read ratings from ID3 POPM frames in MP3 files when no text rating was read."));
     m_ratingWritePopm->setToolTip(
-        tr("Additionally save ratings to ID3 POPM frames when writing MP3 files. Other formats are unaffected."));
+        tr("Save ratings to ID3 POPM frames instead of the text rating tag when writing MP3 files. "
+           "Other formats are unaffected."));
     m_ratingPopmOwner->setToolTip(
-        tr("Owner identifier for POPM frames. Leave empty to read the first POPM frame and write an empty owner."));
+        tr("Owner identifier for POPM frames. Leave empty to use the first POPM frame and preserve its owner. "
+           "New frames use an empty owner."));
     m_ratingPopmMapping->setToolTip(tr("Conversion table used between fooyin ratings and POPM byte values."));
     m_ratingReadAsfSharedRating->setToolTip(
         tr("Read ratings from WM/SharedUserRating attributes in ASF/WMA files after text rating tags."));

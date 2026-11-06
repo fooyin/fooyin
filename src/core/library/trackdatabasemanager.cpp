@@ -30,6 +30,7 @@
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QFile>
 #include <QFileInfo>
 #include <QLoggingCategory>
 
@@ -58,10 +59,45 @@ AudioReader::WriteOptions writeOptionsForStats(Track::Stats stats)
     return options;
 }
 
-bool syncRawRatingTag(Track& track)
+bool syncRawRatingTag(Track& track, const AudioLoader* audioLoader = nullptr, AudioReader::WriteOptions options = {})
 {
     const RatingTagPolicy policy = ratingTagPolicy();
     const QString tag            = policy.effectiveWriteTag();
+
+    if(audioLoader) {
+        const QDateTime accessTime
+            = options.testFlag(AudioReader::PreserveTimestamps) ? QFileInfo{track.filepath()}.lastRead() : QDateTime{};
+
+        Track writtenTrack{track.filepath(), track.subsong()};
+        const bool read = audioLoader->readTrackMetadata(writtenTrack);
+        if(accessTime.isValid()) {
+            QFile file{track.filepath()};
+            if(file.open(QIODevice::ReadOnly)) {
+                file.setFileTime(accessTime, QFileDevice::FileAccessTime);
+            }
+        }
+        if(!read) {
+            return false;
+        }
+
+        bool changed{false};
+        for(const auto& name : {u"RATING"_s, u"FMPS_RATING"_s, u"POPM"_s, tag}) {
+            if(name.isEmpty()) {
+                continue;
+            }
+            QString value = writtenTrack.rawRatingTag(name);
+            if(value.isEmpty()) {
+                value = writtenTrack.extraTag(name).value(0);
+            }
+            changed |= track.rawRatingTag(name) != value;
+            track.setRawRatingTag(name, value);
+            if(track.hasExtraTag(name)) {
+                track.replaceExtraTag(name, writtenTrack.extraTag(name));
+            }
+        }
+        return changed;
+    }
+
     if(tag.isEmpty()) {
         return false;
     }
@@ -185,7 +221,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
         if(write && !updatedTrack.isDatabaseOnlyMetadata()) {
             if(m_audioLoader->writeTrackMetadata(updatedTrack, options)) {
                 if(options.testFlag(AudioReader::Rating)) {
-                    syncRawRatingTag(updatedTrack);
+                    syncRawRatingTag(updatedTrack, m_audioLoader.get(), options);
                 }
                 const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
@@ -288,7 +324,7 @@ TrackList TrackDatabaseManager::writeTrackStats(const TrackList& tracks, Track::
             if(m_audioLoader->writeTrackMetadata(updatedTrack, writeOptions)) {
                 ratingWritten = writeOptions.testFlag(AudioReader::Rating);
                 if(ratingWritten) {
-                    syncRawRatingTag(updatedTrack);
+                    syncRawRatingTag(updatedTrack, m_audioLoader.get(), writeOptions);
                 }
                 const QDateTime modifiedTime   = QFileInfo{updatedTrack.filepath()}.lastModified();
                 const uint64_t newModifiedTime = modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0;
