@@ -1928,12 +1928,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="112"/>
         <source>Maximum memory used for scaled artwork and reflections in each cover flow widget</source>
-        <translation>Maximální paměť používaná zmenšenými a zrcadlenými přebaly alb v každém widgetu</translation>
+        <translation>Maximální paměť používaná zmenšenými a zrcadlenými přebaly alb v cover flow widgetu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="114"/>
         <source>Cover flow cache size</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost vyrovnávací paměti cover flow</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="121"/>
@@ -4618,7 +4618,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="97"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Výchozí nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="100"/>
@@ -4638,69 +4638,69 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="103"/>
         <source>Reset saved defaults to factory</source>
-        <translation type="unfinished"></translation>
+        <translation>Obnovit výchozí nastavení</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="151"/>
         <source>Presets</source>
-        <translation type="unfinished">Předvolby</translation>
+        <translation>Předvolby</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="156"/>
         <source>Save preset…</source>
-        <translation type="unfinished">Uložit předvolbu…</translation>
+        <translation>Uložit předvolbu…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="157"/>
         <source>Restore preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Obnovit předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="158"/>
         <source>Delete preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="163"/>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="181"/>
         <source>Save Preset</source>
-        <translation type="unfinished">Uložit předvolbu</translation>
+        <translation>Uložit předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="163"/>
         <source>Preset name</source>
-        <translation type="unfinished"></translation>
+        <translation>Název předvolby</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="171"/>
         <source>Replace Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="171"/>
         <source>Replace the preset ‘%1’?</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahradit předvolbu ‚%1‘?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="181"/>
         <source>The preset could not be saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolba nemohla být uložena.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="217"/>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="226"/>
         <source>Delete Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat předvolbu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="217"/>
         <source>Delete the preset ‘%1’?</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat předvolbu ‚%1‘?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="226"/>
         <source>The preset could not be deleted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Předvolba nemohla být smazána.</translation>
     </message>
 </context>
 <context>
@@ -4822,12 +4822,12 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="294"/>
         <source>Finalising…</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokončování…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="295"/>
         <source>Converting files (%1 of %2 finished)</source>
-        <translation type="unfinished"></translation>
+        <translation>Převod souborů (dokončeno %1/%2)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="296"/>
@@ -5059,7 +5059,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="329"/>
         <source>Automatic preserves source precision where the selected encoder supports it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Volba „Automaticky“ zachová přesnost zdroje, pokud to vybraný kodér podporuje.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="374"/>
@@ -5219,23 +5219,24 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="561"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1144"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="563"/>
         <source>Maximum number of files to convert at the same time.
 Automatic uses the available processor threads.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximální počet současně převáděných souborů.
+Volba „Automaticky“ použije počet vláken procesoru.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="566"/>
         <source>Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>Výkon</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="570"/>
         <source>Maximum simultaneous conversions</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum současných převodů</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="574"/>
@@ -5321,7 +5322,7 @@ Automatic uses the available processor threads.</source>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1159"/>
         <source>64-bit floating point</source>
-        <translation type="unfinished"></translation>
+        <translation>64bitová čísla s plovoucí čárkou</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
@@ -6080,12 +6081,12 @@ Automatic uses the available processor threads.</source>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
         <source>General</source>
-        <translation type="unfinished">Obecné</translation>
+        <translation>Obecné</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="108"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="111"/>
@@ -6646,7 +6647,18 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
         <extracomment>%1 and %2 are native names or symbols for the split and replace modifier keys.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>• Dostupné widgety najdeš v panelu napravo (pokud je skrytý, podrž ukazatel
+   myši u pravého okraje).
+
+• Widget přidáš jeho přetažením z panelu do okna. Polohu existujících widgetů
+   v okně můžeš změnit jejich přetažením. Pokud při přetahování podržíš %1,
+   rozdělíš cílový widget, pokud %2, nahradíš cílový widget přetahovaným.
+
+• Vyber widget pro zobrazení jeho nadřazených widgetů v navigační liště. Vyber
+   nadřazený widget pro přesun celé skupiny.
+
+• Kliknutím pravým tlačítkem otevřeš místní nabídku pro rozdělení, nahrazení,
+   nebo odstranění widgetu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="529"/>
@@ -8187,12 +8199,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="251"/>
         <source>Delete currently playing file (deprecated)</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat přehrávaný soubor (zastaralé)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="252"/>
         <source>This action is deprecated and will be removed in a future release. Use ‘Delete’ with the target set to ‘Playing track’ instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tato akce je zastaralá a bude v některé z příštích verzí aplikace odstraněna. Použij &apos;Smazat&apos; s cílem nastaveným na &apos;Přehrávaná skladba&apos;.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="298"/>
@@ -8322,265 +8334,268 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="67"/>
         <source>Layout</source>
-        <translation type="unfinished">Vzhled</translation>
+        <translation>Rozvržení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="68"/>
         <source>Appearance</source>
-        <translation type="unfinished">Vzhled</translation>
+        <translation>Vzhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="85"/>
         <source>Auto</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="106"/>
         <source>Artwork arrangement</source>
-        <translation type="unfinished"></translation>
+        <translation>Uspořádání přebalů alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="107"/>
         <source>Fit artwork to available space</source>
-        <translation type="unfinished"></translation>
+        <translation>Přizpůsobit přebal dostupnému místu</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="108"/>
         <source>Automatically size artwork to fit the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky změnit velikost přebalu alba, tak aby se vešel do widgetu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="109"/>
         <source>Side artwork tilt</source>
-        <translation type="unfinished"></translation>
+        <translation>Naklonění bočních přebalů alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="110"/>
         <source>Tilt the artwork on either side of the current item.
 Negative values reverse the tilt; 0° keeps artwork flat.</source>
-        <translation type="unfinished"></translation>
+        <translation>Naklonění přebalů alb po stranách aktuální položky.
+Záporné hodnoty způsobí opačný náklon; 0° ponechá přebaly bez naklonění.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="112"/>
         <source>Centre spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozestupy na středu</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="113"/>
         <source>Distance between the centres of the current artwork and its nearest neighbour, as a percentage of the current artwork’s width</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzdálenost mezi středy aktuálního přebalu alba a jeho nejbližších sousedů jako procento z šířky aktuálního přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="115"/>
         <source>Side spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozestupy po stranách</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="116"/>
         <source>Distance between successive images on each side, as a percentage of the current artwork’s width</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzdálenost mezi jednotlivými obrázky po stranách jako procento z šířky aktuálního přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="117"/>
         <source>Items on each side</source>
-        <translation type="unfinished"></translation>
+        <translation>Položky na každé straně</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="118"/>
         <source>Set the number of items on each side. ‘Auto’ fills the available width.</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet položek na každé straně. ‚Automaticky‘ vyplní dostupný prostor.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="123"/>
         <source>Depth effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Efekty hloubky</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="124"/>
         <source>Size progression</source>
-        <translation type="unfinished"></translation>
+        <translation>Posloupnost velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="125"/>
         <source>Set each image’s size relative to the previous image, moving away from the centre.
 At 100%, all artwork stays the same size.</source>
-        <translation type="unfinished"></translation>
+        <translation>Relativní velikost každého obrázku vzhledem k předchozímu obrázku směrem od středu.
+Při 100% zůstanou všechny přebaly alb stejně veliké.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="127"/>
         <source>Minimum artwork size</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimální velikost</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="128"/>
         <source>Smallest side artwork size as a percentage of the current artwork size</source>
-        <translation type="unfinished"></translation>
+        <translation>Nejmenší velikost obrázku jako procento z velikosti aktuálního přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="129"/>
         <source>Perspective</source>
-        <translation type="unfinished"></translation>
+        <translation>Perspektiva</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="130"/>
         <source>Adjust the depth effect of tilted artwork. At 0%, tilted artwork has no perspective distortion.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení efektu hloubky nakloněných obrázků. Při 0% nemají nakloněné obrázky žádné perspektivní zkreslení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="131"/>
         <source>Side artwork fading</source>
-        <translation type="unfinished"></translation>
+        <translation>Blednutí obrázků po stranách</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="132"/>
         <source>Artwork fades progressively with distance from the centre.
 Higher values make side artwork fainter.</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázky postupně blednou úměrně k jejich vzdálenosti od středu.
+Čím vyšší hodnota, tím je efekt blednutí výraznější.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="138"/>
         <source>Scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Rolování</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="139"/>
         <source>Animate scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Animované rolování</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="140"/>
         <source>Animate scrolling when selecting artwork or using the mouse wheel, touchpad or keyboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Animovat rolování při výběru přebalu alba, použití kolečka myši, touchpadu, nebo klávesnice.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="141"/>
         <source>Animation duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Délka animace</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="142"/>
         <source>Duration of the scrolling animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Délka animace rolování</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="143"/>
         <source>Scroll sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Citlivost rolování</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="144"/>
         <source>Distance moved by the mouse wheel or touchpad, relative to the default scrolling distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Délka posunu rolování při použití kolečka myši, nebo touchpadu, relativní k výchozí vzdálenosti rolování</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="147"/>
         <source>Below artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Pod obrázkem</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="147"/>
         <source>Above artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Nad obrázkem</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="147"/>
         <source>On artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Přes obrázek</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="148"/>
         <source>Position of the current item’s labels relative to its artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozice popisků aktuální položky vzhledem k jejímu obrázku</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="152"/>
         <source>Labels</source>
-        <translation type="unfinished">Popisky</translation>
+        <translation>Popisky</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="153"/>
         <source>Show labels</source>
-        <translation type="unfinished">Zobrazit popisky</translation>
+        <translation>Zobrazit popisky</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="154"/>
         <source>Show text from the displayed filter columns for the current item</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit text ze zobrazených sloupců filtru pro aktuální položku</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="155"/>
         <source>Position</source>
-        <translation type="unfinished">Pozice</translation>
+        <translation>Pozice</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="158"/>
         <source>Overlay labels on reflections</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit popisky přes zrcadlení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="159"/>
         <source>Draw labels in the reflection area when positioned below the artwork.</source>
-        <translation type="unfinished"></translation>
+        <translation>Při nastavení zobrazení popisů pod obrázkem vykreslí popisky přes oblast zrcadlení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="160"/>
         <source>Spacing</source>
-        <translation type="unfinished">Mezera</translation>
+        <translation>Mezera</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="161"/>
         <source>Space between the artwork area and its labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezera mezi přebalem alba a jeho popisky</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="166"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished">Odraz přebalu alba</translation>
+        <translation>Zrcadlení přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="167"/>
         <source>Show artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit zrcadlení přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="168"/>
         <source>Draw a fading reflection below the artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit pod přebalem alba jeho postupně slábnoucí odraz</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="169"/>
         <source>Height</source>
-        <translation type="unfinished">Výška</translation>
+        <translation>Výška</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="170"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished">Výška odrazu v procentech výšky přebalu alba</translation>
+        <translation>Výška zrcadlení v procentech výšky přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="171"/>
         <source>Opacity</source>
-        <translation type="unfinished">Průhlednost</translation>
+        <translation>Průhlednost</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="172"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished">Neprůhlednost v horní části odrazu, která postupně přejde do plné průhlednosti</translation>
+        <translation>Průhlednost v horní části zrcadlení, která postupně přejde do plné průhlednosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="173"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished">Mezera pod přebalem</translation>
+        <translation>Mezera pod přebalem alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="174"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished">Rozestup mezi přebalem a jeho odrazem</translation>
+        <translation>Rozestup mezi přebalem alba a jeho odrazem</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="177"/>
         <source>Preview</source>
-        <translation type="unfinished">Náhled</translation>
+        <translation>Náhled</translation>
     </message>
 </context>
 <context>
@@ -8589,310 +8604,311 @@ Higher values make side artwork fainter.</source>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="62"/>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="107"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="63"/>
         <source>Font</source>
-        <translation type="unfinished">Písmo</translation>
+        <translation>Písmo</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="64"/>
         <source>Background colour</source>
-        <translation type="unfinished">Barva pozadí</translation>
+        <translation>Barva pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="65"/>
         <source>Expand selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit vybranou skupinu</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="66"/>
         <source>Animate expansion and collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Animovat rozbalení a sbalení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="68"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Střídavé barvy řádků</translation>
+        <translation>Střídavé barvy řádků</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="69"/>
         <source>Show artwork in expanded groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit v rozbalených skupinách přebal alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="70"/>
         <source>Show close button</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit tlačítko zavřít</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="71"/>
         <source>Show artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit zrcadlení přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="75"/>
         <source>Remove margins when artwork fills the height</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud přebal alba vyplní celou výšku, odstranit okraje</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="100"/>
         <source>Colour</source>
-        <translation type="unfinished">Barva</translation>
+        <translation>Barva</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="104"/>
         <source>Behaviour</source>
-        <translation type="unfinished">Chování</translation>
+        <translation>Chování</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="105"/>
         <source>Appearance</source>
-        <translation type="unfinished">Vzhled</translation>
+        <translation>Vzhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="106"/>
         <source>Scripts</source>
-        <translation type="unfinished">Skripty</translation>
+        <translation>Skripty</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="113"/>
         <source>Use display script when empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud prázdné, použít skript pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="114"/>
         <source>Leave empty to disable subheaders</source>
-        <translation type="unfinished"></translation>
+        <translation>Ponech prázdné pro zakázání podzáhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="119"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Skript seskupení</translation>
+        <translation>Skript seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="121"/>
         <source>Display script</source>
-        <translation type="unfinished">Skript pro zobrazení</translation>
+        <translation>Skript pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="127"/>
         <source>Header</source>
-        <translation type="unfinished">Záhlaví</translation>
+        <translation>Záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="128"/>
         <source>Subheader</source>
-        <translation type="unfinished"></translation>
+        <translation>Podzáhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="129"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="130"/>
         <source>Footer</source>
-        <translation type="unfinished"></translation>
+        <translation>Patička</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="132"/>
         <source>Leave empty to hide the footer</source>
-        <translation type="unfinished"></translation>
+        <translation>Ponech prázdné pro skrytí patičky</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="141"/>
         <source>Use &lt;b&gt;&amp;lt;left&amp;gt;&lt;/b&gt; and &lt;b&gt;&amp;lt;right&amp;gt;&lt;/b&gt; for alignment, and &lt;b&gt;&amp;lt;hr/&amp;gt;&lt;/b&gt; for rules.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použij &lt;b&gt;&amp;lt;left&amp;gt;&lt;/b&gt; a &lt;b&gt;&amp;lt;right&amp;gt;&lt;/b&gt; pro zarovnání a &lt;b&gt;&amp;lt;hr&amp;gt;&lt;/b&gt; pro vodorovné čáry.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="146"/>
         <source>Use &lt;b&gt;%filter_columns%&lt;/b&gt; for all column values, &lt;b&gt;%filter_column_count%&lt;/b&gt; for their count, or &lt;b&gt;$filter_column(1)&lt;/b&gt; for an individual column in displayed order.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použij &lt;b&gt;%filter_columns%&lt;/b&gt; pro všechny hodnoty sloupců, &lt;b&gt;%filter_column_count%&lt;/b&gt; pro jejich počet, nebo &lt;b&gt;$filter_column(1)&lt;/b&gt; pro určitý sloupec v pořadí zobrazení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="154"/>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="186"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Levý</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="155"/>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="188"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Pravý</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="162"/>
         <source>Artwork shrinks to leave room for track text and is hidden when space is too limited.</source>
-        <translation type="unfinished"></translation>
+        <translation>Přebal alba bude zmenšen, tak aby uvolnil místo textu seznamu skladeb a při nedostatku místa je skryt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="165"/>
         <source>Use the configured margins only when the track content is taller than the artwork.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít nastavené okraje pouze pokud je seznam skladeb vyšší než přebal alba.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="174"/>
         <source>Hidden when there isn’t enough space below the artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud pod přebalem alba není místo, bude skryto</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="177"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished">Výška odrazu v procentech výšky přebalu alba</translation>
+        <translation>Výška zrcadlení v procentech výšky přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="180"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished">Neprůhlednost v horní části odrazu, která postupně přejde do plné průhlednosti</translation>
+        <translation>Průhlednost v horní části zrcadlení, která postupně přejde do plné průhlednosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="183"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished">Rozestup mezi přebalem a jeho odrazem</translation>
+        <translation>Rozestup mezi přebalem a jeho odrazem</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="190"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Horní</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="192"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Spodní</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="196"/>
         <source>Artwork size</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost přebalu</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="202"/>
         <source>Artwork</source>
-        <translation type="unfinished">Přebaly alb</translation>
+        <translation>Přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="204"/>
         <source>Artwork position</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozice přebalu</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="208"/>
         <source>Margins</source>
-        <translation type="unfinished">Okraje</translation>
+        <translation>Okraje</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="217"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished">Odraz přebalu alba</translation>
+        <translation>Zrcadlení přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="219"/>
         <source>Height</source>
-        <translation type="unfinished">Výška</translation>
+        <translation>Výška</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="221"/>
         <source>Opacity</source>
-        <translation type="unfinished">Průhlednost</translation>
+        <translation>Průhlednost</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="223"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished">Mezera pod přebalem</translation>
+        <translation>Mezera pod přebalem</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="231"/>
         <source>Track rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Řádky skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="233"/>
         <source>Playing track</source>
-        <translation type="unfinished">Přehrávaná skladba</translation>
+        <translation>Přehrávaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="245"/>
         <source>Unlimited</source>
-        <translation type="unfinished">Neomezeno</translation>
+        <translation>Neomezeno</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="246"/>
         <source>Set to 0 for unlimited columns.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastav 0 pro neomezený počet sloupců.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="250"/>
         <source>The final column may contain fewer rows.</source>
-        <translation type="unfinished"></translation>
+        <translation>Poslední sloupec může obsahovat méně řádků.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="252"/>
         <source>Fit content</source>
-        <translation type="unfinished"></translation>
+        <translation>Přizpůsobit obsahu</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="253"/>
         <source>Fill available space</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit dostupné místo</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="259"/>
         <source>The minimum column width is relative to the default width at the current font size.
 Longer content can exceed this minimum.</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimální šířka sloupce je relativní vzhledem k výchozí šířce při současné velikosti písma.
+Delší obsah může toto minimum překročit.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="263"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished">Použít vlastní barvu pozadí pro právě přehrávaný řádek; je podporována průhlednost</translation>
+        <translation>Použít vlastní barvu pozadí pro právě přehrávaný řádek; je podporována průhlednost</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="264"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished">Použít vlastní písmo pro právě přehrávaný řádek</translation>
+        <translation>Použít vlastní písmo pro právě přehrávaný řádek</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="273"/>
         <source>Expansion</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="277"/>
         <source>Animation duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Délka animace</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="285"/>
         <source>Columns</source>
-        <translation type="unfinished">Sloupce</translation>
+        <translation>Sloupce</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="286"/>
         <source>Maximum number of columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximální počet sloupců</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="288"/>
         <source>Minimum rows per column</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum řádků ve sloupci</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="290"/>
         <source>Column sizing</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost sloupců</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="292"/>
         <source>Minimum column width</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimální šířka sloupce</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="301"/>
         <source>Preview</source>
-        <translation type="unfinished">Náhled</translation>
+        <translation>Náhled</translation>
     </message>
 </context>
 <context>
@@ -8974,23 +8990,23 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="66"/>
         <source>Columns</source>
-        <translation type="unfinished">Sloupce</translation>
+        <translation>Sloupce</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="67"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="108"/>
         <source>Cover flow</source>
-        <translation type="unfinished"></translation>
+        <translation>Cover flow</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="68"/>
         <source>Artwork (bottom labels)</source>
-        <translation type="unfinished">Přebaly alb (popisky dole)</translation>
+        <translation>Přebaly alb (popisky dole)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
         <source>Artwork (right labels)</source>
-        <translation type="unfinished">Přebaly alb (popisky vpravo)</translation>
+        <translation>Přebaly alb (popisky vpravo)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="70"/>
@@ -9483,7 +9499,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2024"/>
         <source>Cover flow</source>
-        <translation type="unfinished"></translation>
+        <translation>Cover flow</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2028"/>
@@ -17139,22 +17155,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="49"/>
         <source>Show reflection</source>
-        <translation>Zobrazit odraz</translation>
+        <translation>Zobrazit zrcadlení</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="68"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation>Výška odrazu v procentech výšky přebalu alba</translation>
+        <translation>Výška zrcadlení v procentech výšky přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="71"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation>Neprůhlednost v horní části odrazu, která postupně přejde do plné průhlednosti</translation>
+        <translation>Průhlednost v horní části zrcadlení, která postupně přejde do plné průhlednosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="74"/>
         <source>Space between the artwork and its reflection</source>
-        <translation>Rozestup mezi přebalem a jeho odrazem</translation>
+        <translation>Rozestup mezi přebalem alba a jeho odrazem</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="84"/>
@@ -17174,7 +17190,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="101"/>
         <source>Artwork reflection</source>
-        <translation>Odraz přebalu alba</translation>
+        <translation>Zrcadlení přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="103"/>
