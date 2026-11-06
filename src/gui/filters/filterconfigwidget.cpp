@@ -259,7 +259,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     artworkLayout->addWidget(m_coverSource, row++, 1, 1, 3);
     artworkLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, artworkGroup), row, 0);
     artworkLayout->addWidget(m_artworkCornerRadius, row++, 1);
-    artworkLayout->addWidget(new QLabel(tr("Size"), artworkGroup), row++, 0, 1, 5);
+    artworkLayout->addWidget(Gui::createSectionHeader(tr("Size"), artworkGroup), row++, 0, 1, 5);
     artworkLayout->addWidget(m_autoFitArtwork, row++, 0, 1, 5);
     artworkLayout->addLayout(sizeLayout, row++, 0, 1, 5);
     artworkLayout->addWidget(iconSizeHint, row++, 0, 1, 5);
@@ -269,9 +269,9 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     auto* spacingLayout = new QGridLayout(spacingGroup);
 
     row = 0;
-    spacingLayout->addWidget(new QLabel(tr("Gaps"), spacingGroup), row++, 0, 1, 5);
+    spacingLayout->addWidget(Gui::createSectionHeader(tr("Gaps"), spacingGroup), row++, 0, 1, 5);
     spacingLayout->addLayout(gapsLayout, row++, 0, 1, 5);
-    spacingLayout->addWidget(new QLabel(tr("Margins"), spacingGroup), row++, 0, 1, 5);
+    spacingLayout->addWidget(Gui::createSectionHeader(tr("Margins"), spacingGroup), row++, 0, 1, 5);
     spacingLayout->addWidget(m_overrideArtworkMargins, row++, 0, 1, 5);
     spacingLayout->addLayout(marginsLayout, row++, 0, 1, 5);
     spacingLayout->setColumnStretch(4, 1);
