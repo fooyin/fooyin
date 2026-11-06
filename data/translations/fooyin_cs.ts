@@ -554,7 +554,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="518"/>
         <source>Duration-weighted average bitrate of the track list in kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>Průměrný datový tok seznamu skladeb v kb/s vážený podle délky skladeb</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="524"/>
@@ -2325,7 +2325,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="91"/>
         <source>Show preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit náhled</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="101"/>
@@ -2403,27 +2403,27 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="170"/>
         <source>Show matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit odpovídající skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="378"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="428"/>
         <source>Updating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualizace…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="470"/>
         <source>No matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné odpovídající skladby</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <source>%Ln matching track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln odpovídající skladba</numerusform>
+            <numerusform>%Ln odpovídající skladby</numerusform>
+            <numerusform>%Ln odpovídajících skladeb</numerusform>
         </translation>
     </message>
     <message>
@@ -2507,13 +2507,14 @@ Pokud zakázáno, je zachováno aktuální pořadí skladeb a seřazeny jsou pou
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="63"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nic</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="87"/>
         <source>Choose a preset or enter a sorting script. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyber předvolbu, nebo zadej skript pro řazení. Použij ‚Tag metadat…‘ pro přímé čtení tagu.
+Vymaž pro vypnutí řazení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="93"/>
@@ -2639,37 +2640,37 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="530"/>
         <source>Bitrate (kbps)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate (kb/s)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="532"/>
         <source>Sample rate (Hz)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzorkovací frekvence (Hz)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="533"/>
         <source>Bit depth</source>
-        <translation type="unfinished">Bitová hloubka</translation>
+        <translation>Bitová hloubka</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>Number of channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet kanálů</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="536"/>
         <source>File created</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor vytvořen</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>Last modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Změněno</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="538"/>
         <source>File extension</source>
-        <translation type="unfinished">Přípona souboru</translation>
+        <translation>Přípona souboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="539"/>
@@ -7721,10 +7722,10 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="622"/>
         <source>Stopped: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Zastaveno: %Ln operace neprovedena</numerusform>
+            <numerusform>Zastaveno: %Ln operace neprovedeny</numerusform>
+            <numerusform>Zastaveno: %Ln operací neprovedeno</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7880,7 +7881,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="564"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished">&amp;Zastavit</translation>
+        <translation>&amp;Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="545"/>
@@ -9007,7 +9008,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="361"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">Zkratka je již zaregistrována</translation>
+        <translation>Zkratka je již zaregistrována</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="384"/>
@@ -9063,7 +9064,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="267"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">Zkratka je již zaregistrována</translation>
+        <translation>Zkratka je již zaregistrována</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="272"/>
@@ -9276,12 +9277,12 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1092"/>
         <source>Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Dynamický seznam skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
         <source>Toggle Sidebar</source>
-        <translation type="unfinished">Přepnout panel</translation>
+        <translation>Přepnout panel</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1165"/>
@@ -9970,22 +9971,22 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="147"/>
         <source>Layout animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animace změny vzhledu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
         <source>Enter from</source>
-        <translation type="unfinished"></translation>
+        <translation>Přisunout z</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="152"/>
         <source>Scale direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Směr změnu velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="154"/>
         <source>Scale amount</source>
-        <translation type="unfinished"></translation>
+        <translation>Míra změny velikosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="159"/>
@@ -10070,72 +10071,72 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="218"/>
         <source>Crossfade</source>
-        <translation type="unfinished"></translation>
+        <translation>Prolínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="219"/>
         <source>Fade through background</source>
-        <translation type="unfinished"></translation>
+        <translation>Prolínání pozadím</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="221"/>
         <source>Scale &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Změna velikosti a prolínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="222"/>
         <source>Slide &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Přisunutí a prolínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="224"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="225"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Zleva</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="226"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Zprava</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="227"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Shora</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="228"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zdola</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="229"/>
         <source>Automatic follows the interface’s reading direction.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky podle směru čtení textu uživatelského rozhraní.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="231"/>
         <source>Grow</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvětšení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="232"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmenšení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Effect</source>
-        <translation type="unfinished"></translation>
+        <translation>Efekt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="243"/>
         <source>Duration</source>
-        <translation type="unfinished">Délka</translation>
+        <translation>Délka</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="257"/>
@@ -11688,7 +11689,7 @@ Pokud se výchozí poloviční hvězda s vaším systémovým písmem nezobrazuj
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="178"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="182"/>
@@ -13855,12 +13856,12 @@ Lokální texty budou stále načítány.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="978"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1036"/>
         <source>Clear existing tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat existující tagy?</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1041"/>
@@ -13875,7 +13876,7 @@ Lokální texty budou stále načítány.</translation>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="475"/>
         <source>Clear writable tags, then apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat zapisovatelné tagy, poté aplikovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="616"/>
@@ -15353,17 +15354,17 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="184"/>
         <source>Volume shortcut step</source>
-        <translation type="unfinished"></translation>
+        <translation>Krok zkratky hlasitosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="186"/>
         <source>Volume control step (small)</source>
-        <translation type="unfinished"></translation>
+        <translation>Krok ovladače hlasitosti (malý)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="188"/>
         <source>Volume control step (large)</source>
-        <translation type="unfinished"></translation>
+        <translation>Krok ovladače hlasitosti (velký)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="196"/>
@@ -16346,7 +16347,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="77"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="123"/>
@@ -17255,7 +17256,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="604"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln skladba</numerusform>
             <numerusform>%Ln skladby</numerusform>
             <numerusform>%Ln skladeb</numerusform>
@@ -17394,7 +17395,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2030"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="884"/>
@@ -17479,7 +17480,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
         <source>Remove unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit nedostupné skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
@@ -17574,7 +17575,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="448"/>
         <source>Remove unavailable tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit ze seznamu skladeb nedostupné skladby</translation>
     </message>
 </context>
 <context>
@@ -17625,22 +17626,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="360"/>
         <source>Could not remove plugin directory ‘%1’. Check that it is writable and its files are not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nelze odstranit složku pluginu ‚%1‘. Zkontrolujte, že je zapisovatelný a soubory v něm nejsou používány.</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="369"/>
         <source>Could not remove ‘%1’: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Nelze odstranit ‚%1‘: %2</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="481"/>
         <source>Invalid plugin identifier ‘%1’.</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný identifikátor pluginu ‚%1‘.</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="487"/>
         <source>The plugin update directory ‘%1’ is a symbolic link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Složka pro aktualizaci pluginu ‚%1‘ je symbolický odkaz.</translation>
     </message>
 </context>
 <context>
@@ -17677,7 +17678,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="135"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="280"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="218"/>
@@ -17687,12 +17688,12 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="280"/>
         <source>Undo removal</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátit zpět odstranění</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="283"/>
         <source>This plugin cannot be removed here. Use its installer or package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tento plugin zde neleze odstranit. Použij jeho instalátor, nebo správce balíčků.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="335"/>
@@ -17712,62 +17713,62 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="44"/>
         <source>This plugin is already installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tento plugin je již nainstalován.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="46"/>
         <source>This version of the plugin is already installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tato verze pluginu je již nainstalovaná.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="49"/>
         <source>The selected plugin file does not exist or is not a regular file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybraný soubor pluginu neexistuje, nebo se nejedná o běžný soubor.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="52"/>
         <source>Plugin bundles are not supported on this operating system or processor architecture.</source>
-        <translation type="unfinished"></translation>
+        <translation>Balíčky pluginů nejsou na tomto operačním systému nebo architektuře procesoru podporovány.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="56"/>
         <source>The plugin bundle could not be read. It may be damaged or inaccessible.</source>
-        <translation type="unfinished"></translation>
+        <translation>Balíček pluginu nelze načíst. Může být poškozený, nebo nepřístupný.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="59"/>
         <source>The plugin bundle contains invalid or unsupported files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Balíček pluginu obsahuje neplatné, nebo nepodporované soubory.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="62"/>
         <source>The plugin bundle does not contain files for this operating system and processor architecture.</source>
-        <translation type="unfinished"></translation>
+        <translation>Balíček pluginu neobsahuje soubory pro tento operační systém, nebo architekturu procesoru.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="66"/>
         <source>No recognised fooyin plugin was found in the installation files.</source>
-        <translation type="unfinished"></translation>
+        <translation>V instalačních souborech nebyl nalezen žádný fooyin plugin.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="69"/>
         <source>This plugin uses an incompatible version of the fooyin plugin API.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tento plugin používá nekompatibilní verzi API pluginů pro fooyin.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="72"/>
         <source>The plugin has an invalid identifier or is missing its version.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin používá neplatný identifikátor, nebo nemá nastavenu verzi.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="75"/>
         <source>The bundle contains more than one fooyin plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Balíček obsahuje více než jeden fooyin plugin.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="78"/>
         <source>The plugin files could not be written to the installation directory. Check that it is writable and that there is enough free disk space.</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubory pluginu nemohly být zapsány do instalační složky. Zkontrolujte, zda je zapisovatelná a máte na disku dostatek volného místa.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="136"/>
@@ -17777,7 +17778,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="137"/>
         <source>This version of the plugin is already installed. Reinstall it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Tato verze pluginu je již nainstalovaná. Přeinstalovat?</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="139"/>
@@ -17787,7 +17788,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="143"/>
         <source>Reinstall</source>
-        <translation type="unfinished"></translation>
+        <translation>Přeinstalovat</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="144"/>
@@ -17797,7 +17798,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="162"/>
         <source>Plugin Reinstalled</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin přeinstalován</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="165"/>
@@ -17880,22 +17881,22 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="152"/>
         <source>Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyžadován restart</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="154"/>
         <source>Pending removal</source>
-        <translation type="unfinished"></translation>
+        <translation>Čeká na odstranění</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="156"/>
         <source>Removal failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranění selhalo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
         <source>This plugin is marked for removal at the next restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tento plugin je označen pro odstranění při příštím spuštění.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="368"/>
@@ -18498,7 +18499,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="111"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
@@ -19040,7 +19041,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="71"/>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="230"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="74"/>
@@ -21240,7 +21241,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="136"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to run arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Sandbox Flatpaku neumožňuje přímé spouštění aplikací nainstalovaných na hostitelském systému. Pro umožnění spouštění aplikací hostitele přidejte v nástroji Flatseal do seznamu oprávnění pro ‘komunikaci’ v sekci Session Bus položku &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt;, nebo spusťte příkaz:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Poté přidejte na začátek každého příkazu pro spuštění služby &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. Například:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;Toto oprávnění umožňuje fooyinu spustit libovolný příkaz mimo sandbox. Povolte tuto volbu pouze pokud zcela důvěřujete vašim službám.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="152"/>
@@ -26317,7 +26318,7 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="219"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit</translation>
     </message>
 </context>
 <context>
@@ -27175,12 +27176,12 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="996"/>
         <source>Column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Záhlaví sloupců</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="999"/>
         <source>Playlist column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Záhlaví sloupců seznamu skladeb</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="1001"/>
@@ -27326,7 +27327,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="131"/>
         <source>Configure</source>
-        <translation type="unfinished">Nastavit</translation>
+        <translation>Nastavit</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>

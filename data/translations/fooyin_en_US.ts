@@ -2507,7 +2507,8 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="87"/>
         <source>Choose a preset or enter a sorting script. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Choose a preset or enter a sorting script. Use “Metadata tag…” to read a tag directly.
+Clear to disable sorting.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="93"/>
@@ -10062,7 +10063,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="229"/>
         <source>Automatic follows the interface’s reading direction.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatic follows the interface’s reading direction.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="231"/>
@@ -17547,22 +17548,22 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="360"/>
         <source>Could not remove plugin directory ‘%1’. Check that it is writable and its files are not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not remove plugin directory “%1”. Check that it is writable and its files are not in use.</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="369"/>
         <source>Could not remove ‘%1’: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not remove “%1”: %2</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="481"/>
         <source>Invalid plugin identifier ‘%1’.</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalid plugin identifier “%1”.</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="487"/>
         <source>The plugin update directory ‘%1’ is a symbolic link.</source>
-        <translation type="unfinished"></translation>
+        <translation>The plugin update directory “%1” is a symbolic link.</translation>
     </message>
 </context>
 <context>
@@ -17669,7 +17670,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="66"/>
         <source>No recognised fooyin plugin was found in the installation files.</source>
-        <translation type="unfinished"></translation>
+        <translation>No recognized fooyin plugin was found in the installation files.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="69"/>
@@ -21153,7 +21154,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="136"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to run arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus “talk” permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to run arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="152"/>

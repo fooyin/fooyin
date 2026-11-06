@@ -554,7 +554,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="518"/>
         <source>Duration-weighted average bitrate of the track list in kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>Средний битрейт списка треков, взвешенный по длительности, в кбит/с</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="524"/>
@@ -2325,7 +2325,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="91"/>
         <source>Show preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать предпросмотр</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="101"/>
@@ -2403,27 +2403,27 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="170"/>
         <source>Show matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать подходящие треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="378"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="428"/>
         <source>Updating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновление…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="470"/>
         <source>No matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет подходящих треков</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <source>%Ln matching track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln подходящий трек</numerusform>
+            <numerusform>%Ln подходящих трека</numerusform>
+            <numerusform>%Ln подходящих треков</numerusform>
         </translation>
     </message>
     <message>
@@ -2507,13 +2507,14 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="63"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="87"/>
         <source>Choose a preset or enter a sorting script. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите пресет или введите скрипт сортировки. Используйте «Metadata tag…», чтобы прочитать тег напрямую.
+Очистите, чтобы отключить сортировку.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="93"/>
@@ -2639,37 +2640,37 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="530"/>
         <source>Bitrate (kbps)</source>
-        <translation type="unfinished"></translation>
+        <translation>Битрейт (кбит/с)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="532"/>
         <source>Sample rate (Hz)</source>
-        <translation type="unfinished"></translation>
+        <translation>Частота дискретизации (Гц)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="533"/>
         <source>Bit depth</source>
-        <translation type="unfinished">Разрядность</translation>
+        <translation>Разрядность</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>Number of channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Число каналов</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="536"/>
         <source>File created</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл создан</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>Last modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Последнее изменение</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="538"/>
         <source>File extension</source>
-        <translation type="unfinished">Расширение файла</translation>
+        <translation>Расширение файла</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="539"/>
@@ -7716,10 +7717,10 @@ Effects here process the final combined output.</source>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="622"/>
         <source>Stopped: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Остановлено: %Ln операция не выполнена</numerusform>
+            <numerusform>Остановлено: %Ln операции не выполнены</numerusform>
+            <numerusform>Остановлено: %Ln операций не выполнено</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7875,7 +7876,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="564"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished">&amp;Стоп</translation>
+        <translation>&amp;Стоп</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="545"/>
@@ -9002,7 +9003,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="361"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">Это сочетание клавиш уже зарегистрировано</translation>
+        <translation>Это сочетание клавиш уже зарегистрировано</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="384"/>
@@ -9058,7 +9059,7 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="267"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">Это сочетание клавиш уже зарегистрировано</translation>
+        <translation>Это сочетание клавиш уже зарегистрировано</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="272"/>
@@ -9271,12 +9272,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1092"/>
         <source>Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоплейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
         <source>Toggle Sidebar</source>
-        <translation type="unfinished">Переключить боковую панель</translation>
+        <translation>Переключить боковую панель</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1165"/>
@@ -9965,22 +9966,22 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="147"/>
         <source>Layout animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Анимация компоновки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
         <source>Enter from</source>
-        <translation type="unfinished"></translation>
+        <translation>Появление с края</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="152"/>
         <source>Scale direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Направление масштабирования</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="154"/>
         <source>Scale amount</source>
-        <translation type="unfinished"></translation>
+        <translation>Величина масштабирования</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="159"/>
@@ -10065,72 +10066,72 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="218"/>
         <source>Crossfade</source>
-        <translation type="unfinished"></translation>
+        <translation>Плавное затухание</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="219"/>
         <source>Fade through background</source>
-        <translation type="unfinished"></translation>
+        <translation>Затухание через фон</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="221"/>
         <source>Scale &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштабирование и затухание</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="222"/>
         <source>Slide &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Сдвиг и затухание</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="224"/>
         <source>Automatic</source>
-        <translation type="unfinished">Автоматически</translation>
+        <translation>Автоматически</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="225"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Слева</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="226"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="227"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверху</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="228"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Снизу</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="229"/>
         <source>Automatic follows the interface’s reading direction.</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматически следует направлению чтения интерфейса.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="231"/>
         <source>Grow</source>
-        <translation type="unfinished"></translation>
+        <translation>Увеличение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="232"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Уменьшение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Effect</source>
-        <translation type="unfinished"></translation>
+        <translation>Эффект</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="243"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="257"/>
@@ -11683,7 +11684,7 @@ If the default half-star does not render correctly with your system font, choose
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="178"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="182"/>
@@ -13849,12 +13850,12 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="978"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1036"/>
         <source>Clear existing tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить существующие теги?</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1041"/>
@@ -13869,7 +13870,7 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="475"/>
         <source>Clear writable tags, then apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить записываемые теги, затем применить</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="616"/>
@@ -15347,17 +15348,17 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="184"/>
         <source>Volume shortcut step</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаг изменения громкости сочетаниями клавиш</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="186"/>
         <source>Volume control step (small)</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаг регулировки громкости (малый)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="188"/>
         <source>Volume control step (large)</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаг регулировки громкости (большой)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="196"/>
@@ -16340,7 +16341,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="77"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="123"/>
@@ -17249,10 +17250,10 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="604"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln трек</numerusform>
+            <numerusform>%Ln трека</numerusform>
+            <numerusform>%Ln треков</numerusform>
         </translation>
     </message>
     <message>
@@ -17388,7 +17389,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2030"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="884"/>
@@ -17473,7 +17474,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
         <source>Remove unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить недоступные треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
@@ -17568,7 +17569,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="448"/>
         <source>Remove unavailable tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить недоступные треки из плейлиста</translation>
     </message>
 </context>
 <context>
@@ -17619,22 +17620,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="360"/>
         <source>Could not remove plugin directory ‘%1’. Check that it is writable and its files are not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось удалить каталог плагина «%1». Проверьте, что он доступен для записи и его файлы не используются.</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="369"/>
         <source>Could not remove ‘%1’: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось удалить «%1»: %2</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="481"/>
         <source>Invalid plugin identifier ‘%1’.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недопустимый идентификатор плагина «%1».</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="487"/>
         <source>The plugin update directory ‘%1’ is a symbolic link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Каталог обновления плагинов «%1» является символической ссылкой.</translation>
     </message>
 </context>
 <context>
@@ -17671,7 +17672,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="135"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="280"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="218"/>
@@ -17681,12 +17682,12 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="280"/>
         <source>Undo removal</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить удаление</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="283"/>
         <source>This plugin cannot be removed here. Use its installer or package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот плагин нельзя удалить здесь. Используйте его установщик или менеджер пакетов.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="335"/>
@@ -17706,62 +17707,62 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="44"/>
         <source>This plugin is already installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот плагин уже установлен.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="46"/>
         <source>This version of the plugin is already installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Эта версия плагина уже установлена.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="49"/>
         <source>The selected plugin file does not exist or is not a regular file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный файл плагина не существует или не является обычным файлом.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="52"/>
         <source>Plugin bundles are not supported on this operating system or processor architecture.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пакеты плагинов не поддерживаются в этой операционной системе или архитектуре процессора.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="56"/>
         <source>The plugin bundle could not be read. It may be damaged or inaccessible.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось прочитать пакет плагина. Возможно, он повреждён или недоступен.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="59"/>
         <source>The plugin bundle contains invalid or unsupported files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пакет плагина содержит недопустимые или неподдерживаемые файлы.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="62"/>
         <source>The plugin bundle does not contain files for this operating system and processor architecture.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пакет плагина не содержит файлов для этой операционной системы и архитектуры процессора.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="66"/>
         <source>No recognised fooyin plugin was found in the installation files.</source>
-        <translation type="unfinished"></translation>
+        <translation>В установочных файлах не найдено распознанного плагина fooyin.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="69"/>
         <source>This plugin uses an incompatible version of the fooyin plugin API.</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот плагин использует несовместимую версию API плагинов fooyin.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="72"/>
         <source>The plugin has an invalid identifier or is missing its version.</source>
-        <translation type="unfinished"></translation>
+        <translation>У плагина недопустимый идентификатор или отсутствует версия.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="75"/>
         <source>The bundle contains more than one fooyin plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пакет содержит более одного плагина fooyin.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="78"/>
         <source>The plugin files could not be written to the installation directory. Check that it is writable and that there is enough free disk space.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось записать файлы плагина в каталог установки. Проверьте, что он доступен для записи и что достаточно свободного места на диске.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="136"/>
@@ -17771,7 +17772,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="137"/>
         <source>This version of the plugin is already installed. Reinstall it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Эта версия плагина уже установлена. Переустановить её?</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="139"/>
@@ -17781,7 +17782,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="143"/>
         <source>Reinstall</source>
-        <translation type="unfinished"></translation>
+        <translation>Переустановить</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="144"/>
@@ -17791,7 +17792,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="162"/>
         <source>Plugin Reinstalled</source>
-        <translation type="unfinished"></translation>
+        <translation>Плагин переустановлен</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="165"/>
@@ -17874,22 +17875,22 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="152"/>
         <source>Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation>Требуется перезапуск</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="154"/>
         <source>Pending removal</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидает удаления</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="156"/>
         <source>Removal failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось удалить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
         <source>This plugin is marked for removal at the next restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот плагин помечен для удаления при следующем перезапуске.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="368"/>
@@ -18492,7 +18493,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="111"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
@@ -19034,7 +19035,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="71"/>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="230"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="74"/>
@@ -21234,7 +21235,7 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="136"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to run arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Песочница Flatpak не может напрямую запускать приложения, установленные на хосте. Чтобы разрешить fooyin запускать приложения хоста, добавьте &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; в разрешения «talk» шины сеанса fooyin в Flatseal или выполните:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Затем добавьте префикс &lt;code&gt;flatpak-spawn --host&lt;/code&gt; к каждой команде сервиса. Например:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;Это разрешение позволяет fooyin выполнять произвольные команды вне песочницы. Включайте его, только если доверяете настроенным сервисам.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="152"/>
@@ -26311,7 +26312,7 @@ Higher supersampling values work best with higher sample counts.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="219"/>
         <source>Stop</source>
-        <translation type="unfinished">Стоп</translation>
+        <translation>Стоп</translation>
     </message>
 </context>
 <context>
@@ -27169,12 +27170,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="996"/>
         <source>Column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовки столбцов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="999"/>
         <source>Playlist column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовки столбцов плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="1001"/>
@@ -27320,7 +27321,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="131"/>
         <source>Configure</source>
-        <translation type="unfinished">Настроить</translation>
+        <translation>Настроить</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>

@@ -554,7 +554,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="518"/>
         <source>Duration-weighted average bitrate of the track list in kbps</source>
-        <translation type="unfinished"></translation>
+        <translation>Längdviktad medelbittakt av spårlistan i kb/s</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="524"/>
@@ -606,7 +606,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="592"/>
         <source>Playback queue mode: playlist or queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppspelningsköläge: spellista eller kö</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="607"/>
@@ -1746,7 +1746,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="223"/>
         <source>No artwork sources enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga konstverkskällor påsatta</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="235"/>
@@ -2321,7 +2321,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="91"/>
         <source>Show preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa förhandsvisning</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="101"/>
@@ -2398,26 +2398,26 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="170"/>
         <source>Show matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa matchande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="378"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="428"/>
         <source>Updating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdaterar…</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="470"/>
         <source>No matching tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga matchande spår</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="404"/>
         <source>%Ln matching track(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln matchande spår</numerusform>
+            <numerusform>%Ln matchande spår</numerusform>
         </translation>
     </message>
     <message>
@@ -2633,47 +2633,47 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="530"/>
         <source>Bitrate (kbps)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bittakt (kb/s)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="532"/>
         <source>Sample rate (Hz)</source>
-        <translation type="unfinished"></translation>
+        <translation>Samplingsfrekvens (Hz)</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="533"/>
         <source>Bit depth</source>
-        <translation type="unfinished">Bitdjup</translation>
+        <translation>Bitdjup</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="535"/>
         <source>Number of channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Antal kanaler</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="536"/>
         <source>File created</source>
-        <translation type="unfinished"></translation>
+        <translation>Fil skapad</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="537"/>
         <source>Last modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Senast modifierad</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="538"/>
         <source>File extension</source>
-        <translation type="unfinished">Filändelse</translation>
+        <translation>Filändelse</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="539"/>
         <source>Folder path</source>
-        <translation type="unfinished"></translation>
+        <translation>Mappsökväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="540"/>
         <source>File path</source>
-        <translation type="unfinished"></translation>
+        <translation>Filsökväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="972"/>
@@ -2683,7 +2683,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="982"/>
         <source>The query contains an incomplete or invalid expression.</source>
-        <translation type="unfinished"></translation>
+        <translation>Frågan innehåller ett inkomplett eller ogiltigt uttryck.</translation>
     </message>
 </context>
 <context>
@@ -2701,7 +2701,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="49"/>
         <source>Match an odd number of rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Matcha ett udda antal regler</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="51"/>
@@ -2721,7 +2721,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="61"/>
         <source>Include all tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkludera alla spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="62"/>
@@ -2731,39 +2731,39 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="68"/>
         <source>Add rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till regel</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="70"/>
         <source>Add group</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till grupp</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="78"/>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="82"/>
         <source>Collapse group</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollapsa grupp</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="82"/>
         <source>Expand group</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandera grupp</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="95"/>
         <source>Remove group</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort grupp</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="179"/>
         <source>Add a rule or group, or choose ‘Include all tracks’.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till regel eller grupp, eller välj ”Inkludera alla spår”.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="182"/>
         <source>Add a rule or group to group %1.</source>
         <extracomment>%1 is a group number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till regel eller grupp till grupp %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="197"/>
@@ -2802,12 +2802,12 @@ Clear to disable sorting.</source>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="161"/>
         <source>and</source>
         <extracomment>Separates the two dates in a ‘between’ rule.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>och</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="208"/>
         <source>No values</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga värden</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="214"/>
@@ -2889,7 +2889,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="476"/>
         <source>Values (one per line)</source>
-        <translation type="unfinished"></translation>
+        <translation>Värden (en per rad)</translation>
     </message>
 </context>
 <context>
@@ -3354,7 +3354,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="145"/>
         <source>Playing track</source>
-        <translation type="unfinished">Spelande spår</translation>
+        <translation>Spelande spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="147"/>
@@ -3722,7 +3722,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="43"/>
         <source>CD sector conversion overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>CD-sektor-konversions-överfyllning</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cdda/cddatoc.cpp" line="89"/>
@@ -7680,9 +7680,9 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message numerus="yes">
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="622"/>
         <source>Stopped: %Ln operation(s) not run</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Stoppade: %Ln åtgärd kördes inte</numerusform>
+            <numerusform>Stoppade: %Ln åtgärder kördes inte</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7831,7 +7831,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="564"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished">&amp;Stoppa</translation>
+        <translation>&amp;Stoppa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="545"/>
@@ -8040,8 +8040,8 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="293"/>
         <source>Could not move %Ln file(s) to the trash. Delete them permanently?</source>
         <translation>
-            <numerusform>Kunde inte flytta ”%Ln” fil till papperskorgen. Radera den permanent?</numerusform>
-            <numerusform>Kunde inte flytta ”%Ln” filer till papperskorgen. Radera dem permanent?</numerusform>
+            <numerusform>Kunde inte flytta %Ln fil till papperskorgen. Radera den permanent?</numerusform>
+            <numerusform>Kunde inte flytta %Ln filer till papperskorgen. Radera dem permanent?</numerusform>
         </translation>
     </message>
     <message>
@@ -8954,7 +8954,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="361"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">Genvägen är redan registrerad</translation>
+        <translation>Genvägen är redan registrerad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutmacosbackend.cpp" line="384"/>
@@ -9010,7 +9010,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="267"/>
         <source>The shortcut is already registered</source>
-        <translation type="unfinished">Genvägen är redan registrerad</translation>
+        <translation>Genvägen är redan registrerad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/globalhotkeys/globalshortcutwindowsbackend.cpp" line="272"/>
@@ -9223,12 +9223,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1092"/>
         <source>Autoplaylist</source>
-        <translation type="unfinished"></translation>
+        <translation>Autospellista</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1093"/>
         <source>Toggle Sidebar</source>
-        <translation type="unfinished">Växla sidruta</translation>
+        <translation>Växla sidruta</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1165"/>
@@ -9317,17 +9317,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1271"/>
         <source>Look up metadata by disc TOC…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök upp metadata efter skiv-innehållsförteckning…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1272"/>
         <source>Look up metadata using the selected tracks’ disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök upp metadata med de valda spårens skiv-innehållsförteckning</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1276"/>
         <source>Look up metadata by disc TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök upp metadata efter skiv-innehållsförteckning</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="1279"/>
@@ -9887,12 +9887,12 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="139"/>
         <source>Light</source>
-        <translation>Ljust</translation>
+        <translation>Ljusa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="140"/>
         <source>Dark</source>
-        <translation>Mörkt</translation>
+        <translation>Mörka</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="141"/>
@@ -9917,22 +9917,22 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="147"/>
         <source>Layout animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Layoutanimering</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
         <source>Enter from</source>
-        <translation type="unfinished"></translation>
+        <translation>Gå in från</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="152"/>
         <source>Scale direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalningsriktning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="154"/>
         <source>Scale amount</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalningsmängd</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="159"/>
@@ -10017,72 +10017,72 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="218"/>
         <source>Crossfade</source>
-        <translation type="unfinished"></translation>
+        <translation>Korstona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="219"/>
         <source>Fade through background</source>
-        <translation type="unfinished"></translation>
+        <translation>Tona genom bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="221"/>
         <source>Scale &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Skala och tona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="222"/>
         <source>Slide &amp; fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Glid och tona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="224"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisk</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="225"/>
         <source>Left</source>
-        <translation type="unfinished">Vänster</translation>
+        <translation>Vänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="226"/>
         <source>Right</source>
-        <translation type="unfinished">Höger</translation>
+        <translation>Höger</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="227"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="228"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="229"/>
         <source>Automatic follows the interface’s reading direction.</source>
-        <translation type="unfinished"></translation>
+        <translation>Följer automatiskt gränssnittets läsriktning.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="231"/>
         <source>Grow</source>
-        <translation type="unfinished"></translation>
+        <translation>Väx</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="232"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Krymp</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="241"/>
         <source>Effect</source>
-        <translation type="unfinished"></translation>
+        <translation>Effekt</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="243"/>
         <source>Duration</source>
-        <translation type="unfinished">Längd</translation>
+        <translation>Längd</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="257"/>
@@ -10478,7 +10478,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="168"/>
         <source>Love Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Älskredigerade</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="173"/>
@@ -11632,7 +11632,7 @@ Välj en annan symbol här om standardhalvstjärnan inte renderas korrekt med di
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="178"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="182"/>
@@ -13793,12 +13793,12 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="978"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1036"/>
         <source>Clear existing tags?</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa existerande taggar?</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="1041"/>
@@ -13813,7 +13813,7 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="475"/>
         <source>Clear writable tags, then apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa skrivbara taggar, applicera sedan</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="616"/>
@@ -16275,7 +16275,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="77"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="123"/>
@@ -16703,7 +16703,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="276"/>
         <source>Include column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkludera kolumnlayout</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="278"/>
@@ -16750,7 +16750,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="371"/>
         <source>The display script only applies in single-column mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Displayskripten tillämpas endast i enkolumnsläge.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="373"/>
@@ -16801,9 +16801,9 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message numerus="yes">
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="585"/>
         <source>Used by %Ln playlist(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Används av %Ln spellista</numerusform>
+            <numerusform>Används av %Ln spellistor</numerusform>
         </translation>
     </message>
     <message>
@@ -17181,7 +17181,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message numerus="yes">
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="604"/>
         <source>%Ln track(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%Ln spår</numerusform>
             <numerusform>%Ln spår</numerusform>
         </translation>
@@ -17288,7 +17288,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1481"/>
         <source>Manage presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hantera förinställningar…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1482"/>
@@ -17318,7 +17318,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="2030"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="884"/>
@@ -17554,12 +17554,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="369"/>
         <source>Could not remove ‘%1’: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte ta bort ”%1”: %2</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="481"/>
         <source>Invalid plugin identifier ‘%1’.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogiltig tilläggsidentifierare ”%1”.</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="487"/>
@@ -17601,7 +17601,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="135"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="280"/>
         <source>Remove</source>
-        <translation type="unfinished">Ta bort</translation>
+        <translation>Ta bort</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="218"/>
@@ -17611,12 +17611,12 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="280"/>
         <source>Undo removal</source>
-        <translation type="unfinished"></translation>
+        <translation>Ångra borttagning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="283"/>
         <source>This plugin cannot be removed here. Use its installer or package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det här tillägget kan inte tas bort här. Använd dess installerare eller pakethanterare.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="335"/>
@@ -17636,17 +17636,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="44"/>
         <source>This plugin is already installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det här tillägget är redan installerat.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="46"/>
         <source>This version of the plugin is already installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här versionen av tillägget är redan installerat.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="49"/>
         <source>The selected plugin file does not exist or is not a regular file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den valda tilläggsfilen existerar inte eller är inte en vanlig fil.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="52"/>
@@ -17671,17 +17671,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="66"/>
         <source>No recognised fooyin plugin was found in the installation files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget känt fooyin-tillägg hittades i installationsfilerna.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="69"/>
         <source>This plugin uses an incompatible version of the fooyin plugin API.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det här tillägget använder en inkompatibel version av fooyin-tilläggs-API:n.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="72"/>
         <source>The plugin has an invalid identifier or is missing its version.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillägget har en ogiltig identifierare eller saknar sin version.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="75"/>
@@ -17691,7 +17691,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="78"/>
         <source>The plugin files could not be written to the installation directory. Check that it is writable and that there is enough free disk space.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tilläggsfilerna kunde inte skrivas till installationsmappen. Kontrollera att den är skrivbar och att det finns tillräckligt diskutrymme.</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="136"/>
@@ -17701,17 +17701,17 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="137"/>
         <source>This version of the plugin is already installed. Reinstall it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här versionen av tillägget är redan installerad. Ominstallera den?</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="139"/>
         <source>This plugin is already installed. Update it?</source>
-        <translation>Detta tillägg är redan installerat. Uppdatera den?</translation>
+        <translation>Det här tillägget är redan installerat. Uppdatera den?</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="143"/>
         <source>Reinstall</source>
-        <translation type="unfinished"></translation>
+        <translation>Ominstallera</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="144"/>
@@ -17721,7 +17721,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="162"/>
         <source>Plugin Reinstalled</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillägg ominstallerat</translation>
     </message>
     <message>
         <location filename="../../src/gui/plugininstallhandler.cpp" line="165"/>
@@ -17804,22 +17804,22 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="152"/>
         <source>Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation>Omstart krävs</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="154"/>
         <source>Pending removal</source>
-        <translation type="unfinished"></translation>
+        <translation>Väntar borttagning</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="156"/>
         <source>Removal failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Borttagning misslyckades</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="290"/>
         <source>This plugin is marked for removal at the next restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det här tillägget är markerat för borttagning vid nästa omstart.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="368"/>
@@ -18419,7 +18419,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="111"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="119"/>
@@ -18959,7 +18959,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="71"/>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="230"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/rgscanner/rgscannerplugin.cpp" line="74"/>
@@ -21155,7 +21155,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="136"/>
         <source>&lt;p&gt;The Flatpak sandbox cannot directly launch applications installed on the host. To allow fooyin to launch host applications, add &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; to fooyin’s Session Bus ‘talk’ permissions in Flatseal, or run:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Then prefix each service command with &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. For example:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;This permission allows fooyin to run arbitrary commands outside the sandbox. Only enable it if you trust your configured services.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Flatpak-sandlådan kan inte öppna applikationer direkt som är installerade på värden. För att låta fooyin öppna värdapplikationer, lägg till &lt;code&gt;org.freedesktop.Flatpak&lt;/code&gt; till fooyins sessionsbuss ”talk”-behörighet i Flatseal, eller kör:&lt;/p&gt;&lt;pre&gt;flatpak override --user --talk-name=org.freedesktop.Flatpak org.fooyin.fooyin&lt;/pre&gt;&lt;p&gt;Prefixa sedan varje tjänstkommando med &lt;code&gt;flatpak-spawn --host&lt;/code&gt;. Till exempel:&lt;/p&gt;&lt;pre&gt;flatpak-spawn --host spek \&quot;%filepath%\&quot;&lt;/pre&gt;&lt;p&gt;Den här behörigheten låter fooyin köra arbiträra kommandon utanför sandlådan. Sätt endast på den om du litar på dina konfigurerade tjänster.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/runservices/runservicespage.cpp" line="152"/>
@@ -22553,7 +22553,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="52"/>
         <source>System: %1</source>
         <extracomment>%1 is the key combination of a shortcut</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>System: %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="53"/>
@@ -22631,7 +22631,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="178"/>
         <source>Enable system shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt på systemgenvägar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="179"/>
@@ -23935,7 +23935,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/gui/layout/layoutcommands.cpp" line="1071"/>
         <source>Split and move widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitta och flytta widget</translation>
     </message>
 </context>
 <context>
@@ -26226,7 +26226,7 @@ Högre supersamplingsvärden fungerar bäst med högre antal samplar.</translati
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="219"/>
         <source>Stop</source>
-        <translation type="unfinished">Stopp</translation>
+        <translation>Stopp</translation>
     </message>
 </context>
 <context>
@@ -26825,7 +26825,7 @@ Sätt till 0 för att automatiskt välja från fjärr-buffert-längden.</transla
         <location filename="../../src/gui/widgets.cpp" line="837"/>
         <location filename="../../src/gui/widgets.cpp" line="847"/>
         <source>Metadata Compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadatakomprimering</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="802"/>
@@ -26841,7 +26841,7 @@ Set to 0 to disable compression. Changes take effect after restarting fooyin.</s
     <message>
         <location filename="../../src/gui/widgets.cpp" line="808"/>
         <source> bytes</source>
-        <translation type="unfinished"></translation>
+        <translation> byte</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="816"/>
@@ -26852,12 +26852,13 @@ Set to 0 to disable compression. Changes take effect after restarting fooyin.</s
         <location filename="../../src/gui/widgets.cpp" line="817"/>
         <source>Higher levels may reduce memory use at the cost of slower metadata loading and updates.
 Changes take effect after restarting fooyin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Högre nivåer kan minska minnesanvändning men ökar tiden för inläsning och uppdatering av metadata.
+Ändringar träder i kraft efter att ha startat om fooyin.</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="838"/>
         <source>Extra tags to compress below the threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrataggar att komprimera under gränsen</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="839"/>
@@ -27076,12 +27077,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="996"/>
         <source>Column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolumnrubriker</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="999"/>
         <source>Playlist column headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Spellistskolumnrubriker</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="1001"/>
@@ -27227,7 +27228,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="131"/>
         <source>Configure</source>
-        <translation type="unfinished">Konfigurera</translation>
+        <translation>Konfigurera</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="136"/>
@@ -27452,7 +27453,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="396"/>
         <source>Unable to parse command line options.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte tolka kommandotolksalternativ.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="415"/>
@@ -27498,43 +27499,43 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="672"/>
         <source>Expected ‘WITH’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ”WITH” efter ”%1”</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="715"/>
         <source>Expected ‘(’ after ‘%1’</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ”(” efter ”%1”</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="725"/>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="731"/>
         <source>Expected a value in ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ett värde i ”%1”-listan</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="741"/>
         <source>Expected ‘)’ at end of ‘%1’ list</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ”)” vid slutet av ”%1”-listan</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="879"/>
         <source>Expected a date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ett datum i ”BETWEEN”-intervallet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="886"/>
         <source>Invalid date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogiltigt datum i ”BETWEEN”-intervallet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="893"/>
         <source>Expected ‘AND’ between dates in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Förväntade ”AND” mellan datum i ”BETWEEN”-intervallet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="902"/>
         <source>The start date must not be after the end date in ‘BETWEEN’ range</source>
-        <translation type="unfinished"></translation>
+        <translation>Startdatumet får inte vara efter slutdatumet i ”BETWEEN”-intervallet</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptruntime.cpp" line="928"/>
