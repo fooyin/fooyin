@@ -6,13 +6,17 @@
 
 - **Interface**
   - Add configurable inline track expansion to Library Filter ([#1841](https://github.com/fooyin/fooyin/pull/1841))
+  - Add configurable cover flow to Library Filter ([#701](https://github.com/fooyin/fooyin/issues/701), [#1867](https://github.com/fooyin/fooyin/pull/1867))
   - Add configurable animations when switching layouts
   - Add configurable focused-widget and playing-track targets for supported shortcuts, including Rating ([#1363](https://github.com/fooyin/fooyin/issues/1363), [#1849](https://github.com/fooyin/fooyin/issues/1849))
+  - Add named presets to widget configuration dialogs
   - Add a shared global background for supported widgets
+- **Playback:** Add per-track preferences for automatic playback and crossfading ([#1844](https://github.com/fooyin/fooyin/issues/1844))
 
 ### Improvements
 
 - **Audio Conversion:** Add support for parallel conversion
+- **CLI:** Expand playback controls and align Play behaviour ([#1866](https://github.com/fooyin/fooyin/issues/1866))
 - **Interface** 
   - Allow dialog actions in separate scopes to share shortcuts
   - Add a separate themed placeholder for artist artwork
@@ -23,6 +27,7 @@
   - Require Shift to split widgets during layout editing and show native modifier key names in hints
   - Make the Properties selection sidebar resizable
   - Improve wording in line with the KDE HIG ([#1810](https://github.com/fooyin/fooyin/pull/1810))
+  - Reuse cached artwork while requested thumbnail sizes load
   - Separate Library Tree grouping from display scripts and redesign the grouping preset editor
   - Show a script error indicator in Script Editor toolbars
   - Update the Gallery layout to use inline Filter track expansion
@@ -33,6 +38,7 @@
   - Add an automatic artwork fitting option
   - Add separate grouping scripts for columns
   - Add artwork margin and playing track appearance settings
+  - Improve artwork sizing and caption margins
   - Add overlay artwork captions
   - Add rounded hover, selection, and focus highlights when no margins are configured
   - Keep the current selection in view when resizing icons or the window
@@ -40,6 +46,9 @@
 - **Playlists**
   - Add a live track preview and matching track count to the autoplaylist editor
   - Support custom sorting scripts in autoplaylist rules ([#1806](https://github.com/fooyin/fooyin/issues/1806))
+- **Lyrics**
+  - Add lyrics.ovh as an online source ([#1834](https://github.com/fooyin/fooyin/pull/1834))
+  - Add transfer timeouts to all online sources
 - **Radio Browser**
   - Load and prepare tag filters without blocking the interface
   - Add sizing and spacing controls with automatic icon/row fitting
@@ -56,6 +65,7 @@
   - Fix alpha selection in colour dialogs
   - Fix the autosearch delay slider skipping values when scrolling ([#1837](https://github.com/fooyin/fooyin/issues/1837))
   - Fix Directory Browser playing row highlights
+  - Fix sizing and selected icon colours in Icon Picker and Playlist Manager
   - Fix playing row colour blending with alternating row colours
   - Fix Properties selection sidebar text alignment and improve performance ([#1848](https://github.com/fooyin/fooyin/issues/1848))
   - Restore saved Properties and Lyrics dialog state before showing them ([#1860](https://github.com/fooyin/fooyin/issues/1860))
