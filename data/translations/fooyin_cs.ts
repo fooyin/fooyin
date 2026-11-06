@@ -9011,32 +9011,32 @@ Delší obsah může toto minimum překročit.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="70"/>
         <source>Artwork (overlay labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přebaly alb (popisky přes)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="71"/>
         <source>Artwork (no labels)</source>
-        <translation type="unfinished">Přebaly alb (bez popisků)</translation>
+        <translation>Přebaly alb (bez popisků)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="74"/>
         <source>Show summary item</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit souhrn</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="75"/>
         <source>Show header</source>
-        <translation type="unfinished">Zobrazit záhlaví</translation>
+        <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="76"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zobrazit posuvník</translation>
+        <translation>Zobrazit posuvník</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="77"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Střídavé barvy řádků</translation>
+        <translation>Střídavé barvy řádků</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="78"/>
