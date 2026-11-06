@@ -27,10 +27,8 @@ function(setup_projectm)
 
     FetchContent_Declare(
         projectm
-        GIT_REPOSITORY https://github.com/projectM-visualizer/projectm.git
-        GIT_TAG v4.1.7
-        GIT_SHALLOW TRUE
-        GIT_SUBMODULES_RECURSE TRUE EXCLUDE_FROM_ALL
+        URL https://github.com/projectM-visualizer/projectm/releases/download/v4.1.7/libprojectM-4.1.7.tar.gz
+        URL_HASH MD5=351adac015b8f4314bf692394ff8a277
     )
 
     FetchContent_MakeAvailable(projectm)
