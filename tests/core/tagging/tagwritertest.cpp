@@ -912,7 +912,7 @@ TEST_F(TagWriterTest, Mp3SwitchingRatingStorageAvoidsDuplicateRatings)
     ASSERT_TRUE(m_parser.init(source));
 
     {
-        TagLib::MPEG::File mp3File(source.filepath.toLocal8Bit().constData());
+        TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
         ASSERT_TRUE(mp3File.isValid());
         auto* tag = mp3File.ID3v2Tag(true);
         ASSERT_NE(tag, nullptr);
@@ -983,7 +983,7 @@ TEST_F(TagWriterTest, Mp3SwitchingRatingStorageAvoidsDuplicateRatings)
         ASSERT_TRUE(file.flush());
 
         {
-            TagLib::MPEG::File mp3File(source.filepath.toLocal8Bit().constData());
+            TagLib::MPEG::File mp3File(file.closeAndGetFileName().toLocal8Bit().constData());
             ASSERT_TRUE(mp3File.isValid());
             auto* tag = mp3File.ID3v2Tag();
             ASSERT_NE(tag, nullptr);
