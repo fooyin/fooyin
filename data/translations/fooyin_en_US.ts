@@ -1756,7 +1756,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="223"/>
         <source>No artwork sources enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>No artwork sources enabled</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkdialog.cpp" line="235"/>
@@ -3513,7 +3513,7 @@ Clear to disable sorting.</translation>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="214"/>
         <source>Select which image source to use for the background</source>
-        <translation type="unfinished"></translation>
+        <translation>Select which image source to use for the background</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="215"/>
@@ -3558,12 +3558,12 @@ Clear to disable sorting.</translation>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="242"/>
         <source>Image source</source>
-        <translation type="unfinished">Image source</translation>
+        <translation>Image source</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="243"/>
         <source>Source</source>
-        <translation type="unfinished">Source</translation>
+        <translation>Source</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="253"/>
@@ -4649,7 +4649,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="171"/>
         <source>Replace the preset ‘%1’?</source>
-        <translation type="unfinished"></translation>
+        <translation>Replace the preset “%1”?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="181"/>
@@ -4665,7 +4665,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="217"/>
         <source>Delete the preset ‘%1’?</source>
-        <translation type="unfinished"></translation>
+        <translation>Delete the preset “%1”?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="226"/>
@@ -5029,7 +5029,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="329"/>
         <source>Automatic preserves source precision where the selected encoder supports it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatic preserves source precision where the selected encoder supports it.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="374"/>
@@ -6148,7 +6148,7 @@ Automatic uses the available processor threads.</source>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="87"/>
         <source>Source</source>
-        <translation type="unfinished">Source</translation>
+        <translation>Source</translation>
     </message>
     <message>
         <location filename="../../src/plugins/discord/settings/discordpage.cpp" line="89"/>
@@ -6630,7 +6630,13 @@ Effects here process the final combined output.</translation>
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
         <extracomment>%1 and %2 are native names or symbols for the split and replace modifier keys.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>• Find widgets in the palette on the right (hover near the right edge if it’s hidden).
+
+• Drag widgets from the palette to add them, or drag existing ones to move them. Hold %1 to split the target widget, or %2 to replace it.
+
+• Select a widget to see its parent containers in the breadcrumb bar. Select a parent to move an entire section.
+
+• Right-click any widget to split, replace, or remove it using the context menu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="529"/>
@@ -8148,7 +8154,7 @@ Effects here process the final combined output.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="252"/>
         <source>This action is deprecated and will be removed in a future release. Use ‘Delete’ with the target set to ‘Playing track’ instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>This action is deprecated and will be removed in a future release. Use “Delete” with the target set to “Playing track” instead.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="298"/>
@@ -8317,12 +8323,12 @@ Negative values reverse the tilt; 0° keeps artwork flat.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="112"/>
         <source>Centre spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Center spacing</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="113"/>
         <source>Distance between the centres of the current artwork and its nearest neighbour, as a percentage of the current artwork’s width</source>
-        <translation type="unfinished"></translation>
+        <translation>Distance between the centers of the current artwork and its nearest neighbor, as a percentage of the current artwork’s width</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="115"/>
@@ -8342,7 +8348,7 @@ Negative values reverse the tilt; 0° keeps artwork flat.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="118"/>
         <source>Set the number of items on each side. ‘Auto’ fills the available width.</source>
-        <translation type="unfinished"></translation>
+        <translation>Set the number of items on each side. “Auto” fills the available width.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="123"/>
@@ -8358,7 +8364,8 @@ Negative values reverse the tilt; 0° keeps artwork flat.</source>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="125"/>
         <source>Set each image’s size relative to the previous image, moving away from the centre.
 At 100%, all artwork stays the same size.</source>
-        <translation type="unfinished"></translation>
+        <translation>Set each image’s size relative to the previous image, moving away from the center.
+At 100%, all artwork stays the same size.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="127"/>
@@ -8389,7 +8396,8 @@ At 100%, all artwork stays the same size.</source>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="132"/>
         <source>Artwork fades progressively with distance from the centre.
 Higher values make side artwork fainter.</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork fades progressively with distance from the center.
+Higher values make side artwork fainter.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="138"/>
@@ -8553,7 +8561,7 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="64"/>
         <source>Background colour</source>
-        <translation type="unfinished">Background color</translation>
+        <translation>Background color</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="65"/>
@@ -8568,7 +8576,7 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="68"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Alternating row colors</translation>
+        <translation>Alternating row colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="69"/>
@@ -8593,12 +8601,12 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="100"/>
         <source>Colour</source>
-        <translation type="unfinished">Color</translation>
+        <translation>Color</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="104"/>
         <source>Behaviour</source>
-        <translation type="unfinished">Behavior</translation>
+        <translation>Behavior</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="105"/>
@@ -8801,7 +8809,7 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="263"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished">Use a custom background color for the currently playing row; transparency is supported</translation>
+        <translation>Use a custom background color for the currently playing row; transparency is supported</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="264"/>
@@ -8974,7 +8982,7 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="77"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Alternating row colors</translation>
+        <translation>Alternating row colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="78"/>
@@ -9216,7 +9224,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="258"/>
         <source>Artwork source</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork source</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="262"/>
@@ -10593,18 +10601,19 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="45"/>
         <source>Use a shared base colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Use a shared base color</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="51"/>
         <source>Choose ‘Global background’ in a widget’s background settings to use this image.</source>
-        <translation type="unfinished"></translation>
+        <translation>Choose “Global background” in a widget’s background settings to use this image.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="55"/>
         <source>Uses an opaque theme base colour beneath the artwork to keep colouring consistent across widgets.
 When disabled, the artwork blends with each widget’s own background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Uses an opaque theme base color beneath the artwork to keep coloring consistent across widgets.
+When disabled, the artwork blends with each widget’s own background.</translation>
     </message>
 </context>
 <context>
@@ -11510,19 +11519,22 @@ When disabled, rating editors use the default star shapes.</source>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="139"/>
         <source>Symbol used for full stars in %rating_stars% and %rating_stars_padded%.
 Also used in rating editors when ‘Use custom rating symbols’ is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol used for full stars in %rating_stars% and %rating_stars_padded%.
+Also used in rating editors when “Use custom rating symbols” is enabled.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="141"/>
         <source>Symbol used for half stars in %rating_stars% and %rating_stars_padded%.
 Also used in rating editors when ‘Use custom rating symbols’ is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol used for half stars in %rating_stars% and %rating_stars_padded%.
+Also used in rating editors when “Use custom rating symbols” is enabled.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="143"/>
         <source>Symbol used for empty stars in %rating_stars_padded%.
 Also used in rating editors when ‘Use custom rating symbols’ is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol used for empty stars in %rating_stars_padded%.
+Also used in rating editors when “Use custom rating symbols” is enabled.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="145"/>
@@ -14670,7 +14682,7 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="329"/>
         <source>Source</source>
-        <translation type="unfinished">Source</translation>
+        <translation>Source</translation>
     </message>
     <message>
         <location filename="../../src/gui/metadatalookup/metadatalookupdialog.cpp" line="331"/>
@@ -20218,7 +20230,7 @@ Changes take effect the next time the PipeWire output is initialized.</translati
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="50"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Alternating row colors</translation>
+        <translation>Alternating row colors</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="51"/>
@@ -23902,7 +23914,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="234"/>
         <source>Key combinations are managed in your system settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Key combinations are managed in your system settings.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="385"/>
