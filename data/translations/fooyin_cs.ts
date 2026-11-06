@@ -1908,7 +1908,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="93"/>
         <source>Grouping script</source>
-        <translation>Skript seskupení</translation>
+        <translation>Skript pro seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="94"/>
@@ -2215,7 +2215,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="127"/>
         <source>Choose a custom placeholder image file</source>
-        <translation>Vyber uživatelský zástupný obrázek</translation>
+        <translation>Vyber vlastní zástupný obrázek</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksourcespage.cpp" line="132"/>
@@ -4408,7 +4408,7 @@ Paranoidní: provádí nejdůkladnější kontrolu a dodatečná opakování (ne
     <message>
         <location filename="../../src/gui/controls/commandbutton.cpp" line="497"/>
         <source>Custom icon missing; using fallback icon.</source>
-        <translation>Uživatelská ikona nedostupná; použita záložní ikona.</translation>
+        <translation>Vlastní ikona nedostupná; použita záložní ikona.</translation>
     </message>
 </context>
 <context>
@@ -7380,7 +7380,7 @@ Efekty zpracovávají finální kombinovaný výstup.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="91"/>
         <source>Grouping script</source>
-        <translation>Skript seskupení</translation>
+        <translation>Skript pro seskupení</translation>
     </message>
 </context>
 <context>
@@ -8684,7 +8684,7 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="119"/>
         <source>Grouping script</source>
-        <translation>Skript seskupení</translation>
+        <translation>Skript pro seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="121"/>
@@ -8709,12 +8709,12 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="130"/>
         <source>Footer</source>
-        <translation>Patička</translation>
+        <translation>Zápatí</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="132"/>
         <source>Leave empty to hide the footer</source>
-        <translation>Ponech prázdné pro skrytí patičky</translation>
+        <translation>Ponech prázdné pro skrytí zápatí</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="141"/>
@@ -9141,7 +9141,7 @@ Delší obsah může toto minimum překročit.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="201"/>
         <source>Auto</source>
-        <translation>Automatická</translation>
+        <translation>Automatické</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="208"/>
@@ -9166,7 +9166,7 @@ Delší obsah může toto minimum překročit.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="326"/>
         <source>Use filter action</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít akci filtru</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="329"/>
@@ -9182,118 +9182,119 @@ Delší obsah může toto minimum překročit.</translation>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="163"/>
         <source>View mode</source>
-        <translation type="unfinished">Režim zobrazení</translation>
+        <translation>Režim zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="173"/>
         <source>Front cover</source>
-        <translation type="unfinished">Přední přebal</translation>
+        <translation>Přední přebal</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="174"/>
         <source>Back cover</source>
-        <translation type="unfinished">Zadní přebal</translation>
+        <translation>Zadní přebal</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="175"/>
         <source>Artist</source>
-        <translation type="unfinished">Umělec</translation>
+        <translation>Umělec</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="177"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Výchozí</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="178"/>
         <source>Embedded covers</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložené přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="179"/>
         <source>Directory covers</source>
-        <translation type="unfinished"></translation>
+        <translation>Přebaly alb složky</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="181"/>
         <source>Display options</source>
-        <translation type="unfinished"></translation>
+        <translation>Možnosti zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="215"/>
         <source>Artwork</source>
-        <translation type="unfinished">Přebaly alb</translation>
+        <translation>Přebaly alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="224"/>
         <source>Artwork spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozestupy přebalů alb</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="227"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontální</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="229"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikální</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="236"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Levý</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="238"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Pravý</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="240"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Horní</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="242"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolní</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="247"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons when manual sizing is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro změnu velikosti ikon ve widgetu při povolené ruční změně velikosti použij &lt;b&gt;Ctrl+Kolečko myši&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="250"/>
         <source>Resize artwork to fill the available width using the preferred size.
 Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated as zero.</source>
-        <translation type="unfinished"></translation>
+        <translation>Změnit velikost přebalu alba pro vyplnění dostupné šířky sloupce.
+Ctrl+Kolečko myši mění počet sloupců. Automatické horizontální mezery nastaveny na nula.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="256"/>
         <source>Artwork type</source>
-        <translation type="unfinished">Typ přebalu alba</translation>
+        <translation>Typ přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="258"/>
         <source>Artwork source</source>
-        <translation type="unfinished"></translation>
+        <translation>Zdroj přebalu alba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="262"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="272"/>
         <source>Gaps</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezery</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="274"/>
         <source>Margins</source>
-        <translation type="unfinished">Okraje</translation>
+        <translation>Okraje</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="289"/>
@@ -9335,36 +9336,36 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="198"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="259"/>
         <source>Header</source>
-        <translation type="unfinished">Záhlaví</translation>
+        <translation>Záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="199"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="375"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="200"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="263"/>
         <source>Footer</source>
-        <translation type="unfinished"></translation>
+        <translation>Zápatí</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="203"/>
         <source>Group by</source>
-        <translation type="unfinished"></translation>
+        <translation>Seskupit podle</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="206"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="345"/>
         <source>Subheader</source>
-        <translation type="unfinished"></translation>
+        <translation>Podzáhlaví</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="216"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="221"/>
         <source>Filter columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Sloupce filtru</translation>
     </message>
 </context>
 <context>
@@ -9372,7 +9373,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionwidget.cpp" line="154"/>
         <source>Collapse group</source>
-        <translation type="unfinished">Sbalit skupinu</translation>
+        <translation>Sbalit skupinu</translation>
     </message>
 </context>
 <context>
@@ -9489,7 +9490,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2022"/>
         <source>Artwork (overlay labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přebaly alb (popisky přes)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2023"/>
@@ -9519,7 +9520,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2159"/>
         <source>Expand selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit vybranou skupinu</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2172"/>
@@ -9608,7 +9609,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="171"/>
         <source>Grouping Script</source>
-        <translation type="unfinished"></translation>
+        <translation>Skript pro seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="173"/>
@@ -9628,7 +9629,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="250"/>
         <source>Use grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít skript pro seskupení</translation>
     </message>
 </context>
 <context>
@@ -10644,12 +10645,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="98"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="99"/>
         <source>Interface</source>
-        <translation type="unfinished">Rozhraní</translation>
+        <translation>Rozhraní</translation>
     </message>
 </context>
 <context>
@@ -10657,18 +10658,19 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="45"/>
         <source>Use a shared base colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít sdílenou základní barvu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="51"/>
         <source>Choose ‘Global background’ in a widget’s background settings to use this image.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro použití tohoto obrázku vyber v nastavení pozadí widgetu volbu ‚Globální pozadí‘.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="55"/>
         <source>Uses an opaque theme base colour beneath the artwork to keep colouring consistent across widgets.
 When disabled, the artwork blends with each widget’s own background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použije neprůhlednou základní barvu motivu pod přebalem alba pro zachování konzistence barev napříč widgety.
+Pokud zakázáno, přebal alba splývá s vlastním pozadím každého widgetu.</translation>
     </message>
 </context>
 <context>
@@ -10948,7 +10950,7 @@ When disabled, the artwork blends with each widget’s own background.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="144"/>
         <source>Custom icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Vlastní ikona</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="146"/>
@@ -11404,13 +11406,13 @@ zobrazovat hvězdy jen u neohodnocených</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
         <source>Use custom rating symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít vlastní symboly hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
         <source>Symbol font</source>
-        <translation type="unfinished"></translation>
+        <translation>Písmo symbolů</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="97"/>
@@ -11422,7 +11424,7 @@ zobrazovat srdce jen u neoblíbených</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
         <source>Use custom love symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít vlastní symboly oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="107"/>
@@ -11493,7 +11495,7 @@ zobrazovat srdce jen u neoblíbených</translation>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="190"/>
         <source>Size of the heart or custom symbol in love editors</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost srdce nebo vlastního symbolu v editorech oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="191"/>
@@ -11504,12 +11506,12 @@ When disabled, love editors use the default heart shape.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="193"/>
         <source>Symbol shown for loved tracks when custom love symbols are enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol zobrazovaný pro oblíbené skladby, pokud jsou povoleny vlastní symboly oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="194"/>
         <source>Symbol shown for unloved tracks when custom love symbols are enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol zobrazovaný pro neoblíbené skladby, pokud jsou povoleny vlastní symboly oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="195"/>
@@ -13354,17 +13356,17 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="96"/>
         <source>Use the display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít skript pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="97"/>
         <source>Enter a display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej skript pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="98"/>
         <source>Use the grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít skript pro seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="101"/>
@@ -13379,17 +13381,17 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="122"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Skript seskupení</translation>
+        <translation>Skript pro seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="123"/>
         <source>Tracks with matching results share tree nodes. Leave empty to use the display script.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skladby s odpovídajícími výsledky sdílí uzly stromu. Ponech prázdné pro použití skriptu pro zobrazení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="124"/>
         <source>Display script</source>
-        <translation type="unfinished">Skript pro zobrazení</translation>
+        <translation>Skript pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="125"/>
@@ -13404,7 +13406,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="130"/>
         <source>Sets the order within each level. Leave a level empty to use its grouping script.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pořadí na každé úrovni. Ponech úroveň prázdnou pro použití odpovídajícího skriptu pro seskupení.</translation>
     </message>
 </context>
 <context>
@@ -13442,17 +13444,17 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="243"/>
         <source>Use display script</source>
-        <translation type="unfinished">Použít skript pro zobrazení</translation>
+        <translation>Použít skript pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="247"/>
         <source>Enter display script</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadej skript pro zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="251"/>
         <source>Use grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít skript pro seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="389"/>
@@ -17939,7 +17941,7 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="307"/>
         <source>Grouping script</source>
-        <translation>Skript seskupení</translation>
+        <translation>Skript pro seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="309"/>
@@ -20477,7 +20479,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="118"/>
         <source>Auto</source>
-        <translation>Automatická</translation>
+        <translation>Automatické</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="121"/>
@@ -24576,7 +24578,7 @@ Vyšší hodnoty zvyšují podrobnost a spotřebu paměti.</translation>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="163"/>
         <source>Channel spacing</source>
-        <translation>Rozestup kanálů</translation>
+        <translation>Rozestupy kanálů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrogram/spectrogramconfigwidget.cpp" line="182"/>
@@ -25115,7 +25117,7 @@ Vyšší hodnoty zvyšují podrobnost a spotřebu paměti.</translation>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="425"/>
         <source>Bar spacing</source>
-        <translation>Rozestup sloupců</translation>
+        <translation>Rozestupy sloupců</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="426"/>
@@ -25125,7 +25127,7 @@ Vyšší hodnoty zvyšují podrobnost a spotřebu paměti.</translation>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="427"/>
         <source>Section spacing</source>
-        <translation>Rozestup sekcí</translation>
+        <translation>Rozestupy sekcí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="428"/>
@@ -27083,7 +27085,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="138"/>
         <source>Channel spacing</source>
-        <translation>Rozestup kanálů</translation>
+        <translation>Rozestupy kanálů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="140"/>
@@ -27093,7 +27095,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="142"/>
         <source>Bar spacing</source>
-        <translation>Rozestup pruhů</translation>
+        <translation>Rozestupy pruhů</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="145"/>
@@ -27103,7 +27105,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="147"/>
         <source>Section spacing</source>
-        <translation>Rozestup sekcí</translation>
+        <translation>Rozestupy sekcí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="189"/>
