@@ -283,6 +283,21 @@ public:
         {
             const std::scoped_lock lock(m_mutex);
             m_writes.emplace_back(track, options);
+
+            if(options.testFlag(Rating)) {
+                const auto policy = Fooyin::ratingTagPolicy();
+                const auto tag    = policy.effectiveWriteTag();
+                if(!tag.isEmpty()) {
+                    auto& tags          = m_extraTags[QFileInfo{track.filepath()}.absoluteFilePath()];
+                    const QString value = Fooyin::formatTextRating(track.rating(), policy.writeScale);
+                    if(value.isEmpty()) {
+                        tags.erase(tag);
+                    }
+                    else {
+                        tags.insert_or_assign(tag, QStringList{value});
+                    }
+                }
+            }
         }
 
         [[nodiscard]] std::vector<std::pair<Fooyin::Track, WriteOptions>> writes() const
