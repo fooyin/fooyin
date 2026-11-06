@@ -203,7 +203,7 @@ public:
 
     mutable QBasicTimer m_delayedLayout;
     QPoint m_pressedPos;
-    QPersistentModelIndex m_coverFlowPressedIndex;
+    QPersistentModelIndex m_pressedIndex;
     bool m_canStartDrag{true};
     QPersistentModelIndex m_hoverIndex;
     QPoint m_dragPos;

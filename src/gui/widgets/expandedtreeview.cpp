@@ -6101,8 +6101,8 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
     const QModelIndex index     = indexAt(pos);
     const QModelIndex prevIndex = currentIndex().siblingAtColumn(0);
 
-    if(p->m_viewMode == ViewMode::CoverFlow) {
-        p->m_coverFlowPressedIndex = index;
+    if(p->m_viewMode == ViewMode::CoverFlow || (p->m_viewMode == ViewMode::Icon && p->m_expansionWidget)) {
+        p->m_pressedIndex = index;
     }
 
     if(!index.isValid()) {
@@ -6164,9 +6164,11 @@ void ExpandedTreeView::mouseDoubleClickEvent(QMouseEvent* event)
         return;
     }
 
-    if(p->m_viewMode == ViewMode::CoverFlow && p->m_coverFlowPressedIndex.isValid()) {
-        // The first click may have moved the cover away from the cursor
-        const QPoint pos = visualRect(p->m_coverFlowPressedIndex).center();
+    if(p->m_pressedIndex.isValid()
+       && (p->m_viewMode == ViewMode::CoverFlow || (p->m_viewMode == ViewMode::Icon && p->m_expansionWidget))) {
+        // Cover flow or group expansion may have moved the pressed item away from the cursor
+        // Note: This only works reliably with animation enabled
+        const QPoint pos = visualRect(p->m_pressedIndex).center();
         QMouseEvent mapped{event->type(),          QPointF{pos},     QPointF{viewport()->mapToGlobal(pos)},
                            event->button(),        event->buttons(), event->modifiers(),
                            event->pointingDevice()};
