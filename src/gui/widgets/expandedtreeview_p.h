@@ -143,6 +143,7 @@ public:
     std::vector<std::pair<int, int>> columnRanges(const QModelIndex& topIndex, const QModelIndex& bottomIndex) const;
     std::vector<QRect> rectsToPaint(const QModelIndex& index, const QStyleOptionViewItem& option, int y) const;
 
+    [[nodiscard]] QMargins iconGridMargins() const;
     void updateExpansionGeometry();
     void updateExpansionAnimation(const QVariant& value);
     QPixmap captureExpansion() const;

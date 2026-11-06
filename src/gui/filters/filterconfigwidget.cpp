@@ -332,8 +332,8 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 
     auto* spacingLayout = new QHBoxLayout();
     spacingLayout->addWidget(gapsGroup, 1);
-    spacingLayout->addWidget(marginsGroup, 2);
-    spacingLayout->addWidget(gridMarginsGroup, 2);
+    spacingLayout->addWidget(marginsGroup, 1);
+    spacingLayout->addWidget(gridMarginsGroup, 1);
 
     auto* appearanceTabLayout = new QGridLayout(appearanceTab);
 

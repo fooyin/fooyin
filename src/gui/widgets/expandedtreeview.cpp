@@ -2527,9 +2527,9 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
     // Use the full width first to decide whether a scrollbar is needed
     m_layoutBounds = QRect{{}, QSize{width, viewport()->height()}};
 
-    const auto& gridMargins = m_p->m_iconGridMargins;
-    const int verticalInset = haveSideCaptions() ? 0 : MinItemSpacing;
-    const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + (gridMargins ? gridMargins->top() : verticalInset)};
+    const auto& gridMargins     = m_p->m_iconGridMargins;
+    const auto effectiveMargins = m_p->iconGridMargins();
+    const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + effectiveMargins.top()};
 
     int segStartPosition{m_layoutBounds.left()};
     int segEndPosition{m_layoutBounds.right() + 1};
@@ -2699,7 +2699,7 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
     }
 
     m_contentsSize = rect.size();
-    m_contentsSize.rheight() += gridMargins ? gridMargins->bottom() : verticalInset;
+    m_contentsSize.rheight() += effectiveMargins.bottom();
     if(gridMargins) {
         m_contentsSize.rwidth() = std::max(m_contentsSize.width(), gridBounds.right() + 1 + rightMargin);
     }
@@ -4810,6 +4810,16 @@ std::vector<QRect> ExpandedTreeViewPrivate::rectsToPaint(const QModelIndex& inde
     return rects;
 }
 
+QMargins ExpandedTreeViewPrivate::iconGridMargins() const
+{
+    if(m_iconGridMargins) {
+        return *m_iconGridMargins;
+    }
+    return m_captionDisplay == CaptionDisplay::Right
+             ? QMargins{}
+             : QMargins{MinItemSpacing, MinItemSpacing, MinItemSpacing, MinItemSpacing};
+}
+
 void ExpandedTreeViewPrivate::updateExpansionGeometry()
 {
     if(!m_expansionWidget || m_layingOutItems) {
@@ -4863,10 +4873,10 @@ void ExpandedTreeViewPrivate::updateExpansionAnimation(const QVariant& value)
         // Artwork and prepared backgrounds can arrive after the opening animation starts
         m_expansionSnapshot = captureExpansion();
         const QRect icon    = m_self->visualRect(m_expandedIndex);
-        const int spacing   = m_view->spacing();
+        const int topMargin = m_self->iconScrollTopMargin(m_expandedIndex);
         const int scroll = m_expansionAnimationIndex == m_expandedIndex
                              ? std::clamp(m_expansionRect.bottom() + 1 - bar->value() - m_self->viewport()->height(), 0,
-                                          std::max(0, icon.top() - spacing))
+                                          std::max(0, icon.top() - topMargin))
                              : 0;
         bar->setValue(bar->value() + scroll);
     }
@@ -5363,6 +5373,21 @@ void ExpandedTreeView::setIconVerticalGap(int gap)
     viewport()->update();
 }
 
+int ExpandedTreeView::iconScrollTopMargin(const QModelIndex& index) const
+{
+    if(p->m_viewMode != ViewMode::Icon || !p->isIndexValid(index)) {
+        return 0;
+    }
+
+    p->layoutItems();
+    const int item = p->viewIndex(index);
+    if(item < 0) {
+        return 0;
+    }
+
+    return p->m_viewItems.at(item).y == p->m_viewItems.front().y ? p->iconGridMargins().top() : p->m_view->spacing();
+}
+
 void ExpandedTreeView::setIconGridMargins(const QMargins& margins)
 {
     const QMargins clamped{std::clamp(margins.left(), 0, 999), std::clamp(margins.top(), 0, 999),
@@ -5705,8 +5730,7 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
     }
 
     if(p->m_viewMode == ViewMode::Icon) {
-        const int spacing = p->m_view->spacing();
-        rect.adjust(0, -spacing, 0, spacing);
+        rect.adjust(0, -iconScrollTopMargin(index), 0, p->m_view->spacing());
     }
 
     int item = p->viewIndex(index);

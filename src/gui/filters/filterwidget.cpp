@@ -1901,12 +1901,9 @@ void FilterWidget::applyExpansionContent(const ExpansionResult& result)
             const QRect iconRect     = m_view->visualRect(index);
             const int viewportHeight = m_view->viewport()->height();
             const int bottom         = m_expansion->y() + m_expansion->height();
-            const int spacing        = m_view->captionDisplay() != ExpandedTreeView::CaptionDisplay::Right
-                                            || m_view->useIconGapsForSideCaptions()
-                                         ? m_view->iconVerticalGap()
-                                         : 0;
+            const int topMargin      = m_view->iconScrollTopMargin(index);
             // Keep the selected icon and its top spacing visible while showing the expansion
-            const int scroll = std::clamp(bottom - viewportHeight, 0, std::max(0, iconRect.top() - spacing));
+            const int scroll = std::clamp(bottom - viewportHeight, 0, std::max(0, iconRect.top() - topMargin));
             if(scroll > 0) {
                 auto* bar = m_view->verticalScrollBar();
                 bar->setValue(bar->value() + scroll);

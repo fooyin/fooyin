@@ -180,6 +180,9 @@ public:
     void setIconHorizontalGap(int gap);
     [[nodiscard]] int iconVerticalGap() const;
     void setIconVerticalGap(int gap);
+
+    //! Uses the grid top margin for the first icon row and the row gap for later rows.
+    [[nodiscard]] int iconScrollTopMargin(const QModelIndex& index) const;
     //! Overrides the automatic margins around the icon grid.
     void setIconGridMargins(const QMargins& margins);
     void resetIconGridMargins();
