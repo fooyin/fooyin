@@ -6,7 +6,7 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="295"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Spill av</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="299"/>
@@ -21,17 +21,17 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="305"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstatt nåværende spilleliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="308"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Opprett ny spilleliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="311"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Legg til i spilleliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="315"/>
@@ -41,32 +41,32 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="318"/>
         <source>Queue to play next</source>
-        <translation type="unfinished"></translation>
+        <translation>Legg til foran i køen</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="321"/>
         <source>Replace playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstatt avspillingskø</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="325"/>
         <source>Set as root</source>
-        <translation type="unfinished"></translation>
+        <translation>Sett som hovedmappe</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="328"/>
         <source>View mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Visningsmodus</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="331"/>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfigurer</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="505"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Filutforsker</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="507"/>
@@ -84,17 +84,17 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="59"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstatt</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="62"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitt</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="65"/>
         <source>Remove split</source>
-        <translation type="unfinished"></translation>
+        <translation>Fjern splitting</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="69"/>
@@ -104,12 +104,12 @@
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="72"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Lim inn</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="76"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>Legg til</translation>
     </message>
     <message>
         <location filename="../../src/gui/contextmenuids.h" line="79"/>
@@ -124,7 +124,7 @@
     <message>
         <location filename="../../src/gui/widgets.cpp" line="527"/>
         <source>Layout Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Layoutredigering</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="529"/>
@@ -147,17 +147,17 @@
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="54"/>
         <source>Replace current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstatt nåværende spilleliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="57"/>
         <source>Create new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Opprett ny spilleliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="60"/>
         <source>Add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Legg til i spilleliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtercontextmenu.h" line="64"/>
@@ -364,7 +364,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="437"/>
         <source>Sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Samplingsrate</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="439"/>
@@ -384,7 +384,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="445"/>
         <source>Play count</source>
-        <translation type="unfinished"></translation>
+        <translation>Antall spillinger</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="450"/>
@@ -405,7 +405,7 @@
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="461"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="464"/>
         <source>Playback Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Avspillingsstatistikk</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="462"/>
@@ -420,12 +420,12 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="467"/>
         <source>Codec name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodeknavn</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="469"/>
         <source>Codec profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodekprofil</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="471"/>
@@ -440,7 +440,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="475"/>
         <source>Encoding description</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodingsbeskrivelse</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="477"/>
@@ -460,12 +460,12 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="485"/>
         <source>Full file path</source>
-        <translation type="unfinished"></translation>
+        <translation>Hel filsti</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="488"/>
         <source>Path relative to the library root</source>
-        <translation type="unfinished"></translation>
+        <translation>Filsti relativ til hovedmappen</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="490"/>
@@ -475,12 +475,12 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="492"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtype</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="494"/>
         <source>Filename including extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Filnavn (med filtype)</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="496"/>
@@ -539,12 +539,12 @@
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="609"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="612"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Spilleliste</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="514"/>
         <source>Number of tracks in the list</source>
-        <translation type="unfinished"></translation>
+        <translation>Antall låter i listen</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="516"/>
@@ -596,12 +596,12 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="528"/>
         <source>Unique genres across the track list</source>
-        <translation type="unfinished"></translation>
+        <translation>Unike sjangere i låtlisten</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="580"/>
         <source>fooyin version</source>
-        <translation type="unfinished"></translation>
+        <translation>fooyin-versjon</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="592"/>
@@ -648,7 +648,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="669"/>
         <source>Returns true when x is greater than y</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerer &quot;sant&quot; når x er større enn y</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="710"/>
@@ -688,7 +688,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="751"/>
         <source>Returns true when a is longer than b</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerer &quot;sant&quot; når a er lengre enn b</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="754"/>
@@ -703,7 +703,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="822"/>
         <source>Returns the CRC-32 checksum of the text</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerer en CRC-32-sjekksum av teksten</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="877"/>
@@ -970,7 +970,7 @@
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="72"/>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="74"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <location filename="../../src/gui/scripting/scriptreferenceentries.cpp" line="61"/>
@@ -1184,7 +1184,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="692"/>
         <source>Converts text to ASCII</source>
-        <translation type="unfinished"></translation>
+        <translation>Gjør om tekst til ASCII</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="694"/>
@@ -1229,17 +1229,17 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="729"/>
         <source>Returns the text length</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerer tekstens lengde</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="731"/>
         <source>Returns the longest string</source>
-        <translation type="unfinished"></translation>
+        <translation>Returnerer den lengste strengen</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="743"/>
         <source>Compares two strings</source>
-        <translation type="unfinished"></translation>
+        <translation>Sammenligner to strenger</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="745"/>
@@ -1415,7 +1415,7 @@
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="845"/>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="848"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tid</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="840"/>
@@ -1822,12 +1822,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="111"/>
         <source>Save Method</source>
-        <translation type="unfinished"></translation>
+        <translation>Lagringsmetode</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="120"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Format</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkdownloadpage.cpp" line="122"/>
@@ -1997,7 +1997,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="319"/>
         <source>Loading artwork…</source>
-        <translation type="unfinished"></translation>
+        <translation>Laster inn kunstverk…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkproperties.cpp" line="323"/>
@@ -2023,53 +2023,53 @@
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="121"/>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="209"/>
         <source>No artwork present</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen kunstverk til stede</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="95"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Åpne bilde</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="93"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="196"/>
         <source>Multiple images</source>
-        <translation type="unfinished"></translation>
+        <translation>Flere bilder</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="197"/>
         <source>Artwork found in %Ln file(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Kunstverk oppdaget i %Ln fil</numerusform>
+            <numerusform>Kunstverk oppdaget i %Ln filer</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="198"/>
         <source>%Ln file(s) selected</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln fil valgt</numerusform>
+            <numerusform>%Ln filer valgt</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="294"/>
         <source>Replace image</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstatt bilde</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="294"/>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>Legg til bilde</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="300"/>
         <source>View full size</source>
-        <translation type="unfinished"></translation>
+        <translation>Vis full størrelse</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="301"/>
@@ -2079,7 +2079,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="302"/>
         <source>Export as…</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksporter som…</translation>
     </message>
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="305"/>
@@ -2094,7 +2094,7 @@
     <message>
         <location filename="../../src/gui/artwork/artworkrow.cpp" line="319"/>
         <source>Remove this artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Fjern dette kunstverket</translation>
     </message>
 </context>
 <context>
@@ -2102,7 +2102,7 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="140"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>Søker</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworksearchingpage.cpp" line="141"/>
