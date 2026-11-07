@@ -22,10 +22,12 @@
 #include <core/player/playerdefs.h>
 
 #include <QColor>
+#include <QFont>
 #include <QSortFilterProxyModel>
 #include <QString>
 
 #include <array>
+#include <optional>
 
 class QAbstractFileIconProvider;
 class QDir;
@@ -75,6 +77,7 @@ public:
 
     void setFlat(bool isFlat);
     void setIconsEnabled(bool enabled);
+    void setPlayingRowStyle(const QString& font, const QColor& colour);
     void setPlayState(Player::PlayState state);
     void setPlayingPath(const QString& path);
     void setSearchText(const QString& text);
@@ -103,6 +106,7 @@ private:
 
     bool m_showIcons;
     QColor m_playingColour;
+    std::optional<QFont> m_playingFont;
     std::array<Qt::Alignment, 4> m_columnAlignments;
 };
 } // namespace Fooyin

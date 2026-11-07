@@ -106,6 +106,8 @@ public:
         QString rootPath{
             QDir::homePath(),
         };
+        QString playingRowFont;
+        QString playingRowColour;
         BackgroundConfig background;
     };
 

@@ -71,20 +71,22 @@
 using namespace Qt::StringLiterals;
 
 // Settings keys
-constexpr auto DirBrowserIconsKey        = u"DirectoryBrowser/Icons";
-constexpr auto DirBrowserDoubleClickKey  = u"DirectoryBrowser/DoubleClickBehaviour";
-constexpr auto DirBrowserMiddleClickKey  = u"DirectoryBrowser/MiddleClickBehaviour";
-constexpr auto DirBrowserModeKey         = u"DirectoryBrowser/Mode";
-constexpr auto DirBrowserListIndentKey   = u"DirectoryBrowser/IndentList";
-constexpr auto DirBrowserControlsKey     = u"DirectoryBrowser/Controls";
-constexpr auto DirBrowserControlsPosKey  = u"DirectoryBrowser/ControlsPosition";
-constexpr auto DirBrowserLocationKey     = u"DirectoryBrowser/LocationBar";
-constexpr auto DirBrowserShowSymLinksKey = u"DirectoryBrowser/SymLinks";
-constexpr auto DirBrowserShowHiddenKey   = u"DirectoryBrowser/Hidden";
-constexpr auto DirBrowserSendPlaybackKey = u"DirectoryBrowser/StartPlaybackOnSend";
-constexpr auto DirBrowserShowHeaderKey   = u"DirectoryBrowser/ShowHeader";
-constexpr auto DirBrowserRestoreSortKey  = u"DirectoryBrowser/RestoreSort";
-constexpr auto DirBrowserBackgroundKey   = u"DirectoryBrowser/Background";
+constexpr auto DirBrowserIconsKey            = u"DirectoryBrowser/Icons";
+constexpr auto DirBrowserDoubleClickKey      = u"DirectoryBrowser/DoubleClickBehaviour";
+constexpr auto DirBrowserMiddleClickKey      = u"DirectoryBrowser/MiddleClickBehaviour";
+constexpr auto DirBrowserModeKey             = u"DirectoryBrowser/Mode";
+constexpr auto DirBrowserListIndentKey       = u"DirectoryBrowser/IndentList";
+constexpr auto DirBrowserControlsKey         = u"DirectoryBrowser/Controls";
+constexpr auto DirBrowserControlsPosKey      = u"DirectoryBrowser/ControlsPosition";
+constexpr auto DirBrowserLocationKey         = u"DirectoryBrowser/LocationBar";
+constexpr auto DirBrowserShowSymLinksKey     = u"DirectoryBrowser/SymLinks";
+constexpr auto DirBrowserShowHiddenKey       = u"DirectoryBrowser/Hidden";
+constexpr auto DirBrowserSendPlaybackKey     = u"DirectoryBrowser/StartPlaybackOnSend";
+constexpr auto DirBrowserShowHeaderKey       = u"DirectoryBrowser/ShowHeader";
+constexpr auto DirBrowserRestoreSortKey      = u"DirectoryBrowser/RestoreSort";
+constexpr auto DirBrowserPlayingRowFontKey   = u"DirectoryBrowser/PlayingRowFont";
+constexpr auto DirBrowserPlayingRowColourKey = u"DirectoryBrowser/PlayingRowColour";
+constexpr auto DirBrowserBackgroundKey       = u"DirectoryBrowser/Background";
 
 namespace {
 class DirChange : public QUndoCommand
@@ -451,10 +453,12 @@ DirBrowser::ConfigData DirBrowser::defaultConfig() const
     config.mode = static_cast<Mode>(m_settings->fileValue(DirBrowserModeKey, static_cast<int>(config.mode)).toInt());
     config.controlsPosition = static_cast<ControlsPosition>(
         m_settings->fileValue(DirBrowserControlsPosKey, static_cast<int>(config.controlsPosition)).toInt());
-    config.showControls = m_settings->fileValue(DirBrowserControlsKey, config.showControls).toBool();
-    config.showLocation = m_settings->fileValue(DirBrowserLocationKey, config.showLocation).toBool();
-    config.showSymLinks = m_settings->fileValue(DirBrowserShowSymLinksKey, config.showSymLinks).toBool();
-    config.showHidden   = m_settings->fileValue(DirBrowserShowHiddenKey, config.showHidden).toBool();
+    config.showControls     = m_settings->fileValue(DirBrowserControlsKey, config.showControls).toBool();
+    config.showLocation     = m_settings->fileValue(DirBrowserLocationKey, config.showLocation).toBool();
+    config.showSymLinks     = m_settings->fileValue(DirBrowserShowSymLinksKey, config.showSymLinks).toBool();
+    config.showHidden       = m_settings->fileValue(DirBrowserShowHiddenKey, config.showHidden).toBool();
+    config.playingRowFont   = m_settings->fileValue(DirBrowserPlayingRowFontKey, config.playingRowFont).toString();
+    config.playingRowColour = m_settings->fileValue(DirBrowserPlayingRowColourKey, config.playingRowColour).toString();
     config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(DirBrowserBackgroundKey).toMap()));
 
     return config;
@@ -480,6 +484,8 @@ void DirBrowser::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(DirBrowserLocationKey, config.showLocation);
     m_settings->fileSet(DirBrowserShowSymLinksKey, config.showSymLinks);
     m_settings->fileSet(DirBrowserShowHiddenKey, config.showHidden);
+    m_settings->fileSet(DirBrowserPlayingRowFontKey, config.playingRowFont);
+    m_settings->fileSet(DirBrowserPlayingRowColourKey, config.playingRowColour);
 
     QJsonObject background;
     config.background.saveLayout(background);
@@ -501,6 +507,8 @@ void DirBrowser::clearSavedDefaults() const
     m_settings->fileRemove(DirBrowserLocationKey);
     m_settings->fileRemove(DirBrowserShowSymLinksKey);
     m_settings->fileRemove(DirBrowserShowHiddenKey);
+    m_settings->fileRemove(DirBrowserPlayingRowFontKey);
+    m_settings->fileRemove(DirBrowserPlayingRowColourKey);
     m_settings->fileRemove(DirBrowserBackgroundKey);
 }
 
@@ -523,9 +531,13 @@ void DirBrowser::applyConfig(const ConfigData& config)
     setShowSymLinksEnabled(m_config.showSymLinks);
     setShowHidden(m_config.showHidden);
     setRootPath(m_config.rootPath);
+    m_dirTree->setUniformRowHeights(m_config.playingRowFont.isEmpty());
+    m_proxyModel->setPlayingRowStyle(m_config.playingRowFont, QColor{m_config.playingRowColour});
     m_dirTree->setBackgroundConfig(m_config.background);
     m_backgroundSource->setConfig(m_config.background);
     updateControlState();
+
+    QMetaObject::invokeMethod(m_dirTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
 
     Q_EMIT configChanged();
 }
@@ -546,6 +558,8 @@ void DirBrowser::saveConfigToLayout(const ConfigData& config, QJsonObject& layou
     layout["ShowSymLinks"_L1]      = config.showSymLinks;
     layout["ShowHidden"_L1]        = config.showHidden;
     layout["RootPath"_L1]          = config.rootPath;
+    layout["PlayingRowFont"_L1]    = config.playingRowFont;
+    layout["PlayingRowColour"_L1]  = config.playingRowColour;
 
     QJsonObject background;
     config.background.saveLayout(background);
@@ -577,11 +591,13 @@ DirBrowser::ConfigData DirBrowser::configFromLayout(const QJsonObject& layout) c
         }
     }
 
-    config.showControls = layout.value("ShowControls"_L1).toBool(config.showControls);
-    config.showLocation = layout.value("ShowLocation"_L1).toBool(config.showLocation);
-    config.showSymLinks = layout.value("ShowSymLinks"_L1).toBool(config.showSymLinks);
-    config.showHidden   = layout.value("ShowHidden"_L1).toBool(config.showHidden);
-    config.rootPath     = layout.value("RootPath"_L1).toString(config.rootPath);
+    config.showControls     = layout.value("ShowControls"_L1).toBool(config.showControls);
+    config.showLocation     = layout.value("ShowLocation"_L1).toBool(config.showLocation);
+    config.showSymLinks     = layout.value("ShowSymLinks"_L1).toBool(config.showSymLinks);
+    config.showHidden       = layout.value("ShowHidden"_L1).toBool(config.showHidden);
+    config.rootPath         = layout.value("RootPath"_L1).toString(config.rootPath);
+    config.playingRowFont   = layout.value("PlayingRowFont"_L1).toString(config.playingRowFont);
+    config.playingRowColour = layout.value("PlayingRowColour"_L1).toString(config.playingRowColour);
     config.background.loadLayout(layout.value("Background"_L1).toObject());
 
     if(config.rootPath.isEmpty()) {

@@ -40,7 +40,6 @@ DirProxyModel::DirProxyModel(bool flat, QObject* parent)
     , m_flat{flat}
     , m_playingState{Player::PlayState::Stopped}
     , m_showIcons{true}
-    , m_playingColour{Gui::defaultPlayingRowColour()}
     , m_columnAlignments{Qt::AlignLeft, Qt::AlignRight, Qt::AlignLeft, Qt::AlignLeft}
 {
     setRecursiveFilteringEnabled(true);
@@ -70,7 +69,6 @@ void DirProxyModel::reset(const QModelIndex& root)
 
 void DirProxyModel::resetPalette()
 {
-    m_playingColour = Gui::defaultPlayingRowColour();
     Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole});
 }
 
@@ -189,7 +187,10 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
 
     if(isPlayingTrack) {
         if(role == Qt::BackgroundRole) {
-            return m_playingColour;
+            return m_playingColour.isValid() ? m_playingColour : Gui::defaultPlayingRowColour();
+        }
+        if(role == Qt::FontRole && m_playingFont) {
+            return *m_playingFont;
         }
         if(role == Qt::DecorationRole && isPlayingCell) {
             switch(m_playingState) {
@@ -348,10 +349,18 @@ void DirProxyModel::setIconsEnabled(bool enabled)
     Utils::recursiveDataChanged(this, {});
 }
 
+void DirProxyModel::setPlayingRowStyle(const QString& font, const QColor& colour)
+{
+    QFont playingFont;
+    m_playingFont   = !font.isEmpty() && playingFont.fromString(font) ? std::optional{playingFont} : std::nullopt;
+    m_playingColour = colour;
+    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::FontRole});
+}
+
 void DirProxyModel::setPlayState(Player::PlayState state)
 {
     m_playingState = state;
-    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole, IsPlaying});
+    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole, Qt::FontRole, IsPlaying});
 }
 
 void DirProxyModel::setPlayingPath(const QString& path)
@@ -360,7 +369,7 @@ void DirProxyModel::setPlayingPath(const QString& path)
         return;
     }
 
-    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole, IsPlaying});
+    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole, Qt::FontRole, IsPlaying});
 }
 
 void DirProxyModel::setSearchText(const QString& text)
