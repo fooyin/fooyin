@@ -67,6 +67,7 @@ private:
     ExpandingComboBox* m_deviceBox;
 
     QCheckBox* m_gaplessPlayback;
+    QCheckBox* m_volumeControlEnabled;
     QSpinBox* m_bufferSize;
     QSpinBox* m_decodeLowWatermark;
     QSpinBox* m_decodeHighWatermark;
@@ -81,6 +82,7 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     , m_outputBox{new ExpandingComboBox(this)}
     , m_deviceBox{new ExpandingComboBox(this)}
     , m_gaplessPlayback{new QCheckBox(tr("Gapless playback"), this)}
+    , m_volumeControlEnabled{new QCheckBox(tr("Enable volume control"), this)}
     , m_bufferSize{new QSpinBox(this)}
     , m_decodeLowWatermark{new QSpinBox(this)}
     , m_decodeHighWatermark{new QSpinBox(this)}
@@ -130,30 +132,34 @@ OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* se
     m_bitDepthBox->setToolTip(tr("Override the output sample format. Devices may choose a compatible format."));
     m_bitDepthBox->resizeDropDown();
 
-    deviceLayout->addWidget(new QLabel(tr("Output") + u":"_s, this), 0, 0);
-    deviceLayout->addWidget(m_outputBox, 0, 1);
-    deviceLayout->addWidget(new QLabel(tr("Device") + u":"_s, this), 1, 0);
-    deviceLayout->addWidget(m_deviceBox, 1, 1);
+    int row{0};
+    deviceLayout->addWidget(new QLabel(tr("Output") + u":"_s, this), row, 0);
+    deviceLayout->addWidget(m_outputBox, row++, 1);
+    deviceLayout->addWidget(new QLabel(tr("Device") + u":"_s, this), row, 0);
+    deviceLayout->addWidget(m_deviceBox, row++, 1);
     deviceLayout->setColumnStretch(1, 1);
 
-    generalLayout->addWidget(m_gaplessPlayback, 0, 0, 1, 2);
-    generalLayout->addWidget(new QLabel(tr("Bit depth") + u":"_s, this), 1, 0);
-    generalLayout->addWidget(m_bitDepthBox, 1, 1);
+    row = 0;
+    generalLayout->addWidget(m_gaplessPlayback, row++, 0, 1, 2);
+    generalLayout->addWidget(m_volumeControlEnabled, row++, 0, 1, 2);
+    generalLayout->addWidget(new QLabel(tr("Bit depth") + u":"_s, this), row, 0);
+    generalLayout->addWidget(m_bitDepthBox, row++, 1);
     generalLayout->setColumnStretch(2, 1);
 
-    bufferLayout->addWidget(new QLabel(tr("Length") + u":"_s, this), 0, 0);
-    bufferLayout->addWidget(m_bufferSize, 0, 1, Qt::AlignLeft);
-    bufferLayout->addWidget(new QLabel(tr("Low watermark") + u":"_s, this), 1, 0);
-    bufferLayout->addWidget(m_decodeLowWatermark, 1, 1, Qt::AlignLeft);
-    bufferLayout->addWidget(m_decodeLowWatermarkHint, 1, 2);
-    bufferLayout->addWidget(new QLabel(tr("High watermark") + u":"_s, this), 2, 0);
-    bufferLayout->addWidget(m_decodeHighWatermark, 2, 1, Qt::AlignLeft);
-    bufferLayout->addWidget(m_decodeHighWatermarkHint, 2, 2);
+    row = 0;
+    bufferLayout->addWidget(new QLabel(tr("Length") + u":"_s, this), row, 0);
+    bufferLayout->addWidget(m_bufferSize, row++, 1, Qt::AlignLeft);
+    bufferLayout->addWidget(new QLabel(tr("Low watermark") + u":"_s, this), row, 0);
+    bufferLayout->addWidget(m_decodeLowWatermark, row, 1, Qt::AlignLeft);
+    bufferLayout->addWidget(m_decodeLowWatermarkHint, row++, 2);
+    bufferLayout->addWidget(new QLabel(tr("High watermark") + u":"_s, this), row, 0);
+    bufferLayout->addWidget(m_decodeHighWatermark, row, 1, Qt::AlignLeft);
+    bufferLayout->addWidget(m_decodeHighWatermarkHint, row++, 2);
     bufferLayout->setColumnStretch(2, 1);
 
     auto* mainLayout = new QGridLayout(this);
 
-    int row{0};
+    row = 0;
     mainLayout->addWidget(deviceBox, row++, 0, 1, 2);
     mainLayout->addWidget(generalBox, row++, 0, 1, 2);
     mainLayout->addWidget(bufferBox, row++, 0, 1, 2);
@@ -242,6 +248,7 @@ void OutputPageWidget::load()
 
     syncCurrentOutput();
     m_gaplessPlayback->setChecked(m_settings->value<Settings::Core::GaplessPlayback>());
+    m_volumeControlEnabled->setChecked(m_settings->value<Settings::Core::VolumeControlEnabled>());
 
     refreshBufferConstraints();
 
@@ -262,6 +269,8 @@ void OutputPageWidget::apply()
         }
         return std::pair{lowRatio, highRatio};
     };
+
+    m_settings->set<Settings::Core::VolumeControlEnabled>(m_volumeControlEnabled->isChecked());
 
     const QString output = m_outputBox->currentText() + u"|"_s + m_deviceBox->currentData().toString();
     m_settings->set<Settings::Core::AudioOutput>(output);
@@ -287,6 +296,7 @@ void OutputPageWidget::reset()
 {
     m_settings->reset<Settings::Core::AudioOutput>();
     m_settings->reset<Settings::Core::GaplessPlayback>();
+    m_settings->reset<Settings::Core::VolumeControlEnabled>();
     m_settings->reset<Settings::Core::BufferLength>();
     m_settings->reset<Settings::Core::OutputBitDepth>();
     m_settings->reset<Settings::Core::OutputDither>();

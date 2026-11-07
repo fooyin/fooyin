@@ -80,6 +80,7 @@ public:
 
     void showVolumeMenu() const;
     void updateDisplay(double volume) const;
+    void updateVolumeControlState() const;
     void updateToolTip(int value);
     void updateOrientation();
 
@@ -110,12 +111,16 @@ VolumeControlPrivate::VolumeControlPrivate(VolumeControl* self, ActionManager* a
     m_layout->setSpacing(0);
 
     setCurve(m_curve);
-    QObject::connect(m_volumeSlider, &Slider::valueChanged, m_volumeSlider,
-                     [this](int value) { m_settings->set<Settings::Core::OutputVolume>(volumeAtPosition(value)); });
+    QObject::connect(m_volumeSlider, &Slider::valueChanged, m_volumeSlider, [this](int value) {
+        if(m_settings->value<Settings::Core::VolumeControlEnabled>()) {
+            m_settings->set<Settings::Core::OutputVolume>(volumeAtPosition(value));
+        }
+    });
     m_settings->subscribe<Settings::Core::OutputVolume>(m_volumeSlider,
                                                         [this](double volume) { updateSlider(volume); });
     m_settings->subscribe<Settings::Gui::VolumeControlStepSmall>(m_volumeSlider, [this]() { updateSteps(); });
     m_settings->subscribe<Settings::Gui::VolumeControlStepLarge>(m_volumeSlider, [this]() { updateSteps(); });
+    m_settings->subscribe<Settings::Core::VolumeControlEnabled>(m_self, [this]() { updateVolumeControlState(); });
 
     changeDisplay(m_options, true);
 }
@@ -169,6 +174,7 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
     }
 
     updateOrientation();
+    updateVolumeControlState();
 
     if(options & VolumeControl::Tooltip) {
         QObject::connect(m_volumeSlider, &Slider::sliderMoved, m_volumeSlider,
@@ -200,6 +206,10 @@ void VolumeControlPrivate::setCurve(VolumeCurve curve)
 void VolumeControlPrivate::updateSlider(double volume) const
 {
     const QSignalBlocker blocker{m_volumeSlider};
+
+    if(!m_settings->value<Settings::Core::VolumeControlEnabled>()) {
+        volume = 1.0;
+    }
 
     volume = std::clamp(volume, 0.0, 1.0);
 
@@ -308,7 +318,7 @@ void VolumeControlPrivate::updateOrientation()
 
 void VolumeControlPrivate::showVolumeMenu() const
 {
-    if(!m_volumeMenu) {
+    if(!m_volumeMenu || !m_volumeSlider->isEnabled()) {
         return;
     }
 
@@ -342,6 +352,10 @@ void VolumeControlPrivate::updateDisplay(double volume) const
         return;
     }
 
+    if(!m_settings->value<Settings::Core::VolumeControlEnabled>()) {
+        volume = 1.0;
+    }
+
     if(volume <= 1.0 && volume >= 0.40) {
         m_volumeIcon->setIcon(Gui::iconFromTheme(Constants::Icons::VolumeHigh));
     }
@@ -356,12 +370,39 @@ void VolumeControlPrivate::updateDisplay(double volume) const
     }
 }
 
+void VolumeControlPrivate::updateVolumeControlState() const
+{
+    const bool enabled    = m_settings->value<Settings::Core::VolumeControlEnabled>();
+    const QString toolTip = enabled ? QString{} : VolumeControl::tr("Volume control disabled");
+    m_self->setToolTip(toolTip);
+    m_volumeSlider->setEnabled(enabled);
+    m_volumeSlider->setToolTip(toolTip);
+    if(m_volumeIcon) {
+        m_volumeIcon->setEnabled(enabled);
+        m_volumeIcon->setToolTip(enabled && m_volumeIcon->defaultAction() ? m_volumeIcon->defaultAction()->toolTip()
+                                                                          : toolTip);
+    }
+
+    if(!enabled) {
+        if(m_volumeMenu) {
+            m_volumeMenu->hide();
+        }
+        if(m_toolTip) {
+            m_toolTip->hide();
+        }
+    }
+
+    const double volume = m_settings->value<Settings::Core::OutputVolume>();
+    updateSlider(volume);
+    updateDisplay(volume);
+}
+
 void VolumeControlPrivate::updateToolTip(int value)
 {
     if(!m_toolTip) {
         m_toolTip = new ToolTip(m_self->window());
-        m_toolTip->show();
     }
+    m_toolTip->show();
 
     const double volume = volumeAtPosition(value);
     if(volume > 0.0) {
@@ -591,6 +632,10 @@ void VolumeControl::resizeEvent(QResizeEvent* event)
 
 void VolumeControl::wheelEvent(QWheelEvent* event)
 {
+    if(!p->m_volumeSlider->isEnabled()) {
+        event->ignore();
+        return;
+    }
     QApplication::sendEvent(p->m_volumeSlider, event);
 }
 } // namespace Fooyin

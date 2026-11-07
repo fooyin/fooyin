@@ -96,6 +96,7 @@ enum CoreSettings : uint32_t
     PlaybackQueueMode             = 45 | Type::Int,
     PlaybackQueueHistoryLimit     = 46 | Type::Int,
     PlaybackQueuePlayNowAction    = 47 | Type::Int,
+    VolumeControlEnabled          = 48 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

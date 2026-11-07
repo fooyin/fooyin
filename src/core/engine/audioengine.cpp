@@ -338,7 +338,9 @@ AudioEngine::AudioEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManag
     , m_outputReconnectQueued{false}
     , m_fadeController{&m_pipeline}
     , m_outputController{this, &m_pipeline}
-    , m_volume{m_settings->value<Settings::Core::OutputVolume>()}
+    , m_volumeControlEnabled{m_settings->value<Settings::Core::VolumeControlEnabled>()}
+    , m_requestedVolume{std::clamp(m_settings->value<Settings::Core::OutputVolume>(), 0.0, 1.0)}
+    , m_volume{m_volumeControlEnabled ? m_requestedVolume : 1.0}
     , m_playbackBufferLengthMs{m_settings->value<Settings::Core::BufferLength>()}
     , m_remoteDecodedBufferMs{std::max(RemoteDecodedBufferMinMs,
                                        m_settings->value<Settings::Core::Internal::RemoteBufferLengthMs>())}
@@ -1439,19 +1441,32 @@ void AudioEngine::seekWithRequest(uint64_t positionMs, uint64_t requestId)
 
 void AudioEngine::setVolume(double volume)
 {
-    m_volume = std::clamp(volume, 0.0, 1.0);
+    m_requestedVolume = std::clamp(volume, 0.0, 1.0);
+    m_volume          = m_volumeControlEnabled ? m_requestedVolume : 1.0;
     m_pipeline.setOutputVolume(m_volume);
     publishPlaybackOutputInfo();
 }
 
+void AudioEngine::setVolumeControlEnabled(bool enabled)
+{
+    if(std::exchange(m_volumeControlEnabled, enabled) != enabled) {
+        setVolume(m_requestedVolume);
+    }
+}
+
 void AudioEngine::handleOutputVolumeChange(double volume)
 {
+    if(!m_volumeControlEnabled) {
+        return;
+    }
+
     volume = std::clamp(volume, 0.0, 1.0);
     if(qFuzzyCompare(m_volume + 1.0, volume + 1.0)) {
         return;
     }
 
-    m_volume = volume;
+    m_requestedVolume = volume;
+    m_volume          = volume;
     Q_EMIT volumeChanged(m_volume);
     publishPlaybackOutputInfo();
 }

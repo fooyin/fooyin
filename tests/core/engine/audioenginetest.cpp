@@ -215,6 +215,7 @@ void registerMinimalEngineSettings(SettingsManager& settings, bool enablePauseSt
     settings.createSetting<Settings::Core::StopAfterCurrent>(false, u"Playback/StopAfterCurrent"_s);
     settings.createSetting<Settings::Core::ResetStopAfterCurrent>(false, u"Playback/ResetStopAfterCurrent"_s);
     settings.createSetting<Settings::Core::OutputVolume>(1.0, u"Engine/OutputVolume"_s);
+    settings.createSetting<Settings::Core::VolumeControlEnabled>(true, u"Engine/VolumeControlEnabled"_s);
     settings.createSetting<Settings::Core::GaplessPlayback>(false, u"Engine/GaplessPlayback"_s);
     settings.createSetting<Settings::Core::BufferLength>(4000, u"Engine/BufferLength"_s);
     settings.createSetting<Settings::Core::OutputBitDepth>(static_cast<int>(SampleFormat::Unknown),

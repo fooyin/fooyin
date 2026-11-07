@@ -174,6 +174,7 @@ public Q_SLOTS:
     void seek(uint64_t positionMs);
     void seekWithRequest(uint64_t positionMs, uint64_t requestId);
     void setVolume(double volume);
+    void setVolumeControlEnabled(bool enabled);
     void handleOutputVolumeChange(double volume);
     void updateCurrentTrackMetadata(const Fooyin::Track& track);
 
@@ -468,6 +469,8 @@ private:
     std::vector<QString> m_activeDspNames;
     QString m_activeDspPreset;
 
+    bool m_volumeControlEnabled;
+    double m_requestedVolume;
     double m_volume;
     int m_playbackBufferLengthMs;
     int m_remoteDecodedBufferMs;

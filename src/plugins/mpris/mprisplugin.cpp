@@ -198,10 +198,13 @@ void MprisPlugin::initialise(const CorePluginContext& context)
         notify(u"PlaybackStatus"_s, playbackStatus());
     });
 
-    m_settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) {
-        notify(u"Volume"_s, volume);
-        Q_EMIT volumeChanged(volume);
-    });
+    const auto updateVolume = [this]() {
+        const double currentVolume = volume();
+        notify(u"Volume"_s, currentVolume);
+        Q_EMIT volumeChanged(currentVolume);
+    };
+    m_settings->subscribe<Settings::Core::OutputVolume>(this, updateVolume);
+    m_settings->subscribe<Settings::Core::VolumeControlEnabled>(this, updateVolume);
 
     QObject::connect(this, &MprisPlugin::reloadMetadata, this, [this]() { notify(u"Metadata"_s, metadata()); });
 }
@@ -330,13 +333,17 @@ bool MprisPlugin::canSeek() const
 
 double MprisPlugin::volume() const
 {
-    return m_settings->value<Settings::Core::OutputVolume>();
+    return m_settings->value<Settings::Core::VolumeControlEnabled>() ? m_settings->value<Settings::Core::OutputVolume>()
+                                                                     : 1.0;
 }
 
 void MprisPlugin::setVolume(double volume)
 {
-    volume = std::clamp(volume, 0.0, 1.0);
+    if(!m_settings->value<Settings::Core::VolumeControlEnabled>()) {
+        return;
+    }
 
+    volume = std::clamp(volume, 0.0, 1.0);
     m_settings->set<Settings::Core::OutputVolume>(volume);
 }
 

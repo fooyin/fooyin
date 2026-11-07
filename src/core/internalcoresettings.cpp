@@ -125,6 +125,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager, DbConnectionPoolPtr
         u"%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"_s, u"Library/SortScript"_s);
     m_settings->createSetting<Settings::Core::AudioOutput>(QString{}, u"Engine/AudioOutput"_s);
     m_settings->createSetting<OutputVolume>(1.0, u"Engine/OutputVolume"_s);
+    m_settings->createSetting<VolumeControlEnabled>(true, u"Engine/VolumeControlEnabled"_s);
     m_settings->createSetting<OutputBitDepth>(static_cast<int>(SampleFormat::Unknown), u"Engine/OutputBitDepth"_s);
     m_settings->createSetting<OutputDither>(false, u"Engine/OutputDither"_s);
     m_settings->createSetting<RewindPreviousTrack>(false, u"Playlist/RewindPreviousTrack"_s);

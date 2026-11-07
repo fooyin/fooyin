@@ -392,6 +392,9 @@ void GuiApplication::savePlaylist(const UId& playlistId) const
 
 void GuiApplication::setVolume(const double volume) const
 {
+    if(!m_settings->value<Settings::Core::VolumeControlEnabled>()) {
+        return;
+    }
     m_settings->set<Settings::Core::OutputVolume>(std::clamp(volume, 0.0, 1.0));
 }
 
@@ -1139,12 +1142,20 @@ void GuiApplication::registerActions()
     auto* muteAction = new QAction(tr("Mute"), m_mainWindow.get());
     Gui::setThemeIcon(muteAction, Constants::Icons::VolumeMute);
     muteAction->setCheckable(true);
-    muteAction->setChecked(m_settings->value<Settings::Core::OutputVolume>() <= 0.0);
     auto* muteCmd = m_actionManager->registerAction(muteAction, Constants::Actions::Mute);
     muteCmd->setCategories(volumeCategory);
     QObject::connect(muteAction, &QAction::triggered, m_mainWindow.get(), [this]() { mute(); });
-    m_settings->subscribe<Settings::Core::OutputVolume>(
-        muteAction, [muteAction](double volume) { muteAction->setChecked(volume <= 0.0); });
+
+    const auto updateVolumeActions = [this, volumeUp, volumeDown, muteAction]() {
+        const bool enabled = m_settings->value<Settings::Core::VolumeControlEnabled>();
+        volumeUp->setEnabled(enabled);
+        volumeDown->setEnabled(enabled);
+        muteAction->setEnabled(enabled);
+        muteAction->setChecked(enabled && m_settings->value<Settings::Core::OutputVolume>() <= 0.0);
+    };
+    m_settings->subscribe<Settings::Core::VolumeControlEnabled>(muteAction, updateVolumeActions);
+    m_settings->subscribe<Settings::Core::OutputVolume>(muteAction, updateVolumeActions);
+    updateVolumeActions();
 
     auto* clearPlaylistAction = new QAction(tr("Clear Current Playlist"), m_mainWindow.get());
     clearPlaylistAction->setStatusTip(tr("Remove all tracks from the current playlist"));
@@ -1755,6 +1766,10 @@ void GuiApplication::close()
 
 void GuiApplication::changeVolume(double delta) const
 {
+    if(!m_settings->value<Settings::Core::VolumeControlEnabled>()) {
+        return;
+    }
+
     static constexpr double MinVolumeDb = -60.0;
 
     const double volume = m_settings->value<Settings::Core::OutputVolume>();
@@ -1771,6 +1786,10 @@ void GuiApplication::changeVolume(double delta) const
 
 void GuiApplication::mute() const
 {
+    if(!m_settings->value<Settings::Core::VolumeControlEnabled>()) {
+        return;
+    }
+
     const double volume = m_settings->value<Settings::Core::OutputVolume>();
     if(volume > 0.0) {
         m_settings->set<Settings::Core::Internal::MuteVolume>(volume);

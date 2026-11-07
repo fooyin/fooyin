@@ -150,7 +150,8 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> audioLoader, PlayerCon
     updateAnalysisRelays();
 
     QObject::connect(m_engine, &AudioEngine::volumeChanged, this, [this](double volume) {
-        if(!qFuzzyCompare(m_settings->value<Settings::Core::OutputVolume>() + 1.0, volume + 1.0)) {
+        if(m_settings->value<Settings::Core::VolumeControlEnabled>()
+           && !qFuzzyCompare(m_settings->value<Settings::Core::OutputVolume>() + 1.0, volume + 1.0)) {
             m_settings->set<Settings::Core::OutputVolume>(volume);
         }
     });
@@ -175,6 +176,8 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> audioLoader, PlayerCon
 
     m_settings->subscribe<Settings::Core::AudioOutput>(this, &EngineHandler::changeOutput);
     m_settings->subscribe<Settings::Core::OutputVolume>(this, &EngineHandler::updateVolume);
+    m_settings->subscribe<Settings::Core::VolumeControlEnabled>(
+        this, [this](bool enabled) { dispatchCommand(&AudioEngine::setVolumeControlEnabled, enabled); });
     const auto updateAutomaticResampling = [this]() {
         dispatchCommand(&AudioEngine::setAutomaticResampling,
                         m_settings->value<Settings::Core::Internal::OutputAutoResample>(),
