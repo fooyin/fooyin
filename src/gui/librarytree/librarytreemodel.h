@@ -29,6 +29,8 @@
 
 #include <QSortFilterProxyModel>
 
+class QColor;
+
 namespace Fooyin {
 class CoverRepository;
 class GuiStyleProvider;
@@ -67,9 +69,10 @@ public:
 
     void resetPalette();
     void setRowHeight(int height);
+    void setPlayingRowStyle(const QString& font, const QColor& colour);
     void setSummaryNodeConfig(bool show, const QString& title);
     void setPlayState(Player::PlayState state);
-    void setPlayingPath(const QString& parentNode, const QString& path);
+    void setPlayingTrack(const QString& parentNode, const Track& track);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

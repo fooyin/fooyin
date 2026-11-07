@@ -102,6 +102,8 @@ constexpr auto LibTreeHeaderKey                = u"LibraryTree/Header";
 constexpr auto LibTreeShowSummaryNodeKey       = u"LibraryTree/ShowSummaryNode";
 constexpr auto LibTreeSummaryNodeTitleKey      = u"LibraryTree/SummaryNodeTitle";
 constexpr auto LibTreeArtworkRadiusKey         = u"LibraryTree/ArtworkCornerRadius";
+constexpr auto LibTreePlayingRowFontKey        = u"LibraryTree/PlayingRowFont";
+constexpr auto LibTreePlayingRowColourKey      = u"LibraryTree/PlayingRowColour";
 constexpr auto LibTreeBackgroundKey            = u"LibraryTree/Background";
 
 namespace Fooyin {
@@ -566,6 +568,8 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::defaultConfig() const
     config.rowHeight           = m_settings->fileValue(LibTreeRowHeightKey, config.rowHeight).toInt();
     config.iconSize            = m_settings->value<LibTreeIconSize>().toSize();
     config.artworkCornerRadius = m_settings->fileValue(LibTreeArtworkRadiusKey, config.artworkCornerRadius).toInt();
+    config.playingRowFont      = m_settings->fileValue(LibTreePlayingRowFontKey, config.playingRowFont).toString();
+    config.playingRowColour    = m_settings->fileValue(LibTreePlayingRowColourKey, config.playingRowColour).toString();
     config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(LibTreeBackgroundKey).toMap()));
 
     return config;
@@ -599,6 +603,8 @@ void LibraryTreeWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(LibTreeRowHeightKey, config.rowHeight);
     m_settings->set<LibTreeIconSize>(config.iconSize);
     m_settings->fileSet(LibTreeArtworkRadiusKey, config.artworkCornerRadius);
+    m_settings->fileSet(LibTreePlayingRowFontKey, config.playingRowFont);
+    m_settings->fileSet(LibTreePlayingRowColourKey, config.playingRowColour);
 
     QJsonObject background;
     config.background.saveLayout(background);
@@ -628,6 +634,8 @@ void LibraryTreeWidget::clearSavedDefaults() const
     m_settings->fileRemove(LibTreeRowHeightKey);
     m_settings->reset<LibTreeIconSize>();
     m_settings->fileRemove(LibTreeArtworkRadiusKey);
+    m_settings->fileRemove(LibTreePlayingRowFontKey);
+    m_settings->fileRemove(LibTreePlayingRowColourKey);
     m_settings->fileRemove(LibTreeBackgroundKey);
 }
 
@@ -665,6 +673,7 @@ void LibraryTreeWidget::applyConfig(const ConfigData& config)
     setScrollbarEnabled(m_config.showScrollbar);
     m_libraryTree->setAlternatingRowColors(m_config.alternatingRows);
     m_model->setRowHeight(m_config.rowHeight);
+    m_model->setPlayingRowStyle(m_config.playingRowFont, QColor{m_config.playingRowColour});
     m_model->setSummaryNodeConfig(m_config.showSummaryNode, m_config.summaryNodeTitle);
     m_libraryTree->setIconSize(m_config.iconSize);
     m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
@@ -714,6 +723,8 @@ LibraryTreeWidget::ConfigData LibraryTreeWidget::configFromLayout(const QJsonObj
     }
 
     config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
+    config.playingRowFont      = layout.value("PlayingRowFont"_L1).toString(config.playingRowFont);
+    config.playingRowColour    = layout.value("PlayingRowColour"_L1).toString(config.playingRowColour);
     config.background.loadLayout(layout.value("Background"_L1).toObject());
 
     if(!config.iconSize.isValid()) {
@@ -755,6 +766,8 @@ void LibraryTreeWidget::saveConfigToLayout(const ConfigData& config, QJsonObject
     layout["IconWidth"_L1]                   = config.iconSize.width();
     layout["IconHeight"_L1]                  = config.iconSize.height();
     layout["ArtworkCornerRadius"_L1]         = config.artworkCornerRadius;
+    layout["PlayingRowFont"_L1]              = config.playingRowFont;
+    layout["PlayingRowColour"_L1]            = config.playingRowColour;
 
     QJsonObject background;
     config.background.saveLayout(background);
@@ -799,7 +812,14 @@ void LibraryTreeWidget::setupConnections()
 
     QObject::connect(m_resetThrottler, &SignalThrottler::triggered, this, resetModel);
 
-    QObject::connect(m_model, &LibraryTreeModel::dataUpdated, m_libraryTree, &QTreeView::dataChanged);
+    QObject::connect(m_model, &LibraryTreeModel::dataUpdated, this,
+                     [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) {
+                         m_libraryTree->dataChanged(topLeft, bottomRight, roles);
+                         if(roles.contains(Qt::FontRole) && !m_config.playingRowFont.isEmpty()) {
+                             QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged",
+                                                       Q_ARG(QModelIndex, {}));
+                         }
+                     });
     QObject::connect(m_model, &LibraryTreeModel::modelLoaded, this, [this]() { restoreState(m_pendingState); });
     QObject::connect(m_model, &LibraryTreeModel::modelResetFinished, this,
                      [this]() { restoreState(std::exchange(m_pendingResetState, {}), true); });
@@ -992,7 +1012,7 @@ void LibraryTreeWidget::activePlaylistChanged(Playlist* playlist) const
     }
 
     if(playlist->id() != m_playlist->id()) {
-        m_model->setPlayingPath({}, {});
+        m_model->setPlayingTrack({}, {});
     }
 }
 
@@ -1003,12 +1023,12 @@ void LibraryTreeWidget::playlistTrackChanged(const PlaylistTrack& track)
     }
 
     if(m_playlist->id() != track.playlistId) {
-        m_model->setPlayingPath({}, {});
+        m_model->setPlayingTrack({}, {});
         return;
     }
 
     if(m_playlistGroups.empty()) {
-        m_model->setPlayingPath({}, track.track.uniqueFilepath());
+        m_model->setPlayingTrack({}, track.track);
         return;
     }
 
@@ -1016,7 +1036,7 @@ void LibraryTreeWidget::playlistTrackChanged(const PlaylistTrack& track)
     if(groupIt != m_playlistGroups.cbegin()) {
         --groupIt;
     }
-    m_model->setPlayingPath(groupIt->second, track.track.uniqueFilepath());
+    m_model->setPlayingTrack(groupIt->second, track.track);
 }
 
 void LibraryTreeWidget::addGroupMenu(QMenu* parent)

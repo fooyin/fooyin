@@ -22,12 +22,16 @@
 #include "librarytreegroupeditordialog.h"
 #include "librarytreescriptcontext.h"
 
+#include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/backgroundconfigwidget.h>
+#include <gui/widgets/colourbutton.h>
+#include <gui/widgets/fontbutton.h>
 #include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QEvent>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -67,6 +71,8 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
+    , m_playingRowFont{new FontButton(tr("Font") + u":"_s, true, this)}
+    , m_playingRowColour{new ColourButton(tr("Background colour") + u":"_s, true, this)}
     , m_background{new BackgroundConfigWidget(this)}
     , m_manageGroupings{new QPushButton(tr("Manage groupings…"), this)}
 {
@@ -176,6 +182,19 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     iconGroupLayout->addWidget(iconSizeHint, row, 0, 1, 4);
     iconGroupLayout->setColumnStretch(2, 1);
 
+    const int playingRowLabelWidth = std::max(m_playingRowColour->labelWidthHint(), m_playingRowFont->labelWidthHint());
+    m_playingRowColour->setLabelWidth(playingRowLabelWidth);
+    m_playingRowFont->setLabelWidth(playingRowLabelWidth);
+    m_playingRowColour->setToolTip(
+        tr("Use a custom background colour for the currently playing row; transparency is supported"));
+    m_playingRowFont->setToolTip(tr("Use a custom font for the currently playing row"));
+
+    auto* playingRowGroup  = new QGroupBox(tr("Playing Row"), styleTab);
+    auto* playingRowLayout = new QGridLayout(playingRowGroup);
+
+    playingRowLayout->addWidget(m_playingRowColour, 0, 0);
+    playingRowLayout->addWidget(m_playingRowFont, 1, 0);
+
     m_rowHeight->setMinimum(1);
 
     row = 0;
@@ -185,7 +204,6 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     appearanceGroupLayout->addWidget(m_altColours, row++, 0, 1, 4);
     appearanceGroupLayout->addWidget(m_overrideRowHeight, row, 0);
     appearanceGroupLayout->addWidget(m_rowHeight, row++, 2);
-    appearanceGroupLayout->addWidget(iconGroup, row++, 0, 1, 4);
 
     appearanceGroupLayout->setColumnStretch(appearanceGroupLayout->columnCount() - 1, 1);
     appearanceGroupLayout->setRowStretch(appearanceGroupLayout->rowCount(), 1);
@@ -204,9 +222,12 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* styleLayout = new QGridLayout(styleTab);
 
     row = 0;
-    styleLayout->addWidget(appearanceGroup, row++, 0);
+    styleLayout->addWidget(appearanceGroup, row, 0);
+    styleLayout->addWidget(iconGroup, row++, 1);
+    styleLayout->addWidget(playingRowGroup, row++, 0, 1, 2);
     styleLayout->setColumnStretch(0, 1);
-    styleLayout->setRowStretch(1, 1);
+    styleLayout->setColumnStretch(1, 1);
+    styleLayout->setRowStretch(row, 1);
 
     auto* backgroundLayout = new QVBoxLayout(backgroundTab);
     backgroundLayout->addWidget(m_background);
@@ -243,6 +264,15 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     loadCurrentConfig();
 }
 
+void LibraryTreeConfigDialog::changeEvent(QEvent* event)
+{
+    WidgetConfigDialog::changeEvent(event);
+
+    if(event->type() == QEvent::PaletteChange && !m_playingRowColour->isChecked()) {
+        m_playingRowColour->setColour(Gui::defaultPlayingRowColour());
+    }
+}
+
 LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
 {
     return {
@@ -267,7 +297,10 @@ LibraryTreeWidget::ConfigData LibraryTreeConfigDialog::config() const
         .rowHeight                   = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0,
         .iconSize                    = {m_iconWidth->value(), m_iconHeight->value()},
         .artworkCornerRadius         = m_artworkCornerRadius->value(),
-        .background                  = m_background->config(),
+        .playingRowFont = m_playingRowFont->isChecked() ? m_playingRowFont->buttonFont().toString() : QString{},
+        .playingRowColour
+        = m_playingRowColour->isChecked() ? m_playingRowColour->colour().name(QColor::HexArgb) : QString{},
+        .background = m_background->config(),
     };
 }
 
@@ -304,6 +337,17 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
     m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
 
+    m_playingRowFont->setChecked(!config.playingRowFont.isEmpty());
+    if(config.playingRowFont.isEmpty()) {
+        m_playingRowFont->setButtonFont(widget()->font());
+    }
+    else {
+        m_playingRowFont->setButtonFont(config.playingRowFont);
+    }
+    const QColor playingRowColour{config.playingRowColour};
+    m_playingRowColour->setChecked(playingRowColour.isValid());
+    m_playingRowColour->setColour(playingRowColour.isValid() ? playingRowColour : Gui::defaultPlayingRowColour());
+
     m_background->setConfig(config.background);
 }
 
@@ -322,6 +366,7 @@ void LibraryTreeConfigDialog::mergeExternalConfig(const LibraryTreeWidget::Confi
         &LibraryTreeWidget::ConfigData::alternatingRows, &LibraryTreeWidget::ConfigData::showSummaryNode,
         &LibraryTreeWidget::ConfigData::summaryNodeTitle, &LibraryTreeWidget::ConfigData::rowHeight,
         &LibraryTreeWidget::ConfigData::iconSize, &LibraryTreeWidget::ConfigData::artworkCornerRadius,
+        &LibraryTreeWidget::ConfigData::playingRowFont, &LibraryTreeWidget::ConfigData::playingRowColour,
         &LibraryTreeWidget::ConfigData::background);
 }
 } // namespace Fooyin

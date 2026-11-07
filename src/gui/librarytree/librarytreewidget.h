@@ -121,6 +121,8 @@ public:
         int rowHeight{0};
         QSize iconSize{36, 36};
         int artworkCornerRadius{0};
+        QString playingRowFont;
+        QString playingRowColour;
         BackgroundConfig background;
     };
 

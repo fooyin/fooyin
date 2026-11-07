@@ -31,6 +31,8 @@ class QSpinBox;
 
 namespace Fooyin {
 class BackgroundConfigWidget;
+class ColourButton;
+class FontButton;
 class LibraryTreeGroupRegistry;
 
 class LibraryTreeConfigDialog : public WidgetConfigDialog<LibraryTreeWidget, LibraryTreeWidget::ConfigData>
@@ -42,6 +44,8 @@ public:
                                      QWidget* parent = nullptr);
 
 protected:
+    void changeEvent(QEvent* event) override;
+
     [[nodiscard]] LibraryTreeWidget::ConfigData config() const override;
     void setConfig(const LibraryTreeWidget::ConfigData& config) override;
     void mergeExternalConfig(const LibraryTreeWidget::ConfigData& previous,
@@ -76,6 +80,8 @@ private:
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
     QSpinBox* m_artworkCornerRadius;
+    FontButton* m_playingRowFont;
+    ColourButton* m_playingRowColour;
     BackgroundConfigWidget* m_background;
     QPushButton* m_manageGroupings;
 };
