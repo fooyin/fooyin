@@ -27,6 +27,7 @@
 #include <QNetworkAccessManager>
 #include <QUrl>
 
+#include <functional>
 #include <memory>
 
 namespace Fooyin {
@@ -55,6 +56,7 @@ public:
     void setReconnectOnFinishedEnabled(bool enabled) override;
     void setReadCancellationToken(std::stop_token token) override;
     void setOpenTimeout(std::chrono::milliseconds timeout);
+    void setOpenCallback(std::function<void(QString)> callback);
 
     bool open(OpenMode mode) override;
     void close() override;

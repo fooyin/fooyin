@@ -37,11 +37,13 @@ struct RemoteStreamSource
     std::chrono::milliseconds openTimeout{std::chrono::milliseconds{0}};
 };
 
+// TODO: For 1.0, expose stream preparation through the provider interface.
 class FYCORE_EXPORT RemoteSourceProvider
 {
 public:
     virtual ~RemoteSourceProvider() = default;
 
+    //! Create an unopened source. Access capabilities may remain unknown until response headers arrive.
     [[nodiscard]] virtual RemoteStreamSource createStreamSource(const QUrl& url) const = 0;
 };
 } // namespace Fooyin

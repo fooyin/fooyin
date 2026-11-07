@@ -29,6 +29,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <stop_token>
 
 #include <QByteArray>
 #include <QObject>
@@ -42,6 +43,57 @@ class QNetworkReply;
 
 namespace Fooyin {
 class SettingsManager;
+struct PendingRemoteStreamState;
+
+/*!
+ * Prepares a remote source without exposing its device until its access capabilities are known.
+ * The handle lives on the network thread and is owned by the returned shared pointer. Do not give it
+ * a QObject parent or move it to another thread. Dropping the last handle cancels pending preparation
+ * and arranges destruction on the network thread, releasing any untaken source.
+ *
+ * The methods below may be called from any thread. Completion state and blocking waits do not depend
+ * on signal delivery. When connecting after preparation has begun, also check isFinished() and handle
+ * completion only once: signals are not re-emitted for late connections.
+ */
+class FYCORE_EXPORT PendingRemoteStream : public QObject
+{
+    Q_OBJECT
+
+public:
+    ~PendingRemoteStream() override;
+
+    PendingRemoteStream(const PendingRemoteStream&)            = delete;
+    PendingRemoteStream& operator=(const PendingRemoteStream&) = delete;
+
+    //! Cancel pending preparation. Has no effect after completion.
+    void cancel();
+    [[nodiscard]] bool isFinished() const;
+    //! True when preparation succeeded, including after the source has been taken.
+    [[nodiscard]] bool isReady() const;
+    [[nodiscard]] QString errorString() const;
+
+    /*!
+     * Wait for preparation on a worker thread. Timeout or cancellation ends preparation.
+     * Returns immediately without cancelling if called on the network thread while still pending.
+     */
+    bool waitForReady(std::chrono::milliseconds timeout, std::stop_token token = {});
+
+    /*!
+     * Take the opened source once in the thread that will use it. Returns an empty source before
+     * successful completion or after it has already been taken. Readiness doesn't guarantee body data.
+     */
+    RemoteStreamSource takeSource();
+
+Q_SIGNALS:
+    //! Emitted once on the network thread after success, failure, cancellation or timeout.
+    void finished();
+
+private:
+    friend class RemoteIoService;
+    explicit PendingRemoteStream(std::shared_ptr<PendingRemoteStreamState> state);
+
+    std::shared_ptr<PendingRemoteStreamState> m_state;
+};
 
 class FYCORE_EXPORT RemoteDownloadHandle
 {
@@ -71,7 +123,11 @@ public:
     explicit RemoteIoService(std::shared_ptr<QNetworkAccessManager> networkManager, SettingsManager* settings,
                              QObject* parent = nullptr);
 
+    //! Create an unopened source. Prefer prepareStream() when probing could precede the HTTP response headers.
     [[nodiscard]] RemoteStreamSource createStreamSource(const QUrl& url) const override;
+
+    //! Begin asynchronous preparation using the configured remote open timeout.
+    [[nodiscard]] std::shared_ptr<PendingRemoteStream> prepareStream(const QUrl& url) const;
 
     [[nodiscard]] std::shared_ptr<RemoteDownloadHandle>
     download(const QUrl& url, QObject* context, DownloadCallback callback,

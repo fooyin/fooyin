@@ -48,6 +48,7 @@ Q_LOGGING_CATEGORY(NETWORK_STREAM, "fy.networkstream")
 constexpr auto MaxCleanFinishReconnectAttempts = 5;
 
 namespace Fooyin {
+namespace {
 struct NetworkStreamReconnectState
 {
     bool reconnectOnFinished{false};
@@ -77,6 +78,7 @@ struct IcyMetadataState
         metadataBlock.clear();
     }
 };
+} // namespace
 
 struct NetworkStreamDeviceState
 {
@@ -95,6 +97,7 @@ struct NetworkStreamDeviceState
     bool headersReady{false};
     std::chrono::milliseconds openTimeout{Settings::Core::Internal::DefaultRemoteOpenTimeoutMs};
     std::stop_token readCancellationToken;
+    std::function<void(QString)> openCallback;
     StreamUtils::BufferState streamBuffer;
     StreamUtils::ReadModeState readMode;
     NetworkStreamReconnectState reconnect;
@@ -122,6 +125,28 @@ struct NetworkStreamDeviceState
 };
 
 namespace {
+void notifyNetworkStreamState(const std::shared_ptr<NetworkStreamDeviceState>& state)
+{
+    state->ready.notify_all();
+
+    std::function<void(QString)> callback;
+    QString error;
+    {
+        const std::scoped_lock lock{state->mutex};
+        if(!state->openCallback
+           || (!state->headersReady && !state->finished && !state->aborted && state->error.isEmpty())) {
+            return;
+        }
+
+        callback = std::move(state->openCallback);
+        error    = state->error;
+        if(error.isEmpty() && (state->aborted || !state->headersReady)) {
+            error = u"Network stream closed before response headers arrived."_s;
+        }
+    }
+    callback(std::move(error));
+}
+
 void startNetworkStreamRequest(const std::shared_ptr<QNetworkAccessManager>& network, const QUrl& url,
                                const std::shared_ptr<NetworkStreamDeviceState>& state, quint64 requestId,
                                qint64 offset = -1);
@@ -459,7 +484,7 @@ void readNetworkStreamReply(const std::shared_ptr<QNetworkAccessManager>& networ
             }
         }
     }
-    state->ready.notify_all();
+    notifyNetworkStreamState(state);
 
     if(!finished) {
         return;
@@ -527,7 +552,7 @@ void startNetworkStreamRequestOnNetworkThread(const std::shared_ptr<QNetworkAcce
             const std::scoped_lock lock{state->mutex};
             updateReplyMetadata(*state, reply);
         }
-        state->ready.notify_all();
+        notifyNetworkStreamState(state);
     });
     QObject::connect(reply, &QIODevice::readyRead, reply, [state, reply]() {
         {
@@ -535,7 +560,7 @@ void startNetworkStreamRequestOnNetworkThread(const std::shared_ptr<QNetworkAcce
             updateReplyMetadata(*state, reply);
             appendReplyData(*state, reply);
         }
-        state->ready.notify_all();
+        notifyNetworkStreamState(state);
     });
     QObject::connect(reply, &QNetworkReply::finished, reply,
                      [network, url, state, reply]() { readNetworkStreamReply(network, url, state, reply); });
@@ -549,7 +574,7 @@ void startNetworkStreamRequestOnNetworkThread(const std::shared_ptr<QNetworkAcce
                 state->finished = true;
             }
         }
-        state->ready.notify_all();
+        notifyNetworkStreamState(state);
     });
 }
 
@@ -570,7 +595,7 @@ void startNetworkStreamRequest(const std::shared_ptr<QNetworkAccessManager>& net
         }
         state->finished = true;
     }
-    state->ready.notify_all();
+    notifyNetworkStreamState(state);
 }
 } // namespace
 
@@ -664,6 +689,15 @@ void NetworkStreamDevice::setOpenTimeout(std::chrono::milliseconds timeout)
 {
     const std::scoped_lock lock{m_state->mutex};
     m_state->openTimeout = timeout;
+}
+
+void NetworkStreamDevice::setOpenCallback(std::function<void(QString)> callback)
+{
+    {
+        const std::scoped_lock lock{m_state->mutex};
+        m_state->openCallback = std::move(callback);
+    }
+    notifyNetworkStreamState(m_state);
 }
 
 bool NetworkStreamDevice::open(OpenMode mode)
