@@ -1567,12 +1567,12 @@
     <message>
         <location filename="../../src/gui/filters/filterscripting.cpp" line="63"/>
         <source>Filter</source>
-        <translation type="unfinished">フィルター</translation>
+        <translation>フィルター</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterscripting.cpp" line="64"/>
         <source>Filter column value at a one-based index; empty outside the current range</source>
-        <translation type="unfinished"></translation>
+        <translation>1から始まるインデックスでフィルター列の値を取得。現在の範囲外の場合は空</translation>
     </message>
 </context>
 <context>
@@ -1928,12 +1928,12 @@
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="112"/>
         <source>Maximum memory used for scaled artwork and reflections in each cover flow widget</source>
-        <translation type="unfinished"></translation>
+        <translation>各カバーフローウィジェットで、拡大縮小したアートワークと反射に使用する最大メモリ量</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="114"/>
         <source>Cover flow cache size</source>
-        <translation type="unfinished"></translation>
+        <translation>カバーフローのキャッシュサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artwork/artworkgeneralpage.cpp" line="121"/>
@@ -3312,12 +3312,12 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="62"/>
         <source>Uses the image and appearance settings from Interface → Background, aligned across the main window.</source>
-        <translation type="unfinished"></translation>
+        <translation>「インターフェース」→「背景」の画像と外観の設定を使用し、メインウィンドウ全体で位置を揃えます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="156"/>
         <source>Use track artwork as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックのアートワークを背景に使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="157"/>
@@ -3333,13 +3333,13 @@ Clear to disable sorting.</source>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="159"/>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="331"/>
         <source>Global background</source>
-        <translation type="unfinished"></translation>
+        <translation>グローバル背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="160"/>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="332"/>
         <source>Use the shared main window background</source>
-        <translation type="unfinished"></translation>
+        <translation>共有のメインウィンドウ背景を使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="162"/>
@@ -4560,7 +4560,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="97"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>既定値</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="100"/>
@@ -4580,69 +4580,69 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="103"/>
         <source>Reset saved defaults to factory</source>
-        <translation type="unfinished"></translation>
+        <translation>保存済みの既定値を出荷時の状態に戻す</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="151"/>
         <source>Presets</source>
-        <translation type="unfinished">プリセット</translation>
+        <translation>プリセット</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="156"/>
         <source>Save preset…</source>
-        <translation type="unfinished">プリセットを保存…</translation>
+        <translation>プリセットを保存…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="157"/>
         <source>Restore preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを復元</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="158"/>
         <source>Delete preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="163"/>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="181"/>
         <source>Save Preset</source>
-        <translation type="unfinished">プリセットを保存</translation>
+        <translation>プリセットを保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="163"/>
         <source>Preset name</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット名</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="171"/>
         <source>Replace Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを置き換え</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="171"/>
         <source>Replace the preset ‘%1’?</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット「%1」を置き換えますか?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="181"/>
         <source>The preset could not be saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを保存できませんでした。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="217"/>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="226"/>
         <source>Delete Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="217"/>
         <source>Delete the preset ‘%1’?</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット「%1」を削除しますか?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="226"/>
         <source>The preset could not be deleted.</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットを削除できませんでした。</translation>
     </message>
 </context>
 <context>
@@ -4764,12 +4764,12 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="294"/>
         <source>Finalising…</source>
-        <translation type="unfinished"></translation>
+        <translation>完了処理中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="295"/>
         <source>Converting files (%1 of %2 finished)</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを変換中 (%2 件中 %1 件完了)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="296"/>
@@ -5001,7 +5001,7 @@ Paranoid: performs the most thorough available checking and additional retries (
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="329"/>
         <source>Automatic preserves source precision where the selected encoder supports it.</source>
-        <translation type="unfinished"></translation>
+        <translation>「自動」は、選択したエンコーダーが対応している場合にソースの精度を維持します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="374"/>
@@ -5161,23 +5161,24 @@ Paranoid: performs the most thorough available checking and additional retries (
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="561"/>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1144"/>
         <source>Automatic</source>
-        <translation type="unfinished">自動</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="563"/>
         <source>Maximum number of files to convert at the same time.
 Automatic uses the available processor threads.</source>
-        <translation type="unfinished"></translation>
+        <translation>同時に変換するファイルの最大数。
+「自動」の場合は、利用可能なプロセッサースレッド数を使用します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="566"/>
         <source>Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>パフォーマンス</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="570"/>
         <source>Maximum simultaneous conversions</source>
-        <translation type="unfinished"></translation>
+        <translation>同時変換の最大数</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="574"/>
@@ -5263,7 +5264,7 @@ Automatic uses the available processor threads.</source>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1159"/>
         <source>64-bit floating point</source>
-        <translation type="unfinished"></translation>
+        <translation>64ビット浮動小数点</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
@@ -5393,7 +5394,7 @@ Automatic uses the available processor threads.</source>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="401"/>
         <source>Front cover</source>
-        <translation>表ジャケット</translation>
+        <translation>表カバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="402"/>
@@ -6020,12 +6021,12 @@ Automatic uses the available processor threads.</source>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
         <source>General</source>
-        <translation type="unfinished">全般</translation>
+        <translation>全般</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="108"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="111"/>
@@ -6586,7 +6587,13 @@ Effects here process the final combined output.</source>
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
         <extracomment>%1 and %2 are native names or symbols for the split and replace modifier keys.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>• 右側のパレットでウィジェットを探します(非表示の場合は右端付近にカーソルを合わせます)。
+
+• パレットからウィジェットをドラッグして追加するか、既存のウィジェットをドラッグして移動します。%1 を押しながらドロップすると対象のウィジェットを分割し、%2 を押しながらドロップすると置き換えます。
+
+• ウィジェットを選択すると、パンくずバーに親コンテナーが表示されます。親を選択すると、セクション全体を移動できます。
+
+• ウィジェットを右クリックし、コンテキストメニューから分割、置き換え、削除ができます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="529"/>
@@ -8101,12 +8108,12 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="251"/>
         <source>Delete currently playing file (deprecated)</source>
-        <translation type="unfinished"></translation>
+        <translation>現在再生中のファイルを削除(非推奨)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="252"/>
         <source>This action is deprecated and will be removed in a future release. Use ‘Delete’ with the target set to ‘Playing track’ instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>このアクションは非推奨であり、将来のリリースで削除されます。代わりに、対象を「再生中のトラック」にして「削除」を使用してください。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="298"/>
@@ -8232,265 +8239,268 @@ Effects here process the final combined output.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="67"/>
         <source>Layout</source>
-        <translation type="unfinished">レイアウト</translation>
+        <translation>レイアウト</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="68"/>
         <source>Appearance</source>
-        <translation type="unfinished">外観</translation>
+        <translation>外観</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="85"/>
         <source>Auto</source>
-        <translation type="unfinished">自動</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="106"/>
         <source>Artwork arrangement</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの配置</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="107"/>
         <source>Fit artwork to available space</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークを利用可能なスペースに合わせる</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="108"/>
         <source>Automatically size artwork to fit the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>ウィジェットに合わせてアートワークのサイズを自動調整します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="109"/>
         <source>Side artwork tilt</source>
-        <translation type="unfinished"></translation>
+        <translation>左右のアートワークの傾き</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="110"/>
         <source>Tilt the artwork on either side of the current item.
 Negative values reverse the tilt; 0° keeps artwork flat.</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の項目の両側にあるアートワークを傾けます。
+負の値にすると傾きが逆になり、0°ではアートワークは平らなままです。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="112"/>
         <source>Centre spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>中央の間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="113"/>
         <source>Distance between the centres of the current artwork and its nearest neighbour, as a percentage of the current artwork’s width</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のアートワークの中心と、その隣のアートワークの中心との距離。現在のアートワークの幅に対する割合</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="115"/>
         <source>Side spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>左右の間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="116"/>
         <source>Distance between successive images on each side, as a percentage of the current artwork’s width</source>
-        <translation type="unfinished"></translation>
+        <translation>各側で連続する画像どうしの距離。現在のアートワークの幅に対する割合</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="117"/>
         <source>Items on each side</source>
-        <translation type="unfinished"></translation>
+        <translation>片側の項目数</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="118"/>
         <source>Set the number of items on each side. ‘Auto’ fills the available width.</source>
-        <translation type="unfinished"></translation>
+        <translation>片側に表示する項目数を設定します。「自動」の場合は利用可能な幅いっぱいに表示します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="123"/>
         <source>Depth effects</source>
-        <translation type="unfinished"></translation>
+        <translation>奥行き効果</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="124"/>
         <source>Size progression</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズの変化率</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="125"/>
         <source>Set each image’s size relative to the previous image, moving away from the centre.
 At 100%, all artwork stays the same size.</source>
-        <translation type="unfinished"></translation>
+        <translation>中央から離れるにつれて、各画像のサイズを直前の画像に対する割合で設定します。
+100%の場合、すべてのアートワークが同じサイズになります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="127"/>
         <source>Minimum artwork size</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの最小サイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="128"/>
         <source>Smallest side artwork size as a percentage of the current artwork size</source>
-        <translation type="unfinished"></translation>
+        <translation>左右のアートワークの最小サイズ。現在のアートワークのサイズに対する割合</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="129"/>
         <source>Perspective</source>
-        <translation type="unfinished"></translation>
+        <translation>遠近感</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="130"/>
         <source>Adjust the depth effect of tilted artwork. At 0%, tilted artwork has no perspective distortion.</source>
-        <translation type="unfinished"></translation>
+        <translation>傾けたアートワークの奥行き効果を調整します。0%の場合、傾けたアートワークに遠近による歪みは生じません。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="131"/>
         <source>Side artwork fading</source>
-        <translation type="unfinished"></translation>
+        <translation>左右のアートワークのフェード</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="132"/>
         <source>Artwork fades progressively with distance from the centre.
 Higher values make side artwork fainter.</source>
-        <translation type="unfinished"></translation>
+        <translation>中央から離れるほど、アートワークが徐々に薄くなります。
+値を大きくすると、左右のアートワークがより薄くなります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="138"/>
         <source>Scrolling</source>
-        <translation type="unfinished">スクロール</translation>
+        <translation>スクロール</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="139"/>
         <source>Animate scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>スクロールをアニメーション表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="140"/>
         <source>Animate scrolling when selecting artwork or using the mouse wheel, touchpad or keyboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの選択時、またはマウスホイール、タッチパッド、キーボードの使用時に、スクロールをアニメーション表示します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="141"/>
         <source>Animation duration</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションの長さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="142"/>
         <source>Duration of the scrolling animation</source>
-        <translation type="unfinished"></translation>
+        <translation>スクロールアニメーションの長さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="143"/>
         <source>Scroll sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>スクロール感度</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="144"/>
         <source>Distance moved by the mouse wheel or touchpad, relative to the default scrolling distance</source>
-        <translation type="unfinished"></translation>
+        <translation>マウスホイールまたはタッチパッドによる移動距離。既定のスクロール距離に対する割合</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="147"/>
         <source>Below artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの下</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="147"/>
         <source>Above artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの上</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="147"/>
         <source>On artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワーク上</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="148"/>
         <source>Position of the current item’s labels relative to its artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の項目のラベルの、アートワークに対する位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="152"/>
         <source>Labels</source>
-        <translation type="unfinished">ラベル</translation>
+        <translation>ラベル</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="153"/>
         <source>Show labels</source>
-        <translation type="unfinished">ラベルを表示</translation>
+        <translation>ラベルを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="154"/>
         <source>Show text from the displayed filter columns for the current item</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の項目について、表示中のフィルター列のテキストを表示します</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="155"/>
         <source>Position</source>
-        <translation type="unfinished">位置</translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="158"/>
         <source>Overlay labels on reflections</source>
-        <translation type="unfinished"></translation>
+        <translation>反射部分にラベルを重ねる</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="159"/>
         <source>Draw labels in the reflection area when positioned below the artwork.</source>
-        <translation type="unfinished"></translation>
+        <translation>ラベルをアートワークの下に配置する場合、反射領域にラベルを描画します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="160"/>
         <source>Spacing</source>
-        <translation type="unfinished">間隔</translation>
+        <translation>間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="161"/>
         <source>Space between the artwork area and its labels</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワーク領域とラベルの間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="166"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished">アートワークの反射</translation>
+        <translation>アートワークの反射</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="167"/>
         <source>Show artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの反射を表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="168"/>
         <source>Draw a fading reflection below the artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの下に、フェードする反射を描画します</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="169"/>
         <source>Height</source>
-        <translation type="unfinished">高さ</translation>
+        <translation>高さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="170"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished">アートワークの高さに対する反射の高さの割合</translation>
+        <translation>アートワークの高さに対する反射の高さの割合</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="171"/>
         <source>Opacity</source>
-        <translation type="unfinished">不透明度</translation>
+        <translation>不透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="172"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished">反射の上部の不透明度(透明に向かってフェード)</translation>
+        <translation>反射の上部の不透明度(透明に向かってフェード)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="173"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished">アートワークの下の間隔</translation>
+        <translation>アートワークの下の間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="174"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished">アートワークとその反射の間隔</translation>
+        <translation>アートワークとその反射の間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="177"/>
         <source>Preview</source>
-        <translation type="unfinished">プレビュー</translation>
+        <translation>プレビュー</translation>
     </message>
 </context>
 <context>
@@ -8499,310 +8509,311 @@ Higher values make side artwork fainter.</source>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="62"/>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="107"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="63"/>
         <source>Font</source>
-        <translation type="unfinished">フォント</translation>
+        <translation>フォント</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="64"/>
         <source>Background colour</source>
-        <translation type="unfinished">背景色</translation>
+        <translation>背景色</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="65"/>
         <source>Expand selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したグループを展開</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="66"/>
         <source>Animate expansion and collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>展開と折りたたみをアニメーション表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="68"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">行の色を交互に変える</translation>
+        <translation>行の色を交互に変える</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="69"/>
         <source>Show artwork in expanded groups</source>
-        <translation type="unfinished"></translation>
+        <translation>展開したグループにアートワークを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="70"/>
         <source>Show close button</source>
-        <translation type="unfinished"></translation>
+        <translation>閉じるボタンを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="71"/>
         <source>Show artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの反射を表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="75"/>
         <source>Remove margins when artwork fills the height</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークが高さいっぱいの場合は余白を削除</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="100"/>
         <source>Colour</source>
-        <translation type="unfinished">色</translation>
+        <translation>色</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="104"/>
         <source>Behaviour</source>
-        <translation type="unfinished">動作</translation>
+        <translation>動作</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="105"/>
         <source>Appearance</source>
-        <translation type="unfinished">外観</translation>
+        <translation>外観</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="106"/>
         <source>Scripts</source>
-        <translation type="unfinished">スクリプト</translation>
+        <translation>スクリプト</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="113"/>
         <source>Use display script when empty</source>
-        <translation type="unfinished"></translation>
+        <translation>空の場合は表示スクリプトを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="114"/>
         <source>Leave empty to disable subheaders</source>
-        <translation type="unfinished"></translation>
+        <translation>サブヘッダーを無効にする場合は空のままにします</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="119"/>
         <source>Grouping script</source>
-        <translation type="unfinished">グループ化スクリプト</translation>
+        <translation>グループ化スクリプト</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="121"/>
         <source>Display script</source>
-        <translation type="unfinished">表示スクリプト</translation>
+        <translation>表示スクリプト</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="127"/>
         <source>Header</source>
-        <translation type="unfinished">ヘッダー</translation>
+        <translation>ヘッダー</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="128"/>
         <source>Subheader</source>
-        <translation type="unfinished"></translation>
+        <translation>サブヘッダー</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="129"/>
         <source>Track</source>
-        <translation type="unfinished">トラック</translation>
+        <translation>トラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="130"/>
         <source>Footer</source>
-        <translation type="unfinished"></translation>
+        <translation>フッター</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="132"/>
         <source>Leave empty to hide the footer</source>
-        <translation type="unfinished"></translation>
+        <translation>フッターを非表示にする場合は空のままにします</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="141"/>
         <source>Use &lt;b&gt;&amp;lt;left&amp;gt;&lt;/b&gt; and &lt;b&gt;&amp;lt;right&amp;gt;&lt;/b&gt; for alignment, and &lt;b&gt;&amp;lt;hr/&amp;gt;&lt;/b&gt; for rules.</source>
-        <translation type="unfinished"></translation>
+        <translation>配置には &lt;b&gt;&amp;lt;left&amp;gt;&lt;/b&gt; と &lt;b&gt;&amp;lt;right&amp;gt;&lt;/b&gt;、罫線には &lt;b&gt;&amp;lt;hr/&amp;gt;&lt;/b&gt; を使用します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="146"/>
         <source>Use &lt;b&gt;%filter_columns%&lt;/b&gt; for all column values, &lt;b&gt;%filter_column_count%&lt;/b&gt; for their count, or &lt;b&gt;$filter_column(1)&lt;/b&gt; for an individual column in displayed order.</source>
-        <translation type="unfinished"></translation>
+        <translation>すべての列の値には &lt;b&gt;%filter_columns%&lt;/b&gt;、その数には &lt;b&gt;%filter_column_count%&lt;/b&gt;、表示順の個別の列には &lt;b&gt;$filter_column(1)&lt;/b&gt; を使用します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="154"/>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="186"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="155"/>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="188"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="162"/>
         <source>Artwork shrinks to leave room for track text and is hidden when space is too limited.</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークはトラックのテキスト用の余白を確保するために縮小され、スペースが足りない場合は非表示になります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="165"/>
         <source>Use the configured margins only when the track content is taller than the artwork.</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックの内容がアートワークより高い場合にのみ、設定した余白を使用します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="174"/>
         <source>Hidden when there isn’t enough space below the artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの下に十分なスペースがない場合は非表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="177"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished">アートワークの高さに対する反射の高さの割合</translation>
+        <translation>アートワークの高さに対する反射の高さの割合</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="180"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished">反射の上部の不透明度(透明に向かってフェード)</translation>
+        <translation>反射の上部の不透明度(透明に向かってフェード)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="183"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished">アートワークとその反射の間隔</translation>
+        <translation>アートワークとその反射の間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="190"/>
         <source>Top</source>
-        <translation type="unfinished">上</translation>
+        <translation>上</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="192"/>
         <source>Bottom</source>
-        <translation type="unfinished">下</translation>
+        <translation>下</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="196"/>
         <source>Artwork size</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークのサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="202"/>
         <source>Artwork</source>
-        <translation type="unfinished">アートワーク</translation>
+        <translation>アートワーク</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="204"/>
         <source>Artwork position</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="208"/>
         <source>Margins</source>
-        <translation type="unfinished">余白</translation>
+        <translation>余白</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="217"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished">アートワークの反射</translation>
+        <translation>アートワークの反射</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="219"/>
         <source>Height</source>
-        <translation type="unfinished">高さ</translation>
+        <translation>高さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="221"/>
         <source>Opacity</source>
-        <translation type="unfinished">不透明度</translation>
+        <translation>不透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="223"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished">アートワークの下の間隔</translation>
+        <translation>アートワークの下の間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="231"/>
         <source>Track rows</source>
-        <translation type="unfinished"></translation>
+        <translation>トラック行</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="233"/>
         <source>Playing track</source>
-        <translation type="unfinished">再生中のトラック</translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="245"/>
         <source>Unlimited</source>
-        <translation type="unfinished">無制限</translation>
+        <translation>無制限</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="246"/>
         <source>Set to 0 for unlimited columns.</source>
-        <translation type="unfinished"></translation>
+        <translation>0にすると列数は無制限になります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="250"/>
         <source>The final column may contain fewer rows.</source>
-        <translation type="unfinished"></translation>
+        <translation>最後の列は行数が少なくなる場合があります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="252"/>
         <source>Fit content</source>
-        <translation type="unfinished"></translation>
+        <translation>内容に合わせる</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="253"/>
         <source>Fill available space</source>
-        <translation type="unfinished"></translation>
+        <translation>利用可能なスペースを埋める</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="259"/>
         <source>The minimum column width is relative to the default width at the current font size.
 Longer content can exceed this minimum.</source>
-        <translation type="unfinished"></translation>
+        <translation>最小列幅は、現在のフォントサイズでの既定の幅に対する相対値です。
+それより長い内容は、この最小値を超えることがあります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="263"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished">現在再生中の行にカスタム背景色を使用。透明度もサポートされます</translation>
+        <translation>現在再生中の行にカスタム背景色を使用。透明度もサポートされます</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="264"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished">現在再生中の行にカスタムフォントを使用</translation>
+        <translation>現在再生中の行にカスタムフォントを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="273"/>
         <source>Expansion</source>
-        <translation type="unfinished"></translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="277"/>
         <source>Animation duration</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションの長さ</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="285"/>
         <source>Columns</source>
-        <translation type="unfinished">列</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="286"/>
         <source>Maximum number of columns</source>
-        <translation type="unfinished"></translation>
+        <translation>最大列数</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="288"/>
         <source>Minimum rows per column</source>
-        <translation type="unfinished"></translation>
+        <translation>1列あたりの最小行数</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="290"/>
         <source>Column sizing</source>
-        <translation type="unfinished"></translation>
+        <translation>列サイズの調整</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="292"/>
         <source>Minimum column width</source>
-        <translation type="unfinished"></translation>
+        <translation>最小列幅</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="301"/>
         <source>Preview</source>
-        <translation type="unfinished">プレビュー</translation>
+        <translation>プレビュー</translation>
     </message>
 </context>
 <context>
@@ -8884,53 +8895,53 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="66"/>
         <source>Columns</source>
-        <translation type="unfinished">列</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="67"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="108"/>
         <source>Cover flow</source>
-        <translation type="unfinished"></translation>
+        <translation>カバーフロー</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="68"/>
         <source>Artwork (bottom labels)</source>
-        <translation type="unfinished">アートワーク(下部にラベル)</translation>
+        <translation>アートワーク(下部にラベル)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
         <source>Artwork (right labels)</source>
-        <translation type="unfinished">アートワーク(右側にラベル)</translation>
+        <translation>アートワーク(右側にラベル)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="70"/>
         <source>Artwork (overlay labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワーク(ラベルを重ねる)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="71"/>
         <source>Artwork (no labels)</source>
-        <translation type="unfinished">アートワーク(ラベルなし)</translation>
+        <translation>アートワーク(ラベルなし)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="74"/>
         <source>Show summary item</source>
-        <translation type="unfinished"></translation>
+        <translation>サマリー項目を表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="75"/>
         <source>Show header</source>
-        <translation type="unfinished">ヘッダーを表示</translation>
+        <translation>ヘッダーを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="76"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">スクロールバーを表示</translation>
+        <translation>スクロールバーを表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="77"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">行の色を交互に変える</translation>
+        <translation>行の色を交互に変える</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="78"/>
@@ -8940,27 +8951,27 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="82"/>
         <source>Fit artwork to available width</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークを利用可能な幅に合わせる</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="86"/>
         <source>Custom margins</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタム余白</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="105"/>
         <source>Display</source>
-        <translation type="unfinished">表示</translation>
+        <translation>表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="106"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="107"/>
         <source>Expansion</source>
-        <translation type="unfinished"></translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="111"/>
@@ -8975,12 +8986,12 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="120"/>
         <source>Filter items</source>
-        <translation type="unfinished"></translation>
+        <translation>フィルター項目</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="121"/>
         <source>Expanded tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>展開されたトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="122"/>
@@ -9060,7 +9071,7 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="326"/>
         <source>Use filter action</source>
-        <translation type="unfinished"></translation>
+        <translation>フィルターアクションを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="329"/>
@@ -9076,118 +9087,119 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="163"/>
         <source>View mode</source>
-        <translation type="unfinished">表示モード</translation>
+        <translation>表示モード</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="173"/>
         <source>Front cover</source>
-        <translation type="unfinished">表ジャケット</translation>
+        <translation>表ジャケット</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="174"/>
         <source>Back cover</source>
-        <translation type="unfinished">裏ジャケット</translation>
+        <translation>裏ジャケット</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="175"/>
         <source>Artist</source>
-        <translation type="unfinished">アーティスト</translation>
+        <translation>アーティスト</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="177"/>
         <source>Default</source>
-        <translation type="unfinished">既定</translation>
+        <translation>既定</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="178"/>
         <source>Embedded covers</source>
-        <translation type="unfinished"></translation>
+        <translation>埋め込みカバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="179"/>
         <source>Directory covers</source>
-        <translation type="unfinished"></translation>
+        <translation>ディレクトリ内のカバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="181"/>
         <source>Display options</source>
-        <translation type="unfinished"></translation>
+        <translation>表示オプション</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="215"/>
         <source>Artwork</source>
-        <translation type="unfinished">アートワーク</translation>
+        <translation>アートワーク</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="224"/>
         <source>Artwork spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="227"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="229"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="236"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="238"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="240"/>
         <source>Top</source>
-        <translation type="unfinished">上</translation>
+        <translation>上</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="242"/>
         <source>Bottom</source>
-        <translation type="unfinished">下</translation>
+        <translation>下</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="247"/>
         <source>Use &lt;b&gt;Ctrl+Scroll&lt;/b&gt; in the widget to resize icons when manual sizing is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>手動サイズ調整が有効な場合、ウィジェット内で &lt;b&gt;Ctrl+スクロール&lt;/b&gt; を使用するとアイコンのサイズを変更できます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="250"/>
         <source>Resize artwork to fill the available width using the preferred size.
 Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated as zero.</source>
-        <translation type="unfinished"></translation>
+        <translation>推奨サイズを使用して、アートワークを利用可能な幅いっぱいに拡大縮小します。
+Ctrl+スクロールで列数が変わります。自動の水平方向の間隔は0として扱われます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="256"/>
         <source>Artwork type</source>
-        <translation type="unfinished">アートワークの種類</translation>
+        <translation>アートワークの種類</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="258"/>
         <source>Artwork source</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークのソース</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="262"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="272"/>
         <source>Gaps</source>
-        <translation type="unfinished"></translation>
+        <translation>間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="274"/>
         <source>Margins</source>
-        <translation type="unfinished">余白</translation>
+        <translation>余白</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="289"/>
@@ -9229,36 +9241,36 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="198"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="259"/>
         <source>Header</source>
-        <translation type="unfinished">ヘッダー</translation>
+        <translation>ヘッダー</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="199"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="375"/>
         <source>Track</source>
-        <translation type="unfinished">トラック</translation>
+        <translation>トラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="200"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="263"/>
         <source>Footer</source>
-        <translation type="unfinished"></translation>
+        <translation>フッター</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="203"/>
         <source>Group by</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ化の基準</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="206"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="345"/>
         <source>Subheader</source>
-        <translation type="unfinished"></translation>
+        <translation>サブヘッダー</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="216"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="221"/>
         <source>Filter columns</source>
-        <translation type="unfinished"></translation>
+        <translation>フィルター列</translation>
     </message>
 </context>
 <context>
@@ -9266,7 +9278,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionwidget.cpp" line="154"/>
         <source>Collapse group</source>
-        <translation type="unfinished">グループを折りたたむ</translation>
+        <translation>グループを折りたたむ</translation>
     </message>
 </context>
 <context>
@@ -9383,7 +9395,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2022"/>
         <source>Artwork (overlay labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワーク(ラベルを重ねる)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2023"/>
@@ -9393,7 +9405,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2024"/>
         <source>Cover flow</source>
-        <translation type="unfinished"></translation>
+        <translation>カバーフロー</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2028"/>
@@ -9413,7 +9425,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2159"/>
         <source>Expand selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したグループを展開</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2172"/>
@@ -9423,7 +9435,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2025"/>
         <source>Front cover</source>
-        <translation>表ジャケット</translation>
+        <translation>表カバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2026"/>
@@ -9502,7 +9514,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="171"/>
         <source>Grouping Script</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ化スクリプト</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="173"/>
@@ -9522,7 +9534,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="250"/>
         <source>Use grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ化スクリプトを使用</translation>
     </message>
 </context>
 <context>
@@ -10534,12 +10546,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="98"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="99"/>
         <source>Interface</source>
-        <translation type="unfinished">インターフェース</translation>
+        <translation>インターフェース</translation>
     </message>
 </context>
 <context>
@@ -10547,18 +10559,19 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="45"/>
         <source>Use a shared base colour</source>
-        <translation type="unfinished"></translation>
+        <translation>共通のベースカラーを使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="51"/>
         <source>Choose ‘Global background’ in a widget’s background settings to use this image.</source>
-        <translation type="unfinished"></translation>
+        <translation>このイメージを使用するには、ウィジェットの背景設定で「グローバル背景」を選択してください。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="55"/>
         <source>Uses an opaque theme base colour beneath the artwork to keep colouring consistent across widgets.
 When disabled, the artwork blends with each widget’s own background.</source>
-        <translation type="unfinished"></translation>
+        <translation>アートワークの下に不透明なテーマのベースカラーを敷き、ウィジェット間で色合いを統一します。
+無効にすると、アートワークは各ウィジェット自身の背景とブレンドされます。</translation>
     </message>
 </context>
 <context>
@@ -10838,7 +10851,7 @@ When disabled, the artwork blends with each widget’s own background.</source>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="144"/>
         <source>Custom icon</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタムアイコン</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="146"/>
@@ -11294,13 +11307,13 @@ or selected rows</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="94"/>
         <source>Use custom rating symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタム評価記号を使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="95"/>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="101"/>
         <source>Symbol font</source>
-        <translation type="unfinished"></translation>
+        <translation>記号のフォント</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="97"/>
@@ -11312,7 +11325,7 @@ or selected rows</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="98"/>
         <source>Use custom love symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタム「いいね」記号を使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="107"/>
@@ -11383,43 +11396,44 @@ or selected rows</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="190"/>
         <source>Size of the heart or custom symbol in love editors</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」エディタ内のハートまたはカスタム記号のサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="191"/>
         <source>Use the configured loved and unloved symbols in love editors.
 When disabled, love editors use the default heart shape.</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」エディタで、設定した「いいね」済みと未「いいね」の記号を使用します。
+無効にすると、「いいね」エディタは既定のハート形を使用します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="193"/>
         <source>Symbol shown for loved tracks when custom love symbols are enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタム「いいね」記号が有効な場合に、「いいね」済みのトラックに表示する記号</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="194"/>
         <source>Symbol shown for unloved tracks when custom love symbols are enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>カスタム「いいね」記号が有効な場合に、未「いいね」のトラックに表示する記号</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="195"/>
         <source>Font used for custom symbols in love editors. Heart size controls the symbol size.</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」エディタ内のカスタム記号に使用するフォント。記号のサイズは「ハートのサイズ」で制御します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="198"/>
         <source>Love Symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」の記号</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="202"/>
         <source>Loved symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>「いいね」済みの記号</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="204"/>
         <source>Unloved symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>未「いいね」の記号</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="209"/>
@@ -11439,56 +11453,60 @@ When disabled, love editors use the default heart shape.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="117"/>
         <source>Track Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックのラベル</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="127"/>
         <source>Properties sidebar</source>
-        <translation type="unfinished"></translation>
+        <translation>プロパティサイドバー</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="134"/>
         <source>Use the configured full, half and empty symbols in rating editors.
 When disabled, rating editors use the default star shapes.</source>
-        <translation type="unfinished"></translation>
+        <translation>評価エディタで、設定した満星、半星、空星の記号を使用します。
+無効にすると、評価エディタは既定の星形を使用します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="136"/>
         <source>Font used for custom symbols in rating editors. Star size controls the symbol size.</source>
-        <translation type="unfinished"></translation>
+        <translation>評価エディタ内のカスタム記号に使用するフォント。記号のサイズは「星のサイズ」で制御します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="138"/>
         <source>Size of each star or custom symbol in rating editors</source>
-        <translation type="unfinished"></translation>
+        <translation>評価エディタ内の各星またはカスタム記号のサイズ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="139"/>
         <source>Symbol used for full stars in %rating_stars% and %rating_stars_padded%.
 Also used in rating editors when ‘Use custom rating symbols’ is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>%rating_stars% と %rating_stars_padded% の満星に使用する記号。
+「カスタム評価記号を使用する」が有効な場合は、評価エディタでも使用されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="141"/>
         <source>Symbol used for half stars in %rating_stars% and %rating_stars_padded%.
 Also used in rating editors when ‘Use custom rating symbols’ is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>%rating_stars% と %rating_stars_padded% の半星に使用する記号。
+「カスタム評価記号を使用する」が有効な場合は、評価エディタでも使用されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="143"/>
         <source>Symbol used for empty stars in %rating_stars_padded%.
 Also used in rating editors when ‘Use custom rating symbols’ is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>%rating_stars_padded% の空星に使用する記号。
+「カスタム評価記号を使用する」が有効な場合は、評価エディタでも使用されます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="145"/>
         <source>Preview of %rating_stars_padded% using the current font</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のフォントを使用した %rating_stars_padded% のプレビュー</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="147"/>
         <source>Rating Symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>評価の記号</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="153"/>
@@ -12167,7 +12185,7 @@ Also used in rating editors when ‘Use custom rating symbols’ is enabled.</so
         <location filename="../../src/gui/layout/layoututils.cpp" line="257"/>
         <source>%1 to split • %2 to replace</source>
         <extracomment>%1 and %2 are native names or symbols for the split and replace modifier keys.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 で分割 • %2 で置き換え</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="284"/>
@@ -12930,7 +12948,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/core/library/libraryscanner.cpp" line="373"/>
         <source>Could not load the playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイリストを読み込めませんでした。</translation>
     </message>
 </context>
 <context>
@@ -13062,7 +13080,7 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="84"/>
@@ -13238,57 +13256,57 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="96"/>
         <source>Use the display script</source>
-        <translation type="unfinished"></translation>
+        <translation>表示スクリプトを使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="97"/>
         <source>Enter a display script</source>
-        <translation type="unfinished"></translation>
+        <translation>表示スクリプトを入力</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="98"/>
         <source>Use the grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ化スクリプトを使用する</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="101"/>
         <source>Name</source>
-        <translation type="unfinished">名前</translation>
+        <translation>名前</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="107"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; between tree levels. All scripts must produce matching levels and multi-value expansions.</source>
-        <translation type="unfinished"></translation>
+        <translation>ツリーの階層間には &lt;code&gt;||&lt;/code&gt; を使用します。すべてのスクリプトで、階層と複数値の展開が一致する結果を生成する必要があります。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="122"/>
         <source>Grouping script</source>
-        <translation type="unfinished">グループ化スクリプト</translation>
+        <translation>グループ化スクリプト</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="123"/>
         <source>Tracks with matching results share tree nodes. Leave empty to use the display script.</source>
-        <translation type="unfinished"></translation>
+        <translation>結果が一致するトラックは、ツリーのノードを共有します。表示スクリプトを使用する場合は空のままにします。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="124"/>
         <source>Display script</source>
-        <translation type="unfinished">表示スクリプト</translation>
+        <translation>表示スクリプト</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="125"/>
         <source>Use &lt;code&gt;%trackcount%&lt;/code&gt; and &lt;code&gt;%childcount%&lt;/code&gt; for counts, &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text, or &lt;code&gt;%frontcover%&lt;/code&gt; at the start or end of a level for artwork.</source>
-        <translation type="unfinished"></translation>
+        <translation>件数には &lt;code&gt;%trackcount%&lt;/code&gt; と &lt;code&gt;%childcount%&lt;/code&gt;、右揃えのテキストには &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt;、アートワークには階層の先頭または末尾に &lt;code&gt;%frontcover%&lt;/code&gt; を使用します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="129"/>
         <source>Sort script</source>
-        <translation type="unfinished"></translation>
+        <translation>並べ替えスクリプト</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="130"/>
         <source>Sets the order within each level. Leave a level empty to use its grouping script.</source>
-        <translation type="unfinished"></translation>
+        <translation>各階層内の順序を設定します。階層を空にすると、その階層のグループ化スクリプトを使用します。</translation>
     </message>
 </context>
 <context>
@@ -13311,37 +13329,37 @@ This improves compatibility with other players, but stores whole-star values onl
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="173"/>
         <source>Grouping</source>
-        <translation type="unfinished">グループ</translation>
+        <translation>グループ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="175"/>
         <source>Display</source>
-        <translation type="unfinished">表示</translation>
+        <translation>表示</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="177"/>
         <source>Sort</source>
-        <translation type="unfinished">並べ替え</translation>
+        <translation>並べ替え</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="243"/>
         <source>Use display script</source>
-        <translation type="unfinished">表示スクリプトを使用</translation>
+        <translation>表示スクリプトを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="247"/>
         <source>Enter display script</source>
-        <translation type="unfinished"></translation>
+        <translation>表示スクリプトを入力</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="251"/>
         <source>Use grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ化スクリプトを使用</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="389"/>
         <source>New grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいグループ</translation>
     </message>
 </context>
 <context>
@@ -15527,7 +15545,7 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="118"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
 </context>
 <context>
@@ -16376,52 +16394,52 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="43"/>
         <source>Disable crossfading</source>
-        <translation type="unfinished"></translation>
+        <translation>クロスフェードを無効にする</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="47"/>
         <source>Never</source>
-        <translation type="unfinished">しない</translation>
+        <translation>しない</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="48"/>
         <source>When shuffling</source>
-        <translation type="unfinished"></translation>
+        <translation>シャッフル時</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="49"/>
         <source>Always</source>
-        <translation type="unfinished">常に</translation>
+        <translation>常に</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="51"/>
         <source>Multiple values</source>
-        <translation type="unfinished"></translation>
+        <translation>複数の値</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="52"/>
         <source>Excluded tracks can still be played explicitly or added to the playback queue.</source>
-        <translation type="unfinished"></translation>
+        <translation>除外したトラックも、明示的に再生したり、再生キューに追加したりできます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="54"/>
         <source>Disable crossfading into and out of these tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>これらのトラックへの、およびこれらのトラックからのクロスフェードを無効にする</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="56"/>
         <source>Track overrides</source>
-        <translation type="unfinished"></translation>
+        <translation>トラックごとの設定</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="58"/>
         <source>Exclude from automatic playback</source>
-        <translation type="unfinished"></translation>
+        <translation>自動再生から除外</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="61"/>
         <source>Reset to defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>既定値にリセット</translation>
     </message>
 </context>
 <context>
@@ -20134,27 +20152,27 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="45"/>
         <source>Show search bar</source>
-        <translation type="unfinished">検索バーを表示</translation>
+        <translation>検索バーを表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="48"/>
         <source>Show header</source>
-        <translation type="unfinished">ヘッダーを表示</translation>
+        <translation>ヘッダーを表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="49"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">スクロールバーを表示</translation>
+        <translation>スクロールバーを表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="50"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">行の色を交互に変える</translation>
+        <translation>行の色を交互に変える</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="51"/>
         <source>Show station icons</source>
-        <translation type="unfinished">局アイコンを表示</translation>
+        <translation>局アイコンを表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
@@ -20179,90 +20197,91 @@ Changes take effect the next time the PipeWire output is initialised.</source>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="58"/>
         <source>Fit icons to available width</source>
-        <translation type="unfinished"></translation>
+        <translation>アイコンを利用可能な幅に合わせる</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="61"/>
         <source>Use grid spacing with right captions</source>
-        <translation type="unfinished"></translation>
+        <translation>右側のキャプションにグリッド間隔を使用する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="67"/>
         <source>Use uniform station icon sizes</source>
-        <translation type="unfinished"></translation>
+        <translation>局アイコンのサイズを統一する</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="70"/>
         <source>Columns</source>
-        <translation type="unfinished">列</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="71"/>
         <source>Icons</source>
-        <translation type="unfinished">アイコン</translation>
+        <translation>アイコン</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="72"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="188"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="73"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="192"/>
         <source>Bottom</source>
-        <translation type="unfinished">下</translation>
+        <translation>下</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="90"/>
         <source>Fit station icons into equally sized areas while preserving their proportions</source>
-        <translation type="unfinished"></translation>
+        <translation>局アイコンを、縦横比を保ったまま同じサイズの領域に収める</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="102"/>
         <source>Square</source>
-        <translation type="unfinished">正方形</translation>
+        <translation>正方形</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="109"/>
         <source>Resize artwork to fill the available width using the preferred size.
 Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated as zero.</source>
-        <translation type="unfinished"></translation>
+        <translation>推奨サイズを使用して、アートワークを利用可能な幅いっぱいに拡大縮小します。
+Ctrl+スクロールで列数が変わります。自動の水平方向の間隔は0として扱われます。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="128"/>
         <source>Apply horizontal and vertical gaps when captions are displayed to the right of icons. When disabled, columns stretch to fill the available width without gaps between stations. Artwork margins still apply.</source>
-        <translation type="unfinished"></translation>
+        <translation>キャプションをアイコンの右側に表示する場合に、水平方向と垂直方向の間隔を適用します。無効にすると、局どうしの間隔なしで、列が利用可能な幅いっぱいに広がります。アートワークの余白は引き続き適用されます。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="186"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="190"/>
         <source>Top</source>
-        <translation type="unfinished">上</translation>
+        <translation>上</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="197"/>
         <source>Icon corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>アイコンの角の半径</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="207"/>
         <source>Margins</source>
-        <translation type="unfinished">余白</translation>
+        <translation>余白</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="229"/>
         <source>General</source>
-        <translation type="unfinished">全般</translation>
+        <translation>全般</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="231"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="75"/>
@@ -20355,12 +20374,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="157"/>
         <source>Display mode</source>
-        <translation type="unfinished"></translation>
+        <translation>表示モード</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="159"/>
         <source>Caption placement</source>
-        <translation type="unfinished"></translation>
+        <translation>キャプションの配置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="174"/>
@@ -20944,7 +20963,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="83"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">スクロールバーを表示</translation>
+        <translation>スクロールバーを表示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="106"/>
@@ -22775,17 +22794,17 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="52"/>
         <source>Script error</source>
-        <translation type="unfinished"></translation>
+        <translation>スクリプトエラー</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="144"/>
         <source>Open in the Script Editor for details</source>
-        <translation type="unfinished"></translation>
+        <translation>スクリプトエディターで詳細を確認</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="221"/>
         <source>Script help</source>
-        <translation type="unfinished"></translation>
+        <translation>スクリプトのヘルプ</translation>
     </message>
 </context>
 <context>
@@ -23723,7 +23742,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="67"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="78"/>
         <source>Playing track</source>
-        <translation type="unfinished">再生中のトラック</translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="74"/>
@@ -23751,7 +23770,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="506"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="511"/>
         <source>%1 does not support the selected shortcut target.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 は、選択したショートカットの対象に対応していません。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="518"/>
@@ -23795,7 +23814,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="641"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="642"/>
         <source>Keyboard Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>キーボードショートカット</translation>
     </message>
 </context>
 <context>
@@ -23849,39 +23868,39 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="188"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="194"/>
         <source>Target</source>
-        <translation type="unfinished">ターゲット</translation>
+        <translation>ターゲット</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="196"/>
         <source>Configure…</source>
-        <translation type="unfinished">設定…</translation>
+        <translation>設定…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="235"/>
         <source>Open system shortcut settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>システムのショートカット設定を開きます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="237"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="389"/>
         <source>Focused widget</source>
-        <translation type="unfinished">フォーカスされたウィジェット</translation>
+        <translation>フォーカスされたウィジェット</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="238"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="390"/>
         <source>Playing track</source>
-        <translation type="unfinished">再生中のトラック</translation>
+        <translation>再生中のトラック</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="239"/>
         <source>Choose which tracks the system shortcut applies to.</source>
-        <translation type="unfinished"></translation>
+        <translation>システムショートカットを適用するトラックを選択します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="392"/>
         <source>Choose which tracks this shortcut applies to.</source>
-        <translation type="unfinished"></translation>
+        <translation>このショートカットを適用するトラックを選択します。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="495"/>
@@ -23896,12 +23915,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="511"/>
         <source>Application shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリケーションのショートカット</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="511"/>
         <source>Shortcut</source>
-        <translation type="unfinished">ショートカット</translation>
+        <translation>ショートカット</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="558"/>
@@ -24962,7 +24981,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="510"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
@@ -25987,27 +26006,27 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="249"/>
         <source>Could not start the scan database transaction.</source>
-        <translation type="unfinished"></translation>
+        <translation>スキャンのデータベーストランザクションを開始できませんでした。</translation>
     </message>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="256"/>
         <source>Could not store scanned tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>スキャンしたトラックを保存できませんでした。</translation>
     </message>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="259"/>
         <source>Could not update scanned tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>スキャンしたトラックを更新できませんでした。</translation>
     </message>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="262"/>
         <source>Could not update scanned track statistics.</source>
-        <translation type="unfinished"></translation>
+        <translation>スキャンしたトラックの統計情報を更新できませんでした。</translation>
     </message>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="265"/>
         <source>Could not commit scanned tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>スキャンしたトラックをコミットできませんでした。</translation>
     </message>
 </context>
 <context>
@@ -26927,7 +26946,7 @@ This does not support full scripting.</source>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="189"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
@@ -27610,7 +27629,8 @@ Higher supersampling values work best with higher sample counts.</source>
         <source>Drag to add %1.
 Hold %2 to split a widget, or %3 to replace it.</source>
         <extracomment>%1 is a widget name; %2 and %3 are native modifier key names or symbols.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ドラッグして %1 を追加します。
+%2 を押しながらドロップするとウィジェットを分割し、%3 を押しながらドロップすると置き換えます。</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="138"/>
@@ -28595,7 +28615,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="290"/>
         <source>Start playback or restart the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>再生を開始、または現在のトラックを最初から再生</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="291"/>
@@ -28615,27 +28635,27 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="292"/>
         <source>Skip to next album</source>
-        <translation type="unfinished"></translation>
+        <translation>次のアルバムにスキップ</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="293"/>
         <source>Skip to previous album</source>
-        <translation type="unfinished"></translation>
+        <translation>前のアルバムにスキップ</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="293"/>
         <source>Play a random track</source>
-        <translation type="unfinished"></translation>
+        <translation>ランダムなトラックを再生</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="294"/>
         <source>Play a random album</source>
-        <translation type="unfinished"></translation>
+        <translation>ランダムなアルバムを再生</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="294"/>
         <source>Seek to position (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>位置にシーク (例: 5000、10s、1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="295"/>
@@ -28695,7 +28715,7 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="301"/>
         <source>Stop after current track: on, off, or toggle</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のトラック後に停止: on、off、toggle のいずれか</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="302"/>
@@ -28740,12 +28760,12 @@ Changes apply to newly opened streams.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="442"/>
         <source>The stop-after-current option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>「現在のトラック後に停止」オプションは一度しか指定できません。</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="448"/>
         <source>Invalid stop-after-current mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無効な「現在のトラック後に停止」モード : %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="455"/>
