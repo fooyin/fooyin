@@ -6617,7 +6617,13 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
         <extracomment>%1 and %2 are native names or symbols for the split and replace modifier keys.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>• Hitta widgetar i panelen till höger (hovra vid högra kanten om den är gömd).
+
+• Dra widgetar från panelen för att lägga till dem, eller dra existerande för att flytta dem. Håll i %1 för att splitta målwidgeten, eller %2 för att ersätta den.
+
+• Välj en widget för att se dess föräldracontainrar i brödsmulsfältet. Välj en förälder för att flytta en hel sektion.
+
+• Högerklicka valfri widget för att splitta, ersätta eller ta bort den med snabbmenyn.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="529"/>
@@ -8150,7 +8156,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="252"/>
         <source>This action is deprecated and will be removed in a future release. Use ‘Delete’ with the target set to ‘Playing track’ instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här handlingen är föråldrad och kommer tas bort i en framtida version. Använd ”Radera” med målet satt till ”Spelande spår” istället.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="298"/>
@@ -8590,7 +8596,7 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="75"/>
         <source>Remove margins when artwork fills the height</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort marginaler när konstverk fyller höjden</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="100"/>
@@ -18438,7 +18444,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1532"/>
         <source>Open playlist preset settings to create, edit or remove presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna spellistsförinställning för att skapa, redigera eller ta bort förinställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1545"/>
@@ -18548,7 +18554,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
         <source>Remove unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort otillgängliga spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
@@ -18643,7 +18649,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="448"/>
         <source>Remove unavailable tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort otillgängliga spår från spellistan</translation>
     </message>
 </context>
 <context>
@@ -18694,7 +18700,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="360"/>
         <source>Could not remove plugin directory ‘%1’. Check that it is writable and its files are not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte ta bort tilläggsmapp ”%1”. Kontrollera att den är skrivbar och dess filer inte är i användning.</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="369"/>
