@@ -8646,173 +8646,174 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="162"/>
         <source>Artwork shrinks to leave room for track text and is hidden when space is too limited.</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面縮小留出空間用來放置曲目文字，當空間過於有限時就會隱藏。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="165"/>
         <source>Use the configured margins only when the track content is taller than the artwork.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用所調設的邊距，僅當曲目內容高於圖面時。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="174"/>
         <source>Hidden when there isn’t enough space below the artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>當圖面下方空間不足時即會隱藏</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="177"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished">倒影高度作為圖面高度的百分比</translation>
+        <translation>反射影像高度作為圖面高度的百分比</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="180"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished">倒影頂端的不透明度，淡出至透明的</translation>
+        <translation>反射影像頂端的不透明度，淡化至透明的</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="183"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished">圖面與其倒影之間的空間</translation>
+        <translation>圖面與其反射影像之間的空間</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="190"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="192"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="196"/>
         <source>Artwork size</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="202"/>
         <source>Artwork</source>
-        <translation type="unfinished">圖面</translation>
+        <translation>圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="204"/>
         <source>Artwork position</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="208"/>
         <source>Margins</source>
-        <translation type="unfinished">邊距</translation>
+        <translation>邊距</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="217"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished">圖面倒影</translation>
+        <translation>圖面反射影像</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="219"/>
         <source>Height</source>
-        <translation type="unfinished">高度</translation>
+        <translation>高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="221"/>
         <source>Opacity</source>
-        <translation type="unfinished">不透明度</translation>
+        <translation>不透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="223"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished">圖面下方的間隔</translation>
+        <translation>圖面下方的間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="231"/>
         <source>Track rows</source>
-        <translation type="unfinished"></translation>
+        <translation>曲目行列</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="233"/>
         <source>Playing track</source>
-        <translation type="unfinished">進行播放曲目</translation>
+        <translation>進行播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="245"/>
         <source>Unlimited</source>
-        <translation type="unfinished">無限制</translation>
+        <translation>無限制</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="246"/>
         <source>Set to 0 for unlimited columns.</source>
-        <translation type="unfinished"></translation>
+        <translation>設定 0 用於無限欄位。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="250"/>
         <source>The final column may contain fewer rows.</source>
-        <translation type="unfinished"></translation>
+        <translation>最終欄位可能包含較少的行列。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="252"/>
         <source>Fit content</source>
-        <translation type="unfinished"></translation>
+        <translation>適用的內容</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="253"/>
         <source>Fill available space</source>
-        <translation type="unfinished"></translation>
+        <translation>填充可用的空間</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="259"/>
         <source>The minimum column width is relative to the default width at the current font size.
 Longer content can exceed this minimum.</source>
-        <translation type="unfinished"></translation>
+        <translation>最小欄位寬度相對於目前字型大小的預設寬度。
+較長的內容可以超過此最小值。</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="263"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished">使用自訂背景顏色來呈現目前進行播放的行列；支援透明度</translation>
+        <translation>使用自訂背景顏色用於現目前進行播放的行列；支援透明度</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="264"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished">使用自訂字型用於目前進行播放的行列</translation>
+        <translation>使用自訂字型用於目前進行播放的行列</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="273"/>
         <source>Expansion</source>
-        <translation type="unfinished"></translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="277"/>
         <source>Animation duration</source>
-        <translation type="unfinished"></translation>
+        <translation>動畫持續時間</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="285"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>欄位</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="286"/>
         <source>Maximum number of columns</source>
-        <translation type="unfinished"></translation>
+        <translation>最大欄位數量</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="288"/>
         <source>Minimum rows per column</source>
-        <translation type="unfinished"></translation>
+        <translation>各個欄位最少行列</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="290"/>
         <source>Column sizing</source>
-        <translation type="unfinished"></translation>
+        <translation>欄位大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="292"/>
         <source>Minimum column width</source>
-        <translation type="unfinished"></translation>
+        <translation>最小欄位寬度</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="301"/>
         <source>Preview</source>
-        <translation type="unfinished">預覽</translation>
+        <translation>預覽</translation>
     </message>
 </context>
 <context>
@@ -8894,53 +8895,53 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="66"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>欄位</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="67"/>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="108"/>
         <source>Cover flow</source>
-        <translation type="unfinished"></translation>
+        <translation>封面流動</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="68"/>
         <source>Artwork (bottom labels)</source>
-        <translation type="unfinished">專輯圖面 (底部標籤)</translation>
+        <translation>圖面 (底部標籤)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
         <source>Artwork (right labels)</source>
-        <translation type="unfinished">專輯圖面 (右側標籤)</translation>
+        <translation>圖面 (右側標籤)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="70"/>
         <source>Artwork (overlay labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面 (覆蓋標籤)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="71"/>
         <source>Artwork (no labels)</source>
-        <translation type="unfinished">專輯圖面 (無標籤)</translation>
+        <translation>圖面 (無標籤)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="74"/>
         <source>Show summary item</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示摘要項目</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="75"/>
         <source>Show header</source>
-        <translation type="unfinished">顯示標題</translation>
+        <translation>顯示標題</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="76"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">顯示捲軸</translation>
+        <translation>顯示捲軸</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="77"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>交替行列顏色</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="78"/>
@@ -8950,27 +8951,27 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="82"/>
         <source>Fit artwork to available width</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面適用符合至可用寬度</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="86"/>
         <source>Custom margins</source>
-        <translation type="unfinished"></translation>
+        <translation>自定邊距</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="105"/>
         <source>Display</source>
-        <translation type="unfinished">顯示</translation>
+        <translation>顯示</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="106"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="107"/>
         <source>Expansion</source>
-        <translation type="unfinished"></translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="111"/>
@@ -8985,12 +8986,12 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="120"/>
         <source>Filter items</source>
-        <translation type="unfinished"></translation>
+        <translation>篩選項目</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="121"/>
         <source>Expanded tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>展開曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="122"/>
@@ -9070,7 +9071,7 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="326"/>
         <source>Use filter action</source>
-        <translation type="unfinished"></translation>
+        <translation>使用篩選動作</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="329"/>
@@ -9086,82 +9087,82 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="163"/>
         <source>View mode</source>
-        <translation type="unfinished">檢視模式</translation>
+        <translation>檢視模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="173"/>
         <source>Front cover</source>
-        <translation type="unfinished">封面</translation>
+        <translation>封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="174"/>
         <source>Back cover</source>
-        <translation type="unfinished">背面</translation>
+        <translation>背面</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="175"/>
         <source>Artist</source>
-        <translation type="unfinished">藝人</translation>
+        <translation>藝人</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="177"/>
         <source>Default</source>
-        <translation type="unfinished">預設</translation>
+        <translation>預設</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="178"/>
         <source>Embedded covers</source>
-        <translation type="unfinished"></translation>
+        <translation>內嵌封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="179"/>
         <source>Directory covers</source>
-        <translation type="unfinished"></translation>
+        <translation>目錄封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="181"/>
         <source>Display options</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示選項</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="215"/>
         <source>Artwork</source>
-        <translation type="unfinished">圖面</translation>
+        <translation>圖面</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="224"/>
         <source>Artwork spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面間距</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="227"/>
         <source>Horizontal</source>
-        <translation type="unfinished">水平</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="229"/>
         <source>Vertical</source>
-        <translation type="unfinished">垂直</translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="236"/>
         <source>Left</source>
-        <translation type="unfinished">左</translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="238"/>
         <source>Right</source>
-        <translation type="unfinished">右</translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="240"/>
         <source>Top</source>
-        <translation type="unfinished">頂部</translation>
+        <translation>頂部</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="242"/>
         <source>Bottom</source>
-        <translation type="unfinished">底部</translation>
+        <translation>底部</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="247"/>
@@ -9177,27 +9178,27 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="256"/>
         <source>Artwork type</source>
-        <translation type="unfinished">圖面類型</translation>
+        <translation>圖面類型</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="258"/>
         <source>Artwork source</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面來源</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="262"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="272"/>
         <source>Gaps</source>
-        <translation type="unfinished"></translation>
+        <translation>間隔</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="274"/>
         <source>Margins</source>
-        <translation type="unfinished">邊距</translation>
+        <translation>邊距</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="289"/>
@@ -9239,36 +9240,36 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="198"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="259"/>
         <source>Header</source>
-        <translation type="unfinished">標頭</translation>
+        <translation>標頭</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="199"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="375"/>
         <source>Track</source>
-        <translation type="unfinished">曲目</translation>
+        <translation>曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="200"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="263"/>
         <source>Footer</source>
-        <translation type="unfinished"></translation>
+        <translation>註腳</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="203"/>
         <source>Group by</source>
-        <translation type="unfinished"></translation>
+        <translation>群組依照</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="206"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="345"/>
         <source>Subheader</source>
-        <translation type="unfinished"></translation>
+        <translation>次標頭</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="216"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="221"/>
         <source>Filter columns</source>
-        <translation type="unfinished"></translation>
+        <translation>篩選欄位</translation>
     </message>
 </context>
 <context>
@@ -9276,7 +9277,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionwidget.cpp" line="154"/>
         <source>Collapse group</source>
-        <translation type="unfinished">縮合群組</translation>
+        <translation>縮合群組</translation>
     </message>
 </context>
 <context>
@@ -9284,13 +9285,13 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="111"/>
         <source>Clear Group</source>
-        <translation>清除組</translation>
+        <translation>清除群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="121"/>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="437"/>
         <source>Clear Groups</source>
-        <translation>清除組</translation>
+        <translation>清除群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="175"/>
@@ -9304,7 +9305,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/filters/filtermanager.cpp" line="341"/>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="366"/>
         <source>Ungrouped</source>
-        <translation>尚未群組</translation>
+        <translation>尚無群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filtermanager.cpp" line="195"/>
@@ -9393,7 +9394,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2022"/>
         <source>Artwork (overlay labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>圖面 (覆蓋標籤)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2023"/>
@@ -9403,7 +9404,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2024"/>
         <source>Cover flow</source>
-        <translation type="unfinished"></translation>
+        <translation>封面流動</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2028"/>
@@ -9423,7 +9424,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2159"/>
         <source>Expand selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>展開所選群組</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2172"/>
@@ -9512,7 +9513,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="171"/>
         <source>Grouping Script</source>
-        <translation type="unfinished"></translation>
+        <translation>進行群組腳本</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="173"/>
@@ -9532,7 +9533,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterscolumnmodel.cpp" line="250"/>
         <source>Use grouping script</source>
-        <translation type="unfinished"></translation>
+        <translation>使用進行群組腳本</translation>
     </message>
 </context>
 <context>
@@ -10544,12 +10545,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="98"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="99"/>
         <source>Interface</source>
-        <translation type="unfinished">介面</translation>
+        <translation>介面</translation>
     </message>
 </context>
 <context>
