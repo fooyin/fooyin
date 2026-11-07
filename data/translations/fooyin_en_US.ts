@@ -718,7 +718,7 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="885"/>
         <source>Looks up a raw tag field. Multiple values are joined with ‘, ’ or selected by the optional zero-based index.</source>
-        <translation>Looks up a raw tag field. Multiple values are joined with “,” or selected by the optional zero-based index.</translation>
+        <translation>Looks up a raw tag field. Multiple values are joined with “, ” or selected by the optional zero-based index.</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="889"/>
