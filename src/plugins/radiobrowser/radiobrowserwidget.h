@@ -114,6 +114,7 @@ public:
         };
 
         ViewConfig view;
+        QString playingRowColour;
         BackgroundConfig background;
         int doubleClickAction{5};
         int middleClickAction{0};

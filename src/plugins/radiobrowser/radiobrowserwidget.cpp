@@ -101,6 +101,7 @@ constexpr auto UniformIconsKey               = "RadioBrowser/UniformIcons";
 constexpr auto ShowIconsKey                  = "RadioBrowser/ShowIcons";
 constexpr auto ShowSavedIconsKey             = "RadioBrowser/ShowSavedIcons";
 constexpr auto ShowToolTipsKey               = "RadioBrowser/ShowToolTips";
+constexpr auto PlayingRowColourKey           = "RadioBrowser/PlayingRowColour";
 constexpr auto BackgroundKey                 = "RadioBrowser/Background";
 
 namespace Fooyin::RadioBrowser {
@@ -408,6 +409,7 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
     const QScopedValueRollback loadingLayout{m_loadingLayout, true};
 
     const auto config{configFromLayout(layout)};
+    m_model->setPlayingRowColour(QColor{config.playingRowColour});
     m_viewConfig = config.view;
 
     m_browseViewState.viewMode = m_viewConfig.viewMode;
@@ -441,6 +443,7 @@ void RadioBrowserWidget::loadLayoutData(const QJsonObject& layout)
 
     m_config = {
         .view              = m_viewConfig,
+        .playingRowColour  = config.playingRowColour,
         .background        = background,
         .doubleClickAction = m_doubleClickAction,
         .middleClickAction = m_middleClickAction,
@@ -621,6 +624,7 @@ RadioBrowserWidget::ConfigData RadioBrowserWidget::defaultConfig() const
         = m_settings->fileValue(ShowSavedIconsKey, config.view.showSavedStationIcons).toBool();
     config.view.showToolTips = m_settings->fileValue(ShowToolTipsKey, config.view.showToolTips).toBool();
 
+    config.playingRowColour = m_settings->fileValue(PlayingRowColourKey, config.playingRowColour).toString();
     config.background.loadLayout(QJsonObject::fromVariantMap(m_settings->fileValue(BackgroundKey).toMap()));
 
     if(!config.view.iconSize.isValid()) {
@@ -659,6 +663,7 @@ void RadioBrowserWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(ShowIconsKey, config.view.showIcons);
     m_settings->fileSet(ShowSavedIconsKey, config.view.showSavedStationIcons);
     m_settings->fileSet(ShowToolTipsKey, config.view.showToolTips);
+    m_settings->fileSet(PlayingRowColourKey, config.playingRowColour);
 
     QJsonObject background;
     config.background.saveLayout(background);
@@ -689,6 +694,7 @@ void RadioBrowserWidget::clearSavedDefaults() const
     m_settings->fileRemove(ShowIconsKey);
     m_settings->fileRemove(ShowSavedIconsKey);
     m_settings->fileRemove(ShowToolTipsKey);
+    m_settings->fileRemove(PlayingRowColourKey);
     m_settings->fileRemove(BackgroundKey);
 }
 
@@ -706,6 +712,9 @@ void RadioBrowserWidget::applyConfig(const ConfigData& config)
     m_middleClickAction        = config.middleClickAction;
     m_playbackOnSend           = config.playbackOnSend;
     m_hideBroken               = config.hideBroken;
+
+    m_config.playingRowColour = config.playingRowColour;
+    m_model->setPlayingRowColour(QColor{m_config.playingRowColour});
 
     m_controller->setHideBroken(m_hideBroken);
     setViewConfig(config.view, false);
@@ -762,6 +771,7 @@ RadioBrowserWidget::ConfigData RadioBrowserWidget::configFromLayout(const QJsonO
     config.playbackOnSend    = layout.value("PlaybackOnSend"_L1).toBool(config.playbackOnSend);
     config.hideBroken        = layout.value("HideBroken"_L1).toBool(config.hideBroken);
     config.showFilterBar     = layout.value("ShowFilterBar"_L1).toBool(config.showFilterBar);
+    config.playingRowColour  = layout.value("PlayingRowColour"_L1).toString(config.playingRowColour);
     config.background.loadLayout(layout.value("Background"_L1).toObject());
     return config;
 }
@@ -791,6 +801,7 @@ void RadioBrowserWidget::saveConfigToLayout(const ConfigData& config, QJsonObjec
     layout["PlaybackOnSend"_L1]             = config.playbackOnSend;
     layout["HideBroken"_L1]                 = config.hideBroken;
     layout["ShowFilterBar"_L1]              = config.showFilterBar;
+    layout["PlayingRowColour"_L1]           = config.playingRowColour;
 
     QJsonObject background;
     config.background.saveLayout(background);

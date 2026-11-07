@@ -22,10 +22,12 @@
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/backgroundconfigwidget.h>
+#include <gui/widgets/colourbutton.h>
 #include <gui/widgets/hintlabel.h>
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QEvent>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -65,6 +67,7 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     , m_iconBottomMargin{new QSpinBox(this)}
     , m_iconCornerRadius{new QSpinBox(this)}
     , m_uniformStationIcons{new QCheckBox(tr("Use uniform station icon sizes"), this)}
+    , m_playingRowColour{new ColourButton(tr("Background colour") + u":"_s, true, this)}
     , m_background{new BackgroundConfigWidget(this)}
 {
     m_displayMode->addItem(tr("Columns"), static_cast<int>(ExpandedTreeView::ViewMode::Tree));
@@ -209,6 +212,13 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     iconLayout->setColumnStretch(2, 1);
     iconLayout->setRowStretch(row, 1);
 
+    m_playingRowColour->setToolTip(
+        tr("Use a custom background colour for the currently playing row; transparency is supported"));
+
+    auto* playingRowGroup  = new QGroupBox(tr("Playing Row"), this);
+    auto* playingRowLayout = new QGridLayout(playingRowGroup);
+    playingRowLayout->addWidget(m_playingRowColour, 0, 0);
+
     auto* generalPage = new QWidget(this);
     auto* layout      = new QGridLayout(generalPage);
 
@@ -222,6 +232,8 @@ RadioBrowserConfigDialog::RadioBrowserConfigDialog(RadioBrowserWidget* radioBrow
     auto* appearancePageLayout = new QGridLayout(appearancePage);
     appearancePageLayout->addWidget(appearance, 0, 0);
     appearancePageLayout->addWidget(iconMode, 0, 1);
+    appearancePageLayout->addWidget(playingRowGroup, 1, 0, 1, 2);
+    appearancePageLayout->setRowStretch(2, 1);
     appearancePageLayout->setColumnStretch(0, 1);
     appearancePageLayout->setColumnStretch(1, 1);
 
@@ -253,14 +265,25 @@ void RadioBrowserConfigDialog::apply()
     m_sendClicks->setChecked(widget()->sendClicks());
 }
 
+void RadioBrowserConfigDialog::changeEvent(QEvent* event)
+{
+    WidgetConfigDialog::changeEvent(event);
+
+    if(event->type() == QEvent::PaletteChange && !m_playingRowColour->isChecked()) {
+        m_playingRowColour->setColour(Gui::defaultPlayingRowColour());
+    }
+}
+
 RadioBrowserWidget::ConfigData RadioBrowserConfigDialog::config() const
 {
     RadioBrowserWidget::ConfigData config;
-    config.doubleClickAction    = m_doubleClick->currentData().toInt();
-    config.middleClickAction    = m_middleClick->currentData().toInt();
-    config.playbackOnSend       = m_playbackOnSend->isChecked();
-    config.hideBroken           = m_hideBroken->isChecked();
-    config.showFilterBar        = m_showSearchBar->isChecked();
+    config.doubleClickAction = m_doubleClick->currentData().toInt();
+    config.middleClickAction = m_middleClick->currentData().toInt();
+    config.playbackOnSend    = m_playbackOnSend->isChecked();
+    config.hideBroken        = m_hideBroken->isChecked();
+    config.showFilterBar     = m_showSearchBar->isChecked();
+    config.playingRowColour
+        = m_playingRowColour->isChecked() ? m_playingRowColour->colour().name(QColor::HexArgb) : QString{};
     config.background           = m_background->config();
     config.view.viewMode        = static_cast<ExpandedTreeView::ViewMode>(m_displayMode->currentData().toInt());
     config.view.captions        = static_cast<ExpandedTreeView::CaptionDisplay>(m_captions->currentData().toInt());
@@ -293,6 +316,9 @@ void RadioBrowserConfigDialog::setConfig(const RadioBrowserWidget::ConfigData& c
     m_hideBroken->setChecked(config.hideBroken);
     m_showSearchBar->setChecked(config.showFilterBar);
     m_showSearchBar->setVisible(widget()->filterBarToggleAllowed());
+    const QColor playingRowColour{config.playingRowColour};
+    m_playingRowColour->setChecked(playingRowColour.isValid());
+    m_playingRowColour->setColour(playingRowColour.isValid() ? playingRowColour : Gui::defaultPlayingRowColour());
     m_background->setConfig(config.background);
     m_displayMode->setCurrentIndex(m_displayMode->findData(static_cast<int>(config.view.viewMode)));
     m_captions->setCurrentIndex(m_captions->findData(static_cast<int>(config.view.captions)));
@@ -329,7 +355,7 @@ void RadioBrowserConfigDialog::mergeExternalConfig(const RadioBrowserWidget::Con
         previous, current, draft, &RadioBrowserWidget::ConfigData::doubleClickAction,
         &RadioBrowserWidget::ConfigData::middleClickAction, &RadioBrowserWidget::ConfigData::playbackOnSend,
         &RadioBrowserWidget::ConfigData::hideBroken, &RadioBrowserWidget::ConfigData::showFilterBar,
-        &RadioBrowserWidget::ConfigData::background);
+        &RadioBrowserWidget::ConfigData::playingRowColour, &RadioBrowserWidget::ConfigData::background);
     mergeExternalFieldValues(
         previous.view, current.view, draft.view, &RadioBrowserWidget::ConfigData::ViewConfig::viewMode,
         &RadioBrowserWidget::ConfigData::ViewConfig::captions, &RadioBrowserWidget::ConfigData::ViewConfig::showHeader,

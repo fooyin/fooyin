@@ -87,6 +87,7 @@ public:
     void setApiSortingEnabled(bool enabled);
     void clearSort();
     void setCurrentStation(const RadioStation& station);
+    void setPlayingRowColour(const QColor& colour);
     void updateColours();
     [[nodiscard]] bool reorderEnabled() const;
     [[nodiscard]] RadioStation stationAt(int row) const;
@@ -114,7 +115,6 @@ private:
     RadioStationList m_savedStations;
     RadioStation m_currentStation;
     QColor m_playingColour;
-    QColor m_iconPlayingColour;
     RadioIconProvider* m_iconProvider;
     mutable QCache<QString, QIcon> m_placeholderIcons;
     mutable std::map<QString, QIcon> m_pinnedPlaceholderIcons;

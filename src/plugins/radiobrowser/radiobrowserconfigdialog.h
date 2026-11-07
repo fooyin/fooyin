@@ -29,6 +29,7 @@ class QSpinBox;
 
 namespace Fooyin {
 class BackgroundConfigWidget;
+class ColourButton;
 
 namespace RadioBrowser {
 class RadioBrowserConfigDialog : public WidgetConfigDialog<RadioBrowserWidget, RadioBrowserWidget::ConfigData>
@@ -41,6 +42,8 @@ public:
     void apply() override;
 
 protected:
+    void changeEvent(QEvent* event) override;
+
     [[nodiscard]] RadioBrowserWidget::ConfigData config() const override;
     void setConfig(const RadioBrowserWidget::ConfigData& config) override;
     void mergeExternalConfig(const RadioBrowserWidget::ConfigData& previous,
@@ -77,6 +80,7 @@ private:
     QSpinBox* m_iconBottomMargin;
     QSpinBox* m_iconCornerRadius;
     QCheckBox* m_uniformStationIcons;
+    ColourButton* m_playingRowColour;
     BackgroundConfigWidget* m_background;
 };
 } // namespace RadioBrowser

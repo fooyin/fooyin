@@ -412,9 +412,6 @@ void drawColumnItem(QPainter* painter, const QStyleOptionViewItem& option, const
     painter->save();
     painter->setClipRect(option.rect, Qt::IntersectClip);
 
-    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-
     if(hasIcon) {
         drawIconInRect(painter, opt, icon, columnIconRect(opt), iconRadius, true);
     }
@@ -467,39 +464,23 @@ void RadioStationDelegate::paint(QPainter* painter, const QStyleOptionViewItem& 
         return;
     }
 
-    const auto captions           = iconView->captionDisplay();
-    const Qt::Edges squareEdges   = captions == ExpandedTreeView::CaptionDisplay::Bottom ? Qt::Edges{Qt::BottomEdge}
-                                  : captions == ExpandedTreeView::CaptionDisplay::Right
-                                      ? Qt::Edges{opt.direction == Qt::RightToLeft ? Qt::LeftEdge : Qt::RightEdge}
-                                      : Qt::Edges{};
-    QRect textRect                = iconTextRect(opt, captions, m_iconMargins);
-    const QVariant iconBackground = index.data(RadioBrowserModel::IconBackgroundRole);
-    const bool hasSavedBadge      = index.data(RadioBrowserModel::SavedStationRole).toBool();
-
-    if(hasIcon) {
-        if(iconBackground.canConvert<QBrush>()) {
-            opt.backgroundBrush = iconBackground.value<QBrush>();
-        }
-        else if(iconBackground.canConvert<QColor>()) {
-            opt.backgroundBrush = iconBackground.value<QColor>();
-        }
-    }
+    const auto captions         = iconView->captionDisplay();
+    const Qt::Edges squareEdges = captions == ExpandedTreeView::CaptionDisplay::Bottom ? Qt::Edges{Qt::BottomEdge}
+                                : captions == ExpandedTreeView::CaptionDisplay::Right
+                                    ? Qt::Edges{opt.direction == Qt::RightToLeft ? Qt::LeftEdge : Qt::RightEdge}
+                                    : Qt::Edges{};
+    QRect textRect              = iconTextRect(opt, captions, m_iconMargins);
+    const bool hasSavedBadge    = index.data(RadioBrowserModel::SavedStationRole).toBool();
 
     opt.icon = {};
     opt.text.clear();
 
     painter->save();
 
-    if(!(opt.state & QStyle::State_Selected) && opt.backgroundBrush.style() != Qt::NoBrush) {
-        painter->save();
-        Gui::clipRoundedRect(*painter, opt.rect, iconView->iconItemCornerRadius(), squareEdges);
-        painter->fillRect(opt.rect, opt.backgroundBrush);
-        painter->restore();
-        opt.backgroundBrush = Qt::NoBrush;
-    }
-
-    Gui::drawRoundedStyleControl(painter, QStyle::CE_ItemViewItem, opt, opt.widget, iconView->iconItemCornerRadius(),
-                                 squareEdges);
+    painter->save();
+    Gui::clipRoundedRect(*painter, opt.rect, iconView->iconItemCornerRadius(), squareEdges);
+    WidgetBackground::drawItemBackground(painter, opt);
+    painter->restore();
 
     if(hasIcon) {
         drawIconInRect(painter, opt, icon, iconRect(opt, captions, m_iconMargins), m_iconCornerRadius,

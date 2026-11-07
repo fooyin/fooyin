@@ -25,14 +25,12 @@
 
 #include <core/track.h>
 #include <gui/guiconstants.h>
+#include <gui/guiutils.h>
 #include <gui/trackmimedata.h>
 #include <utils/stringcollator.h>
-#include <utils/utils.h>
 
-#include <QApplication>
 #include <QIcon>
 #include <QMimeData>
-#include <QPalette>
 
 #include <ranges>
 #include <set>
@@ -125,28 +123,6 @@ std::vector<int> decodeRows(const QMimeData* data)
     return rows;
 }
 
-QColor playingRowColor()
-{
-    QColor base = QApplication::palette().color(QPalette::Inactive, QPalette::Highlight);
-
-    if(Fooyin::Utils::isDarkMode()) {
-        base = base.lighter(150);
-    }
-    else {
-        base = base.darker(150);
-    }
-
-    base.setAlpha(110);
-    return base;
-}
-
-QColor columnPlayingRowColor()
-{
-    QColor color = playingRowColor();
-    color.setAlpha(55);
-    return color;
-}
-
 int radioIconBucketSize(const QSize& size)
 {
     const int logicalSize = std::max({size.width(), size.height(), DefaultRadioIconSize});
@@ -173,8 +149,7 @@ int radioIconBucketSize(const QSize& size)
 
 RadioBrowserModel::RadioBrowserModel(QObject* parent)
     : QAbstractTableModel{parent}
-    , m_playingColour{columnPlayingRowColor()}
-    , m_iconPlayingColour{playingRowColor()}
+    , m_playingColour{}
     , m_iconProvider{nullptr}
     , m_placeholderIcons{MaxCachedPlaceholderBytes}
     , m_iconSize{DefaultRadioIconSize, DefaultRadioIconSize}
@@ -211,11 +186,8 @@ QVariant RadioBrowserModel::data(const QModelIndex& index, const int role) const
         return QSize{0, m_rowHeight};
     }
     if(isCurrentStation(station)) {
-        if(role == Qt::BackgroundRole) {
-            return m_playingColour;
-        }
-        if(role == IconBackgroundRole) {
-            return m_iconPlayingColour;
+        if(role == Qt::BackgroundRole || role == IconBackgroundRole) {
+            return m_playingColour.isValid() ? m_playingColour : Gui::defaultPlayingRowColour();
         }
     }
 
@@ -659,11 +631,15 @@ void RadioBrowserModel::setCurrentStation(const RadioStation& station)
     }
 }
 
+void RadioBrowserModel::setPlayingRowColour(const QColor& colour)
+{
+    if(std::exchange(m_playingColour, colour) != colour) {
+        updateColours();
+    }
+}
+
 void RadioBrowserModel::updateColours()
 {
-    m_playingColour     = columnPlayingRowColor();
-    m_iconPlayingColour = playingRowColor();
-
     if(rowCount({}) > 0) {
         Q_EMIT dataChanged(index(0, 0), index(rowCount({}) - 1, columnCount({}) - 1),
                            {Qt::BackgroundRole, IconBackgroundRole});
