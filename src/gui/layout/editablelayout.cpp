@@ -147,8 +147,9 @@ public:
         int scaleAmount{Settings::Gui::Internal::DefaultLayoutTransitionScaleAmount};
     };
 
-    LayoutTransitionOverlay(QPixmap snapshot, int duration, Options options, QWidget* parent)
+    LayoutTransitionOverlay(QPixmap snapshot, int duration, Options options, QWidget* content, QWidget* parent)
         : QWidget{parent}
+        , m_content{content}
         , m_snapshot{std::move(snapshot)}
         , m_options{options}
     {
@@ -201,6 +202,9 @@ public:
                     if(m_nextSnapshot.isNull()) {
                         m_options.method = LayoutTransitionType::CrossFade;
                     }
+                    else {
+                        setAttribute(Qt::WA_OpaquePaintEvent);
+                    }
                 }
                 m_animation.start();
             },
@@ -228,6 +232,12 @@ protected:
         const qreal opacity   = m_animation.currentValue().toReal();
         const qreal progress  = 1.0 - opacity;
         const auto background = palette().brush(QPalette::Window);
+
+        if(testAttribute(Qt::WA_OpaquePaintEvent) && !background.isOpaque()) {
+            QColor colour = palette().color(QPalette::Window);
+            colour.setAlpha(255);
+            painter.fillRect(rect(), colour);
+        }
 
         switch(m_options.method) {
             case LayoutTransitionType::CrossFade:
@@ -295,12 +305,23 @@ private:
 
     void updateNextSnapshot()
     {
-        hide();
-        m_nextSnapshot = parentWidget()->grab();
-        show();
-        raise();
+        if(size().isEmpty()) {
+            return;
+        }
+
+        const qreal dpr          = devicePixelRatioF();
+        const QSize snapshotSize = size() * dpr;
+        if(m_nextSnapshot.size() != snapshotSize || m_nextSnapshot.devicePixelRatio() != dpr) {
+            m_nextSnapshot = QPixmap{snapshotSize};
+            m_nextSnapshot.setDevicePixelRatio(dpr);
+        }
+        m_nextSnapshot.fill(Qt::transparent);
+
+        parentWidget()->render(&m_nextSnapshot, {}, {}, DrawWindowBackground);
+        m_content->render(&m_nextSnapshot, m_content->pos(), {}, DrawChildren);
     }
 
+    QWidget* m_content;
     QPixmap m_snapshot;
     QPixmap m_nextSnapshot;
     Options m_options;
@@ -582,7 +603,7 @@ void EditableLayoutPrivate::changeLayout(const FyLayout& layout)
             .scaleAmount
             = m_settings->fileValue(LayoutTransitionScaleAmount, DefaultLayoutTransitionScaleAmount).toInt(),
         };
-        m_transitionOverlay = new LayoutTransitionOverlay(snapshot, duration, options, m_self);
+        m_transitionOverlay = new LayoutTransitionOverlay(snapshot, duration, options, m_root, m_self);
     }
 
     auto* window{m_self->window()};
