@@ -74,7 +74,6 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
     layout->addWidget(m_tabs, 0, 0);
     layout->setRowStretch(0, 1);
 
-    m_tabs->setDocumentMode(true);
     m_tabs->addTab(m_formatTab, tr("Format"));
     m_tabs->addTab(m_styleTab, tr("Appearance"));
     m_tabs->addTab(m_background, tr("Background"));
@@ -129,7 +128,6 @@ ScriptDisplayConfigDialog::ScriptDisplayConfigDialog(ScriptDisplay* widget, QWid
                                static_cast<int>(TrackDisplayPreference::PlayingTrackBlankWhenStopped));
 
     auto* formatLayout = new QGridLayout(m_formatTab);
-    formatLayout->setContentsMargins({});
 
     formatLayout->addWidget(m_script, 1, 0, 1, 3);
     formatLayout->addWidget(new QLabel(tr("Preferred track") + u":"_s, m_formatTab), 2, 0);
