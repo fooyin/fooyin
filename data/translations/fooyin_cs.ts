@@ -11501,7 +11501,8 @@ zobrazovat srdce jen u neoblíbených</translation>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="191"/>
         <source>Use the configured loved and unloved symbols in love editors.
 When disabled, love editors use the default heart shape.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít nastavené symboly oblíbenosti a neoblíbenosti v editorech oblíbenosti.
+Pokud zakázáno, editory oblíbenosti použijí výchozí symbol srdce.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="193"/>
@@ -11516,22 +11517,22 @@ When disabled, love editors use the default heart shape.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="195"/>
         <source>Font used for custom symbols in love editors. Heart size controls the symbol size.</source>
-        <translation type="unfinished"></translation>
+        <translation>Písmo použité pro vlastní symboly v editorech oblíbenosti. Velikost srdce určuje velikost symbolu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="198"/>
         <source>Love Symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol oblíbenosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="202"/>
         <source>Loved symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol oblíbené</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="204"/>
         <source>Unloved symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol neoblíbené</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="209"/>
@@ -11551,56 +11552,60 @@ When disabled, love editors use the default heart shape.</source>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="117"/>
         <source>Track Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Popisky skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="127"/>
         <source>Properties sidebar</source>
-        <translation type="unfinished"></translation>
+        <translation>Panel vlastností</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="134"/>
         <source>Use the configured full, half and empty symbols in rating editors.
 When disabled, rating editors use the default star shapes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít nastavené plné, poloviční a prázdné symboly v editorech hodnocení.
+Pokud zakázáno, editory hodnocení použijí výchozí symboly hvězdiček.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="136"/>
         <source>Font used for custom symbols in rating editors. Star size controls the symbol size.</source>
-        <translation type="unfinished"></translation>
+        <translation>Písmo použité pro vlastní symboly v editorech hodnocení. Velikost hvězd určuje velikost symbolu.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="138"/>
         <source>Size of each star or custom symbol in rating editors</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost každé hvězdy nebo vlastního symbolu v editorech hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="139"/>
         <source>Symbol used for full stars in %rating_stars% and %rating_stars_padded%.
 Also used in rating editors when ‘Use custom rating symbols’ is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol použitý pro plné hvězdy v %rating_stars% a %rating_stars_padded%.
+Také použito v editorech hodnocení, pokud je povoleno ‚Použít vlastní symboly hodnocení‘.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="141"/>
         <source>Symbol used for half stars in %rating_stars% and %rating_stars_padded%.
 Also used in rating editors when ‘Use custom rating symbols’ is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol použitý pro poloviční hvězdy v %rating_stars% a %rating_stars_padded%.
+Také použito v editorech hodnocení, pokud je povoleno ‚Použít vlastní symboly hodnocení‘.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="143"/>
         <source>Symbol used for empty stars in %rating_stars_padded%.
 Also used in rating editors when ‘Use custom rating symbols’ is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol použitý pro prázdné hvězdy v %rating_stars% a %rating_stars_padded%.
+Také použito v editorech hodnocení, pokud je povoleno ‚Použít vlastní symboly hodnocení‘.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="145"/>
         <source>Preview of %rating_stars_padded% using the current font</source>
-        <translation type="unfinished"></translation>
+        <translation>Náhled %rating_stars_padded% používající aktuální písmo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="147"/>
         <source>Rating Symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>Symboly hodnocení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="153"/>
@@ -12279,7 +12284,7 @@ Also used in rating editors when ‘Use custom rating symbols’ is enabled.</so
         <location filename="../../src/gui/layout/layoututils.cpp" line="257"/>
         <source>%1 to split • %2 to replace</source>
         <extracomment>%1 and %2 are native names or symbols for the split and replace modifier keys.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 pro rozdělení • %2 pro nahrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/layoututils.cpp" line="284"/>
@@ -13048,7 +13053,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/core/library/libraryscanner.cpp" line="373"/>
         <source>Could not load the playlist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nelze načíst seznam skladeb.</translation>
     </message>
 </context>
 <context>
@@ -13180,7 +13185,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="84"/>
@@ -13371,12 +13376,12 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="101"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="107"/>
         <source>Use &lt;code&gt;||&lt;/code&gt; between tree levels. All scripts must produce matching levels and multi-value expansions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použij &lt;code&gt;||&lt;/code&gt; pro rozdělení úrovní stromu. Všechny skripty musí produkovat odpovídající úrovně a vícehodnotové expanze.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="122"/>
@@ -13396,12 +13401,12 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="125"/>
         <source>Use &lt;code&gt;%trackcount%&lt;/code&gt; and &lt;code&gt;%childcount%&lt;/code&gt; for counts, &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; for right-aligned text, or &lt;code&gt;%frontcover%&lt;/code&gt; at the start or end of a level for artwork.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použij &lt;code&gt;%trackcount%&lt;/code&gt; a &lt;code&gt;%childcount%&lt;/code&gt; pro počty, &lt;code&gt;&amp;lt;right&amp;gt;&lt;/code&gt; pro zarovnání doprava, nebo &lt;code&gt;%frontcover%&lt;/code&gt; na začátku nebo konci úrovně pro přebal alba.</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="129"/>
         <source>Sort script</source>
-        <translation type="unfinished"></translation>
+        <translation>Skript pro řazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="130"/>
@@ -13429,17 +13434,17 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="173"/>
         <source>Grouping</source>
-        <translation type="unfinished">Seskupení</translation>
+        <translation>Seskupení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="175"/>
         <source>Display</source>
-        <translation type="unfinished">Zobrazení</translation>
+        <translation>Zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="177"/>
         <source>Sort</source>
-        <translation type="unfinished">Seřadit</translation>
+        <translation>Seřadit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="243"/>
@@ -13459,7 +13464,7 @@ To zajistí lepší kompatibilitu s jinými přehrávači, ale ukládá pouze ce
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="389"/>
         <source>New grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Nové seskupení</translation>
     </message>
 </context>
 <context>
@@ -15666,7 +15671,7 @@ Lokální texty budou stále načítány.</translation>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="118"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
 </context>
 <context>
@@ -16519,52 +16524,52 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="43"/>
         <source>Disable crossfading</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázat prolínání</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="47"/>
         <source>Never</source>
-        <translation type="unfinished">Nikdy</translation>
+        <translation>Nikdy</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="48"/>
         <source>When shuffling</source>
-        <translation type="unfinished"></translation>
+        <translation>Při promíchání</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="49"/>
         <source>Always</source>
-        <translation type="unfinished">Vždy</translation>
+        <translation>Vždy</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="51"/>
         <source>Multiple values</source>
-        <translation type="unfinished"></translation>
+        <translation>Více hodnot</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="52"/>
         <source>Excluded tracks can still be played explicitly or added to the playback queue.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyloučené skladby lze stále přehrát explicitně, nebo přidat do fronty přehrávání.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="54"/>
         <source>Disable crossfading into and out of these tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázat prolínání při přechodu mezi touto a ostatními skladbami</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="56"/>
         <source>Track overrides</source>
-        <translation type="unfinished"></translation>
+        <translation>Přenastavení skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="58"/>
         <source>Exclude from automatic playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyloučit z automatického přehrávání</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="61"/>
         <source>Reset to defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Výchozí nastavení</translation>
     </message>
 </context>
 <context>
@@ -20299,27 +20304,27 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="45"/>
         <source>Show search bar</source>
-        <translation type="unfinished">Zobrazit panel hledání</translation>
+        <translation>Zobrazit panel hledání</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="48"/>
         <source>Show header</source>
-        <translation type="unfinished">Zobrazit záhlaví</translation>
+        <translation>Zobrazit záhlaví</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="49"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zobrazit posuvník</translation>
+        <translation>Zobrazit posuvník</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="50"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">Střídavé barvy řádků</translation>
+        <translation>Střídavé barvy řádků</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="51"/>
         <source>Show station icons</source>
-        <translation type="unfinished">Zobrazit ikony stanic</translation>
+        <translation>Zobrazit ikony stanic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
@@ -20344,90 +20349,93 @@ Změny se projeví při příští inicializaci PipeWire výstupu.</translation>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="58"/>
         <source>Fit icons to available width</source>
-        <translation type="unfinished"></translation>
+        <translation>Přizpůsobit velikost ikon dostupné šířce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="61"/>
         <source>Use grid spacing with right captions</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít mezery s popisky vpravo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="67"/>
         <source>Use uniform station icon sizes</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít jednotné velikosti ikon stanic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="70"/>
         <source>Columns</source>
-        <translation type="unfinished">Sloupce</translation>
+        <translation>Sloupce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="71"/>
         <source>Icons</source>
-        <translation type="unfinished">Ikony</translation>
+        <translation>Ikony</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="72"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="188"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Pravý</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="73"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="192"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="90"/>
         <source>Fit station icons into equally sized areas while preserving their proportions</source>
-        <translation type="unfinished"></translation>
+        <translation>Změnit velikost ikon stanic na jednotnou velikost při zachování jejich proporcí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="102"/>
         <source>Square</source>
-        <translation type="unfinished">Hranaté</translation>
+        <translation>Hranaté</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="109"/>
         <source>Resize artwork to fill the available width using the preferred size.
 Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated as zero.</source>
-        <translation type="unfinished"></translation>
+        <translation>Změnit velikost přebalu alba pro vyplnění dostupné šířky sloupce.
+Ctrl+Kolečko myši mění počet sloupců. Automatické horizontální mezery nastaveny na nula.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="128"/>
         <source>Apply horizontal and vertical gaps when captions are displayed to the right of icons. When disabled, columns stretch to fill the available width without gaps between stations. Artwork margins still apply.</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít horizontální a vertikální mezery při zobrazení popisků napravo od ikon.
+Pokud zakázáno, sloupce vyplní dostupnou šířku bez mezer mezi stanicemi.
+Okraje jsou stále použity.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="186"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Levý</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="190"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Horní</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="197"/>
         <source>Icon corner radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Poloměr rohů ikony</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="207"/>
         <source>Margins</source>
-        <translation type="unfinished">Okraje</translation>
+        <translation>Okraje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="229"/>
         <source>General</source>
-        <translation type="unfinished">Obecné</translation>
+        <translation>Obecné</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="231"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="75"/>
@@ -20479,7 +20487,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="118"/>
         <source>Auto</source>
-        <translation>Automatické</translation>
+        <translation>Automatická</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="121"/>
@@ -20520,12 +20528,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="157"/>
         <source>Display mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Režim zobrazení</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="159"/>
         <source>Caption placement</source>
-        <translation type="unfinished"></translation>
+        <translation>Umístění popisků</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="174"/>
@@ -21109,7 +21117,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="83"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Zobrazit posuvník</translation>
+        <translation>Zobrazit posuvník</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="106"/>
@@ -22948,17 +22956,17 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="52"/>
         <source>Script error</source>
-        <translation type="unfinished"></translation>
+        <translation>Chyba skriptu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="144"/>
         <source>Open in the Script Editor for details</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro podrobnosti otevři v Editoru skriptů</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="221"/>
         <source>Script help</source>
-        <translation type="unfinished"></translation>
+        <translation>Nápověda skriptu</translation>
     </message>
 </context>
 <context>
@@ -23898,7 +23906,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="67"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="78"/>
         <source>Playing track</source>
-        <translation type="unfinished">Přehrávaná skladba</translation>
+        <translation>Přehrávaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="74"/>
@@ -23926,7 +23934,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="506"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="511"/>
         <source>%1 does not support the selected shortcut target.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 nepodporuje vybraný cíl zkratky.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="518"/>
@@ -23970,7 +23978,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="641"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="642"/>
         <source>Keyboard Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Klávesové zkratky</translation>
     </message>
 </context>
 <context>
@@ -24024,39 +24032,39 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="188"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="194"/>
         <source>Target</source>
-        <translation type="unfinished">Cíl</translation>
+        <translation>Cíl</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="196"/>
         <source>Configure…</source>
-        <translation type="unfinished">Nastavení…</translation>
+        <translation>Nastavení…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="235"/>
         <source>Open system shortcut settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít nastavení systémových zkratek.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="237"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="389"/>
         <source>Focused widget</source>
-        <translation type="unfinished">Aktivní widget</translation>
+        <translation>Aktivní widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="238"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="390"/>
         <source>Playing track</source>
-        <translation type="unfinished">Přehrávaná skladba</translation>
+        <translation>Přehrávaná skladba</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="239"/>
         <source>Choose which tracks the system shortcut applies to.</source>
-        <translation type="unfinished"></translation>
+        <translation>Určuje na které skladby bude systémová zkratka použita.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="392"/>
         <source>Choose which tracks this shortcut applies to.</source>
-        <translation type="unfinished"></translation>
+        <translation>Určuje na které skladby bude zkratka použita.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="495"/>
@@ -24071,12 +24079,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="511"/>
         <source>Application shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkratky aplikace</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="511"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Klávesová zkratka</translation>
+        <translation>Klávesová zkratka</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="558"/>
@@ -25137,7 +25145,7 @@ Vyšší hodnoty zvyšují podrobnost a spotřebu paměti.</translation>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="510"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
@@ -26162,27 +26170,27 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="249"/>
         <source>Could not start the scan database transaction.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nelze spustit transakci skenování databáze.</translation>
     </message>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="256"/>
         <source>Could not store scanned tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Naskenované skladby se nepodařilo uložit.</translation>
     </message>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="259"/>
         <source>Could not update scanned tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Naskenované skladby se nepodařilo aktualizovat.</translation>
     </message>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="262"/>
         <source>Could not update scanned track statistics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se aktualizovat statistiky naskenovaných skladeb.</translation>
     </message>
     <message>
         <location filename="../../src/core/database/trackdatabase.cpp" line="265"/>
         <source>Could not commit scanned tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nelze potvrdit naskenované skladby.</translation>
     </message>
 </context>
 <context>
@@ -27110,7 +27118,7 @@ Plná podpora skriptování není k dispozici.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="189"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
@@ -27793,7 +27801,8 @@ Vyšší hodnoty supersamplingu fungují lépe s vyšším počtem vzorků.</tra
         <source>Drag to add %1.
 Hold %2 to split a widget, or %3 to replace it.</source>
         <extracomment>%1 is a widget name; %2 and %3 are native modifier key names or symbols.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Přetáhni pro přidání %1.
+Podrž %2 pro rozdělení widgetu, nebo %3 pro jeho nahrazení.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/widgetpalette.cpp" line="138"/>
@@ -28778,7 +28787,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="290"/>
         <source>Start playback or restart the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Spustit přehrávání nebo restartovat aktuální skladbu</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="291"/>
@@ -28798,27 +28807,27 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="292"/>
         <source>Skip to next album</source>
-        <translation type="unfinished"></translation>
+        <translation>Přejít na další album</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="293"/>
         <source>Skip to previous album</source>
-        <translation type="unfinished"></translation>
+        <translation>Přejít na předchozí album</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="293"/>
         <source>Play a random track</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrát náhodnou skladbu</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="294"/>
         <source>Play a random album</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrát náhodné album</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="294"/>
         <source>Seek to position (e.g. 5000, 10s, or 1:30)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetočit na pozici (např. 5000, 10s, nebo 1:30)</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="295"/>
@@ -28878,7 +28887,7 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="301"/>
         <source>Stop after current track: on, off, or toggle</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit po aktuální skladbě: on, off, nebo toggle</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="302"/>
@@ -28923,12 +28932,12 @@ Změny se projeví pro nově otevřené streamy.</translation>
     <message>
         <location filename="../../src/app/commandline.cpp" line="442"/>
         <source>The stop-after-current option can only be specified once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Možnost stop-after-current může být zadána pouze jednou.</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="448"/>
         <source>Invalid stop-after-current mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný režim stop-after-current: %1</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="455"/>
