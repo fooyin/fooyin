@@ -165,24 +165,6 @@ struct Lyrics
         return QApplication::font("Fooyin::Lyrics::LyricsArea");
     }
 
-    static QFont defaultLineFont(const GuiStyleProvider& styleProvider)
-    {
-        QFont font{defaultFont(styleProvider)};
-        return font;
-    }
-
-    static QFont defaultWordLineFont(const GuiStyleProvider& styleProvider)
-    {
-        QFont font{defaultFont(styleProvider)};
-        return font;
-    }
-
-    static QFont defaultWordFont(const GuiStyleProvider& styleProvider)
-    {
-        QFont font{defaultWordLineFont(styleProvider)};
-        return font;
-    }
-
     bool operator==(const Lyrics& other) const noexcept
     {
         return std::tie(type, offset, lines) == std::tie(other.type, other.offset, other.lines);

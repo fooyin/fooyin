@@ -17,6 +17,7 @@ create_fooyin_plugin_internal(
         lyricseditordialog.h
         lyricsfinder.cpp
         lyricsfinder.h
+        lyricsfonts.h
         lyricsmodel.cpp
         lyricsmodel.h
         lyricsparser.cpp
