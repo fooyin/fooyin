@@ -773,7 +773,7 @@ void UnifiedMusicLibraryPrivate::removeTracks(const TrackList& tracksToRemove)
 
 void UnifiedMusicLibraryPrivate::handleScanResult(int id, const ScanRequest::Type type, const ScanResult& result)
 {
-    if(id < 0 || (type != ScanRequest::Library && type != ScanRequest::Tracks)) {
+    if(id < 0 || (type != ScanRequest::Library && type != ScanRequest::Tracks && type != ScanRequest::Files)) {
         return;
     }
 

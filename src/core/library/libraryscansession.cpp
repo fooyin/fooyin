@@ -576,12 +576,12 @@ bool LibraryScanSession::handleEnumeratedFile(const QFileInfo& info, const Enume
             }
 
             if(m_state.trackPaths().contains(filepath)) {
-                const auto& existingTracks = m_state.trackPaths().at(filepath);
+                const auto existingTracks = m_resolver->refreshExternalTracks(m_state.trackPaths().at(filepath));
                 m_fileScanResult->tracksScanned.insert(m_fileScanResult->tracksScanned.end(), existingTracks.cbegin(),
                                                        existingTracks.cend());
             }
             else if(m_state.existingArchives().contains(filepath)) {
-                const auto& existingTracks = m_state.existingArchives().at(filepath);
+                const auto existingTracks = m_resolver->refreshExternalTracks(m_state.existingArchives().at(filepath));
                 m_fileScanResult->tracksScanned.insert(m_fileScanResult->tracksScanned.end(), existingTracks.cbegin(),
                                                        existingTracks.cend());
             }

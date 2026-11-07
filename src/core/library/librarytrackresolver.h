@@ -71,6 +71,7 @@ public:
     [[nodiscard]] std::shared_ptr<RemoteDownloadHandle>
     readPlaylistAsync(const QUrl& url, QObject* context,
                       std::function<void(bool completed, TrackList tracks)> callback);
+    TrackList refreshExternalTracks(const TrackList& tracks);
     [[nodiscard]] size_t countPlaylistTracks(const QString& path) const;
     [[nodiscard]] size_t countPlaylistTracks(const QUrl& url) const;
     [[nodiscard]] TrackList readEmbeddedPlaylistTracks(const Track& track);
