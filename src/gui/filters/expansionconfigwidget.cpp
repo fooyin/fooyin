@@ -58,7 +58,7 @@ ExpansionConfigWidget::ExpansionConfigWidget(FilterWidget* filterWidget, QWidget
     , m_previewSubscription{nullptr}
     , m_previewGeneration{0}
     , m_expansionBackground{new BackgroundConfigWidget(Qt::Horizontal, this)}
-    , m_expansionBackgroundColour{new ColourButton(tr("Background"), true, this)}
+    , m_expansionBackgroundColour{new ColourButton(tr("Background") + u":"_s, true, this)}
     , m_expansionPlayingRowFont{new FontButton(tr("Font") + u":"_s, true, this)}
     , m_expansionPlayingRowColour{new ColourButton(tr("Background colour") + u":"_s, true, this)}
     , m_expandGroups{new QCheckBox(tr("Expand selected group"), this)}
