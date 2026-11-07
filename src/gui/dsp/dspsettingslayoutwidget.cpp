@@ -132,8 +132,13 @@ void DspLayoutWidgetBase::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
-    addDspMenuActions(menu);
+    populateContextMenu(menu);
     menu->popup(event->globalPos());
+}
+
+void DspLayoutWidgetBase::populateContextMenu(QMenu* menu)
+{
+    addDspMenuActions(menu);
 }
 
 DspSettingsController* DspLayoutWidgetBase::controller() const

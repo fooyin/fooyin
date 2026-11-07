@@ -30,8 +30,9 @@
 namespace Fooyin {
 class DoubleSliderEditor;
 }
-class QLabel;
+class QDoubleSpinBox;
 class QJsonObject;
+class QLabel;
 class QMenu;
 class QSlider;
 class QTimerEvent;
@@ -60,13 +61,17 @@ private:
     [[nodiscard]] double value() const;
     void setValue(double value);
     void setNameLabelVisible(bool visible);
+    void setSliderVisible(bool visible);
+    void setSpinBoxVisible(bool visible);
     void setValueLabelVisible(bool visible);
+    void updateControlsVisibility();
     void updateValueLabel();
     [[nodiscard]] QString formattedValue() const;
 
     SoundTouchDsp::Parameter m_parameter;
     QLabel* m_nameLabel;
     QSlider* m_slider;
+    QDoubleSpinBox* m_spinBox;
     QLabel* m_valueLabel;
     QBasicTimer m_previewTimer;
     double m_min;
@@ -74,6 +79,8 @@ private:
     double m_step;
     QString m_suffix;
     bool m_showNameLabel;
+    bool m_showSlider;
+    bool m_showSpinBox;
     bool m_showValueLabel;
 };
 
@@ -101,6 +108,7 @@ public:
     [[nodiscard]] QString id() const override;
     [[nodiscard]] QString displayName() const override;
     [[nodiscard]] bool showAsLayoutWidget() const override;
+    [[nodiscard]] bool showAsToolbarWidget() const override;
     [[nodiscard]] DspLayoutEditor* createLayoutEditor(QWidget* parent) override;
     DspSettingsDialog* createSettingsWidget(QWidget* parent) override;
 };
@@ -111,6 +119,7 @@ public:
     [[nodiscard]] QString id() const override;
     [[nodiscard]] QString displayName() const override;
     [[nodiscard]] bool showAsLayoutWidget() const override;
+    [[nodiscard]] bool showAsToolbarWidget() const override;
     [[nodiscard]] DspLayoutEditor* createLayoutEditor(QWidget* parent) override;
     DspSettingsDialog* createSettingsWidget(QWidget* parent) override;
 };
@@ -121,6 +130,7 @@ public:
     [[nodiscard]] QString id() const override;
     [[nodiscard]] QString displayName() const override;
     [[nodiscard]] bool showAsLayoutWidget() const override;
+    [[nodiscard]] bool showAsToolbarWidget() const override;
     [[nodiscard]] DspLayoutEditor* createLayoutEditor(QWidget* parent) override;
     DspSettingsDialog* createSettingsWidget(QWidget* parent) override;
 };

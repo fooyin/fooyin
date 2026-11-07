@@ -58,6 +58,11 @@ public:
         return false;
     }
 
+    [[nodiscard]] virtual bool showAsToolbarWidget() const
+    {
+        return false;
+    }
+
     [[nodiscard]] virtual DspLayoutEditor* createLayoutEditor(QWidget* /*parent*/)
     {
         return nullptr;

@@ -964,7 +964,7 @@ void Widgets::registerDspWidgets()
 
         widgetProvider->registerWidget(
             key, [this, dspId]() { return m_dspSettingsController->createLayoutWidget(dspId); },
-            settingsProvider->displayName());
+            settingsProvider->displayName(), {.supportsToolbar = settingsProvider->showAsToolbarWidget()});
         widgetProvider->setSubMenus(key, {tr("DSP")});
     }
 }
