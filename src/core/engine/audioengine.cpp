@@ -660,6 +660,7 @@ void AudioEngine::setUpcomingTrackCandidate(const Engine::PlaybackItem& item)
 
     m_upcomingTrackCandidate       = track;
     m_upcomingTrackCandidateItemId = itemId;
+    updateCurrentStreamReadLimit();
     updateAutoCrossfadeAlbumMatch();
     m_autoAdvanceState.generation            = m_trackGeneration;
     m_autoAdvanceState.drainPrepareRequested = false;
@@ -3585,7 +3586,8 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
     const StreamId audibleOutputStreamId = m_pipeline.audibleOutputStreamId();
     const bool preparedGaplessRenderedSafe
         = preparedGaplessRendered && audibleOutputStreamId == m_preparedGaplessTransition.streamId;
-    const bool currentStreamFullyDrained   = stream && stream->endOfInput() && stream->bufferEmpty();
+    const bool currentStreamFullyDrained
+        = stream && (stream->readLimitReached() || (stream->endOfInput() && stream->bufferEmpty()));
     const bool preparedGaplessReleaseReady = preparedGaplessRenderedSafe;
     const bool deferPreparedGaplessCommit  = gaplessBoundaryMode && preparedGaplessActive && !preparedGaplessRendered;
     const bool deferRenderedGaplessCommit
@@ -3615,12 +3617,9 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
     const bool pendingBoundaryRenderedGaplessReached
         = m_autoAdvanceState.boundaryPendingUntilAudible && preparedGaplessActive && preparedGaplessReleaseReady;
     const bool cueBoundaryMode = isBoundedSegmentTrack(m_currentTrack);
-    const bool hasDistinctUpcomingCandidate
-        = m_upcomingTrackCandidate.isValid() && !samePlaybackItem(upcomingTrackCandidateItem(), currentPlaybackItem());
-    const bool boundedSegmentHandoffPending = cueBoundaryMode && hasDistinctUpcomingCandidate;
     bool boundedSegmentDrainDeadlineReached{false};
 
-    if(boundedSegmentHandoffPending && currentStreamFullyDrained && m_currentTrack.duration() > boundaryAudiblePosMs) {
+    if(cueBoundaryMode && currentStreamFullyDrained && m_currentTrack.duration() > boundaryAudiblePosMs) {
         if(!m_autoAdvanceState.boundedSegmentDrainDeadline) {
             const auto outputSnapshot          = m_pipeline.outputQueueSnapshot();
             const uint64_t boundaryRemainderMs = m_currentTrack.duration() - boundaryAudiblePosMs;
@@ -3658,7 +3657,7 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
                         << "trackDurationMs=" << m_currentTrack.duration();
     }
 
-    const bool deferBoundaryUntilAudible = preparedGaplessActive || boundedSegmentHandoffPending;
+    const bool deferBoundaryUntilAudible = preparedGaplessActive || cueBoundaryMode;
     const bool boundaryWasPending        = m_autoAdvanceState.boundaryPendingUntilAudible;
     if(result.boundaryReached && !audibleBoundaryReached && deferBoundaryUntilAudible) {
         m_autoAdvanceState.boundaryPendingUntilAudible = true;
@@ -3771,7 +3770,7 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
         }
 
         const bool deferTrackEndStatusForPendingGaplessBoundary
-            = ((gaplessBoundaryMode && preparedGaplessActive) || boundedSegmentHandoffPending)
+            = ((gaplessBoundaryMode && preparedGaplessActive) || cueBoundaryMode)
            && (!m_autoAdvanceState.boundaryAnchorSeen || m_autoAdvanceState.boundaryPendingUntilAudible);
         if(deferTrackEndStatusForPendingGaplessBoundary) {
             qCDebug(ENGINE) << "Deferring track-end status until pending boundary resolves:"
@@ -4866,24 +4865,6 @@ void AudioEngine::setStreamToTrackOriginForTrack(const Track& track)
     m_streamToTrackOriginMs = track.offset();
 }
 
-bool AudioEngine::setStreamToTrackOriginForSegmentSwitch(const Track& track, uint64_t streamPosMs)
-{
-    if(track.offset() >= streamPosMs) {
-        m_streamToTrackOriginMs = track.offset() - streamPosMs;
-        return true;
-    }
-
-    // The decoder has already read past the next segment's start offset.
-    // This happens naturally for bounded-segment tracks (chapters / CUE) when
-    // the boundary signal is deferred until the audible position catches up.
-    // The existing stream-to-track origin mapping is still valid because we
-    // are on the same continuous stream, so keep it unchanged.
-    qCDebug(ENGINE) << "Segment switch: stream position already past target offset, keeping current origin:"
-                    << "trackOffsetMs=" << track.offset() << "streamPosMs=" << streamPosMs
-                    << "currentOriginMs=" << m_streamToTrackOriginMs;
-    return true;
-}
-
 void AudioEngine::updateCurrentStreamReadLimit()
 {
     const auto stream = m_decoder.activeStream();
@@ -4891,18 +4872,30 @@ void AudioEngine::updateCurrentStreamReadLimit()
         return;
     }
 
-    if(m_trackEndAutoTransitionEnabled || !isBoundedSegmentTrack(m_currentTrack) || m_currentTrack.duration() == 0) {
+    // Only an adjacent segment can consume audio beyond the current logical boundary
+    const bool contiguousHandoff
+        = m_trackEndAutoTransitionEnabled && isContiguousSameFileSegment(m_currentTrack, m_upcomingTrackCandidate);
+    if(contiguousHandoff || !isBoundedSegmentTrack(m_currentTrack) || m_currentTrack.duration() == 0) {
         stream->clearReadLimit();
         return;
     }
 
     const uint64_t absoluteEndMs = saturatingAdd(m_currentTrack.offset(), m_currentTrack.duration());
-    const uint64_t streamEndMs = absoluteEndMs > m_streamToTrackOriginMs ? absoluteEndMs - m_streamToTrackOriginMs : 0;
-    const AudioFormat format   = stream->format();
-    const int frames           = std::max(0, format.framesForDuration(streamEndMs));
-    const auto samples = static_cast<uint64_t>(frames) * static_cast<uint64_t>(std::max(1, format.channelCount()));
+    const uint64_t streamEndMs  = absoluteEndMs > m_streamToTrackOriginMs ? absoluteEndMs - m_streamToTrackOriginMs : 0;
+    const AudioFormat format    = stream->format();
+    const auto sampleRate       = static_cast<uint64_t>(format.isValid() ? format.sampleRate() : 0);
+    const auto channels         = static_cast<uint64_t>(std::max(1, format.channelCount()));
+    const uint64_t maxFrames    = (std::numeric_limits<uint64_t>::max() - 1) / channels;
+    const uint64_t wholeSeconds = streamEndMs / Time::MsPerSecond;
 
-    stream->setReadLimitSamples(samples);
+    uint64_t frames{maxFrames};
+    if(sampleRate == 0 || wholeSeconds <= maxFrames / sampleRate) {
+        const uint64_t wholeFrames   = wholeSeconds * sampleRate;
+        const uint64_t partialFrames = ((streamEndMs % Time::MsPerSecond) * sampleRate) / Time::MsPerSecond;
+        frames                       = std::min(maxFrames, saturatingAdd(wholeFrames, partialFrames));
+    }
+
+    stream->setReadLimitSamples(frames * channels);
 }
 
 bool AudioEngine::initDecoder(const Engine::PlaybackItem& item, bool allowPreparedStream)
@@ -5480,64 +5473,55 @@ bool AudioEngine::executeSegmentSwitchLoad(const Engine::PlaybackItem& item, boo
     clearAutoCrossfadeTailFadeState();
     clearAutoBoundaryFadeState(true);
 
-    uint64_t streamPosMs{0};
-    if(const auto stream = m_decoder.activeStream()) {
-        streamPosMs = stream->positionMs();
+    // The active stream keeps its source timeline across logical segment changes
+    qCDebug(ENGINE) << "Switching contiguous segment on active stream:" << track.filenameExt();
+
+    const auto previousTrackStatus = m_trackStatus.load(std::memory_order_relaxed);
+
+    if(!m_decoder.switchContiguousTrack(track)) {
+        qCWarning(ENGINE) << "Contiguous segment switch could not retarget decoder state; falling back:"
+                          << track.filenameExt();
+        return false;
     }
 
-    if(setStreamToTrackOriginForSegmentSwitch(track, streamPosMs)) {
-        qCDebug(ENGINE) << "Switching contiguous segment on active stream:" << track.filenameExt();
+    clearPreparedNextTrack();
+    setCurrentTrackContext(item);
+    updateCurrentStreamReadLimit();
+    clearTrackEndLatch();
+    m_transitions.clearTrackEnding();
 
-        const auto previousTrackStatus = m_trackStatus.load(std::memory_order_relaxed);
-
-        if(!m_decoder.switchContiguousTrack(track)) {
-            qCWarning(ENGINE) << "Contiguous segment switch could not retarget decoder state; falling back:"
-                              << track.filenameExt();
-            return false;
-        }
-
-        clearPreparedNextTrack();
-        setCurrentTrackContext(item);
-        updateCurrentStreamReadLimit();
-        clearTrackEndLatch();
-        m_transitions.clearTrackEnding();
-
-        if(!preserveTransportFade) {
-            m_fadeController.invalidateActiveFade();
-        }
-
-        if(previousTrackStatus == Engine::TrackStatus::End) {
-            updateTrackStatus(Engine::TrackStatus::Buffered);
-        }
-
-        const auto stream           = m_decoder.activeStream();
-        const bool streamWasStopped = stream && stream->state() == AudioStream::State::Stopped;
-
-        if(stream && streamWasStopped) {
-            m_pipeline.switchToStream(stream->id());
-        }
-
-        if(hasPlaybackState(Engine::PlaybackState::Playing)) {
-            if(streamWasStopped) {
-                const int restartPrefillMs = std::max(20, m_decoder.lowWatermarkMs());
-                prefillActiveStream(restartPrefillMs);
-            }
-
-            if(const auto activeStream = m_decoder.activeStream()) {
-                m_pipeline.sendStreamCommand(activeStream->id(), AudioStream::Command::Play);
-            }
-            m_pipeline.play();
-            m_decoder.ensureDecodeTimerRunning();
-        }
-
-        updatePositionContext(m_pipeline.currentStatus().timelineEpoch);
-        publishPosition(0, 0, 1.0, AudioClock::UpdateMode::Discontinuity, true);
-        finaliseTrackCommit(Engine::TransitionMode::SegmentSwitch);
-        return true;
+    if(!preserveTransportFade) {
+        m_fadeController.invalidateActiveFade();
     }
 
-    qCWarning(ENGINE) << "Falling back to full track load for contiguous segment switch:" << track.filenameExt();
-    return false;
+    if(previousTrackStatus == Engine::TrackStatus::End) {
+        updateTrackStatus(Engine::TrackStatus::Buffered);
+    }
+
+    const auto stream           = m_decoder.activeStream();
+    const bool streamWasStopped = stream && stream->state() == AudioStream::State::Stopped;
+
+    if(stream && streamWasStopped) {
+        m_pipeline.switchToStream(stream->id());
+    }
+
+    if(hasPlaybackState(Engine::PlaybackState::Playing)) {
+        if(streamWasStopped) {
+            const int restartPrefillMs = std::max(20, m_decoder.lowWatermarkMs());
+            prefillActiveStream(restartPrefillMs);
+        }
+
+        if(const auto activeStream = m_decoder.activeStream()) {
+            m_pipeline.sendStreamCommand(activeStream->id(), AudioStream::Command::Play);
+        }
+        m_pipeline.play();
+        m_decoder.ensureDecodeTimerRunning();
+    }
+
+    updatePositionContext(m_pipeline.currentStatus().timelineEpoch);
+    publishPosition(0, 0, 1.0, AudioClock::UpdateMode::Discontinuity, true);
+    finaliseTrackCommit(Engine::TransitionMode::SegmentSwitch);
+    return true;
 }
 
 bool AudioEngine::executeManualFadeDeferredLoad(const Engine::PlaybackItem& item)

@@ -726,6 +726,11 @@ public:
         return engine.m_currentTrackItemId;
     }
 
+    static AudioStreamPtr activeStream(const AudioEngine& engine)
+    {
+        return engine.m_decoder.activeStream();
+    }
+
     static uint64_t trackGeneration(const AudioEngine& engine)
     {
         return engine.m_trackGeneration;
@@ -2370,6 +2375,119 @@ FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, NonCueTracksDoNotForceEndAtMe
 
     ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.position() > trackDurationMs + 600; }, 3000ms));
     EXPECT_NE(harness.engine.trackStatus(), Engine::TrackStatus::End);
+}
+
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, BoundedSegmentWithoutUpcomingTrackDoesNotPlayFollowingAudio)
+{
+    ensureCoreApplication();
+    for(const bool chapter : {false, true}) {
+        SCOPED_TRACE(chapter ? "chapter" : "CUE");
+        EngineHarness harness{false};
+        AudioEngineTestAccessor::setGaplessEnabled(harness.engine, true);
+        AudioEngineTestAccessor::setPlaybackBufferLengthMs(harness.engine, 1000);
+        harness.decoderStats->sourceEndMs.store(3000, std::memory_order_relaxed);
+        harness.outputStats->setOutputState(236, 20, 20);
+
+        Track track = harness.createTrack(u"bounded-end.fyt"_s, 400, 200);
+        if(chapter) {
+            track.setIsChapter(true);
+        }
+        else {
+            track.setCuePath(u"Embedded"_s);
+        }
+
+        QSignalSpy boundaries{&harness.engine, &AudioEngine::trackBoundaryReached};
+        harness.engine.loadTrack(makePlaybackItem(track, 1), false);
+        const auto stream = AudioEngineTestAccessor::activeStream(harness.engine);
+        ASSERT_TRUE(stream);
+        harness.engine.play();
+        ASSERT_TRUE(pumpUntil([&harness]() { return harness.engine.trackStatus() == Engine::TrackStatus::End; }));
+
+        EXPECT_EQ(stream->positionMs(), track.duration());
+        EXPECT_GT(stream->bufferedDurationMs(), 0);
+        ASSERT_EQ(boundaries.size(), 1);
+        EXPECT_EQ(boundaries.front().at(2).toULongLong(), 0);
+    }
+}
+
+FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, NonContiguousSameFileTransitionDoesNotPlayFollowingAudio)
+{
+    ensureCoreApplication();
+    for(const bool chapter : {false, true}) {
+        SCOPED_TRACE(chapter ? "chapter" : "CUE");
+        EngineHarness harness{false};
+        AudioEngineTestAccessor::setGaplessEnabled(harness.engine, true);
+        AudioEngineTestAccessor::setPlaybackBufferLengthMs(harness.engine, 1000);
+        harness.decoderStats->sourceEndMs.store(3000, std::memory_order_relaxed);
+        harness.outputStats->setOutputState(236, 20, 20);
+
+        Track current = harness.createTrack(u"shuffled-segments.fyt"_s, 1000, 200);
+        if(chapter) {
+            current.setIsChapter(true);
+        }
+        else {
+            current.setCuePath(u"Embedded"_s);
+        }
+        Track adjacent{current};
+        adjacent.setOffset(current.offset() + current.duration());
+        Track target{current};
+        target.setOffset(400);
+        const auto targetItem = makePlaybackItem(target, 2);
+
+        // Mirror the controller's fallback when the engine doesn't own the handoff
+        QObject::connect(&harness.engine, &AudioEngine::trackBoundaryReached, &harness.engine,
+                         [&harness, &current, &targetItem](const Track& track, uint64_t, uint64_t, bool engineOwns) {
+                             if(!engineOwns && track.offset() == current.offset()) {
+                                 harness.engine.loadTrack(targetItem, false);
+                                 harness.engine.setUpcomingTrackCandidate({});
+                             }
+                         });
+        QSignalSpy boundaries{&harness.engine, &AudioEngine::trackBoundaryReached};
+        harness.engine.loadTrack(makePlaybackItem(current, 1), false);
+        const auto outgoingStream = AudioEngineTestAccessor::activeStream(harness.engine);
+        ASSERT_TRUE(outgoingStream);
+        harness.engine.setUpcomingTrackCandidate(makePlaybackItem(adjacent, 3));
+        EXPECT_FALSE(outgoingStream->readLimitSamples().has_value());
+        harness.engine.setUpcomingTrackCandidate(targetItem);
+        harness.engine.play();
+
+        ASSERT_TRUE(
+            pumpUntil([&harness]() { return AudioEngineTestAccessor::currentTrackItemId(harness.engine) == 2; }));
+        EXPECT_EQ(outgoingStream->positionMs(), current.duration());
+        EXPECT_GT(outgoingStream->bufferedDurationMs(), 0);
+        const auto targetStream = AudioEngineTestAccessor::activeStream(harness.engine);
+        ASSERT_TRUE(targetStream);
+        EXPECT_NE(targetStream, outgoingStream);
+        EXPECT_LE(targetStream->positionMs(), target.duration());
+        ASSERT_FALSE(boundaries.empty());
+        EXPECT_EQ(boundaries.front().at(2).toULongLong(), 0);
+    }
+}
+
+FOOYIN_AUDIOENGINE_REGULAR_TEST(AudioEngineTest, ContiguousSegmentSwitchPreservesSourceTimeline)
+{
+    ensureCoreApplication();
+    EngineHarness harness{false};
+    harness.outputStats->setOutputState(0, 0, 0);
+    Track current = harness.createTrack(u"contiguous-timeline.fyt"_s, 400, 200);
+    current.setIsChapter(true);
+    Track adjacent = current;
+    adjacent.setOffset(current.offset() + current.duration());
+    const auto adjacentItem = makePlaybackItem(adjacent, 2);
+
+    harness.engine.loadTrack(makePlaybackItem(current, 1), false);
+    harness.engine.setUpcomingTrackCandidate(adjacentItem);
+    harness.engine.play();
+    const auto stream = AudioEngineTestAccessor::activeStream(harness.engine);
+    ASSERT_TRUE(stream);
+
+    // Output may have consumed some of the next chapter before its audible boundary is published
+    std::vector<double> samples(1000);
+    ASSERT_EQ(stream->read(samples.data(), 220), 220);
+    harness.engine.loadTrack(adjacentItem, false);
+    ASSERT_EQ(AudioEngineTestAccessor::activeStream(harness.engine), stream);
+    EXPECT_EQ(stream->read(samples.data(), 500), 180);
+    EXPECT_EQ(stream->positionMs(), current.duration() + adjacent.duration());
 }
 
 FOOYIN_AUDIOENGINE_SENSITIVE_TEST(AudioEngineTest, CuePlaylistRepeatRestartsSameFileAtFirstSegment)
