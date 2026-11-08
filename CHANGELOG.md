@@ -12,6 +12,7 @@
   - Add named presets to widget configuration dialogs
   - Add a shared global background for supported widgets
 - **Playback:** Add per-track preferences for automatic playback and crossfading ([#1844](https://github.com/fooyin/fooyin/issues/1844))
+- **Statistics:** Add a Statistics menu with listening charts and a year in review, built from a new history of individual listens (only listens from this version onwards are included)
 
 ### Improvements
 

@@ -337,6 +337,8 @@ set(SOURCES
     menubar/mainmenubar.h
     menubar/playbackmenu.cpp
     menubar/playbackmenu.h
+    menubar/statisticsmenu.cpp
+    menubar/statisticsmenu.h
     menubar/viewmenu.cpp
     menubar/viewmenu.h
     metadatalookup/lookupresultsmodel.cpp
@@ -635,6 +637,17 @@ set(SOURCES
     splitters/splitterstate.h
     splitters/splitterwidget.cpp
     splitters/splitterwidget.h
+    statistics/statisticsdialog.cpp
+    statistics/statisticsdialog.h
+    statistics/statisticsservice.cpp
+    statistics/statisticsservice.h
+    statistics/statscharts.cpp
+    statistics/statscharts.h
+    statistics/statscolours.h
+    statistics/statswidgets.cpp
+    statistics/statswidgets.h
+    statistics/yearinreviewdialog.cpp
+    statistics/yearinreviewdialog.h
     splitters/tabstackwidget.cpp
     splitters/tabstackwidget.h
     statusevent.cpp

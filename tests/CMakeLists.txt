@@ -92,6 +92,9 @@ fooyin_add_test(test_playbacksession core/playback/playbacksessiontest.cpp)
 fooyin_add_test(test_playercontroller core/playback/playercontrollertest.cpp)
 fooyin_add_test(test_playlistnavigator core/playback/playlistnavigatortest.cpp)
 
+fooyin_add_test(test_playhistory core/playhistory/playhistorytest.cpp ${CMAKE_SOURCE_DIR}/data/data.qrc)
+fooyin_add_test(test_playhistorystats core/playhistory/playhistorystatstest.cpp)
+
 fooyin_add_test(test_cueparser core/playlist/cueparsertest.cpp data/playlists.qrc)
 fooyin_add_test(test_m3uparser core/playlist/m3uparsertest.cpp data/playlists.qrc)
 fooyin_add_test(test_plsparser core/playlist/plsparsertest.cpp data/playlists.qrc)

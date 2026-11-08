@@ -40,6 +40,7 @@
 #include "menubar/librarymenu.h"
 #include "menubar/mainmenubar.h"
 #include "menubar/playbackmenu.h"
+#include "menubar/statisticsmenu.h"
 #include "menubar/viewmenu.h"
 #include "metadatalookup/metadatalookupdialog.h"
 #include "playlist/manager/playlistmanagerwidget.h"
@@ -274,6 +275,7 @@ GuiApplication::GuiApplication(Application* core)
     , m_playbackMenu{new PlaybackMenu(m_actionManager, m_playerController, m_settings, this)}
     , m_libraryMenu{new LibraryMenu(m_core, m_actionManager, this)}
     , m_helpMenu{new HelpMenu(m_actionManager, this)}
+    , m_statisticsMenu{new StatisticsMenu(m_core, m_actionManager, this)}
     , m_propertiesDialog{new PropertiesDialog(m_actionManager, m_settings, this)}
     , m_scriptCommandHandler{std::make_unique<ScriptCommandHandler>(m_actionManager, m_playerController,
                                                                     m_propertiesDialog, m_selectionController.get(),

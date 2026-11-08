@@ -42,6 +42,7 @@ MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
     m_menubar->appendGroup(Constants::Groups::Playback);
     m_menubar->appendGroup(Constants::Groups::Library);
     m_menubar->appendGroup(Constants::Groups::Help);
+    m_menubar->appendGroup(Constants::Groups::Statistics);
 
     m_menubar->appendGroup(Actions::Groups::One);
     m_menubar->appendGroup(Actions::Groups::Two);
@@ -95,6 +96,10 @@ MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
     ActionContainer* helpMenu = m_actionManager->createMenu(Constants::Menus::Help);
     m_menubar->addMenu(helpMenu, Constants::Groups::Help);
     helpMenu->menu()->setTitle(ActionManager::tr("&Help"));
+
+    ActionContainer* statisticsMenu = m_actionManager->createMenu(Constants::Menus::Statistics);
+    m_menubar->addMenu(statisticsMenu, Constants::Groups::Statistics);
+    statisticsMenu->menu()->setTitle(ActionManager::tr("&Statistics"));
 }
 
 QMenuBar* MainMenuBar::menuBar() const

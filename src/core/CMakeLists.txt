@@ -44,6 +44,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/player/playbackqueue.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playercontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playerdefs.h
+    ${CMAKE_SOURCE_DIR}/include/core/playhistory/playhistory.h
+    ${CMAKE_SOURCE_DIR}/include/core/playhistory/playhistorystats.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlist.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistchangeset.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlisthandler.h
@@ -85,6 +87,8 @@ set(SOURCES
     database/librarydatabase.h
     database/playbackqueuedatabase.cpp
     database/playbackqueuedatabase.h
+    database/playhistorydatabase.cpp
+    database/playhistorydatabase.h
     database/playlistdatabase.cpp
     database/playlistdatabase.h
     database/settingsdatabase.cpp
@@ -302,6 +306,8 @@ set(SOURCES
     playback/playlistnavigator.cpp
     playback/playlistnavigator.h
     playback/trackplaybacksettings.h
+    playhistory/playhistory.cpp
+    playhistory/playhistorystats.cpp
     playlist/parsers/cueparser.cpp
     playlist/parsers/cueparser.h
     playlist/parsers/m3uparser.cpp

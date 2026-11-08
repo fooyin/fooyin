@@ -118,6 +118,7 @@ constexpr auto Library        = "Fooyin.Menu.Library";
 constexpr auto Database       = "Fooyin.Menu.Database";
 constexpr auto SwitchLibrary  = "Fooyin.Menu.Library.Switch";
 constexpr auto Help           = "Fooyin.Menu.Help";
+constexpr auto Statistics     = "Fooyin.Menu.Statistics";
 
 namespace Context {
 constexpr auto Layout                   = "Fooyin.Menu.Layout";
@@ -141,13 +142,14 @@ constexpr auto Convert                  = "Fooyin.Menu.Convert";
 } // namespace Menus
 
 namespace Groups {
-constexpr auto File     = "Fooyin.Group.File";
-constexpr auto Edit     = "Fooyin.Group.Edit";
-constexpr auto View     = "Fooyin.Group.View";
-constexpr auto Layout   = "Fooyin.Group.View";
-constexpr auto Playback = "Fooyin.Group.Playback";
-constexpr auto Library  = "Fooyin.Group.Library";
-constexpr auto Help     = "Fooyin.Group.Help";
+constexpr auto File       = "Fooyin.Group.File";
+constexpr auto Edit       = "Fooyin.Group.Edit";
+constexpr auto View       = "Fooyin.Group.View";
+constexpr auto Layout     = "Fooyin.Group.View";
+constexpr auto Playback   = "Fooyin.Group.Playback";
+constexpr auto Library    = "Fooyin.Group.Library";
+constexpr auto Help       = "Fooyin.Group.Help";
+constexpr auto Statistics = "Fooyin.Group.Statistics";
 
 namespace Context {
 constexpr auto Layout        = "Fooyin.Group.Layout";
@@ -278,6 +280,8 @@ constexpr auto ToggleMenubar             = "View.ToggleMenubar";
 constexpr auto LookupMetadata            = "Tracks.LookupMetadata";
 constexpr auto LookupMetadataByDiscToc   = "Tracks.LookupMetadataByDiscToc";
 constexpr auto LookupMetadataById        = "Tracks.LookupMetadataById";
+constexpr auto ListeningCharts           = "Statistics.ListeningCharts";
+constexpr auto YearInReview              = "Statistics.YearInReview";
 } // namespace Actions
 
 namespace Mime {

@@ -73,6 +73,7 @@ class PropertiesDialog;
 class QueueViewer;
 class SearchController;
 class ScriptCommandHandler;
+class StatisticsMenu;
 class ScriptSubscription;
 class SystemTrayIcon;
 class ThemeRegistry;
@@ -243,6 +244,7 @@ private:
     PlaybackMenu* m_playbackMenu;
     LibraryMenu* m_libraryMenu;
     HelpMenu* m_helpMenu;
+    StatisticsMenu* m_statisticsMenu;
 
     PropertiesDialog* m_propertiesDialog;
     std::unique_ptr<ScriptCommandHandler> m_scriptCommandHandler;

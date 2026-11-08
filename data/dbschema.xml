@@ -424,4 +424,29 @@
             ALTER TABLE Tracks ADD COLUMN SampleFrames INTEGER DEFAULT 0;
         </sql>
     </revision>
+    <revision version="23">
+        <description>
+            Add play history, a log of individual listens used for statistics.
+        </description>
+        <sql>
+            CREATE TABLE IF NOT EXISTS PlayHistory (
+                EntryID INTEGER PRIMARY KEY AUTOINCREMENT,
+                Timestamp INTEGER NOT NULL,
+                Hash TEXT NOT NULL,
+                Title TEXT,
+                Artists TEXT,
+                Album TEXT,
+                AlbumArtists TEXT,
+                Genres TEXT,
+                Composers TEXT,
+                Year INTEGER DEFAULT 0,
+                Duration INTEGER DEFAULT 0,
+                Bitrate INTEGER DEFAULT 0,
+                Lossless INTEGER DEFAULT -1
+            );
+
+            CREATE INDEX IF NOT EXISTS PlayHistoryTimestampIndex ON PlayHistory(Timestamp);
+            CREATE INDEX IF NOT EXISTS PlayHistoryHashIndex ON PlayHistory(Hash);
+        </sql>
+    </revision>
 </schema>
