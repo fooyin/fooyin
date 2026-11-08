@@ -57,6 +57,7 @@
 #include <core/scripting/scriptregistry.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timer.h>
 
 #include <QCoreApplication>
 #include <QFile>
@@ -216,6 +217,10 @@ void Application::startup()
 void Application::completeStartup()
 {
     Q_ASSERT(ScriptRegistry::instance().isFinalised());
+    QObject::connect(
+        m_library, &MusicLibrary::tracksLoaded, this,
+        [timer = Timer{}]() { qCInfo(APP) << "Library loaded in" << timer.elapsedFormatted(); },
+        Qt::SingleShotConnection);
     m_library->loadAllTracks();
 }
 

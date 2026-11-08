@@ -28,6 +28,7 @@
 #include <gui/guiapplication.h>
 #include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timer.h>
 
 #include <kdsingleapplication.h>
 
@@ -215,6 +216,8 @@ void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, C
 
 int main(int argc, char** argv)
 {
+    const Fooyin::Timer startupTimer;
+
 #ifdef Q_OS_WIN
     const GuiThreadApartment guiThreadApartment;
     if(FAILED(guiThreadApartment.result)) {
@@ -293,6 +296,15 @@ int main(int argc, char** argv)
     Fooyin::Application coreApp;
     coreApp.startup();
     Fooyin::GuiApplication guiApp{&coreApp};
+
+    QObject::connect(
+        &guiApp, &Fooyin::GuiApplication::startupFinished, &app,
+        [&startupTimer]() {
+            QLoggingCategory log{"fy.app"};
+            qCInfo(log) << "Startup took" << startupTimer.elapsedFormatted();
+        },
+        Qt::SingleShotConnection);
+
     guiApp.startup();
     coreApp.completeStartup();
 

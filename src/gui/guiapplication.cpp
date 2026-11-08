@@ -771,8 +771,9 @@ void GuiApplication::initialise()
     m_mainWindow->setCentralWidget(m_editableLayout.get());
     m_searchController->loadWidgets();
 
-    auto openMainWindow = [this]() {
+    const auto openMainWindow = [this]() {
         m_mainWindow->open();
+        Q_EMIT startupFinished();
         if(m_settings->value<Settings::Core::FirstRun>()) {
             QMetaObject::invokeMethod(this, &GuiApplication::showQuickSetup, Qt::QueuedConnection);
         }
