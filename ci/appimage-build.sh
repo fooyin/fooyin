@@ -8,7 +8,6 @@ readonly SOURCE_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 BUILD_DIR="${FOOYIN_APPIMAGE_BUILD_DIR:-$SOURCE_DIR/build-appimage}"
 APPDIR="${FOOYIN_APPIMAGE_APPDIR:-$BUILD_DIR/AppDir}"
 OUTPUT_DIR="${FOOYIN_APPIMAGE_OUTPUT_DIR:-$BUILD_DIR/output}"
-TOOLS_DIR="${FOOYIN_APPIMAGE_TOOLS_DIR:-$BUILD_DIR/tools}"
 
 case "$(uname -m)" in
     x86_64)
@@ -23,16 +22,9 @@ case "$(uname -m)" in
         ;;
 esac
 
-QUICK_SHARUN="${FOOYIN_QUICK_SHARUN:-$TOOLS_DIR/quick-sharun}"
-readonly QUICK_SHARUN_REVISION=87f1a9c11c73f23e46a0e7ecd2467d40aaaf0392
-readonly QUICK_SHARUN_URL="https://raw.githubusercontent.com/pkgforge-dev/Anylinux-AppImages/$QUICK_SHARUN_REVISION/useful-tools/quick-sharun.sh"
+QUICK_SHARUN="${FOOYIN_QUICK_SHARUN:-quick-sharun}"
 
-mkdir -p "$BUILD_DIR" "$OUTPUT_DIR" "$TOOLS_DIR"
-
-if [[ ! -x "$QUICK_SHARUN" ]]; then
-    curl --fail --location --retry 3 --output "$QUICK_SHARUN" "$QUICK_SHARUN_URL"
-    chmod +x "$QUICK_SHARUN"
-fi
+mkdir -p "$BUILD_DIR" "$OUTPUT_DIR"
 
 cmake -S "$SOURCE_DIR" -B "$BUILD_DIR" -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
