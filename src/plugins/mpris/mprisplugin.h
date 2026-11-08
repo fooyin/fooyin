@@ -27,8 +27,7 @@
 
 class QDBusObjectPath;
 
-namespace Fooyin {
-namespace Mpris {
+namespace Fooyin::Mpris {
 class MprisPlugin : public QObject,
                     public Plugin,
                     public CorePlugin,
@@ -126,7 +125,8 @@ Q_SIGNALS:
     void reloadMetadata();
 
 private:
-    QString currentCoverPath() const;
+    void setEnabled(bool enabled);
+    [[nodiscard]] QString currentCoverPath() const;
     void notify(const QString& name, const QVariant& value);
     void notify(const QVariantMap& properties);
     void trackChanged(const PlaylistTrack& playlistTrack);
@@ -145,5 +145,4 @@ private:
     QVariantMap m_currentMetaData;
     CoverProvider* m_coverProvider;
 };
-} // namespace Mpris
-} // namespace Fooyin
+} // namespace Fooyin::Mpris

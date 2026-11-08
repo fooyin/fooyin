@@ -7,8 +7,11 @@ endif()
 
 set(SOURCES
     #[[gersemi: sort]] #
+    mprispage.cpp
+    mprispage.h
     mprisplugin.cpp
     mprisplugin.h
+    mprissettings.h
 )
 
 qt_add_dbus_adaptor(

@@ -21,7 +21,22 @@
 
 #include "fyutils_export.h"
 
+#include <cstdint>
+
 namespace Fooyin::Audio {
+enum class VolumeCurve : uint8_t
+{
+    LinearDb = 0,
+    LinearAmplitude,
+    Quadratic,
+    Cubic,
+    LogarithmicDb,
+};
+
 FYUTILS_EXPORT double dbToVolume(double db);
 FYUTILS_EXPORT double volumeToDb(double volume);
+// Map between linear amplitude and a normalised control position in [0, 1].
+// LinearDb spans -40 dB to 0 dB, with position 0 reserved for mute.
+FYUTILS_EXPORT double volumeToPosition(double volume, VolumeCurve curve);
+FYUTILS_EXPORT double volumeFromPosition(double position, VolumeCurve curve);
 } // namespace Fooyin::Audio

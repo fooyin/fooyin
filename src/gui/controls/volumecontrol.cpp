@@ -52,19 +52,11 @@
 using namespace std::chrono_literals;
 using namespace Qt::StringLiterals;
 
-constexpr double MinLogVolume      = 0.01;
-constexpr double LogPositionFactor = 100.0;
-constexpr int VolumeSteps          = 1000;
+constexpr int LinearDbSteps = 200;
+constexpr int VolumeSteps   = 1000;
 
 namespace Fooyin {
-enum class VolumeCurve : uint8_t
-{
-    LinearDb = 0,
-    LinearAmplitude,
-    Quadratic,
-    Cubic,
-    LogarithmicDb,
-};
+using Audio::VolumeCurve;
 
 class VolumeControlPrivate
 {
@@ -193,7 +185,7 @@ void VolumeControlPrivate::setCurve(VolumeCurve curve)
 
     m_curve = curve;
     if(m_curve == VolumeCurve::LinearDb) {
-        m_volumeSlider->setRange(static_cast<int>(std::log10(MinLogVolume) * LogPositionFactor), 0);
+        m_volumeSlider->setRange(-LinearDbSteps, 0);
     }
     else {
         m_volumeSlider->setRange(0, VolumeSteps);
@@ -211,27 +203,10 @@ void VolumeControlPrivate::updateSlider(double volume) const
         volume = 1.0;
     }
 
-    volume = std::clamp(volume, 0.0, 1.0);
-
-    double value{0.0};
-    switch(m_curve) {
-        case VolumeCurve::LinearDb:
-            value = std::log10(std::max(volume, MinLogVolume)) * LogPositionFactor;
-            break;
-        case VolumeCurve::LinearAmplitude:
-            value = volume * VolumeSteps;
-            break;
-        case VolumeCurve::Quadratic:
-            value = std::sqrt(volume) * VolumeSteps;
-            break;
-        case VolumeCurve::Cubic:
-            value = std::cbrt(volume) * VolumeSteps;
-            break;
-        case VolumeCurve::LogarithmicDb:
-            value = std::exp2(Audio::volumeToDb(volume) / 10.0) * VolumeSteps;
-            break;
-    }
-
+    const int minimum     = m_volumeSlider->minimum();
+    const int range       = m_volumeSlider->maximum() - minimum;
+    const double position = Audio::volumeToPosition(volume, m_curve);
+    const double value    = minimum + (position * range);
     m_volumeSlider->setValue(static_cast<int>(std::round(value)));
 }
 
@@ -247,26 +222,10 @@ void VolumeControlPrivate::updateSteps() const
 
 double VolumeControlPrivate::volumeAtPosition(int value) const
 {
-    if(value == m_volumeSlider->minimum()) {
-        return 0.0;
-    }
-
-    const double position = static_cast<double>(value) / VolumeSteps;
-    switch(m_curve) {
-        case VolumeCurve::LinearDb:
-            return std::pow(10.0, value / LogPositionFactor);
-        case VolumeCurve::LinearAmplitude:
-            return position;
-        case VolumeCurve::Quadratic:
-            return position * position;
-        case VolumeCurve::Cubic:
-            return position * position * position;
-        case VolumeCurve::LogarithmicDb:
-            // Each halving of the slider position reduces the gain by 10 dB
-            return Audio::dbToVolume(10.0 * std::log2(position));
-    }
-
-    return 0.0;
+    const int minimum     = m_volumeSlider->minimum();
+    const int range       = m_volumeSlider->maximum() - minimum;
+    const double position = static_cast<double>(value - minimum) / range;
+    return Audio::volumeFromPosition(position, m_curve);
 }
 
 void VolumeControlPrivate::updateOrientation()

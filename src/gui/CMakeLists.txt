@@ -216,6 +216,8 @@ set(SOURCES
     dsp/resamplersettingswidget.h
     dsp/skipsilencesettingswidget.cpp
     dsp/skipsilencesettingswidget.h
+    filters/coverflowconfigwidget.cpp
+    filters/coverflowconfigwidget.h
     filters/expansion/filterexpansionmodel.cpp
     filters/expansion/filterexpansionmodel.h
     filters/expansion/filterexpansionpopulator.cpp
@@ -226,14 +228,12 @@ set(SOURCES
     filters/expansion/filterexpansiontrackview.h
     filters/expansion/filterexpansionwidget.cpp
     filters/expansion/filterexpansionwidget.h
+    filters/expansionconfigwidget.cpp
+    filters/expansionconfigwidget.h
     filters/filtercolumneditordialog.cpp
     filters/filtercolumneditordialog.h
     filters/filtercolumnregistry.cpp
     filters/filtercolumnregistry.h
-    filters/coverflowconfigwidget.cpp
-    filters/coverflowconfigwidget.h
-    filters/expansionconfigwidget.cpp
-    filters/expansionconfigwidget.h
     filters/filterconfigwidget.cpp
     filters/filterconfigwidget.h
     filters/filterconstants.h

@@ -19,8 +19,10 @@
 
 #include "mprisplugin.h"
 
+#include "mprispage.h"
 #include "mprisplayer.h"
 #include "mprisroot.h"
+#include "mprissettings.h"
 
 #include <core/coresettings.h>
 #include <core/engine/enginecontroller.h>
@@ -28,6 +30,7 @@
 #include <gui/guipaths.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
+#include <utils/audioutils.h>
 #include <utils/crypto.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
@@ -159,6 +162,10 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     m_audioLoader      = context.audioLoader;
     m_settings         = context.settingsManager;
 
+    m_settings->createSetting<Settings::Mpris::VolumeCurve>(static_cast<int>(Audio::VolumeCurve::LinearAmplitude),
+                                                            u"MPRIS/VolumeCurve"_s);
+    m_settings->createSetting<Settings::Mpris::Enabled>(true, u"MPRIS/Enabled"_s);
+
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this, [this]() {
         notify({{u"LoopStatus"_s, loopStatus()},
                 {u"Shuffle"_s, shuffle()},
@@ -205,6 +212,7 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     };
     m_settings->subscribe<Settings::Core::OutputVolume>(this, updateVolume);
     m_settings->subscribe<Settings::Core::VolumeControlEnabled>(this, updateVolume);
+    m_settings->subscribe<Settings::Mpris::VolumeCurve>(this, updateVolume);
 
     QObject::connect(this, &MprisPlugin::reloadMetadata, this, [this]() { notify(u"Metadata"_s, metadata()); });
 }
@@ -216,28 +224,16 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
 
     m_coverProvider->setUsePlaceholder(false);
 
+    new MprisPage(m_settings, this);
+
     QObject::connect(m_windowController, &WindowController::isFullScreenChanged, this,
                      [this]() { notify(u"Fullscreen"_s, fullscreen()); });
 
     new MprisRoot(this);
     new MprisPlayer(this);
 
-    if(!QDBusConnection::sessionBus().isConnected()) {
-        qCWarning(MPRIS) << "Cannot connect to the dbus session bus";
-        return;
-    }
-
-    if(!QDBusConnection::sessionBus().registerService(ServiceName)) {
-        qCWarning(MPRIS) << "Cannot register with the session dbus";
-        return;
-    }
-
-    m_registered = true;
-
-    if(!QDBusConnection::sessionBus().registerObject(MprisObjectPath, this)) {
-        qCWarning(MPRIS) << "Cannot register object to the dbus";
-        return;
-    }
+    setEnabled(m_settings->value<Settings::Mpris::Enabled>());
+    m_settings->subscribe<Settings::Mpris::Enabled>(this, &MprisPlugin::setEnabled);
 }
 
 void MprisPlugin::shutdown()
@@ -247,11 +243,7 @@ void MprisPlugin::shutdown()
         QFile::remove(coverPath);
     }
 
-    if(!m_registered) {
-        return;
-    }
-
-    QDBusConnection::sessionBus().unregisterService(ServiceName);
+    setEnabled(false);
 }
 
 QString MprisPlugin::identity() const
@@ -333,8 +325,12 @@ bool MprisPlugin::canSeek() const
 
 double MprisPlugin::volume() const
 {
-    return m_settings->value<Settings::Core::VolumeControlEnabled>() ? m_settings->value<Settings::Core::OutputVolume>()
-                                                                     : 1.0;
+    if(!m_settings->value<Settings::Core::VolumeControlEnabled>()) {
+        return 1.0;
+    }
+
+    const auto curve = static_cast<Audio::VolumeCurve>(m_settings->value<Settings::Mpris::VolumeCurve>());
+    return Audio::volumeToPosition(m_settings->value<Settings::Core::OutputVolume>(), curve);
 }
 
 void MprisPlugin::setVolume(double volume)
@@ -343,8 +339,8 @@ void MprisPlugin::setVolume(double volume)
         return;
     }
 
-    volume = std::clamp(volume, 0.0, 1.0);
-    m_settings->set<Settings::Core::OutputVolume>(volume);
+    const auto curve = static_cast<Audio::VolumeCurve>(m_settings->value<Settings::Mpris::VolumeCurve>());
+    m_settings->set<Settings::Core::OutputVolume>(Audio::volumeFromPosition(volume, curve));
 }
 
 QString MprisPlugin::playbackStatus() const
@@ -495,6 +491,39 @@ void MprisPlugin::SetPosition(const QDBusObjectPath& path, int64_t position)
     m_playerController->seek(static_cast<uint64_t>(position / static_cast<int64_t>(Time::UsPerMs)));
 }
 
+void MprisPlugin::setEnabled(bool enabled)
+{
+    if(enabled == m_registered) {
+        return;
+    }
+
+    auto connection = QDBusConnection::sessionBus();
+    if(!enabled) {
+        connection.unregisterService(ServiceName);
+        connection.unregisterObject(MprisObjectPath);
+        m_registered = false;
+        return;
+    }
+
+    if(!connection.isConnected()) {
+        qCWarning(MPRIS) << "Cannot connect to the dbus session bus";
+        return;
+    }
+
+    if(!connection.registerObject(MprisObjectPath, this)) {
+        qCWarning(MPRIS) << "Cannot register object to the dbus";
+        return;
+    }
+
+    if(!connection.registerService(ServiceName)) {
+        connection.unregisterObject(MprisObjectPath);
+        qCWarning(MPRIS) << "Cannot register with the session dbus";
+        return;
+    }
+
+    m_registered = true;
+}
+
 QString MprisPlugin::currentCoverPath() const
 {
     if(m_currCoverKey.isEmpty()) {
@@ -511,6 +540,10 @@ void MprisPlugin::notify(const QString& name, const QVariant& value)
 
 void MprisPlugin::notify(const QVariantMap& properties)
 {
+    if(!m_registered) {
+        return;
+    }
+
     QDBusMessage msg = QDBusMessage::createSignal(MprisObjectPath, DbusPath, u"PropertiesChanged"_s);
     msg.setArguments({PlayerEntity, properties, QStringList{}});
     QDBusConnection::sessionBus().send(msg);

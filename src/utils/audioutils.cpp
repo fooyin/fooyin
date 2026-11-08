@@ -21,6 +21,9 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
+
+constexpr double MinVolumeDb = -40.0;
 
 namespace Fooyin::Audio {
 double dbToVolume(double db)
@@ -34,5 +37,49 @@ double volumeToDb(double volume)
         return -std::numeric_limits<double>::infinity();
     }
     return 20.0 * std::log10(volume);
+}
+
+double volumeToPosition(double volume, VolumeCurve curve)
+{
+    volume = std::clamp(volume, 0.0, 1.0);
+
+    switch(curve) {
+        case VolumeCurve::LinearDb:
+            return (std::max(volumeToDb(volume), MinVolumeDb) - MinVolumeDb) / -MinVolumeDb;
+        case VolumeCurve::LinearAmplitude:
+            return volume;
+        case VolumeCurve::Quadratic:
+            return std::sqrt(volume);
+        case VolumeCurve::Cubic:
+            return std::cbrt(volume);
+        case VolumeCurve::LogarithmicDb:
+            return std::exp2(volumeToDb(volume) / 10.0);
+    }
+
+    return volume;
+}
+
+double volumeFromPosition(double position, VolumeCurve curve)
+{
+    position = std::clamp(position, 0.0, 1.0);
+    if(position == 0.0) {
+        return 0.0;
+    }
+
+    switch(curve) {
+        case VolumeCurve::LinearDb:
+            return dbToVolume(MinVolumeDb * (1.0 - position));
+        case VolumeCurve::LinearAmplitude:
+            return position;
+        case VolumeCurve::Quadratic:
+            return position * position;
+        case VolumeCurve::Cubic:
+            return position * position * position;
+        case VolumeCurve::LogarithmicDb:
+            // Each halving of the position reduces the gain by 10 dB
+            return dbToVolume(10.0 * std::log2(position));
+    }
+
+    return position;
 }
 } // namespace Fooyin::Audio
