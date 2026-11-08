@@ -110,8 +110,8 @@ OscilloscopeConfigDialog::OscilloscopeConfigDialog(OscilloscopeWidget* oscillosc
     auto* generalPageLayout = new QGridLayout(generalPage);
 
     generalPageLayout->addWidget(generalGroup, 0, 0);
-    generalPageLayout->addWidget(m_colourGroup, 0, 1);
-    generalPageLayout->setRowStretch(1, 1);
+    generalPageLayout->addWidget(m_colourGroup, 1, 0);
+    generalPageLayout->setRowStretch(2, 1);
 
     auto* tabs = new QTabWidget(this);
     tabs->addTab(generalPage, tr("General"));
