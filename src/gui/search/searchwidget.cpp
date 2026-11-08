@@ -78,7 +78,7 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
     m_searchBox->setPlaceholderText(m_defaultPlaceholder);
     m_searchBox->setClearButtonEnabled(true);
 
-    m_searchController->registerSetFunction(id(), [this](const QString& search) { m_searchBox->setText(search); });
+    m_searchController->registerSetFunction(this, [this](const QString& search) { m_searchBox->setText(search); });
 
     setFocusProxy(m_searchBox);
     loadColours();
@@ -107,7 +107,7 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
 
 SearchWidget::~SearchWidget()
 {
-    m_searchController->removeConnectedWidgets(id());
+    m_searchController->removeConnectedWidgets(this);
 }
 
 QString SearchWidget::defaultPlaylistName()
@@ -156,6 +156,8 @@ void SearchWidget::layoutEditingMenu(QMenu* menu)
 
 void SearchWidget::populateContextMenu(QMenu* menu)
 {
+    updateConnectedState();
+
     auto* autoSearch = new QAction(tr("Autosearch"), menu);
     autoSearch->setCheckable(true);
     autoSearch->setChecked(m_autoSearch);
@@ -217,6 +219,8 @@ void SearchWidget::populateContextMenu(QMenu* menu)
 
 void SearchWidget::saveLayoutData(QJsonObject& layout)
 {
+    layout.remove("Widgets"_L1);
+
     layout["AutoSearch"_L1] = m_autoSearch;
     layout["ShowAll"_L1]    = m_showAll;
     layout["SearchMode"_L1] = static_cast<quint8>(m_mode);
@@ -255,20 +259,18 @@ void SearchWidget::loadLayoutData(const QJsonObject& layout)
         m_searchBox->setPlaceholderText(layout.value("Placeholder"_L1).toString());
     }
 
-    if(m_searchTarget || !layout.contains("Widgets"_L1)) {
+    if(m_searchTarget) {
         return;
     }
 
-    const QStringList widgetIds = layout.value("Widgets"_L1).toString().split(u'|');
-
-    if(widgetIds.isEmpty()) {
-        return;
-    }
+    const QStringList widgetIds = layout.value("Widgets"_L1).toString().split(u'|', Qt::SkipEmptyParts);
 
     IdSet connectedWidgets;
-
     for(const QString& id : widgetIds) {
-        connectedWidgets.emplace(id.trimmed());
+        const Id widgetId{id.trimmed()};
+        if(widgetId.isValid()) {
+            connectedWidgets.emplace(widgetId);
+        }
     }
 
     m_searchController->setConnectedWidgets(id(), connectedWidgets);
@@ -531,9 +533,14 @@ void SearchWidget::updateConnectedState()
         return;
     }
 
-    const auto widgets  = m_searchController->connectedWidgets(id());
-    m_unconnected       = widgets.empty();
-    m_exclusivePlaylist = (widgets.size() == 1 && qobject_cast<PlaylistWidget*>(widgets.front()));
+    const auto widgets           = m_searchController->connectedWidgets(id());
+    const bool unconnected       = m_searchController->connectedWidgetIds(id()).empty();
+    const bool exclusivePlaylist = (widgets.size() == 1 && qobject_cast<PlaylistWidget*>(widgets.front()));
+    if(m_unconnected != unconnected || m_exclusivePlaylist != exclusivePlaylist) {
+        ++m_searchRequestToken;
+    }
+    m_unconnected       = unconnected;
+    m_exclusivePlaylist = exclusivePlaylist;
 
     if(m_unconnected) {
         static const QString searchTooltip
@@ -562,6 +569,8 @@ SearchRequest SearchWidget::currentSearchRequest() const
 
 void SearchWidget::searchChanged(bool enterKey)
 {
+    updateConnectedState();
+
     if(m_searchTarget) {
         m_searchTarget->searchEvent(currentSearchRequest());
         return;

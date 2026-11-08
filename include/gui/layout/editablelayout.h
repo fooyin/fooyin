@@ -84,6 +84,7 @@ public:
 
 Q_SIGNALS:
     void layoutChanged();
+    void widgetsChanged();
 
 private:
     std::unique_ptr<EditableLayoutPrivate> p;

@@ -39,13 +39,13 @@ public:
     void loadWidgets();
 
     void setupWidgetConnections(const Id& id);
-    void registerSetFunction(const Id& id, const std::function<void(const QString&)>& func);
+    void registerSetFunction(FyWidget* source, const std::function<void(const QString&)>& func);
 
     WidgetList connectedWidgets(const Id& id);
     IdSet connectedWidgetIds(const Id& id);
 
     void setConnectedWidgets(const Id& id, const IdSet& widgets);
-    void removeConnectedWidgets(const Id& id);
+    void removeConnectedWidgets(FyWidget* source);
 
     void changeSearch(const Id& id, const SearchRequest& request);
 

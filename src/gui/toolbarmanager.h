@@ -60,6 +60,9 @@ public:
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
+Q_SIGNALS:
+    void widgetsChanged();
+
 private:
     struct ToolbarItem
     {

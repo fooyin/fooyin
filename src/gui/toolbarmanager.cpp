@@ -252,6 +252,7 @@ void ToolbarManager::clear()
             delete entry.toolbar;
         }
     }
+    Q_EMIT widgetsChanged();
 }
 
 std::vector<FyWidget*> ToolbarManager::widgets() const
@@ -418,6 +419,7 @@ bool ToolbarManager::insertWidget(QToolBar* toolbar, const QString& key, QAction
     entry->items.insert(itemPosition, {.key = key, .action = action, .widget = widget, .savedWidget = {}});
     updateAllowedAreas(entry);
     widget->finalise();
+    Q_EMIT widgetsChanged();
     return true;
 }
 
@@ -473,6 +475,7 @@ void ToolbarManager::removeItem(QToolBar* toolbar, QAction* action)
     else {
         updateAllowedAreas(entry);
     }
+    Q_EMIT widgetsChanged();
 }
 
 void ToolbarManager::updateAllowedAreas(ToolbarEntry* entry)
@@ -499,6 +502,7 @@ void ToolbarManager::removeToolbar(QToolBar* toolbar)
     m_toolbars.erase(it);
     m_window->removeToolBar(toolbar);
     toolbar->deleteLater();
+    Q_EMIT widgetsChanged();
 }
 
 void ToolbarManager::showContextMenu(QToolBar* toolbar, const QPoint& toolbarPos, const QPoint& globalPos,
