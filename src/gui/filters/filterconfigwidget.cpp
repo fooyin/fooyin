@@ -81,6 +81,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
     , m_autoFitArtwork{new QCheckBox(tr("Fit artwork to available width"), this)}
+    , m_artworkScaling{new QComboBox(this)}
     , m_iconHorizontalGap{new QSpinBox(this)}
     , m_iconVerticalGap{new QSpinBox(this)}
     , m_overrideGridMargins{new QCheckBox(tr("Custom grid margins"), this)}
@@ -285,6 +286,13 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_autoFitArtwork->setToolTip(tr("Resize artwork to fill the available width.\n"
                                     "Ctrl+Scroll changes the number of columns."));
 
+    m_artworkScaling->addItem(tr("Fit"), static_cast<int>(ArtworkScaling::Fit));
+    m_artworkScaling->addItem(tr("Fill (crop)"), static_cast<int>(ArtworkScaling::Fill));
+    m_artworkScaling->addItem(tr("Stretch"), static_cast<int>(ArtworkScaling::Stretch));
+    m_artworkScaling->setToolTip(tr("Fit shows the whole image and preserves its aspect ratio.\n"
+                                    "Fill crops the image to fill the artwork area and preserves its aspect ratio.\n"
+                                    "Stretch fills the artwork area by changing the image’s aspect ratio."));
+
     auto* artworkLayout = new QGridLayout(artworkGroup);
 
     row = 0;
@@ -292,6 +300,8 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     artworkLayout->addWidget(m_coverType, row++, 1, 1, 3);
     artworkLayout->addWidget(new QLabel(tr("Artwork source") + u":"_s, artworkGroup), row, 0);
     artworkLayout->addWidget(m_coverSource, row++, 1, 1, 3);
+    artworkLayout->addWidget(new QLabel(tr("Artwork scaling") + u":"_s, artworkGroup), row, 0);
+    artworkLayout->addWidget(m_artworkScaling, row++, 1, 1, 3);
     artworkLayout->addWidget(new QLabel(tr("Corner radius") + u":"_s, artworkGroup), row, 0);
     artworkLayout->addWidget(m_artworkCornerRadius, row++, 1);
     artworkLayout->addWidget(Gui::createSectionHeader(tr("Size"), artworkGroup), row++, 0, 1, 5);
@@ -399,6 +409,7 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
     result.rowHeight              = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0;
     result.iconSize               = {m_iconWidth->value(), m_iconHeight->value()};
     result.autoFitArtwork         = m_autoFitArtwork->isChecked();
+    result.artworkScaling         = Constants::artworkScalingFromInt(m_artworkScaling->currentData().toInt());
     result.iconHorizontalGap      = m_iconHorizontalGap->value();
     result.iconVerticalGap        = m_iconVerticalGap->value();
     result.overrideGridMargins    = m_overrideGridMargins->isChecked();
@@ -462,6 +473,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_iconWidth->setValue(config.iconSize.width());
     m_iconHeight->setValue(config.iconSize.height());
     m_autoFitArtwork->setChecked(config.autoFitArtwork);
+    m_artworkScaling->setCurrentIndex(m_artworkScaling->findData(static_cast<int>(config.artworkScaling)));
     m_iconHorizontalGap->setValue(config.iconHorizontalGap);
     m_iconVerticalGap->setValue(config.iconVerticalGap);
     m_overrideGridMargins->setChecked(config.overrideGridMargins);
@@ -506,18 +518,18 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
         &FilterWidget::ConfigData::showHeader, &FilterWidget::ConfigData::showScrollbar,
         &FilterWidget::ConfigData::alternatingRows, &FilterWidget::ConfigData::rowHeight,
         &FilterWidget::ConfigData::iconSize, &FilterWidget::ConfigData::iconHorizontalGap,
-        &FilterWidget::ConfigData::autoFitArtwork, &FilterWidget::ConfigData::iconVerticalGap,
-        &FilterWidget::ConfigData::overrideGridMargins, &FilterWidget::ConfigData::gridMargins,
-        &FilterWidget::ConfigData::artworkCornerRadius, &FilterWidget::ConfigData::overrideArtworkMargins,
-        &FilterWidget::ConfigData::artworkMargins, &FilterWidget::ConfigData::coverFlow,
-        &FilterWidget::ConfigData::expandGroups, &FilterWidget::ConfigData::expansionPosition,
-        &FilterWidget::ConfigData::expansionAnimated, &FilterWidget::ConfigData::expansionAnimationDuration,
-        &FilterWidget::ConfigData::expansionAlternatingRows, &FilterWidget::ConfigData::expansionMatchGridMargins,
-        &FilterWidget::ConfigData::expandedArtwork, &FilterWidget::ConfigData::expansionMinimumRows,
-        &FilterWidget::ConfigData::expansionMaximumColumns, &FilterWidget::ConfigData::expansionArtworkOnLeft,
-        &FilterWidget::ConfigData::expansionStretchColumns, &FilterWidget::ConfigData::expansionMinimumColumnWidth,
-        &FilterWidget::ConfigData::expansionArtworkSize, &FilterWidget::ConfigData::expansionShowCloseButton,
-        &FilterWidget::ConfigData::expansionArtworkReflection,
+        &FilterWidget::ConfigData::autoFitArtwork, &FilterWidget::ConfigData::artworkScaling,
+        &FilterWidget::ConfigData::iconVerticalGap, &FilterWidget::ConfigData::overrideGridMargins,
+        &FilterWidget::ConfigData::gridMargins, &FilterWidget::ConfigData::artworkCornerRadius,
+        &FilterWidget::ConfigData::overrideArtworkMargins, &FilterWidget::ConfigData::artworkMargins,
+        &FilterWidget::ConfigData::coverFlow, &FilterWidget::ConfigData::expandGroups,
+        &FilterWidget::ConfigData::expansionPosition, &FilterWidget::ConfigData::expansionAnimated,
+        &FilterWidget::ConfigData::expansionAnimationDuration, &FilterWidget::ConfigData::expansionAlternatingRows,
+        &FilterWidget::ConfigData::expansionMatchGridMargins, &FilterWidget::ConfigData::expandedArtwork,
+        &FilterWidget::ConfigData::expansionMinimumRows, &FilterWidget::ConfigData::expansionMaximumColumns,
+        &FilterWidget::ConfigData::expansionArtworkOnLeft, &FilterWidget::ConfigData::expansionStretchColumns,
+        &FilterWidget::ConfigData::expansionMinimumColumnWidth, &FilterWidget::ConfigData::expansionArtworkSize,
+        &FilterWidget::ConfigData::expansionShowCloseButton, &FilterWidget::ConfigData::expansionArtworkReflection,
         &FilterWidget::ConfigData::expansionArtworkReflectionHeight,
         &FilterWidget::ConfigData::expansionArtworkReflectionOpacity,
         &FilterWidget::ConfigData::expansionArtworkReflectionGap,
@@ -555,6 +567,7 @@ void FilterConfigDialog::setupConnections()
         m_iconVerticalGap->setEnabled(gridArtwork);
 
         const bool iconMode = !m_columnsMode->isChecked() && !coverFlow;
+        m_artworkScaling->setEnabled(iconMode);
         m_overrideGridMargins->setEnabled(iconMode);
         for(auto* margin : {m_gridLeftMargin, m_gridTopMargin, m_gridRightMargin, m_gridBottomMargin}) {
             margin->setEnabled(iconMode && m_overrideGridMargins->isChecked());

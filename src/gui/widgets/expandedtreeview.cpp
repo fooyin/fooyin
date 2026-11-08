@@ -2673,9 +2673,8 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
 
             const int artworkWidth = iconSizeForWidth(item.width - artworkPadding).width();
             item.width             = std::max(item.width, artworkWidth + artworkPadding);
-            item.decorationSize
-                = haveSideCaptions() ? iconSizeForWidth(artworkWidth) : QSize{artworkWidth, m_fittedIconSize.height()};
-            item.height = measurements.heights[i];
+            item.decorationSize    = m_fittedIconSize;
+            item.height            = measurements.heights[i];
         }
         else if(!useConfiguredGridSpacing) {
             item.x = segStartPosition + (segColumn * itmWidth);
@@ -2816,7 +2815,10 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
     setupDecorationProps(&mainOpt);
 
     // The delegate paints the item background along with its contents
+    painter->save();
+    painter->setClipRect(mainOpt.rect, Qt::IntersectClip);
     delegate(iconIndex)->paint(painter, mainOpt, iconIndex);
+    painter->restore();
 
     if(currentRowHasFocus) {
         drawFocus(painter, opt, index);

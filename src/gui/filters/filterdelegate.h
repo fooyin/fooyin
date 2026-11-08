@@ -21,6 +21,7 @@
 
 #include "fygui_export.h"
 
+#include "filterfwd.h"
 #include "filteritem.h"
 
 #include <gui/widgets/expandedtreeview.h>
@@ -42,6 +43,7 @@ public:
 
     void setArtworkCornerRadius(int radius);
     void setArtworkMargins(const QMargins& margins);
+    void setArtworkScaling(ArtworkScaling scaling);
     void setCoverFlowCacheSize(int sizeMb);
 
 private:
@@ -75,6 +77,7 @@ private:
     void cacheCoverFlowPixmap(const QString& key, const QPixmap& pixmap) const;
 
     int m_artworkCornerRadius;
+    ArtworkScaling m_artworkScaling;
     QMargins m_artworkMargins;
     mutable QCache<QString, QPixmap> m_coverFlowPixmaps;
 };

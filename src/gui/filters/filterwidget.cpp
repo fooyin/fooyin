@@ -83,6 +83,7 @@ constexpr auto FilterSourceKey                 = u"Filters/Source";
 constexpr auto FilterKeepAliveKey              = u"Filters/KeepAlive";
 constexpr auto FilterIconSizeKey               = u"Filters/IconSize";
 constexpr auto FilterAutoFitArtworkKey         = u"Filters/AutoFitArtwork";
+constexpr auto FilterArtworkScalingKey         = u"Filters/ArtworkScaling";
 constexpr auto FilterIconHorizontalGapKey      = u"Filters/IconHorizontalGap";
 constexpr auto FilterIconVerticalGapKey        = u"Filters/IconVerticalGap";
 constexpr auto FilterArtworkRadiusKey          = u"Filters/ArtworkCornerRadius";
@@ -649,11 +650,13 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.autoSwitch      = m_settings->fileValue(FilterAutoSwitchKey, config.autoSwitch).toBool();
     config.preservePlaybackPlaylist
         = m_settings->fileValue(FilterKeepAliveKey, config.preservePlaybackPlaylist).toBool();
-    config.playlistName        = m_settings->fileValue(FilterAutoPlaylistKey, config.playlistName).toString();
-    config.restoreState        = m_settings->fileValue(FilterRestoreStateKey, config.restoreState).toBool();
-    config.rowHeight           = m_settings->fileValue(FilterRowHeightKey, config.rowHeight).toInt();
-    config.iconSize            = m_settings->fileValue(FilterIconSizeKey, config.iconSize).toSize();
-    config.autoFitArtwork      = m_settings->fileValue(FilterAutoFitArtworkKey, config.autoFitArtwork).toBool();
+    config.playlistName   = m_settings->fileValue(FilterAutoPlaylistKey, config.playlistName).toString();
+    config.restoreState   = m_settings->fileValue(FilterRestoreStateKey, config.restoreState).toBool();
+    config.rowHeight      = m_settings->fileValue(FilterRowHeightKey, config.rowHeight).toInt();
+    config.iconSize       = m_settings->fileValue(FilterIconSizeKey, config.iconSize).toSize();
+    config.autoFitArtwork = m_settings->fileValue(FilterAutoFitArtworkKey, config.autoFitArtwork).toBool();
+    config.artworkScaling = Constants::artworkScalingFromInt(
+        m_settings->fileValue(FilterArtworkScalingKey, static_cast<int>(config.artworkScaling)).toInt());
     config.iconHorizontalGap   = m_settings->fileValue(FilterIconHorizontalGapKey, config.iconHorizontalGap).toInt();
     config.iconVerticalGap     = m_settings->fileValue(FilterIconVerticalGapKey, config.iconVerticalGap).toInt();
     config.artworkCornerRadius = m_settings->fileValue(FilterArtworkRadiusKey, config.artworkCornerRadius).toInt();
@@ -761,6 +764,7 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterRowHeightKey, config.rowHeight);
     m_settings->fileSet(FilterIconSizeKey, config.iconSize);
     m_settings->fileSet(FilterAutoFitArtworkKey, config.autoFitArtwork);
+    m_settings->fileSet(FilterArtworkScalingKey, static_cast<int>(config.artworkScaling));
     m_settings->fileSet(FilterIconHorizontalGapKey, config.iconHorizontalGap);
     m_settings->fileSet(FilterIconVerticalGapKey, config.iconVerticalGap);
     m_settings->fileSet(FilterArtworkRadiusKey, config.artworkCornerRadius);
@@ -829,6 +833,7 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterRowHeightKey);
     m_settings->fileRemove(FilterIconSizeKey);
     m_settings->fileRemove(FilterAutoFitArtworkKey);
+    m_settings->fileRemove(FilterArtworkScalingKey);
     m_settings->fileRemove(FilterIconHorizontalGapKey);
     m_settings->fileRemove(FilterIconVerticalGapKey);
     m_settings->fileRemove(FilterArtworkRadiusKey);
@@ -910,6 +915,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     validated.iconHorizontalGap   = std::max(validated.iconHorizontalGap, -1);
     validated.iconVerticalGap     = std::max(validated.iconVerticalGap, 0);
     validated.artworkCornerRadius = std::clamp(validated.artworkCornerRadius, 0, 100);
+    validated.artworkScaling      = Constants::artworkScalingFromInt(static_cast<int>(validated.artworkScaling));
     validated.artworkMargins      = Gui::marginsFromJson({}, validated.artworkMargins);
     validated.gridMargins         = Gui::marginsFromJson({}, validated.gridMargins);
 
@@ -970,7 +976,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.preservePlaybackPlaylist != validated.preservePlaybackPlaylist
        || m_config.playlistName != validated.playlistName || m_config.restoreState != validated.restoreState
        || m_config.rowHeight != validated.rowHeight || m_config.iconSize != validated.iconSize
-       || m_config.autoFitArtwork != validated.autoFitArtwork
+       || m_config.autoFitArtwork != validated.autoFitArtwork || m_config.artworkScaling != validated.artworkScaling
        || m_config.iconHorizontalGap != validated.iconHorizontalGap
        || m_config.iconVerticalGap != validated.iconVerticalGap
        || m_config.overrideGridMargins != validated.overrideGridMargins || m_config.gridMargins != validated.gridMargins
@@ -1037,6 +1043,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     }
 
     m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
+    m_delegate->setArtworkScaling(m_config.artworkScaling);
     updateArtworkMargins();
     m_view->changeIconSize(m_config.iconSize);
     m_model->setIconSize(m_view->effectiveIconSize());
@@ -1096,8 +1103,10 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     if(layout.contains("IconWidth"_L1) && layout.contains("IconHeight"_L1)) {
         config.iconSize = {layout.value("IconWidth"_L1).toInt(), layout.value("IconHeight"_L1).toInt()};
     }
-    config.iconHorizontalGap   = layout.value("IconHorizontalGap"_L1).toInt(config.iconHorizontalGap);
-    config.autoFitArtwork      = layout.value("AutoFitArtwork"_L1).toBool(config.autoFitArtwork);
+    config.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt(config.iconHorizontalGap);
+    config.autoFitArtwork    = layout.value("AutoFitArtwork"_L1).toBool(config.autoFitArtwork);
+    config.artworkScaling    = Constants::artworkScalingFromInt(
+        layout.value("ArtworkScaling"_L1).toInt(static_cast<int>(config.artworkScaling)));
     config.iconVerticalGap     = layout.value("IconVerticalGap"_L1).toInt(config.iconVerticalGap);
     config.overrideGridMargins = layout.value("OverrideGridMargins"_L1).toBool(config.overrideGridMargins);
     config.gridMargins         = Gui::marginsFromJson(layout.value("GridMargins"_L1).toObject(), config.gridMargins);
@@ -1197,6 +1206,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["IconHeight"_L1]                        = config.iconSize.height();
     layout["IconHorizontalGap"_L1]                 = config.iconHorizontalGap;
     layout["AutoFitArtwork"_L1]                    = config.autoFitArtwork;
+    layout["ArtworkScaling"_L1]                    = static_cast<int>(config.artworkScaling);
     layout["IconVerticalGap"_L1]                   = config.iconVerticalGap;
     layout["OverrideGridMargins"_L1]               = config.overrideGridMargins;
     layout["GridMargins"_L1]                       = Gui::marginsToJson(config.gridMargins);

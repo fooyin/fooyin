@@ -181,6 +181,7 @@ QSize richTextNaturalSize(const QStyleOptionViewItem& option, const RichText& ri
 FilterDelegate::FilterDelegate(QObject* parent)
     : QStyledItemDelegate{parent}
     , m_artworkCornerRadius{0}
+    , m_artworkScaling{ArtworkScaling::Fit}
     , m_coverFlowPixmaps{static_cast<qsizetype>(Settings::Gui::Internal::DefaultCoverFlowCacheSize * 1024 * 1024)}
 { }
 
@@ -242,8 +243,32 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     if(hasArtwork) {
         const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
         const auto mode  = opt.state.testFlag(QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled;
-        scaledArtwork = Utils::scalePixmap(artworkIcon.pixmap(decorationRect.size(), dpr, mode), decorationRect.size(),
-                                           dpr, true);
+        if(m_artworkScaling == ArtworkScaling::Fit) {
+            scaledArtwork = Utils::scalePixmap(artworkIcon.pixmap(decorationRect.size(), dpr, mode),
+                                               decorationRect.size(), dpr, true);
+        }
+        else {
+            QSize sourceSize = artworkIcon.actualSize(decorationRect.size(), mode);
+            if(sourceSize.isEmpty() || decorationRect.isEmpty()) {
+                sourceSize = decorationRect.size();
+            }
+            else {
+                sourceSize.scale(decorationRect.size(), Qt::KeepAspectRatioByExpanding);
+            }
+
+            const QSize targetSize{std::max(1, static_cast<int>(std::llround(decorationRect.width() * dpr))),
+                                   std::max(1, static_cast<int>(std::llround(decorationRect.height() * dpr)))};
+            const auto aspectMode
+                = m_artworkScaling == ArtworkScaling::Fill ? Qt::KeepAspectRatioByExpanding : Qt::IgnoreAspectRatio;
+            scaledArtwork
+                = artworkIcon.pixmap(sourceSize, dpr, mode).scaled(targetSize, aspectMode, Qt::SmoothTransformation);
+            if(m_artworkScaling == ArtworkScaling::Fill && !scaledArtwork.isNull()) {
+                scaledArtwork = scaledArtwork.copy((scaledArtwork.width() - targetSize.width()) / 2,
+                                                   (scaledArtwork.height() - targetSize.height()) / 2,
+                                                   targetSize.width(), targetSize.height());
+            }
+            scaledArtwork.setDevicePixelRatio(dpr);
+        }
     }
 
     const auto drawArtwork = [&]() {
@@ -385,6 +410,11 @@ void FilterDelegate::setArtworkCornerRadius(int radius)
 void FilterDelegate::setArtworkMargins(const QMargins& margins)
 {
     m_artworkMargins = margins;
+}
+
+void FilterDelegate::setArtworkScaling(ArtworkScaling scaling)
+{
+    m_artworkScaling = scaling;
 }
 
 void FilterDelegate::setCoverFlowCacheSize(int sizeMb)

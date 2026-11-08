@@ -155,6 +155,7 @@ public:
         int rowHeight{0};
         QSize iconSize{100, 100};
         bool autoFitArtwork{true};
+        ArtworkScaling artworkScaling{ArtworkScaling::Fit};
         int iconHorizontalGap{-1};
         int iconVerticalGap{10};
         bool overrideGridMargins{false};

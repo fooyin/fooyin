@@ -93,6 +93,7 @@ private:
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
     QCheckBox* m_autoFitArtwork;
+    QComboBox* m_artworkScaling;
     QSpinBox* m_iconHorizontalGap;
     QSpinBox* m_iconVerticalGap;
     QCheckBox* m_overrideGridMargins;
