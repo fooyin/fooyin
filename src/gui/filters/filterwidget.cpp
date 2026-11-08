@@ -92,6 +92,7 @@ constexpr auto FilterOverrideGridMarginsKey    = u"Filters/OverrideGridMargins";
 constexpr auto FilterGridMarginsKey            = u"Filters/GridMargins";
 
 constexpr auto FilterExpandGroupsKey                = u"Filters/ExpandGroups";
+constexpr auto FilterExpansionPositionKey           = u"Filters/ExpansionPosition";
 constexpr auto FilterExpansionAnimatedKey           = u"Filters/ExpansionAnimated";
 constexpr auto FilterExpansionAnimationDurationKey  = u"Filters/ExpansionAnimationDuration";
 constexpr auto FilterExpansionAlternatingRowsKey    = u"Filters/ExpansionAlternatingRows";
@@ -667,6 +668,8 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.gridMargins = Gui::marginsFromJson(
         QJsonObject::fromVariantMap(m_settings->fileValue(FilterGridMarginsKey).toMap()), config.gridMargins);
     config.expandGroups      = m_settings->fileValue(FilterExpandGroupsKey, config.expandGroups).toBool();
+    config.expansionPosition = static_cast<ExpandedTreeView::ExpansionPosition>(std::clamp(
+        m_settings->fileValue(FilterExpansionPositionKey, static_cast<int>(config.expansionPosition)).toInt(), 0, 2));
     config.expansionAnimated = m_settings->fileValue(FilterExpansionAnimatedKey, config.expansionAnimated).toBool();
     config.expansionAnimationDuration = std::clamp(
         m_settings->fileValue(FilterExpansionAnimationDurationKey, config.expansionAnimationDuration).toInt(), 50,
@@ -767,6 +770,7 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterGridMarginsKey, Gui::marginsToJson(config.gridMargins).toVariantMap());
     m_settings->fileSet(FilterExpandGroupsKey, config.expandGroups);
     m_settings->fileSet(FilterExpansionAnimatedKey, config.expansionAnimated);
+    m_settings->fileSet(FilterExpansionPositionKey, static_cast<int>(config.expansionPosition));
     m_settings->fileSet(FilterExpansionAnimationDurationKey, config.expansionAnimationDuration);
     m_settings->fileSet(FilterExpansionAlternatingRowsKey, config.expansionAlternatingRows);
     m_settings->fileSet(FilterExpansionMatchGridMarginsKey, config.expansionMatchGridMargins);
@@ -834,6 +838,7 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterGridMarginsKey);
     m_settings->fileRemove(FilterExpandGroupsKey);
     m_settings->fileRemove(FilterExpansionAnimatedKey);
+    m_settings->fileRemove(FilterExpansionPositionKey);
     m_settings->fileRemove(FilterExpansionAnimationDurationKey);
     m_settings->fileRemove(FilterExpansionAlternatingRowsKey);
     m_settings->fileRemove(FilterExpansionMatchGridMarginsKey);
@@ -916,6 +921,12 @@ void FilterWidget::applyConfig(const ConfigData& config)
     validated.iconSize
         = validated.iconSize.expandedTo({minIconSize, minIconSize}).boundedTo({maxIconSize, maxIconSize});
 
+    if(validated.expansionPosition != ExpandedTreeView::ExpansionPosition::Below
+       && validated.expansionPosition != ExpandedTreeView::ExpansionPosition::Above
+       && validated.expansionPosition != ExpandedTreeView::ExpansionPosition::Automatic) {
+        validated.expansionPosition = ExpandedTreeView::ExpansionPosition::Below;
+    }
+
     validated.expansionAnimationDuration        = std::clamp(validated.expansionAnimationDuration, 50, 2000);
     validated.expansionArtworkMargins           = Gui::marginsFromJson({}, validated.expansionArtworkMargins);
     validated.expansionArtworkSize              = std::clamp(validated.expansionArtworkSize, 50, 200);
@@ -967,6 +978,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.overrideArtworkMargins != validated.overrideArtworkMargins
        || m_config.artworkMargins != validated.artworkMargins || m_config.expandGroups != validated.expandGroups
        || m_config.expansionAnimated != validated.expansionAnimated
+       || m_config.expansionPosition != validated.expansionPosition
        || m_config.expansionAnimationDuration != validated.expansionAnimationDuration
        || m_config.expandedArtwork != validated.expandedArtwork
        || m_config.expansionScripts != validated.expansionScripts
@@ -993,6 +1005,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     m_header->setCollapsed(!m_config.showHeader);
     m_view->setCollapseDelayEnabled(doubleClickAction() != TrackAction::None);
     m_view->setExpansionAnimated(m_config.expansionAnimated);
+    m_view->setExpansionPosition(m_config.expansionPosition);
     m_view->setExpansionAnimationDuration(m_config.expansionAnimationDuration);
     m_view->setExpansionMatchGridMargins(m_config.expansionMatchGridMargins);
     m_view->setBackgroundConfig(m_config.background);
@@ -1129,6 +1142,8 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
         = layout.value("ExpansionPlayingRowColour"_L1).toString(config.expansionPlayingRowColour);
     config.expandGroups      = layout.value("ExpandGroups"_L1).toBool(config.expandGroups);
     config.expansionAnimated = layout.value("ExpansionAnimated"_L1).toBool(config.expansionAnimated);
+    config.expansionPosition = static_cast<ExpandedTreeView::ExpansionPosition>(
+        std::clamp(layout.value("ExpansionPosition"_L1).toInt(static_cast<int>(config.expansionPosition)), 0, 2));
     config.expansionAnimationDuration
         = std::clamp(layout.value("ExpansionAnimationDuration"_L1).toInt(config.expansionAnimationDuration), 50, 2000);
     config.expandedArtwork     = layout.value("ExpandedArtwork"_L1).toBool(config.expandedArtwork);
@@ -1190,6 +1205,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["ArtworkMargins"_L1]                    = Gui::marginsToJson(config.artworkMargins);
     layout["ExpandGroups"_L1]                      = config.expandGroups;
     layout["ExpansionAnimated"_L1]                 = config.expansionAnimated;
+    layout["ExpansionPosition"_L1]                 = static_cast<int>(config.expansionPosition);
     layout["ExpansionAnimationDuration"_L1]        = config.expansionAnimationDuration;
     layout["ExpansionAlternatingRows"_L1]          = config.expansionAlternatingRows;
     layout["ExpansionMatchGridMargins"_L1]         = config.expansionMatchGridMargins;
@@ -1897,14 +1913,17 @@ void FilterWidget::applyExpansionContent(const ExpansionResult& result)
         if(m_pendingScrollPosition >= 0) {
             restoreScrollPosition();
         }
-        else if(changed) {
+        else if(changed && m_expansion->isVisible()) {
             const QRect iconRect     = m_view->visualRect(index);
             const int viewportHeight = m_view->viewport()->height();
             const int bottom         = m_expansion->y() + m_expansion->height();
             const int topMargin      = m_view->iconScrollTopMargin(index);
-            // Keep the selected icon and its top spacing visible while showing the expansion
-            const int scroll = std::clamp(bottom - viewportHeight, 0, std::max(0, iconRect.top() - topMargin));
-            if(scroll > 0) {
+            // Keep the selected icon visible while revealing the expansion on either side
+            const int scroll
+                = m_expansion->property("expansionAbove").toBool()
+                    ? std::clamp(m_expansion->y(), -std::max(0, viewportHeight - iconRect.bottom() - 1 - topMargin), 0)
+                    : std::clamp(bottom - viewportHeight, 0, std::max(0, iconRect.top() - topMargin));
+            if(scroll != 0) {
                 auto* bar = m_view->verticalScrollBar();
                 bar->setValue(bar->value() + scroll);
             }

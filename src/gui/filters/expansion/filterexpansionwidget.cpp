@@ -34,6 +34,7 @@
 #include <utils/utils.h>
 
 #include <QApplication>
+#include <QDynamicPropertyChangeEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
@@ -576,6 +577,15 @@ bool FilterExpansionWidget::eventFilter(QObject* watched, QEvent* event)
     return QWidget::eventFilter(watched, event);
 }
 
+bool FilterExpansionWidget::event(QEvent* event)
+{
+    if(event->type() == QEvent::DynamicPropertyChange
+       && static_cast<QDynamicPropertyChangeEvent*>(event)->propertyName() == "expansionAbove") {
+        updateLayout();
+    }
+    return QWidget::event(event);
+}
+
 void FilterExpansionWidget::mousePressEvent(QMouseEvent* event)
 {
     // Prevent closing on artwork click
@@ -590,14 +600,18 @@ void FilterExpansionWidget::paintEvent(QPaintEvent* /*event*/)
     const QColor background = customColour.isValid() ? customColour : defaultBackgroundColour();
 
     QPainterPath shape;
-    shape.addRect(rect().adjusted(0, m_previewMode ? 0 : PointerHeight, 0, 0));
+    const bool above        = property("expansionAbove").toBool();
+    const int pointerHeight = m_previewMode ? 0 : PointerHeight;
+    shape.addRect(rect().adjusted(0, above ? 0 : pointerHeight, 0, above ? -pointerHeight : 0));
 
     if(!m_previewMode) {
         const int anchor = std::clamp(property("expansionAnchor").toInt(), PointerHeight,
                                       std::max(PointerHeight, width() - PointerHeight));
-        shape.addPolygon(QPolygonF{{static_cast<qreal>(anchor - PointerHeight), PointerHeight},
-                                   {static_cast<qreal>(anchor), 0},
-                                   {static_cast<qreal>(anchor + PointerHeight), PointerHeight}});
+        const int edge   = above ? height() - PointerHeight : PointerHeight;
+        const int tip    = above ? height() : 0;
+        shape.addPolygon(QPolygonF{{static_cast<qreal>(anchor - PointerHeight), static_cast<qreal>(edge)},
+                                   {static_cast<qreal>(anchor), static_cast<qreal>(tip)},
+                                   {static_cast<qreal>(anchor + PointerHeight), static_cast<qreal>(edge)}});
     }
 
     painter.save();
@@ -625,7 +639,7 @@ void FilterExpansionWidget::paintEvent(QPaintEvent* /*event*/)
                 = std::ceil(Gui::artworkReflectionHeight(target.height(), m_artworkReflection) * dpr) / dpr;
             const qreal bottom = target.bottom() + 1 + m_artworkReflection.gap + reflectionHeight;
 
-            if(bottom <= height()) {
+            if(bottom <= height() - (above ? pointerHeight : 0)) {
                 Gui::drawArtworkReflection(painter, m_artwork, m_scaledArtwork, target, 0, m_artworkReflection);
             }
         }
@@ -791,25 +805,27 @@ void FilterExpansionWidget::updateLayout()
 
     const auto metrics        = layoutMetrics(width());
     const int pointerHeight   = m_previewMode ? 0 : PointerHeight;
+    const bool above          = property("expansionAbove").toBool();
+    const int topPointer      = above ? 0 : pointerHeight;
+    const int bottomPointer   = above ? pointerHeight : 0;
     const int extent          = metrics.artworkExtent;
     const bool artwork        = extent > 0;
     m_effectiveArtworkMargins = metrics.artworkMargins;
 
     const int artworkX
         = m_artworkOnLeft ? m_effectiveArtworkMargins.left() : width() - extent - m_effectiveArtworkMargins.right();
-    m_artworkRect
-        = artwork ? QRect{artworkX, pointerHeight + m_effectiveArtworkMargins.top(), extent, extent} : QRect{};
+    m_artworkRect = artwork ? QRect{artworkX, topPointer + m_effectiveArtworkMargins.top(), extent, extent} : QRect{};
 
     const int artworkMargin
         = artwork ? extent + m_effectiveArtworkMargins.left() + m_effectiveArtworkMargins.right() : ContentMargin;
     const int controlsMargin = metrics.controlsMargin;
 
-    layout()->setContentsMargins(m_artworkOnLeft ? artworkMargin : controlsMargin, pointerHeight + ContentMargin,
-                                 m_artworkOnLeft ? controlsMargin : artworkMargin, ContentMargin);
+    layout()->setContentsMargins(m_artworkOnLeft ? artworkMargin : controlsMargin, topPointer + ContentMargin,
+                                 m_artworkOnLeft ? controlsMargin : artworkMargin, bottomPointer + ContentMargin);
 
     const QSize closeSize = m_close->sizeHint();
     const int closeX      = m_artworkOnLeft ? width() - closeSize.width() - 2 : 2;
-    m_close->setGeometry({closeX, pointerHeight + 2, closeSize.width(), closeSize.height()});
+    m_close->setGeometry({closeX, topPointer + 2, closeSize.width(), closeSize.height()});
 
     update();
 }

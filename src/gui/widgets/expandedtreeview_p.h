@@ -215,6 +215,9 @@ public:
     QRect m_expansionRect;
     bool m_expansionAnimated{true};
     bool m_expansionMatchGridMargins{false};
+    ExpandedTreeView::ExpansionPosition m_expansionPosition{ExpandedTreeView::ExpansionPosition::Below};
+    bool m_expansionAbove{false};
+    bool m_expansionAnimationAbove{false};
     QVariantAnimation m_expansionAnimation;
     QPersistentModelIndex m_expansionAnimationIndex;
     QPersistentModelIndex m_expansionAnimationNextIndex;
@@ -223,6 +226,7 @@ public:
     QSize m_expansionAnimationViewSize;
     int m_expansionAnimationHeight{-1};
     int m_expansionAnimationScrollMax{0};
+    int m_expansionAnimationScrollRemainder{0};
     QRect m_dropIndicatorRect;
     ExpandedTreeView::DropIndicatorPosition m_dropIndicatorPos{ExpandedTreeView::OnViewport};
 

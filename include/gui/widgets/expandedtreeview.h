@@ -85,6 +85,14 @@ public:
     };
     Q_ENUM(CaptionDisplay)
 
+    enum class ExpansionPosition : uint8_t
+    {
+        Below = 0,
+        Above,
+        Automatic,
+    };
+    Q_ENUM(ExpansionPosition)
+
     class CoverFlowStyleOption : public QStyleOptionViewItem
     {
     public:
@@ -210,6 +218,7 @@ public:
     [[nodiscard]] QModelIndex expandedIndex() const;
     void prepareExpansionChange();
     void setExpandedIndex(const QModelIndex& index);
+    void setExpansionPosition(ExpansionPosition position);
     void setExpansionWidget(QWidget* widget);
     void setExpansionAnimated(bool enabled);
     void setExpansionAnimationDuration(int duration);

@@ -2006,6 +2006,8 @@ public:
     void drawView(QPainter* painter, const QRegion& region) const override;
 
     [[nodiscard]] bool canReuseMeasurements() const;
+    [[nodiscard]] QRect rowRect(const QModelIndex& index) const;
+    [[nodiscard]] int expansionRow(const QModelIndex& index, bool above) const;
     [[nodiscard]] int spacing() const override;
     [[nodiscard]] QSize effectiveIconSize() const override;
     bool resizeIcons(int steps) override;
@@ -2147,6 +2149,31 @@ void IconView::drawView(QPainter* painter, const QRegion& region) const
 bool IconView::canReuseMeasurements() const
 {
     return !empty() && m_uniformRowWidth > 0 && m_layoutBounds.width() == viewport()->width();
+}
+
+QRect IconView::rowRect(const QModelIndex& index) const
+{
+    const int item = m_p->viewIndex(index);
+    if(item < 0 || m_segmentSize <= 0) {
+        return {};
+    }
+
+    const int rowStart = item - (item % m_segmentSize);
+    QRect rect;
+    for(int i{rowStart}; i < std::min(rowStart + m_segmentSize, itemCount()); ++i) {
+        rect |= viewItem(i).rect();
+    }
+    return mapToViewport(rect);
+}
+
+int IconView::expansionRow(const QModelIndex& index, bool above) const
+{
+    const int item = m_p->viewIndex(index);
+    if(item < 0 || m_segmentSize <= 0) {
+        return -1;
+    }
+
+    return item / m_segmentSize + (above ? 0 : 1);
 }
 
 int IconView::spacing() const
@@ -2683,15 +2710,24 @@ void IconView::layoutGrid(int width, FittedMeasurements& measurements)
                                          ? std::min(segEndPosition - (gridBounds.left() - segStartPosition), width)
                                          : width;
             const int expansionWidth = std::max(1, expansionRight - expansionLeft);
-            const int height     = animating ? m_p->m_expansionAnimationHeight
-                                             : std::max(1, m_p->m_expansionWidget->hasHeightForWidth()
-                                                               ? m_p->m_expansionWidget->heightForWidth(expansionWidth)
-                                                               : m_p->m_expansionWidget->sizeHint().height());
-            m_p->m_expansionRect = {expansionLeft, segPosition + deltaSegPosition, expansionWidth, height};
-            int gap              = std::max(spacing(), IconRowSpacing);
+            const int height = animating ? m_p->m_expansionAnimationHeight
+                                         : std::max(1, m_p->m_expansionWidget->hasHeightForWidth()
+                                                           ? m_p->m_expansionWidget->heightForWidth(expansionWidth)
+                                                           : m_p->m_expansionWidget->sizeHint().height());
+            int gap          = std::max(spacing(), IconRowSpacing);
             if(animating) {
                 const int fullHeight = std::max(1, m_p->animationSnapshot().deviceIndependentSize().toSize().height());
                 gap                  = static_cast<int>(std::lround(static_cast<double>(gap) * height / fullHeight));
+            }
+            const bool above = animating ? m_p->m_expansionAnimationAbove : m_p->m_expansionAbove;
+            // Keep the minimum gap on the side away from the selected row
+            const int expansionTop = above ? segPosition + gap - spacing() : segPosition + deltaSegPosition;
+            m_p->m_expansionRect   = {expansionLeft, expansionTop, expansionWidth, height};
+            if(above) {
+                for(int rowItem{i - segColumn}; rowItem <= i; ++rowItem) {
+                    viewItem(rowItem).y += height + gap;
+                    rect |= viewItem(rowItem).rect();
+                }
             }
             deltaSegPosition += height + gap;
             rect |= m_p->m_expansionRect;
@@ -4830,6 +4866,7 @@ void ExpandedTreeViewPrivate::updateExpansionGeometry()
     const auto index     = animating ? m_expansionAnimationIndex : m_expandedIndex;
     const bool expanded  = m_viewMode == ViewMode::Icon && index.isValid() && m_expansionRect.isValid();
     if(expanded) {
+        m_expansionWidget->setProperty("expansionAbove", m_expansionAbove);
         const int item = viewIndex(index);
         if(item >= 0) {
             const QRect anchor = m_view->mapToViewport(m_viewItems.at(item).rect());
@@ -4853,20 +4890,24 @@ void ExpandedTreeViewPrivate::updateExpansionAnimation(const QVariant& value)
         return;
     }
 
-    const QRect anchor = m_self->visualRect(m_expandedIndex);
+    const QModelIndex anchorIndex = m_expandedIndex.isValid() ? m_expandedIndex : m_expansionAnimationIndex;
+    const QRect anchor            = m_self->visualRect(anchorIndex);
 
     if(m_expansionAnimationNextIndex.isValid()
        && m_expansionAnimation.currentTime() >= m_expansionAnimation.duration() / 2) {
         m_expansionAnimationIndex = m_expansionAnimationNextIndex;
+        m_expansionAnimationAbove = m_expansionAbove;
     }
 
     m_expansionAnimationHeight = value.toInt();
     m_self->refreshExpansion();
 
     auto* bar = m_self->verticalScrollBar();
-    if(m_expansionAnimationNextIndex.isValid() && anchor.isValid()) {
-        const QRect updated = m_self->visualRect(m_expandedIndex);
-        bar->setValue(bar->value() + updated.top() - anchor.top());
+    if(anchor.isValid()) {
+        const QRect updated = m_self->visualRect(anchorIndex);
+        const int scroll    = bar->value() + updated.top() - anchor.top() + m_expansionAnimationScrollRemainder;
+        bar->setValue(scroll);
+        m_expansionAnimationScrollRemainder = scroll - bar->value();
     }
 
     if(m_expandedIndex.isValid()) {
@@ -4874,10 +4915,14 @@ void ExpandedTreeViewPrivate::updateExpansionAnimation(const QVariant& value)
         m_expansionSnapshot = captureExpansion();
         const QRect icon    = m_self->visualRect(m_expandedIndex);
         const int topMargin = m_self->iconScrollTopMargin(m_expandedIndex);
-        const int scroll = m_expansionAnimationIndex == m_expandedIndex
-                             ? std::clamp(m_expansionRect.bottom() + 1 - bar->value() - m_self->viewport()->height(), 0,
-                                          std::max(0, icon.top() - topMargin))
-                             : 0;
+        int scroll          = 0;
+        if(m_expansionAnimationIndex == m_expandedIndex) {
+            scroll = m_expansionAbove
+                       ? std::clamp(m_expansionRect.top() - bar->value(),
+                                    -std::max(0, m_self->viewport()->height() - icon.bottom() - 1 - topMargin), 0)
+                       : std::clamp(m_expansionRect.bottom() + 1 - bar->value() - m_self->viewport()->height(), 0,
+                                    std::max(0, icon.top() - topMargin));
+        }
         bar->setValue(bar->value() + scroll);
     }
     else {
@@ -4906,11 +4951,12 @@ const QPixmap& ExpandedTreeViewPrivate::animationSnapshot() const
 void ExpandedTreeViewPrivate::stopExpansionAnimation()
 {
     m_expansionAnimation.stop();
-    m_expansionAnimationIndex     = QModelIndex{};
-    m_expansionAnimationNextIndex = QModelIndex{};
-    m_expansionSnapshot           = {};
-    m_expansionPreviousSnapshot   = {};
-    m_expansionAnimationHeight    = -1;
+    m_expansionAnimationIndex           = QModelIndex{};
+    m_expansionAnimationNextIndex       = QModelIndex{};
+    m_expansionSnapshot                 = {};
+    m_expansionPreviousSnapshot         = {};
+    m_expansionAnimationHeight          = -1;
+    m_expansionAnimationScrollRemainder = 0;
 }
 
 void CoverFlowSettings::normalise()
@@ -5559,34 +5605,57 @@ void ExpandedTreeView::setExpandedIndex(const QModelIndex& index)
     }
 
     const QRect anchor         = visualRect(expanded);
+    const auto* iconView       = p->m_viewMode == ViewMode::Icon ? static_cast<IconView*>(p->m_view.get()) : nullptr;
+    const QRect row            = iconView ? iconView->rowRect(expanded) : QRect{};
+    const int viewportHeight   = viewport()->height();
     const QModelIndex previous = p->m_expansionAnimationHeight >= 0 ? p->m_expansionAnimationIndex : p->m_expandedIndex;
     const int previousHeight   = std::max(0, p->m_expansionRect.height());
-    const bool opening         = expanded.isValid() && !p->m_expandedIndex.isValid();
-    const bool closing         = !expanded.isValid() && previous.isValid() && previousHeight > 0;
-    const bool relocating      = expanded.isValid() && p->m_expandedIndex.isValid() && anchor.isValid()
-                              && visualRect(p->m_expandedIndex).top() != anchor.top();
-    const int duration         = style()->styleHint(QStyle::SH_Widget_Animation_Duration, nullptr, this);
-    const bool animate         = p->m_expansionAnimated && isVisible() && p->m_viewMode == ViewMode::Icon
-                              && p->m_expansionWidget && duration > 0
-                              && style()->styleHint(QStyle::SH_Widget_Animate, nullptr, this)
-                              && (opening || closing || relocating);
+    const bool previousAbove = p->m_expansionAnimationHeight >= 0 ? p->m_expansionAnimationAbove : p->m_expansionAbove;
+    const int previousRow    = iconView ? iconView->expansionRow(previous, previousAbove) : -1;
+    const int duration       = style()->styleHint(QStyle::SH_Widget_Animation_Duration, nullptr, this);
+
+    const bool switching  = expanded.isValid() && p->m_expandedIndex.isValid() && anchor.isValid();
+    const bool closing    = !expanded.isValid() && previous.isValid() && previousHeight > 0;
+    const bool canAnimate = p->m_expansionAnimated && isVisible() && p->m_viewMode == ViewMode::Icon
+                         && p->m_expansionWidget && duration > 0
+                         && style()->styleHint(QStyle::SH_Widget_Animate, nullptr, this);
 
     QPixmap snapshot;
     QPixmap previousSnapshot;
-    if(animate && relocating) {
+    if(canAnimate && switching) {
         previousSnapshot
             = p->m_expansionPreviousSnapshot.isNull() ? p->captureExpansion() : p->m_expansionPreviousSnapshot;
     }
-    if(animate && !expanded.isValid()) {
+    if(canAnimate && closing) {
         snapshot = p->m_expansionAnimationHeight >= 0 ? p->animationSnapshot() : p->captureExpansion();
     }
 
+    const bool changingRow = switching && visualRect(p->m_expandedIndex).top() != anchor.top();
+    const bool opening     = expanded.isValid() && !p->m_expandedIndex.isValid();
+
     p->stopExpansionAnimation();
     p->m_expandedIndex = expanded;
-    if(expanded.isValid() || !animate) {
+
+    if(opening || changingRow) {
+        p->m_expansionAbove = p->m_expansionPosition == ExpansionPosition::Above;
+    }
+    if(expanded.isValid() || !canAnimate || !closing) {
         refreshExpansion();
     }
 
+    if((opening || changingRow) && p->m_expansionPosition == ExpansionPosition::Automatic && row.isValid()) {
+        const int below = std::max(0, viewportHeight - row.bottom() - 1 - p->m_view->spacing());
+        const int above = std::max(0, row.top() - p->m_view->spacing());
+        if(p->m_expansionRect.height() > below && above > below) {
+            p->m_expansionAbove = true;
+            refreshExpansion();
+        }
+    }
+
+    // Opposite sides of adjacent icon rows share an insertion point
+    const bool relocating
+        = switching && iconView && previousRow != iconView->expansionRow(expanded, p->m_expansionAbove);
+    const bool animate     = canAnimate && (opening || closing || relocating);
     const int targetHeight = expanded.isValid() ? std::max(0, p->m_expansionRect.height()) : 0;
     if(animate && expanded.isValid() && targetHeight > 0) {
         snapshot = p->captureExpansion();
@@ -5599,6 +5668,7 @@ void ExpandedTreeView::setExpandedIndex(const QModelIndex& index)
         p->m_expansionAnimationScrollMax = verticalScrollBar()->maximum();
         p->m_expansionAnimationIndex     = relocating || !expanded.isValid() ? previous : expanded;
         p->m_expansionAnimationNextIndex = relocating ? expanded : QModelIndex{};
+        p->m_expansionAnimationAbove     = relocating || !expanded.isValid() ? previousAbove : p->m_expansionAbove;
         p->m_expansionAnimationHeight = relocating || !expanded.isValid() || expanded == previous ? previousHeight : 0;
 
         {
@@ -5619,6 +5689,11 @@ void ExpandedTreeView::setExpandedIndex(const QModelIndex& index)
         const QRect updated = visualRect(expanded);
         verticalScrollBar()->setValue(verticalScrollBar()->value() + updated.top() - anchor.top());
     }
+}
+
+void ExpandedTreeView::setExpansionPosition(ExpansionPosition position)
+{
+    p->m_expansionPosition = position;
 }
 
 void ExpandedTreeView::setExpansionWidget(QWidget* widget)
@@ -6334,7 +6409,11 @@ void ExpandedTreeView::paintEvent(QPaintEvent* event)
         const QRect rect = p->m_expansionRect.translated(0, -verticalScrollBar()->value());
         painter.save();
         painter.setClipRect(rect);
-        painter.drawPixmap(rect.topLeft(), p->animationSnapshot());
+        const auto& snapshot = p->animationSnapshot();
+        const int top        = p->m_expansionAnimationAbove
+                                 ? rect.bottom() + 1 - snapshot.deviceIndependentSize().toSize().height()
+                                 : rect.top();
+        painter.drawPixmap(QPoint{rect.left(), top}, snapshot);
         painter.restore();
     }
 

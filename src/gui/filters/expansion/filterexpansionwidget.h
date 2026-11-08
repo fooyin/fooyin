@@ -104,6 +104,7 @@ Q_SIGNALS:
     void trackStatsChanged(const Fooyin::TrackList& tracks, Fooyin::Track::Stat stat);
 
 protected:
+    bool event(QEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;

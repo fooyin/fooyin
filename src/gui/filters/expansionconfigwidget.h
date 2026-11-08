@@ -84,6 +84,7 @@ private:
     FontButton* m_expansionPlayingRowFont;
     ColourButton* m_expansionPlayingRowColour;
     QCheckBox* m_expandGroups;
+    QComboBox* m_expansionPosition;
     QCheckBox* m_expansionAnimated;
     QSpinBox* m_expansionAnimationDuration;
     QCheckBox* m_expansionAlternatingRows;

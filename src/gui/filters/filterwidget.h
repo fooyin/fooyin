@@ -165,6 +165,7 @@ public:
         CoverFlowSettings coverFlow;
         BackgroundConfig background;
         bool expandGroups{false};
+        ExpandedTreeView::ExpansionPosition expansionPosition{ExpandedTreeView::ExpansionPosition::Below};
         bool expansionAnimated{true};
         int expansionAnimationDuration{250};
         bool expansionAlternatingRows{false};
