@@ -611,17 +611,17 @@
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="607"/>
         <source>One-based index of the evaluated playlist row</source>
-        <translation type="unfinished"></translation>
+        <translation>Ett-baserat index av den utvärderade spellistsraden</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="610"/>
         <source>Grouping depth of the evaluated playlist row</source>
-        <translation type="unfinished"></translation>
+        <translation>Grupperingsdjup av den utvärderade spellistsraden</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="613"/>
         <source>Playback icon marker in supported views</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppspelnings-ikon-markör i stödda vyer</translation>
     </message>
     <message>
         <location filename="../../src/core/scripting/scriptregistry.cpp" line="615"/>
@@ -2362,7 +2362,7 @@
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="108"/>
         <source>&amp;Format</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Formatera</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="110"/>
@@ -2383,7 +2383,8 @@
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="137"/>
         <source>When enabled, the autoplaylist is fully reordered by its sort pattern whenever it regenerates.
 When disabled, existing track order is preserved and only newly added matching tracks are sorted and then appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>När på: Autospellistan ordnas om efter dess sorteringsmönster när det regenereras.
+När av: Existerande spårordning bevaras och endast nyligen tillagda matchande spår är sorterade och sedan tillagda.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="142"/>
@@ -2398,12 +2399,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="161"/>
         <source>Sort:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering:</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="163"/>
         <source>Format the query with line breaks and indentation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatera frågan med radbrytningar och indrag.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="166"/>
@@ -2443,12 +2444,12 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="503"/>
         <source>This query uses expressions that are not supported by the rule editor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här frågan använder uttryck som inte stöds av regelredigeraren.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="540"/>
         <source>This query cannot be represented as rules. Continue editing it in Script mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här regeln kan inte representeras som regler. Fortsätt redigera den i skriptläge.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="565"/>
@@ -2473,7 +2474,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="687"/>
         <source>Recently Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Nyligen spelade</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="690"/>
@@ -2483,7 +2484,7 @@ When disabled, existing track order is preserved and only newly added matching t
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="691"/>
         <source>Highly Rated</source>
-        <translation type="unfinished"></translation>
+        <translation>Högt betygsatta</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistdialog.cpp" line="692"/>
@@ -2527,7 +2528,8 @@ When disabled, existing track order is preserved and only newly added matching t
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="87"/>
         <source>Choose a preset or enter a sorting script. Use ‘Metadata tag…’ to read a tag directly.
 Clear to disable sorting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj en förinställning eller skriv in en sorteringsskript. Använd ”Metadata-tagg…” för att läsa en tagg direkt.
+Rensa för att stänga av sortering.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="93"/>
@@ -2538,7 +2540,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="94"/>
         <source>Choose a field or enter a tag name. Use ‘Metadata tag…’ to read a tag directly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj ett fält eller skriv in ett taggnamn. Använd ”Metadata-tagg…” för att läsa en tagg direkt.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistfieldcombobox.cpp" line="138"/>
@@ -2633,17 +2635,17 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="526"/>
         <source>Date added</source>
-        <translation type="unfinished"></translation>
+        <translation>Datum tillagt</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="527"/>
         <source>First played</source>
-        <translation type="unfinished"></translation>
+        <translation>Först spelat</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="528"/>
         <source>Last played</source>
-        <translation type="unfinished"></translation>
+        <translation>Senast spelat</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="529"/>
@@ -2698,7 +2700,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="972"/>
         <source>Enter a query.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in en fråga.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistquery.cpp" line="982"/>
@@ -2716,7 +2718,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="48"/>
         <source>Match any rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Matcha vilken regel som helst</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="49"/>
@@ -2746,7 +2748,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="62"/>
         <source>Includes every track in the library without applying rules.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkluderar varje spår i biblioteket utan att tillämpa regler.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="68"/>
@@ -2789,31 +2791,31 @@ Clear to disable sorting.</source>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="197"/>
         <source>Enter a tag name for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in ett taggnamn för regel %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="203"/>
         <source>The start date must not be after the end date for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Startdatumet får inte vara efter slutdatumet för regel %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="210"/>
         <source>Enter at least one valid value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in minst ett giltigt värde för regel %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="217"/>
         <source>Enter a value for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in ett värde för regel %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulegroupwidget.cpp" line="226"/>
         <source>Enter a number for rule %1.</source>
         <extracomment>%1 is a rule number, including its parent groups, e.g. 2.1.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in en siffra för regel %1.</translation>
     </message>
 </context>
 <context>
@@ -2842,7 +2844,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="233"/>
         <source>Remove rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort regel</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="70"/>
@@ -2864,32 +2866,32 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="446"/>
         <source>Enter at least one value.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in minst ett värde.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="447"/>
         <source>Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tomma rader ignoreras.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="448"/>
         <source>Enter a valid value on each line.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in ett giltigt värde på varje rad.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="451"/>
         <source>Values are durations in seconds. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Värden är tidslängder i sekunder. Tomma rader ignoreras.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="452"/>
         <source>Enter whole numbers. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in hela tal. Tomma rader ignoreras.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="454"/>
         <source>Enter whole numbers of seconds, from 0 to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Skriv in hela tal på sekunder, från 0 till %1.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="455"/>
@@ -2899,12 +2901,12 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="458"/>
         <source>Half-star ratings are supported. Empty lines are ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Halvstjärnsbetyg stöds. Tomma rader ignoreras.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="459"/>
         <source>Enter ratings from 0 to 5 in half-star steps.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv in betyg från 0 till 5 i halvstjärnssteg.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistrulerowwidget.cpp" line="476"/>
@@ -3069,7 +3071,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="57"/>
         <source>Randomise matching tracks before applying the track limit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Slumpa matchande spår innan tillämpning av spårgränsen.</translation>
     </message>
     <message>
         <location filename="../../src/gui/autoplaylist/autoplaylistruleswidget.cpp" line="74"/>
@@ -3324,7 +3326,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="155"/>
         <source>Track artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Spårkonstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="62"/>
@@ -3334,7 +3336,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="156"/>
         <source>Use track artwork as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>Använder spårkonstverk som bakgrunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="157"/>
@@ -3344,19 +3346,19 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="158"/>
         <source>Use the selected image file as the background</source>
-        <translation type="unfinished"></translation>
+        <translation>Använder den valda bildfilen som bakgrunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="159"/>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="331"/>
         <source>Global background</source>
-        <translation type="unfinished"></translation>
+        <translation>Global bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="160"/>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="332"/>
         <source>Use the shared main window background</source>
-        <translation type="unfinished"></translation>
+        <translation>Använder huvudfönstersbakgrunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="162"/>
@@ -3512,7 +3514,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="214"/>
         <source>Select which image source to use for the background</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj vilken bildkälla att använda till bakgrunden</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="215"/>
@@ -3577,7 +3579,7 @@ Clear to disable sorting.</source>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="256"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Positionering</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/backgroundconfigwidget.cpp" line="258"/>
@@ -4476,7 +4478,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="75"/>
         <source>Use the most recently active track selection, even after focus moves elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd den senaste aktiva spårselektionen, även efter att fokus flyttats vidare.</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/commandbuttonconfigdialog.cpp" line="86"/>
@@ -4587,7 +4589,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="97"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Defaulter</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="100"/>
@@ -4607,69 +4609,69 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="103"/>
         <source>Reset saved defaults to factory</source>
-        <translation type="unfinished"></translation>
+        <translation>Återställ sparade defaulter till fabrik</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="151"/>
         <source>Presets</source>
-        <translation type="unfinished">Förinställningar</translation>
+        <translation>Förinställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="156"/>
         <source>Save preset…</source>
-        <translation type="unfinished">Spara förinställning…</translation>
+        <translation>Spara förinställning…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="157"/>
         <source>Restore preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Återhämta förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="158"/>
         <source>Delete preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Radera förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="163"/>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="181"/>
         <source>Save Preset</source>
-        <translation type="unfinished">Spara förinställning</translation>
+        <translation>Spara förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="163"/>
         <source>Preset name</source>
-        <translation type="unfinished"></translation>
+        <translation>Förinställningsnamn</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="171"/>
         <source>Replace Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätt förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="171"/>
         <source>Replace the preset ‘%1’?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätt förinställningen ”%1”?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="181"/>
         <source>The preset could not be saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Förinställningen kunde inte sparas.</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="217"/>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="226"/>
         <source>Delete Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Radera förinställning</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="217"/>
         <source>Delete the preset ‘%1’?</source>
-        <translation type="unfinished"></translation>
+        <translation>Radera förinställningen ”%1”?</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/configdialog.cpp" line="226"/>
         <source>The preset could not be deleted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Förinställningen kunde inte raderas.</translation>
     </message>
 </context>
 <context>
@@ -4796,7 +4798,7 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="295"/>
         <source>Converting files (%1 of %2 finished)</source>
-        <translation type="unfinished"></translation>
+        <translation>Konverterar filer (%1 av %2 klara)</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/conversioncontroller.cpp" line="296"/>
@@ -5194,17 +5196,18 @@ Paranoid: utför de noggrannaste tillgängliga kontroller och additionella åter
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="563"/>
         <source>Maximum number of files to convert at the same time.
 Automatic uses the available processor threads.</source>
-        <translation type="unfinished"></translation>
+        <translation>Max antal filer att konvertera samtidigt.
+Automatisk använder de tillgängliga processortrådarna.</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="566"/>
         <source>Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>Prestanda</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="570"/>
         <source>Maximum simultaneous conversions</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximala samtidiga konverteringar</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="574"/>
@@ -5290,7 +5293,7 @@ Automatic uses the available processor threads.</source>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1159"/>
         <source>64-bit floating point</source>
-        <translation type="unfinished"></translation>
+        <translation>64-bitars flyttal</translation>
     </message>
     <message>
         <location filename="../../src/gui/conversion/convertersetupdialog.cpp" line="1205"/>
@@ -6048,12 +6051,12 @@ Automatic uses the available processor threads.</source>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="107"/>
         <source>General</source>
-        <translation type="unfinished">Generellt</translation>
+        <translation>Generellt</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="108"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowserconfigwidget.cpp" line="111"/>
@@ -6614,7 +6617,13 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
 
 • Right-click any widget to split, replace, or remove it using the context menu.</source>
         <extracomment>%1 and %2 are native names or symbols for the split and replace modifier keys.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>• Hitta widgetar i panelen till höger (hovra vid högra kanten om den är gömd).
+
+• Dra widgetar från panelen för att lägga till dem, eller dra existerande för att flytta dem. Håll i %1 för att splitta målwidgeten, eller %2 för att ersätta den.
+
+• Välj en widget för att se dess föräldracontainrar i brödsmulsfältet. Välj en förälder för att flytta en hel sektion.
+
+• Högerklicka valfri widget för att splitta, ersätta eller ta bort den med snabbmenyn.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layout/editablelayout.cpp" line="529"/>
@@ -8147,7 +8156,7 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="252"/>
         <source>This action is deprecated and will be removed in a future release. Use ‘Delete’ with the target set to ‘Playing track’ instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Den här handlingen är föråldrad och kommer tas bort i en framtida version. Använd ”Radera” med målet satt till ”Spelande spår” istället.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="298"/>
@@ -8275,17 +8284,17 @@ Effekter här bearbetar den slutgiltiga kombinerade utgången.</translation>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="67"/>
         <source>Layout</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="68"/>
         <source>Appearance</source>
-        <translation type="unfinished">Utseende</translation>
+        <translation>Utseende</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="85"/>
         <source>Auto</source>
-        <translation type="unfinished">Auto</translation>
+        <translation>Auto</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="106"/>
@@ -8336,12 +8345,12 @@ Negative values reverse the tilt; 0° keeps artwork flat.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="117"/>
         <source>Items on each side</source>
-        <translation type="unfinished"></translation>
+        <translation>Föremål på varsin sida</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="118"/>
         <source>Set the number of items on each side. ‘Auto’ fills the available width.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sätt antalet föremål på varsin sida. ”Auto” fyller den tillgängliga bredden.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="123"/>
@@ -8351,7 +8360,7 @@ Negative values reverse the tilt; 0° keeps artwork flat.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="124"/>
         <source>Size progression</source>
-        <translation type="unfinished"></translation>
+        <translation>Storleksprogression</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="125"/>
@@ -8372,7 +8381,7 @@ At 100%, all artwork stays the same size.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="129"/>
         <source>Perspective</source>
-        <translation type="unfinished"></translation>
+        <translation>Perspektiv</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="130"/>
@@ -8393,32 +8402,32 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="138"/>
         <source>Scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrollning</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="139"/>
         <source>Animate scrolling</source>
-        <translation type="unfinished"></translation>
+        <translation>Animera skrollning</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="140"/>
         <source>Animate scrolling when selecting artwork or using the mouse wheel, touchpad or keyboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Animera skrollning vid selektion av konstverk eller vid användning skrollhjulet, pekplattan eller tangentbordet.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="141"/>
         <source>Animation duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Animeringslängd</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="142"/>
         <source>Duration of the scrolling animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidslängd på skrollningsanimeringen</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="143"/>
         <source>Scroll sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrollkänslighet</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="144"/>
@@ -8428,17 +8437,17 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="147"/>
         <source>Below artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Under konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="147"/>
         <source>Above artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Ovanför konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="147"/>
         <source>On artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>På konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="148"/>
@@ -8448,12 +8457,12 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="152"/>
         <source>Labels</source>
-        <translation type="unfinished">Etiketter</translation>
+        <translation>Etiketter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="153"/>
         <source>Show labels</source>
-        <translation type="unfinished">Visa etiketter</translation>
+        <translation>Visa etiketter</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="154"/>
@@ -8463,7 +8472,7 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="155"/>
         <source>Position</source>
-        <translation type="unfinished">Position</translation>
+        <translation>Position</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="158"/>
@@ -8478,7 +8487,7 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="160"/>
         <source>Spacing</source>
-        <translation type="unfinished">Mellanrum</translation>
+        <translation>Mellanrum</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="161"/>
@@ -8488,52 +8497,52 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="166"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished">Konstverksreflektion</translation>
+        <translation>Konstverksreflektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="167"/>
         <source>Show artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa konstverksreflektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="168"/>
         <source>Draw a fading reflection below the artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Rita en tonande reflektion under konstverket</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="169"/>
         <source>Height</source>
-        <translation type="unfinished">Höjd</translation>
+        <translation>Höjd</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="170"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished">Reflektionshöjd som en procent av konstverkshöjden</translation>
+        <translation>Reflektionshöjd som en procent av konstverkshöjden</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="171"/>
         <source>Opacity</source>
-        <translation type="unfinished">Opacitet</translation>
+        <translation>Opacitet</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="172"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished">Opacitet vid toppen av reflektionen, med toning till genomskinlig</translation>
+        <translation>Opacitet vid toppen av reflektionen, med toning till genomskinlig</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="173"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished">Mellanrum under konstverk</translation>
+        <translation>Mellanrum under konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="174"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished">Mellanrum mellan konstverket och dess reflektion</translation>
+        <translation>Mellanrum mellan konstverket och dess reflektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/coverflowconfigwidget.cpp" line="177"/>
         <source>Preview</source>
-        <translation type="unfinished">Förhandsvisning</translation>
+        <translation>Förhandsvisning</translation>
     </message>
 </context>
 <context>
@@ -8542,107 +8551,107 @@ Higher values make side artwork fainter.</source>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="62"/>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="107"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="63"/>
         <source>Font</source>
-        <translation type="unfinished">Typsnitt</translation>
+        <translation>Typsnitt</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="64"/>
         <source>Background colour</source>
-        <translation type="unfinished">Bakgrundsfärg</translation>
+        <translation>Bakgrundsfärg</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="65"/>
         <source>Expand selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandera vald grupp</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="66"/>
         <source>Animate expansion and collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Animera expandering och kollapsande</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="68"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Zebramönstrade rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="69"/>
         <source>Show artwork in expanded groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa konstverk i expanderade grupper</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="70"/>
         <source>Show close button</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa stängknapp</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="71"/>
         <source>Show artwork reflection</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa konstverksreflektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="75"/>
         <source>Remove margins when artwork fills the height</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort marginaler när konstverk fyller höjden</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="100"/>
         <source>Colour</source>
-        <translation type="unfinished">Färg</translation>
+        <translation>Färg</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="104"/>
         <source>Behaviour</source>
-        <translation type="unfinished">Beteende</translation>
+        <translation>Beteende</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="105"/>
         <source>Appearance</source>
-        <translation type="unfinished">Utseende</translation>
+        <translation>Utseende</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="106"/>
         <source>Scripts</source>
-        <translation type="unfinished">Skript</translation>
+        <translation>Skript</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="113"/>
         <source>Use display script when empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd displayskript när tomt</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="114"/>
         <source>Leave empty to disable subheaders</source>
-        <translation type="unfinished"></translation>
+        <translation>Lämna tomt för att stänga av underrubriker</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="119"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Grupperingsskript</translation>
+        <translation>Grupperingsskript</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="121"/>
         <source>Display script</source>
-        <translation type="unfinished">Displayskript</translation>
+        <translation>Displayskript</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="127"/>
         <source>Header</source>
-        <translation type="unfinished">Rubrik</translation>
+        <translation>Rubrik</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="128"/>
         <source>Subheader</source>
-        <translation type="unfinished"></translation>
+        <translation>Underrubrik</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="129"/>
         <source>Track</source>
-        <translation type="unfinished">Spår</translation>
+        <translation>Spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="130"/>
@@ -8657,7 +8666,7 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="141"/>
         <source>Use &lt;b&gt;&amp;lt;left&amp;gt;&lt;/b&gt; and &lt;b&gt;&amp;lt;right&amp;gt;&lt;/b&gt; for alignment, and &lt;b&gt;&amp;lt;hr/&amp;gt;&lt;/b&gt; for rules.</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd &lt;b&gt;&amp;lt;left&amp;gt;&lt;/b&gt; och &lt;b&gt;&amp;lt;right&amp;gt;&lt;/b&gt; för positionering, och &lt;b&gt;&amp;lt;hr/&amp;gt;&lt;/b&gt; för linjer.</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="146"/>
@@ -8668,13 +8677,13 @@ Higher values make side artwork fainter.</source>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="154"/>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="186"/>
         <source>Left</source>
-        <translation type="unfinished">Vänster</translation>
+        <translation>Vänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="155"/>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="188"/>
         <source>Right</source>
-        <translation type="unfinished">Höger</translation>
+        <translation>Höger</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="162"/>
@@ -8694,27 +8703,27 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="177"/>
         <source>Reflection height as a percentage of the artwork height</source>
-        <translation type="unfinished">Reflektionshöjd som en procent av konstverkshöjden</translation>
+        <translation>Reflektionshöjd som en procent av konstverkshöjden</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="180"/>
         <source>Opacity at the top of the reflection, fading to transparent</source>
-        <translation type="unfinished">Opacitet vid toppen av reflektionen, med toning till genomskinlig</translation>
+        <translation>Opacitet vid toppen av reflektionen, med toning till genomskinlig</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="183"/>
         <source>Space between the artwork and its reflection</source>
-        <translation type="unfinished">Mellanrum mellan konstverket och dess reflektion</translation>
+        <translation>Mellanrum mellan konstverket och dess reflektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="190"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="192"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="196"/>
@@ -8734,27 +8743,27 @@ Higher values make side artwork fainter.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="208"/>
         <source>Margins</source>
-        <translation type="unfinished">Marginaler</translation>
+        <translation>Marginaler</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="217"/>
         <source>Artwork reflection</source>
-        <translation type="unfinished">Konstverksreflektion</translation>
+        <translation>Konstverksreflektion</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="219"/>
         <source>Height</source>
-        <translation type="unfinished">Höjd</translation>
+        <translation>Höjd</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="221"/>
         <source>Opacity</source>
-        <translation type="unfinished">Opacitet</translation>
+        <translation>Opacitet</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="223"/>
         <source>Gap below artwork</source>
-        <translation type="unfinished">Mellanrum under konstverk</translation>
+        <translation>Mellanrum under konstverk</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="231"/>
@@ -8800,12 +8809,12 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="263"/>
         <source>Use a custom background colour for the currently playing row; transparency is supported</source>
-        <translation type="unfinished">Använd en egen bakgrundsfärg för den aktuella spelande raden; genomskinlighet stöds</translation>
+        <translation>Använd en egen bakgrundsfärg för den aktuella spelande raden; genomskinlighet stöds</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="264"/>
         <source>Use a custom font for the currently playing row</source>
-        <translation type="unfinished">Använd ett eget typsnitt för den aktuella spelande raden</translation>
+        <translation>Använd ett eget typsnitt för den aktuella spelande raden</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="273"/>
@@ -8820,7 +8829,7 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="285"/>
         <source>Columns</source>
-        <translation type="unfinished">Kolumner</translation>
+        <translation>Kolumner</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="286"/>
@@ -8845,7 +8854,7 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/expansionconfigwidget.cpp" line="301"/>
         <source>Preview</source>
-        <translation type="unfinished">Förhandsvisning</translation>
+        <translation>Förhandsvisning</translation>
     </message>
 </context>
 <context>
@@ -8927,7 +8936,7 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="66"/>
         <source>Columns</source>
-        <translation type="unfinished">Kolumner</translation>
+        <translation>Kolumner</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="67"/>
@@ -8938,12 +8947,12 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="68"/>
         <source>Artwork (bottom labels)</source>
-        <translation type="unfinished">Konstverk (bottenetiketter)</translation>
+        <translation>Konstverk (bottenetiketter)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="69"/>
         <source>Artwork (right labels)</source>
-        <translation type="unfinished">Konstverk (högeretiketter)</translation>
+        <translation>Konstverk (högeretiketter)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="70"/>
@@ -8953,7 +8962,7 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="71"/>
         <source>Artwork (no labels)</source>
-        <translation type="unfinished">Konstverk (inga etiketter)</translation>
+        <translation>Konstverk (inga etiketter)</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="74"/>
@@ -8963,17 +8972,17 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="75"/>
         <source>Show header</source>
-        <translation type="unfinished">Visa rubrik</translation>
+        <translation>Visa rubrik</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="76"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Visa skrollningslist</translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="77"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Zebramönstrade rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="78"/>
@@ -8998,7 +9007,7 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="106"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="107"/>
@@ -9119,27 +9128,27 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="163"/>
         <source>View mode</source>
-        <translation type="unfinished">Visningsläge</translation>
+        <translation>Visningsläge</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="173"/>
         <source>Front cover</source>
-        <translation type="unfinished">Framsidsomslag</translation>
+        <translation>Framsidsomslag</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="174"/>
         <source>Back cover</source>
-        <translation type="unfinished">Baksidsomslag</translation>
+        <translation>Baksidsomslag</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="175"/>
         <source>Artist</source>
-        <translation type="unfinished">Artist</translation>
+        <translation>Artist</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="177"/>
         <source>Default</source>
-        <translation type="unfinished">Default</translation>
+        <translation>Default</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="178"/>
@@ -9179,22 +9188,22 @@ Longer content can exceed this minimum.</source>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="236"/>
         <source>Left</source>
-        <translation type="unfinished">Vänster</translation>
+        <translation>Vänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="238"/>
         <source>Right</source>
-        <translation type="unfinished">Höger</translation>
+        <translation>Höger</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="240"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="242"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="247"/>
@@ -9210,7 +9219,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="256"/>
         <source>Artwork type</source>
-        <translation type="unfinished">Konstverkstyp</translation>
+        <translation>Konstverkstyp</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="258"/>
@@ -9230,7 +9239,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="274"/>
         <source>Margins</source>
-        <translation type="unfinished">Marginaler</translation>
+        <translation>Marginaler</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterconfigwidget.cpp" line="289"/>
@@ -9272,13 +9281,13 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="198"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="259"/>
         <source>Header</source>
-        <translation type="unfinished">Rubrik</translation>
+        <translation>Rubrik</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="199"/>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="375"/>
         <source>Track</source>
-        <translation type="unfinished">Spår</translation>
+        <translation>Spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionpopulator.cpp" line="200"/>
@@ -9309,7 +9318,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/expansion/filterexpansionwidget.cpp" line="154"/>
         <source>Collapse group</source>
-        <translation type="unfinished">Kollapsa grupp</translation>
+        <translation>Kollapsa grupp</translation>
     </message>
 </context>
 <context>
@@ -9486,7 +9495,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="2199"/>
         <source>Alternating row colours</source>
-        <translation>Zebramönstra rader</translation>
+        <translation>Zebramönstrade rader</translation>
     </message>
     <message>
         <location filename="../../src/gui/filters/filterwidget.cpp" line="1252"/>
@@ -10579,12 +10588,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="98"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guibackgroundpage.cpp" line="99"/>
         <source>Interface</source>
-        <translation type="unfinished">Gränssnitt</translation>
+        <translation>Gränssnitt</translation>
     </message>
 </context>
 <context>
@@ -11528,7 +11537,7 @@ Also used in rating editors when ‘Use custom rating symbols’ is enabled.</so
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="145"/>
         <source>Preview of %rating_stars_padded% using the current font</source>
-        <translation type="unfinished"></translation>
+        <translation>Förhandsvisning av %rating_stars_padded% med det aktuella typsnittet</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guitrackdisplaypage.cpp" line="147"/>
@@ -13110,7 +13119,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="81"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreeconfigwidget.cpp" line="84"/>
@@ -13301,7 +13310,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="101"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="107"/>
@@ -13311,7 +13320,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="122"/>
         <source>Grouping script</source>
-        <translation type="unfinished">Grupperingsskript</translation>
+        <translation>Grupperingsskript</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="123"/>
@@ -13321,7 +13330,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="124"/>
         <source>Display script</source>
-        <translation type="unfinished">Displayskript</translation>
+        <translation>Displayskript</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupeditordialog.cpp" line="125"/>
@@ -13359,7 +13368,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="173"/>
         <source>Grouping</source>
-        <translation type="unfinished">Gruppering</translation>
+        <translation>Gruppering</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="175"/>
@@ -13374,7 +13383,7 @@ Detta förbättrar kompatibilitet med andra spelare men lagrar endast hela stjä
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="243"/>
         <source>Use display script</source>
-        <translation type="unfinished">Använd displayskript</translation>
+        <translation>Använd displayskript</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="247"/>
@@ -15584,7 +15593,7 @@ Local lyrics will still be loaded.</source>
     <message>
         <location filename="../../src/plugins/oscilloscope/oscilloscopeconfigwidget.cpp" line="118"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
 </context>
 <context>
@@ -16440,7 +16449,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="47"/>
         <source>Never</source>
-        <translation type="unfinished">Aldrig</translation>
+        <translation>Aldrig</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="48"/>
@@ -16450,7 +16459,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="49"/>
         <source>Always</source>
-        <translation type="unfinished">Alltid</translation>
+        <translation>Alltid</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/playbackpropertiestab.cpp" line="51"/>
@@ -17063,7 +17072,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="42"/>
         <source>Keep subheaders in view</source>
-        <translation type="unfinished"></translation>
+        <translation>Håll underrubriker i vyn</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistconfigdialog.cpp" line="43"/>
@@ -18372,7 +18381,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1475"/>
         <source>Create a new preset from the current view, with an optional column layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Skapa en ny förinställning från den aktuella vyn, med en valfri kolumnlayout</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1477"/>
@@ -18435,7 +18444,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1532"/>
         <source>Open playlist preset settings to create, edit or remove presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna spellistsförinställning för att skapa, redigera eller ta bort förinställningar</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1545"/>
@@ -18450,7 +18459,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1562"/>
         <source>Include column layout</source>
-        <translation type="unfinished">Inkludera kolumnlayout</translation>
+        <translation>Inkludera kolumnlayout</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1568"/>
@@ -18545,7 +18554,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="236"/>
         <source>Remove unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort otillgängliga spår</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="239"/>
@@ -18640,7 +18649,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/gui/playlist/editableplaylistsession.cpp" line="448"/>
         <source>Remove unavailable tracks from the playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort otillgängliga spår från spellistan</translation>
     </message>
 </context>
 <context>
@@ -18691,7 +18700,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="360"/>
         <source>Could not remove plugin directory ‘%1’. Check that it is writable and its files are not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte ta bort tilläggsmapp ”%1”. Kontrollera att den är skrivbar och dess filer inte är i användning.</translation>
     </message>
     <message>
         <location filename="../../src/core/plugins/plugininstaller.cpp" line="369"/>
@@ -20204,27 +20213,27 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="45"/>
         <source>Show search bar</source>
-        <translation type="unfinished">Visa sökruta</translation>
+        <translation>Visa sökruta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="48"/>
         <source>Show header</source>
-        <translation type="unfinished">Visa rubrik</translation>
+        <translation>Visa rubrik</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="49"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Visa skrollningslist</translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="50"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Zebramönstrade rader</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="51"/>
         <source>Show station icons</source>
-        <translation type="unfinished">Visa stationsikoner</translation>
+        <translation>Visa stationsikoner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="52"/>
@@ -20264,24 +20273,24 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="70"/>
         <source>Columns</source>
-        <translation type="unfinished">Kolumner</translation>
+        <translation>Kolumner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="71"/>
         <source>Icons</source>
-        <translation type="unfinished">Ikoner</translation>
+        <translation>Ikoner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="72"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="188"/>
         <source>Right</source>
-        <translation type="unfinished">Höger</translation>
+        <translation>Höger</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="73"/>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="192"/>
         <source>Bottom</source>
-        <translation type="unfinished">Botten</translation>
+        <translation>Botten</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="90"/>
@@ -20291,7 +20300,7 @@ Högre värden förbättrar stabilitet men ökar latens och må göra visualiser
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="102"/>
         <source>Square</source>
-        <translation type="unfinished">Kvadrat</translation>
+        <translation>Kvadrat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="109"/>
@@ -20307,12 +20316,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="186"/>
         <source>Left</source>
-        <translation type="unfinished">Vänster</translation>
+        <translation>Vänster</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="190"/>
         <source>Top</source>
-        <translation type="unfinished">Topp</translation>
+        <translation>Topp</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="197"/>
@@ -20322,17 +20331,17 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="207"/>
         <source>Margins</source>
-        <translation type="unfinished">Marginaler</translation>
+        <translation>Marginaler</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="229"/>
         <source>General</source>
-        <translation type="unfinished">Generellt</translation>
+        <translation>Generellt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="231"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radiobrowserconfigdialog.cpp" line="75"/>
@@ -21014,7 +21023,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="83"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">Visa skrollningslist</translation>
+        <translation>Visa skrollningslist</translation>
     </message>
     <message>
         <location filename="../../src/plugins/radiobrowser/radioguideconfigdialog.cpp" line="106"/>
@@ -23924,12 +23933,12 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="188"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="194"/>
         <source>Target</source>
-        <translation type="unfinished">Mål</translation>
+        <translation>Mål</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="196"/>
         <source>Configure…</source>
-        <translation type="unfinished">Konfigurera…</translation>
+        <translation>Konfigurera…</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="235"/>
@@ -23940,7 +23949,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="237"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="389"/>
         <source>Focused widget</source>
-        <translation type="unfinished">Fokuserad widget</translation>
+        <translation>Fokuserad widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="238"/>
@@ -23976,7 +23985,7 @@ Ctrl+Scroll changes the number of columns. Automatic horizontal gaps are treated
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="511"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Genväg</translation>
+        <translation>Genväg</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="558"/>
@@ -25036,7 +25045,7 @@ Higher values increase detail and memory usage.</source>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="510"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/plugins/spectrum/spectrumconfigwidget.cpp" line="182"/>
@@ -27005,7 +27014,7 @@ Detta stödjer inte fullständig skriptning.</translation>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="189"/>
         <source>Background</source>
-        <translation type="unfinished">Bakgrund</translation>
+        <translation>Bakgrund</translation>
     </message>
     <message>
         <location filename="../../src/plugins/vumeter/vumeterconfigwidget.cpp" line="66"/>
