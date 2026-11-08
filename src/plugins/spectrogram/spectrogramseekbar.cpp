@@ -205,9 +205,9 @@ void SpectrogramSeekBar::stopSeeking()
 
 bool SpectrogramSeekBar::event(QEvent* event)
 {
-    if(isSeeking()
-       && (event->type() == QEvent::UngrabMouse || event->type() == QEvent::WindowDeactivate
-           || event->type() == QEvent::Hide)) {
+    if((event->type() == QEvent::UngrabMouse || event->type() == QEvent::WindowDeactivate
+        || event->type() == QEvent::Hide)
+       && isSeeking()) {
         stopSeeking();
     }
 
