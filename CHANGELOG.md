@@ -36,7 +36,11 @@
   - Update the Gallery layout to use inline Filter track expansion
   - Add support for inline love and rating editors to single-column Playlist and Filter Expansion scripts ([#1859](https://github.com/fooyin/fooyin/issues/1859))
   - Add optional custom symbols for love and rating editors ([#1685](https://github.com/fooyin/fooyin/issues/1685), [#1746](https://github.com/fooyin/fooyin/pull/1746))
+  - Add configurable playing row styles to Library Tree, Directory Browser, and Radio Browser
+  - Add toolbar support and optional spinbox controls to SoundTouch DSP widgets
+  - Add MPRIS enable toggle and volume curve settings ([#1833](https://github.com/fooyin/fooyin/issues/1833))
   - Normalise the Script Display configuration layout ([#1878](https://github.com/fooyin/fooyin/issues/1878))
+  - Improve the Oscilloscope configuration layout
 - **Library & Metadata**
   - Improve repeated track lookup performance
   - Store MP3 ratings in POPM fields instead of duplicate text fields when configured ([#1201](https://github.com/fooyin/fooyin/issues/1201))
