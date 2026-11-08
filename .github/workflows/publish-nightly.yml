@@ -41,6 +41,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       version_suffix: ${{ needs.prepare.outputs.version_suffix }}
+      appimage_update_channel: nightly
     secrets: inherit
 
   publish:
@@ -132,7 +133,7 @@ jobs:
           import re
           from pathlib import Path
 
-          extensions = {".deb", ".rpm", ".pkg", ".exe", ".zip", ".flatpak", ".AppImage"}
+          extensions = {".deb", ".rpm", ".pkg", ".exe", ".zip", ".flatpak", ".AppImage", ".zsync"}
           packages = sorted(
               path for path in Path("artifacts").rglob("*")
               if path.is_file() and (path.suffix in extensions or path.name.endswith(".tar.xz"))

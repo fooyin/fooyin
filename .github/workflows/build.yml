@@ -8,6 +8,11 @@ on:
         required: false
         type: string
         default: ''
+      appimage_update_channel:
+        description: GitHub release channel used for AppImage updates
+        required: false
+        type: string
+        default: latest
       signing_policy_slug:
         description: Optional SignPath signing policy slug for Windows artifacts
         required: false
@@ -73,6 +78,7 @@ jobs:
     uses: ./.github/workflows/build-appimage.yml
     with:
       version_suffix: ${{ inputs.version_suffix || '' }}
+      update_channel: ${{ inputs.appimage_update_channel || 'latest' }}
     secrets: inherit
 
   attach:

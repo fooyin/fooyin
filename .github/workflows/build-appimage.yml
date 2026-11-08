@@ -7,9 +7,15 @@ on:
         required: false
         type: string
         default: ''
+      update_channel:
+        description: GitHub release channel used for AppImage updates
+        required: false
+        type: string
+        default: latest
 
 env:
   FOOYIN_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+  FOOYIN_APPIMAGE_UPDATE_CHANNEL: ${{ inputs.update_channel }}
   BUILD_CCACHE: ON
   BUILD_PCH: ON
   CCACHE_DIR: ${{ github.workspace }}/.ccache
@@ -49,9 +55,14 @@ jobs:
           ./ci/ubuntu-depends.sh
           apt-get install -y \
             curl \
+            dbus-x11 \
+            desktop-file-utils \
             file \
+            locales \
             patchelf \
-            qt6-wayland
+            qt6-wayland \
+            xauth \
+            xvfb
 
       - name: Set ccache generation
         id: ccache-generation
@@ -74,7 +85,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: appimage-${{ matrix.arch }}
-          path: build-appimage/output/*.AppImage
+          path: |
+            build-appimage/output/*.AppImage
+            build-appimage/output/*.AppImage.zsync
           compression-level: 0
           if-no-files-found: error
 
