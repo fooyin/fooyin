@@ -584,7 +584,8 @@ void EditableLayoutPrivate::changeLayout(const FyLayout& layout)
     const QScopedValueRollback changingLayout{m_changingLayout, true};
 
     const int duration = m_settings->fileValue(LayoutTransitionDuration, DefaultLayoutTransitionDuration).toInt();
-    const bool enabled = m_settings->fileValue(LayoutTransitionEnabled, DefaultLayoutTransitionEnabled).toBool();
+    const bool enabled = layout.name() != m_layoutProvider->currentLayout().name()
+                      && m_settings->fileValue(LayoutTransitionEnabled, DefaultLayoutTransitionEnabled).toBool();
 
     QPixmap snapshot;
     if(enabled && m_self->isVisible() && m_self->updatesEnabled() && !m_self->size().isEmpty()) {
