@@ -286,7 +286,7 @@
 <context>
     <name>Fooyin::Equaliser::EqualiserSettingsWidget</name>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1080"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1081"/>
         <source>The first %Ln non-empty line(s) must contain integer values.</source>
         <translation>
             <numerusform>The first %Ln non-empty line must contain integer values.</numerusform>
@@ -294,7 +294,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1091"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1092"/>
         <source>The preset file contains %Ln band value(s).</source>
         <translation>
             <numerusform>The preset file contains %Ln band value.</numerusform>
@@ -302,7 +302,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1092"/>
+        <location filename="../../src/plugins/equaliser/equalisersettingswidget.cpp" line="1093"/>
         <source>Expected %Ln band value(s).</source>
         <translation>
             <numerusform>Expected %Ln band value.</numerusform>
@@ -556,7 +556,7 @@
 <context>
     <name>Fooyin::OutputPageWidget</name>
     <message numerus="yes">
-        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="177"/>
+        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="183"/>
         <source>Resume decoding below %Ln ms</source>
         <translation>
             <numerusform>Resume decoding below %Ln ms</numerusform>
@@ -564,7 +564,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="178"/>
+        <location filename="../../src/gui/settings/playback/outputpage.cpp" line="184"/>
         <source>Pause decoding at %Ln ms</source>
         <translation>
             <numerusform>Pause decoding at %Ln ms</numerusform>
@@ -775,7 +775,7 @@
 <context>
     <name>QObject</name>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkexporter.cpp" line="265"/>
+        <location filename="../../src/gui/artwork/artworkexporter.cpp" line="266"/>
         <source>Extracted artwork to %Ln file(s)</source>
         <translation>
             <numerusform>Extracted artwork to %Ln file</numerusform>
@@ -783,7 +783,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/gui/artwork/artworkexporter.cpp" line="270"/>
+        <location filename="../../src/gui/artwork/artworkexporter.cpp" line="271"/>
         <source>Extracted artwork to %Ln file(s); some extractions failed</source>
         <translation>
             <numerusform>Extracted artwork to %Ln file; some extractions failed</numerusform>
