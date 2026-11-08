@@ -336,17 +336,17 @@ void TagEditorItem::sortCustomTags()
 
     auto sortedChildren{m_children};
 
-    StringCollator collator;
-
     auto defaultEnd
         = std::ranges::find_if(sortedChildren, [](const TagEditorItem* item) { return item && !item->isDefault(); });
 
+    StringCollator collator;
     std::ranges::sort(defaultEnd, sortedChildren.end(),
                       [&collator](const TagEditorItem* lhs, const TagEditorItem* rhs) {
                           return collator.compare(lhs->title(), rhs->title()) < 0;
                       });
 
-    m_children = sortedChildren;
+    m_children = std::move(sortedChildren);
+    resetChildren();
 }
 
 void TagEditorItem::applyChanges(const TagEditorField& field)
