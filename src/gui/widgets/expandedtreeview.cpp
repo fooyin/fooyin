@@ -4914,7 +4914,13 @@ void ExpandedTreeViewPrivate::updateExpansionAnimation(const QVariant& value)
 
     if(m_expandedIndex.isValid()) {
         // Artwork and prepared backgrounds can arrive after the opening animation starts
-        m_expansionSnapshot = captureExpansion();
+        auto snapshot = captureExpansion();
+        if(snapshot.isNull()) {
+            stopExpansionAnimation();
+            m_self->refreshExpansion();
+            return;
+        }
+        m_expansionSnapshot = std::move(snapshot);
         const QRect icon    = m_self->visualRect(m_expandedIndex);
         const int topMargin = m_self->iconScrollTopMargin(m_expandedIndex);
         int scroll          = 0;
@@ -4935,8 +4941,18 @@ void ExpandedTreeViewPrivate::updateExpansionAnimation(const QVariant& value)
 
 QPixmap ExpandedTreeViewPrivate::captureExpansion() const
 {
+    const QSize size = m_expansionWidget->size();
+    if(size.isEmpty() || size.width() > m_self->viewport()->width() || size.height() > m_self->viewport()->height()) {
+        // A full snapshot in this case with offscreen rows could allocate a significant amount of memory
+        return {};
+    }
+
     const qreal dpr = m_expansionWidget->devicePixelRatioF();
-    QPixmap snapshot{m_expansionWidget->size() * dpr};
+    QPixmap snapshot{size * dpr};
+    if(snapshot.isNull()) {
+        return {};
+    }
+
     snapshot.setDevicePixelRatio(dpr);
     snapshot.fill(Qt::transparent);
     m_expansionWidget->render(&snapshot, {}, {}, QWidget::DrawChildren);
@@ -5663,7 +5679,7 @@ void ExpandedTreeView::setExpandedIndex(const QModelIndex& index)
         snapshot = p->captureExpansion();
     }
 
-    if(animate && !snapshot.isNull()) {
+    if(animate && !snapshot.isNull() && (!relocating || !previousSnapshot.isNull())) {
         p->m_expansionSnapshot           = std::move(snapshot);
         p->m_expansionPreviousSnapshot   = std::move(previousSnapshot);
         p->m_expansionAnimationViewSize  = size();

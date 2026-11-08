@@ -28,6 +28,8 @@
 
 #include <cmath>
 
+constexpr auto MaximumBackgroundExtent = 4096;
+
 QT_BEGIN_NAMESPACE
 // Exported by qimageeffects.cpp
 void qt_blurImage(QImage& blurImage, qreal radius, bool quality, int transposed = 0);
@@ -148,7 +150,7 @@ void BackgroundRenderer::draw(QPainter& painter)
 
         if(!prev.isNull()) {
             painter.setOpacity(opacity * (1.0 - m_bgFadeController->progress()));
-            drawBackgroundPixmap(painter, prev);
+            drawBackgroundPixmap(painter, prev, prevPixmap.size());
         }
         painter.setOpacity(opacity * m_bgFadeController->progress());
     }
@@ -156,7 +158,7 @@ void BackgroundRenderer::draw(QPainter& painter)
         painter.setOpacity(opacity);
     }
 
-    drawBackgroundPixmap(painter, pixmap);
+    drawBackgroundPixmap(painter, pixmap, currentPixmap.size());
 
     painter.restore();
 }
@@ -198,7 +200,10 @@ void BackgroundRenderer::startPreparation()
     const auto generation{request.generation};
 
     Utils::asyncExec([request = std::move(request)]() mutable {
-        return prepareBackground(std::move(request.image), request.key.size, request.key.blur * request.key.dpr,
+        if(request.key.sourceRect != request.image.rect()) {
+            request.image = request.image.copy(request.key.sourceRect);
+        }
+        return prepareBackground(std::move(request.image), request.key.size, request.key.blur * request.key.scale,
                                  request.key.dpr);
     }).then(this, [this, cache, key, generation](QImage image) {
         if(cache->generation == generation && qFuzzyCompare(key.dpr, m_dpr) && !image.isNull()) {
@@ -226,36 +231,30 @@ QPixmap BackgroundRenderer::preparedBackgroundPixmap(const QPixmap& source, Pixm
         return cache.pixmap;
     }
 
-    QSize targetSize = source.size();
-
-    switch(static_cast<BackgroundImageScaling>(m_config.scaling)) {
-        case BackgroundImageScaling::ScaledAndCropped:
-            targetSize.scale(viewportSize, Qt::KeepAspectRatioByExpanding);
-            break;
-        case BackgroundImageScaling::Scaled:
-            targetSize = viewportSize;
-            break;
-        case BackgroundImageScaling::ScaledKeepProportions:
-            targetSize.scale(viewportSize, Qt::KeepAspectRatio);
-            break;
-        case BackgroundImageScaling::OriginalSize:
-            if(m_config.maxSize > 0) {
-                const QSize maxSize{m_config.maxSize, m_config.maxSize};
-                if(targetSize.width() > maxSize.width() || targetSize.height() > maxSize.height()) {
-                    targetSize.scale(maxSize, Qt::KeepAspectRatio);
-                }
-            }
-            break;
-    }
-
+    const QSize targetSize = backgroundPixmapSize(source.size());
     if(targetSize.isEmpty()) {
         return {};
     }
 
-    targetSize = {static_cast<int>(std::ceil(static_cast<qreal>(targetSize.width()) * dpr)),
-                  static_cast<int>(std::ceil(static_cast<qreal>(targetSize.height()) * dpr))};
+    QRect sourceRect{source.rect()};
+    if(m_config.scaling == static_cast<int>(BackgroundImageScaling::ScaledAndCropped)) {
+        // Crop before scaling so a tall canvas can't turn a square cover into a huge image
+        const QSize cropSize = viewportSize.scaled(source.size(), Qt::KeepAspectRatio).expandedTo({1, 1});
+        sourceRect           = {(source.width() - cropSize.width()) / 2, (source.height() - cropSize.height()) / 2,
+                                cropSize.width(), cropSize.height()};
+    }
 
-    const PreparationKey key{.sourceKey = source.cacheKey(), .size = targetSize, .dpr = dpr, .blur = m_config.blur};
+    const qreal scale = std::min({dpr, static_cast<qreal>(MaximumBackgroundExtent) / targetSize.width(),
+                                  static_cast<qreal>(MaximumBackgroundExtent) / targetSize.height()});
+    const QSize preparedSize{static_cast<int>(std::ceil(targetSize.width() * scale)),
+                             static_cast<int>(std::ceil(targetSize.height() * scale))};
+
+    const PreparationKey key{.sourceKey  = source.cacheKey(),
+                             .size       = preparedSize,
+                             .sourceRect = sourceRect,
+                             .dpr        = dpr,
+                             .scale      = scale,
+                             .blur       = m_config.blur};
     if(key == cache.key && !cache.pixmap.isNull()) {
         return cache.pixmap;
     }
@@ -267,6 +266,31 @@ QPixmap BackgroundRenderer::preparedBackgroundPixmap(const QPixmap& source, Pixm
     }
 
     return cache.pixmap;
+}
+
+QSize BackgroundRenderer::backgroundPixmapSize(const QSize& sourceSize) const
+{
+    QSize targetSize = sourceSize;
+
+    switch(static_cast<BackgroundImageScaling>(m_config.scaling)) {
+        case BackgroundImageScaling::ScaledAndCropped:
+        case BackgroundImageScaling::Scaled:
+            targetSize = m_size;
+            break;
+        case BackgroundImageScaling::ScaledKeepProportions:
+            targetSize.scale(m_size, Qt::KeepAspectRatio);
+            break;
+        case BackgroundImageScaling::OriginalSize:
+            if(m_config.maxSize > 0) {
+                const QSize maxSize{m_config.maxSize, m_config.maxSize};
+                if(targetSize.width() > maxSize.width() || targetSize.height() > maxSize.height()) {
+                    targetSize.scale(maxSize, Qt::KeepAspectRatio);
+                }
+            }
+            break;
+    }
+
+    return targetSize;
 }
 
 QPoint BackgroundRenderer::backgroundPixmapPosition(const QSize& pixmapSize) const
@@ -319,29 +343,10 @@ QPoint BackgroundRenderer::backgroundPixmapPosition(const QSize& pixmapSize) con
     return {x, y};
 }
 
-void BackgroundRenderer::drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap)
+void BackgroundRenderer::drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap, const QSize& sourceSize)
 {
-    QSize pixmapSize = pixmap.deviceIndependentSize().toSize();
-
-    if(m_config.scaling != static_cast<int>(BackgroundImageScaling::OriginalSize)) {
-        const QSize viewportSize = m_size;
-
-        if(m_config.scaling == static_cast<int>(BackgroundImageScaling::Scaled)) {
-            pixmapSize = viewportSize;
-        }
-        else {
-            const Qt::AspectRatioMode aspectRatioMode
-                = m_config.scaling == static_cast<int>(BackgroundImageScaling::ScaledAndCropped)
-                    ? Qt::KeepAspectRatioByExpanding
-                    : Qt::KeepAspectRatio;
-            pixmapSize.scale(viewportSize, aspectRatioMode);
-        }
-
-        painter.drawPixmap(QRect{backgroundPixmapPosition(pixmapSize), pixmapSize}, pixmap);
-        return;
-    }
-
-    painter.drawPixmap(backgroundPixmapPosition(pixmapSize), pixmap);
+    const QSize pixmapSize = backgroundPixmapSize(sourceSize);
+    painter.drawPixmap(QRect{backgroundPixmapPosition(pixmapSize), pixmapSize}, pixmap);
 }
 } // namespace Fooyin
 

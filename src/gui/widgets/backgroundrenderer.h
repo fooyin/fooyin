@@ -60,7 +60,9 @@ private:
     {
         qint64 sourceKey{0};
         QSize size;
+        QRect sourceRect;
         qreal dpr{1.0};
+        qreal scale{1.0};
         int blur{0};
 
         bool operator==(const PreparationKey& other) const = default;
@@ -85,8 +87,9 @@ private:
     void invalidateScaledBackground();
     void startPreparation();
     QPixmap preparedBackgroundPixmap(const QPixmap& source, PixmapCache& cache);
+    [[nodiscard]] QSize backgroundPixmapSize(const QSize& sourceSize) const;
     [[nodiscard]] QPoint backgroundPixmapPosition(const QSize& pixmapSize) const;
-    void drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap);
+    void drawBackgroundPixmap(QPainter& painter, const QPixmap& pixmap, const QSize& sourceSize);
 
     QSize m_size;
     qreal m_dpr;

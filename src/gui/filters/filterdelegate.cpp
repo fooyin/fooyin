@@ -601,14 +601,19 @@ QSize FilterDelegate::iconItemSize(const QStyleOptionViewItem& option, const QMo
         return {};
     }
 
-    const QStyle* style  = option.widget ? option.widget->style() : QApplication::style();
-    const QSize textSize = richTextSize(option, index);
-
-    const int verticalMargin  = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameVMargin, &option, option.widget));
-    const int verticalPadding = 2 * verticalMargin;
     const QSize artworkSize
         = option.decorationSize
         + QSize{m_artworkMargins.left() + m_artworkMargins.right(), m_artworkMargins.top() + m_artworkMargins.bottom()};
+
+    if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::None
+       || view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay) {
+        return artworkSize;
+    }
+
+    const QStyle* style       = option.widget ? option.widget->style() : QApplication::style();
+    const QSize textSize      = richTextSize(option, index);
+    const int verticalMargin  = std::max(2, style->pixelMetric(QStyle::PM_FocusFrameVMargin, &option, option.widget));
+    const int verticalPadding = 2 * verticalMargin;
 
     switch(view->captionDisplay()) {
         case ExpandedTreeView::CaptionDisplay::Bottom: {
