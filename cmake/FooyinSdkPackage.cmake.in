@@ -14,7 +14,7 @@ if(SDK_RUNTIME_FILES)
     file(COPY ${SDK_RUNTIME_FILES} DESTINATION "${sdk_prefix}/@BIN_INSTALL_DIR@")
 endif()
 
-file(COPY "@PROJECT_SOURCE_DIR@/COPYING" DESTINATION "${sdk_prefix}")
+file(COPY "@PROJECT_SOURCE_DIR@/COPYING" "@PROJECT_SOURCE_DIR@/SDK.md" DESTINATION "${sdk_prefix}")
 file(COPY "@PROJECT_SOURCE_DIR@/3rdparty/pffft/src/LICENSE.txt" DESTINATION "${sdk_prefix}/licenses/pffft")
 
 file(READ "${sdk_prefix}/include/fooyin/core/plugins/plugin.h" sdk_plugin_header)
