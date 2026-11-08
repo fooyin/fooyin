@@ -92,7 +92,7 @@ QJsonObject saveItemData(const LayoutItem* item)
         }
     }
 
-    if(item->childCount() > 0 || data.contains("Widgets"_L1)) {
+    if(item->childCount() > 0 || item->isContainer()) {
         data["Widgets"_L1] = saveChildren(item);
     }
 
