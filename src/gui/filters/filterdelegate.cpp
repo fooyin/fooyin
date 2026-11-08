@@ -27,7 +27,6 @@
 #include <gui/scripting/richtextutils.h>
 #include <gui/widgets/expandedtreeview.h>
 #include <gui/widgets/widgetbackground.h>
-#include <utils/utils.h>
 
 #include <QApplication>
 #include <QPainter>
@@ -243,32 +242,15 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     if(hasArtwork) {
         const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
         const auto mode  = opt.state.testFlag(QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled;
-        if(m_artworkScaling == ArtworkScaling::Fit) {
-            scaledArtwork = Utils::scalePixmap(artworkIcon.pixmap(decorationRect.size(), dpr, mode),
-                                               decorationRect.size(), dpr, true);
+        QSize sourceSize = decorationRect.size();
+        if(m_artworkScaling != ArtworkScaling::Fit) {
+            const QSize available = artworkIcon.actualSize(sourceSize, mode);
+            if(!available.isEmpty() && !sourceSize.isEmpty()) {
+                sourceSize = available.scaled(sourceSize, Qt::KeepAspectRatioByExpanding);
+            }
         }
-        else {
-            QSize sourceSize = artworkIcon.actualSize(decorationRect.size(), mode);
-            if(sourceSize.isEmpty() || decorationRect.isEmpty()) {
-                sourceSize = decorationRect.size();
-            }
-            else {
-                sourceSize.scale(decorationRect.size(), Qt::KeepAspectRatioByExpanding);
-            }
-
-            const QSize targetSize{std::max(1, static_cast<int>(std::llround(decorationRect.width() * dpr))),
-                                   std::max(1, static_cast<int>(std::llround(decorationRect.height() * dpr)))};
-            const auto aspectMode
-                = m_artworkScaling == ArtworkScaling::Fill ? Qt::KeepAspectRatioByExpanding : Qt::IgnoreAspectRatio;
-            scaledArtwork
-                = artworkIcon.pixmap(sourceSize, dpr, mode).scaled(targetSize, aspectMode, Qt::SmoothTransformation);
-            if(m_artworkScaling == ArtworkScaling::Fill && !scaledArtwork.isNull()) {
-                scaledArtwork = scaledArtwork.copy((scaledArtwork.width() - targetSize.width()) / 2,
-                                                   (scaledArtwork.height() - targetSize.height()) / 2,
-                                                   targetSize.width(), targetSize.height());
-            }
-            scaledArtwork.setDevicePixelRatio(dpr);
-        }
+        scaledArtwork = Gui::scaleArtworkPixmap(artworkIcon.pixmap(sourceSize, dpr, mode), decorationRect.size(), dpr,
+                                                m_artworkScaling);
     }
 
     const auto drawArtwork = [&]() {

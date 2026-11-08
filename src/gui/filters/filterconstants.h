@@ -24,18 +24,6 @@
 #include <gui/widgets/expandedtreeview.h>
 
 namespace Fooyin::Filters::Constants {
-constexpr ArtworkScaling artworkScalingFromInt(int value)
-{
-    switch(value) {
-        case static_cast<int>(ArtworkScaling::Fill):
-            return ArtworkScaling::Fill;
-        case static_cast<int>(ArtworkScaling::Stretch):
-            return ArtworkScaling::Stretch;
-        default:
-            return ArtworkScaling::Fit;
-    }
-}
-
 constexpr int minimumIconSize(ExpandedTreeView::ViewMode mode, ExpandedTreeView::CaptionDisplay captions)
 {
     return mode == ExpandedTreeView::ViewMode::Icon

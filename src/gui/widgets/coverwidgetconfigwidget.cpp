@@ -39,7 +39,7 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
     , m_coverTypeGroup{new QButtonGroup(this)}
     , m_alignmentGroup{new QButtonGroup(this)}
     , m_trackPreference{new QComboBox(this)}
-    , m_keepAspectRatio{new QCheckBox(tr("Keep aspect ratio"), this)}
+    , m_artworkScaling{new QComboBox(this)}
     , m_fadeEnabled{new QCheckBox(tr("Fade cover changes"), this)}
     , m_fadeDuration{new SliderEditor(tr("Fade length"), this)}
     , m_doubleClick{new QComboBox(this)}
@@ -94,11 +94,19 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
     trackPreferenceLayout->addWidget(m_trackPreference);
     trackPreferenceLayout->addStretch();
 
+    m_artworkScaling->addItem(tr("Fit"), static_cast<int>(ArtworkScaling::Fit));
+    m_artworkScaling->addItem(tr("Fill (crop)"), static_cast<int>(ArtworkScaling::Fill));
+    m_artworkScaling->addItem(tr("Stretch"), static_cast<int>(ArtworkScaling::Stretch));
+    m_artworkScaling->setToolTip(tr("Fit shows the whole image and preserves its aspect ratio.\n"
+                                    "Fill crops the image to fill the artwork area and preserves its aspect ratio.\n"
+                                    "Stretch fills the artwork area by changing the image’s aspect ratio."));
+
     int row{0};
     displayLayout->addWidget(coverTypeBox, row, 0);
     displayLayout->addWidget(alignmentBox, row++, 1);
     displayLayout->addLayout(trackPreferenceLayout, row++, 0, 1, 2);
-    displayLayout->addWidget(m_keepAspectRatio, row++, 0, 1, 2);
+    displayLayout->addWidget(new QLabel(tr("Artwork scaling") + u":"_s, displayGroup), row, 0);
+    displayLayout->addWidget(m_artworkScaling, row++, 1);
     displayLayout->setColumnStretch(0, 1);
     displayLayout->setColumnStretch(1, 1);
 
@@ -158,7 +166,7 @@ void CoverWidgetConfigDialog::setConfig(const CoverWidget::ConfigData& config)
         button->setChecked(true);
     }
 
-    m_keepAspectRatio->setChecked(config.keepAspectRatio);
+    m_artworkScaling->setCurrentIndex(m_artworkScaling->findData(static_cast<int>(config.artworkScaling)));
     m_trackPreference->setCurrentIndex(m_trackPreference->findData(static_cast<int>(config.trackPreference)));
     m_fadeEnabled->setChecked(config.fadeCoverChanges);
     m_fadeDuration->setValue(config.fadeDurationMs);
@@ -171,7 +179,7 @@ CoverWidget::ConfigData CoverWidgetConfigDialog::config() const
     return {
         .coverType         = static_cast<Track::Cover>(m_coverTypeGroup->checkedId()),
         .coverAlignment    = static_cast<Qt::Alignment>(m_alignmentGroup->checkedId()),
-        .keepAspectRatio   = m_keepAspectRatio->isChecked(),
+        .artworkScaling    = artworkScalingFromInt(m_artworkScaling->currentData().toInt()),
         .trackPreference   = static_cast<TrackDisplayPreference>(m_trackPreference->currentData().toInt()),
         .fadeCoverChanges  = m_fadeEnabled->isChecked(),
         .fadeDurationMs    = m_fadeDuration->value(),
@@ -184,7 +192,7 @@ void CoverWidgetConfigDialog::mergeExternalConfig(const CoverWidget::ConfigData&
                                                   const CoverWidget::ConfigData& current)
 {
     mergeExternalFields(previous, current, &CoverWidget::ConfigData::coverType,
-                        &CoverWidget::ConfigData::coverAlignment, &CoverWidget::ConfigData::keepAspectRatio,
+                        &CoverWidget::ConfigData::coverAlignment, &CoverWidget::ConfigData::artworkScaling,
                         &CoverWidget::ConfigData::trackPreference, &CoverWidget::ConfigData::fadeCoverChanges,
                         &CoverWidget::ConfigData::fadeDurationMs, &CoverWidget::ConfigData::doubleClickAction,
                         &CoverWidget::ConfigData::middleClickAction);

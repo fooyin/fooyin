@@ -409,7 +409,7 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
     result.rowHeight              = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0;
     result.iconSize               = {m_iconWidth->value(), m_iconHeight->value()};
     result.autoFitArtwork         = m_autoFitArtwork->isChecked();
-    result.artworkScaling         = Constants::artworkScalingFromInt(m_artworkScaling->currentData().toInt());
+    result.artworkScaling         = artworkScalingFromInt(m_artworkScaling->currentData().toInt());
     result.iconHorizontalGap      = m_iconHorizontalGap->value();
     result.iconVerticalGap        = m_iconVerticalGap->value();
     result.overrideGridMargins    = m_overrideGridMargins->isChecked();

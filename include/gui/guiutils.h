@@ -23,6 +23,7 @@
 
 #include <core/player/playbackqueue.h>
 #include <core/track.h>
+#include <gui/coverartworktypes.h>
 #include <gui/theme/fytheme.h>
 #include <utils/ratingsymbols.h>
 #include <utils/starrating.h>
@@ -52,6 +53,10 @@ class MusicLibrary;
 class SettingsManager;
 
 namespace Gui {
+//! Scales artwork to a logical size, cropping Fill according to alignment.
+FYGUI_EXPORT QPixmap scaleArtworkPixmap(const QPixmap& pixmap, const QSize& size, double dpr, ArtworkScaling scaling,
+                                        Qt::Alignment alignment = Qt::AlignCenter);
+
 //! Sets the selected content margins, preserving the other edges.
 FYGUI_EXPORT void setContentsMargins(QLayout* layout, Qt::Edges edges, int margin);
 FYGUI_EXPORT void setContentsMargins(QWidget* widget, Qt::Edges edges, int margin);

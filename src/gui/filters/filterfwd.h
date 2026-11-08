@@ -19,19 +19,14 @@
 
 #pragma once
 
+#include <gui/coverartworktypes.h>
+
 #include <QDataStream>
 #include <QString>
 
 #include <vector>
 
 namespace Fooyin::Filters {
-enum class ArtworkScaling : uint8_t
-{
-    Fit = 0,
-    Fill,
-    Stretch,
-};
-
 struct FilterColumn
 {
     static constexpr qint32 Magic   = -0x46434F4C;

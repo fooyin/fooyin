@@ -655,7 +655,7 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.rowHeight      = m_settings->fileValue(FilterRowHeightKey, config.rowHeight).toInt();
     config.iconSize       = m_settings->fileValue(FilterIconSizeKey, config.iconSize).toSize();
     config.autoFitArtwork = m_settings->fileValue(FilterAutoFitArtworkKey, config.autoFitArtwork).toBool();
-    config.artworkScaling = Constants::artworkScalingFromInt(
+    config.artworkScaling = artworkScalingFromInt(
         m_settings->fileValue(FilterArtworkScalingKey, static_cast<int>(config.artworkScaling)).toInt());
     config.iconHorizontalGap   = m_settings->fileValue(FilterIconHorizontalGapKey, config.iconHorizontalGap).toInt();
     config.iconVerticalGap     = m_settings->fileValue(FilterIconVerticalGapKey, config.iconVerticalGap).toInt();
@@ -915,7 +915,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
     validated.iconHorizontalGap   = std::max(validated.iconHorizontalGap, -1);
     validated.iconVerticalGap     = std::max(validated.iconVerticalGap, 0);
     validated.artworkCornerRadius = std::clamp(validated.artworkCornerRadius, 0, 100);
-    validated.artworkScaling      = Constants::artworkScalingFromInt(static_cast<int>(validated.artworkScaling));
+    validated.artworkScaling      = artworkScalingFromInt(static_cast<int>(validated.artworkScaling));
     validated.artworkMargins      = Gui::marginsFromJson({}, validated.artworkMargins);
     validated.gridMargins         = Gui::marginsFromJson({}, validated.gridMargins);
 
@@ -1105,8 +1105,8 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     }
     config.iconHorizontalGap = layout.value("IconHorizontalGap"_L1).toInt(config.iconHorizontalGap);
     config.autoFitArtwork    = layout.value("AutoFitArtwork"_L1).toBool(config.autoFitArtwork);
-    config.artworkScaling    = Constants::artworkScalingFromInt(
-        layout.value("ArtworkScaling"_L1).toInt(static_cast<int>(config.artworkScaling)));
+    config.artworkScaling
+        = artworkScalingFromInt(layout.value("ArtworkScaling"_L1).toInt(static_cast<int>(config.artworkScaling)));
     config.iconVerticalGap     = layout.value("IconVerticalGap"_L1).toInt(config.iconVerticalGap);
     config.overrideGridMargins = layout.value("OverrideGridMargins"_L1).toBool(config.overrideGridMargins);
     config.gridMargins         = Gui::marginsFromJson(layout.value("GridMargins"_L1).toObject(), config.gridMargins);

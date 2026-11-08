@@ -24,6 +24,37 @@
 #include <cstdint>
 
 namespace Fooyin {
+enum class ArtworkScaling : uint8_t
+{
+    Fit = 0,
+    Fill,
+    Stretch,
+};
+
+constexpr ArtworkScaling artworkScalingFromInt(int value)
+{
+    switch(value) {
+        case static_cast<int>(ArtworkScaling::Fill):
+            return ArtworkScaling::Fill;
+        case static_cast<int>(ArtworkScaling::Stretch):
+            return ArtworkScaling::Stretch;
+        default:
+            return ArtworkScaling::Fit;
+    }
+}
+
+constexpr Qt::AspectRatioMode artworkAspectRatioMode(ArtworkScaling scaling)
+{
+    switch(scaling) {
+        case ArtworkScaling::Fill:
+            return Qt::KeepAspectRatioByExpanding;
+        case ArtworkScaling::Stretch:
+            return Qt::IgnoreAspectRatio;
+        default:
+            return Qt::KeepAspectRatio;
+    }
+}
+
 enum class ArtworkSourcePreference : uint8_t
 {
     PreferDirectory = 0,

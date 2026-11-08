@@ -33,6 +33,7 @@
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/guiutils.h>
 #include <gui/statusevent.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actionmanager.h>
@@ -60,6 +61,7 @@ using namespace Qt::StringLiterals;
 constexpr auto CoverWidgetCoverTypeKey        = u"ArtworkPanel/CoverType";
 constexpr auto CoverWidgetCoverAlignmentKey   = u"ArtworkPanel/CoverAlignment";
 constexpr auto CoverWidgetKeepAspectRatioKey  = u"ArtworkPanel/KeepAspectRatio";
+constexpr auto CoverWidgetArtworkScalingKey   = u"ArtworkPanel/ArtworkScaling";
 constexpr auto CoverWidgetTrackPreferenceKey  = u"ArtworkPanel/TrackPreference";
 constexpr auto CoverWidgetShowStoppedTrackKey = u"ArtworkPanel/ShowStoppedTrack";
 constexpr auto CoverWidgetFadeEnabledKey      = u"ArtworkPanel/FadeCoverChanges";
@@ -87,7 +89,7 @@ CoverWidget::CoverWidget(ActionManager* actionManager, PlayerController* playerC
     , m_settings{settings}
     , m_coverProvider{new CoverProvider(coverRepository, this)}
     , m_coverType{Track::Cover::Front}
-    , m_keepAspectRatio{false}
+    , m_artworkScaling{ArtworkScaling::Fit}
     , m_fadeCoverChanges{false}
     , m_fadeController{new PixmapFadeController(this)}
     , m_coverRequestId{0}
@@ -135,7 +137,15 @@ CoverWidget::ConfigData CoverWidget::defaultConfig() const
         m_settings->fileValue(CoverWidgetCoverTypeKey, static_cast<int>(config.coverType)).toInt());
     config.coverAlignment = static_cast<Qt::Alignment>(
         m_settings->fileValue(CoverWidgetCoverAlignmentKey, static_cast<int>(config.coverAlignment)).toInt());
-    config.keepAspectRatio = m_settings->fileValue(CoverWidgetKeepAspectRatioKey, config.keepAspectRatio).toBool();
+
+    if(m_settings->fileContains(CoverWidgetArtworkScalingKey)) {
+        config.artworkScaling = artworkScalingFromInt(m_settings->fileValue(CoverWidgetArtworkScalingKey).toInt());
+    }
+    else {
+        config.artworkScaling = m_settings->fileValue(CoverWidgetKeepAspectRatioKey, true).toBool()
+                                  ? ArtworkScaling::Fit
+                                  : ArtworkScaling::Stretch;
+    }
 
     if(m_settings->fileContains(CoverWidgetTrackPreferenceKey)) {
         config.trackPreference = static_cast<TrackDisplayPreference>(
@@ -169,7 +179,8 @@ const CoverWidget::ConfigData& CoverWidget::currentConfig() const
 void CoverWidget::applyConfig(const ConfigData& config)
 {
     const bool coverTypeChanged       = m_coverType != config.coverType;
-    const bool keepAspectChanged      = m_keepAspectRatio != config.keepAspectRatio;
+    const auto artworkScaling         = artworkScalingFromInt(static_cast<int>(config.artworkScaling));
+    const bool scalingChanged         = m_artworkScaling != artworkScaling;
     const bool alignmentChanged       = m_coverAlignment != config.coverAlignment;
     const bool fadeEnabledChanged     = m_fadeCoverChanges != config.fadeCoverChanges;
     const bool trackPreferenceChanged = m_config.trackPreference != config.trackPreference;
@@ -179,7 +190,7 @@ void CoverWidget::applyConfig(const ConfigData& config)
     m_config = {
         .coverType         = config.coverType,
         .coverAlignment    = config.coverAlignment,
-        .keepAspectRatio   = config.keepAspectRatio,
+        .artworkScaling    = artworkScaling,
         .trackPreference   = config.trackPreference,
         .fadeCoverChanges  = config.fadeCoverChanges,
         .fadeDurationMs    = fadeDurationMs,
@@ -189,7 +200,7 @@ void CoverWidget::applyConfig(const ConfigData& config)
 
     m_coverType        = m_config.coverType;
     m_coverAlignment   = m_config.coverAlignment;
-    m_keepAspectRatio  = m_config.keepAspectRatio;
+    m_artworkScaling   = m_config.artworkScaling;
     m_fadeCoverChanges = m_config.fadeCoverChanges;
 
     m_fadeController->setDurationMs(m_config.fadeDurationMs);
@@ -210,7 +221,7 @@ void CoverWidget::applyConfig(const ConfigData& config)
         return;
     }
 
-    if(keepAspectChanged) {
+    if(scalingChanged || (alignmentChanged && m_artworkScaling == ArtworkScaling::Fill)) {
         rescaleCover();
         return;
     }
@@ -224,7 +235,8 @@ void CoverWidget::saveDefaults(const ConfigData& config) const
 {
     m_settings->fileSet(CoverWidgetCoverTypeKey, static_cast<int>(config.coverType));
     m_settings->fileSet(CoverWidgetCoverAlignmentKey, static_cast<int>(config.coverAlignment));
-    m_settings->fileSet(CoverWidgetKeepAspectRatioKey, config.keepAspectRatio);
+    m_settings->fileSet(CoverWidgetArtworkScalingKey, static_cast<int>(config.artworkScaling));
+    m_settings->fileRemove(CoverWidgetKeepAspectRatioKey);
     m_settings->fileSet(CoverWidgetTrackPreferenceKey, static_cast<int>(config.trackPreference));
     m_settings->fileRemove(CoverWidgetShowStoppedTrackKey);
     m_settings->fileSet(CoverWidgetFadeEnabledKey, config.fadeCoverChanges);
@@ -240,6 +252,7 @@ void CoverWidget::clearSavedDefaults() const
     m_settings->fileRemove(CoverWidgetCoverTypeKey);
     m_settings->fileRemove(CoverWidgetCoverAlignmentKey);
     m_settings->fileRemove(CoverWidgetKeepAspectRatioKey);
+    m_settings->fileRemove(CoverWidgetArtworkScalingKey);
     m_settings->fileRemove(CoverWidgetTrackPreferenceKey);
     m_settings->fileRemove(CoverWidgetShowStoppedTrackKey);
     m_settings->fileRemove(CoverWidgetFadeEnabledKey);
@@ -256,7 +269,14 @@ CoverWidget::ConfigData CoverWidget::configFromLayout(const QJsonObject& layout)
         = static_cast<Track::Cover>(layout.value("CoverType"_L1).toInt(static_cast<int>(config.coverType)));
     config.coverAlignment
         = static_cast<Qt::Alignment>(layout.value("CoverAlignment"_L1).toInt(static_cast<int>(config.coverAlignment)));
-    config.keepAspectRatio = layout.value("KeepAspectRatio"_L1).toBool(config.keepAspectRatio);
+
+    if(layout.contains("ArtworkScaling"_L1)) {
+        config.artworkScaling = artworkScalingFromInt(layout.value("ArtworkScaling"_L1).toInt());
+    }
+    else if(layout.contains("KeepAspectRatio"_L1)) {
+        config.artworkScaling
+            = layout.value("KeepAspectRatio"_L1).toBool(true) ? ArtworkScaling::Fit : ArtworkScaling::Stretch;
+    }
 
     if(layout.contains("TrackPreference"_L1)) {
         config.trackPreference = static_cast<TrackDisplayPreference>(layout.value("TrackPreference"_L1).toInt());
@@ -281,9 +301,10 @@ CoverWidget::ConfigData CoverWidget::configFromLayout(const QJsonObject& layout)
 
 void CoverWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& layout)
 {
-    layout["CoverType"_L1]       = static_cast<int>(config.coverType);
-    layout["CoverAlignment"_L1]  = static_cast<int>(config.coverAlignment);
-    layout["KeepAspectRatio"_L1] = config.keepAspectRatio;
+    layout["CoverType"_L1]      = static_cast<int>(config.coverType);
+    layout["CoverAlignment"_L1] = static_cast<int>(config.coverAlignment);
+    layout["ArtworkScaling"_L1] = static_cast<int>(config.artworkScaling);
+    layout.remove("KeepAspectRatio"_L1);
     layout["TrackPreference"_L1] = static_cast<int>(config.trackPreference);
     layout.remove("ShowStoppedTrack"_L1);
     layout["FadeCoverChanges"_L1]  = config.fadeCoverChanges;
@@ -361,22 +382,30 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* keepAspectRatio = new QAction(tr("Keep aspect ratio"), menu);
+    auto* scalingMenu  = new QMenu(tr("Artwork scaling"), menu);
+    auto* scalingGroup = new QActionGroup(scalingMenu);
 
-    keepAspectRatio->setCheckable(true);
-    keepAspectRatio->setChecked(m_config.keepAspectRatio);
+    const auto addScalingAction = [this, scalingMenu, scalingGroup](const QString& text, ArtworkScaling scaling) {
+        auto* action = scalingMenu->addAction(text);
+        scalingGroup->addAction(action);
+        action->setCheckable(true);
+        action->setChecked(m_config.artworkScaling == scaling);
+        QObject::connect(action, &QAction::triggered, this, [this, scaling]() {
+            auto config{m_config};
+            config.artworkScaling = scaling;
+            applyConfig(config);
+        });
+    };
+    addScalingAction(tr("Fit"), ArtworkScaling::Fit);
+    addScalingAction(tr("Fill (crop)"), ArtworkScaling::Fill);
+    addScalingAction(tr("Stretch"), ArtworkScaling::Stretch);
 
-    QObject::connect(keepAspectRatio, &QAction::triggered, this, [this](bool checked) {
-        auto config{m_config};
-        config.keepAspectRatio = checked;
-        applyConfig(config);
-    });
+    auto* alignmentMenu  = new QMenu(tr("Alignment"), menu);
+    auto* alignmentGroup = new QActionGroup(alignmentMenu);
 
-    auto* alignmentGroup = new QActionGroup(menu);
-
-    auto* alignCenter = new QAction(tr("Align to centre"), alignmentGroup);
-    auto* alignLeft   = new QAction(tr("Align to left"), alignmentGroup);
-    auto* alignRight  = new QAction(tr("Align to right"), alignmentGroup);
+    auto* alignCenter = new QAction(tr("Centre"), alignmentGroup);
+    auto* alignLeft   = new QAction(tr("Left"), alignmentGroup);
+    auto* alignRight  = new QAction(tr("Right"), alignmentGroup);
 
     alignCenter->setCheckable(true);
     alignLeft->setCheckable(true);
@@ -386,7 +415,7 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     alignLeft->setChecked(m_config.coverAlignment == Qt::AlignLeft);
     alignRight->setChecked(m_config.coverAlignment == Qt::AlignRight);
 
-    auto changeAlignment = [this](Qt::Alignment alignment) {
+    const auto changeAlignment = [this](Qt::Alignment alignment) {
         auto config{m_config};
         config.coverAlignment = alignment;
         applyConfig(config);
@@ -395,6 +424,10 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(alignCenter, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignCenter); });
     QObject::connect(alignLeft, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignLeft); });
     QObject::connect(alignRight, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignRight); });
+
+    alignmentMenu->addAction(alignCenter);
+    alignmentMenu->addAction(alignLeft);
+    alignmentMenu->addAction(alignRight);
 
     auto* coverGroup = new QActionGroup(menu);
 
@@ -420,15 +453,12 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(backCover, &QAction::triggered, this, [reload]() { reload(Track::Cover::Back); });
     QObject::connect(artistCover, &QAction::triggered, this, [reload]() { reload(Track::Cover::Artist); });
 
-    menu->addAction(keepAspectRatio);
-    menu->addSeparator();
-    menu->addAction(alignCenter);
-    menu->addAction(alignLeft);
-    menu->addAction(alignRight);
-    menu->addSeparator();
     menu->addAction(frontCover);
     menu->addAction(backCover);
     menu->addAction(artistCover);
+    menu->addSeparator();
+    menu->addMenu(scalingMenu);
+    menu->addMenu(alignmentMenu);
     menu->addSeparator();
 
     auto* artworkSettings = new QAction(tr("Artwork settings…"), menu);
@@ -590,14 +620,8 @@ QPixmap CoverWidget::effectiveCover(const QPixmap& cover) const
 
 QPixmap CoverWidget::scaledCover(const QPixmap& cover) const
 {
-    const auto aspectRatio = m_keepAspectRatio ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
-    const double dpr       = devicePixelRatioF();
-    const QSize scaledSize = size() * dpr;
-
-    QPixmap scaled = effectiveCover(cover).scaled(scaledSize, aspectRatio, Qt::SmoothTransformation);
-    scaled.setDevicePixelRatio(dpr);
-
-    return scaled;
+    return Gui::scaleArtworkPixmap(effectiveCover(cover), contentsRect().size(), devicePixelRatioF(), m_artworkScaling,
+                                   Qt::AlignVCenter | m_coverAlignment);
 }
 
 Track CoverWidget::displayTrack() const

@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/track.h>
+#include <gui/coverartworktypes.h>
 #include <gui/fywidget.h>
 #include <gui/trackdisplay.h>
 
@@ -56,7 +57,7 @@ public:
     {
         Track::Cover coverType{Track::Cover::Front};
         Qt::Alignment coverAlignment{Qt::AlignCenter};
-        bool keepAspectRatio{true};
+        ArtworkScaling artworkScaling{ArtworkScaling::Fit};
         TrackDisplayPreference trackPreference{TrackDisplayPreference::PlayingTrack};
         bool fadeCoverChanges{false};
         int fadeDurationMs{1000};
@@ -134,7 +135,7 @@ private:
     ConfigData m_config;
     Track::Cover m_coverType;
     Qt::Alignment m_coverAlignment;
-    bool m_keepAspectRatio;
+    ArtworkScaling m_artworkScaling;
 
     QBasicTimer m_resizeTimer;
 

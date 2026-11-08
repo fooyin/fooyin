@@ -52,6 +52,24 @@
 using namespace Qt::StringLiterals;
 
 namespace Fooyin::Gui {
+QPixmap scaleArtworkPixmap(const QPixmap& pixmap, const QSize& size, double dpr, ArtworkScaling scaling,
+                           Qt::Alignment alignment)
+{
+    if(pixmap.isNull() || size.isEmpty()) {
+        return {};
+    }
+
+    const QSize targetSize{std::max(1, static_cast<int>(std::llround(size.width() * dpr))),
+                           std::max(1, static_cast<int>(std::llround(size.height() * dpr)))};
+    QPixmap scaled = pixmap.scaled(targetSize, artworkAspectRatioMode(scaling), Qt::SmoothTransformation);
+    if(scaling == ArtworkScaling::Fill) {
+        const QRect crop = QStyle::alignedRect(Qt::LeftToRight, alignment, targetSize, scaled.rect());
+        scaled           = scaled.copy(crop);
+    }
+    scaled.setDevicePixelRatio(dpr);
+    return scaled;
+}
+
 namespace {
 void drawRoundedStyleElement(QPainter* painter, const QStyleOption& option, int radiusPercent, Qt::Edges squareEdges,
                              auto&& draw)
