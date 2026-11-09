@@ -30,6 +30,7 @@
 
 #include <QApplication>
 #include <QPainter>
+#include <QPainterPath>
 
 #include <cmath>
 #include <cstddef>
@@ -42,6 +43,15 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::Filters {
 namespace {
+QPixmap createArtworkLayer(const QRect& rect, qreal dpr)
+{
+    QPixmap layer{
+        QSize{static_cast<int>(std::ceil(rect.width() * dpr)), static_cast<int>(std::ceil(rect.height() * dpr))}};
+    layer.setDevicePixelRatio(dpr);
+    layer.fill(Qt::transparent);
+    return layer;
+}
+
 bool labelsOverlapReflections(const CoverFlowSettings& settings)
 {
     return settings.overlayLabelsOnReflections && !settings.labelsAboveArtwork && !settings.labelsOnArtwork
@@ -63,8 +73,6 @@ struct PreparedTextLine
     TextBaselineMetrics baseline;
     int maxHeight{0};
 };
-
-using RichTextLineList = std::vector<RichText>;
 
 int alignedLineX(const QRect& rect, int lineWidth, Qt::Alignment alignment)
 {
@@ -181,6 +189,9 @@ FilterDelegate::FilterDelegate(QObject* parent)
     : QStyledItemDelegate{parent}
     , m_artworkCornerRadius{0}
     , m_artworkScaling{ArtworkScaling::Fit}
+    , m_artworkSelectionFrame{.width = 2}
+    , m_highlightHoveredCaptions{true}
+    , m_highlightSelectedCaptions{true}
     , m_coverFlowPixmaps{static_cast<qsizetype>(Settings::Gui::Internal::DefaultCoverFlowCacheSize * 1024 * 1024)}
 { }
 
@@ -209,6 +220,17 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         WidgetBackground::clearDelegateBackground(opt);
     }
 
+    // Caption highlighting is independent of artwork frames
+    QStyleOptionViewItem captionOpt{opt};
+    if(iconMode && view->captionDisplay() != ExpandedTreeView::CaptionDisplay::None) {
+        if(!m_highlightHoveredCaptions) {
+            captionOpt.state &= ~QStyle::State_MouseOver;
+        }
+        if(!m_highlightSelectedCaptions) {
+            captionOpt.state &= ~QStyle::State_Selected;
+        }
+    }
+
     Qt::Edges squareEdges;
     if(iconMode) {
         if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Bottom) {
@@ -223,6 +245,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
     const auto drawBackground = [&](QStyleOptionViewItem backgroundOpt) {
         painter->save();
+        painter->setClipRect(backgroundOpt.rect, Qt::IntersectClip);
 
         if(backgroundRadius > 0) {
             Gui::clipRoundedRect(*painter, backgroundOpt.rect, backgroundRadius, squareEdges);
@@ -237,7 +260,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         painter->restore();
     };
 
-    const QRect decorationRect = hasArtwork ? artworkRect(opt) : QRect{};
+    const QRect decorationRect = iconMode ? artworkRect(opt) : QRect{};
     QPixmap scaledArtwork;
     if(hasArtwork) {
         const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
@@ -254,14 +277,8 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     }
 
     const auto drawArtwork = [&]() {
-        if(hasArtwork) {
-            painter->save();
-            const Qt::Alignment alignment
-                = iconMode && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Bottom
-                    ? Qt::AlignHCenter | Qt::AlignBottom
-                    : Qt::AlignCenter;
-            Gui::drawRoundedPixmap(*painter, decorationRect, alignment, scaledArtwork, m_artworkCornerRadius);
-            painter->restore();
+        if(iconMode) {
+            drawIconArtwork(painter, opt, decorationRect, scaledArtwork);
         }
     };
 
@@ -270,7 +287,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
     IconCaptionLineList richLines;
     if(!richTreeMode) {
-        richLines = iconRichLines(index, opt);
+        richLines = iconRichLines(index, captionOpt);
     }
 
     if(!richText.empty()) {
@@ -300,7 +317,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     if(!richLines.empty()) {
         painter->save();
 
-        QStyleOptionViewItem backgroundOpt{opt};
+        QStyleOptionViewItem backgroundOpt{captionOpt};
         backgroundOpt.text.clear();
         if(hasArtwork) {
             backgroundOpt.icon = {};
@@ -308,11 +325,11 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         drawBackground(backgroundOpt);
 
         if(overlayCaption) {
-            drawOverlayItem(painter, opt, scaledArtwork, richLines);
+            drawOverlayItem(painter, opt, scaledArtwork, richLines, captionOpt);
         }
         else {
             drawArtwork();
-            drawRichTextLines(painter, opt, iconTextRect(opt), richLines, {});
+            drawRichTextLines(painter, captionOpt, iconTextRect(opt), richLines, {});
         }
 
         painter->restore();
@@ -320,10 +337,11 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     }
 
     if(hasArtwork) {
-        opt.icon = {};
+        opt.icon        = {};
+        captionOpt.icon = {};
     }
     if(iconMode) {
-        drawBackground(opt);
+        drawBackground(captionOpt);
     }
     else {
         style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
@@ -399,22 +417,21 @@ void FilterDelegate::setArtworkScaling(ArtworkScaling scaling)
     m_artworkScaling = scaling;
 }
 
+void FilterDelegate::setArtworkFrames(const ArtworkFrame& hover, const ArtworkFrame& selection)
+{
+    m_artworkHoverFrame     = hover;
+    m_artworkSelectionFrame = selection;
+}
+
+void FilterDelegate::setCaptionHighlighting(bool hover, bool selection)
+{
+    m_highlightHoveredCaptions  = hover;
+    m_highlightSelectedCaptions = selection;
+}
+
 void FilterDelegate::setCoverFlowCacheSize(int sizeMb)
 {
     m_coverFlowPixmaps.setMaxCost(std::clamp(sizeMb, 1, 1024) * 1024LL * 1024LL);
-}
-
-RichText FilterDelegate::recolourRichText(RichText richText, const QColor& colour)
-{
-    if(!colour.isValid()) {
-        return richText;
-    }
-
-    for(auto& block : richText.blocks) {
-        block.format.colour.setColour(colour);
-    }
-
-    return richText;
 }
 
 QRect FilterDelegate::artworkRect(const QStyleOptionViewItem& option) const
@@ -509,29 +526,8 @@ IconCaptionLineList FilterDelegate::iconRichLines(const QModelIndex& index, cons
         return {};
     }
 
-    const auto captionLines = index.data(FilterItem::IconCaptionLines).value<IconCaptionLineList>();
-    IconCaptionLineList lines;
-    lines.reserve(captionLines.size());
-
-    const QColor selectedColour = selectionTextColour(option);
-    const bool isSelected       = option.state & QStyle::State_Selected;
-
-    for(const auto& captionLine : captionLines) {
-        RichText richLine = captionLine.text;
-        if(richLine.empty()) {
-            continue;
-        }
-
-        if(isSelected) {
-            richLine = recolourRichText(std::move(richLine), selectedColour);
-        }
-
-        IconCaptionLine line;
-        line.text      = std::move(richLine);
-        line.alignment = captionLine.alignment;
-        lines.push_back(std::move(line));
-    }
-
+    auto lines = index.data(FilterItem::IconCaptionLines).value<IconCaptionLineList>();
+    std::erase_if(lines, [](const auto& line) { return line.text.empty(); });
     return lines;
 }
 
@@ -701,8 +697,187 @@ void FilterDelegate::setupFilterOption(QStyleOptionViewItem* option, const QMode
     }
 }
 
-void FilterDelegate::drawOverlayItem(QPainter* painter, QStyleOptionViewItem option, const QPixmap& artwork,
-                                     const IconCaptionLineList& lines) const
+const ArtworkFrame* FilterDelegate::artworkFrame(const QStyleOptionViewItem& option) const
+{
+    if(m_artworkSelectionFrame.enabled && option.state & QStyle::State_Selected) {
+        return &m_artworkSelectionFrame;
+    }
+    if(m_artworkHoverFrame.enabled && option.state & QStyle::State_MouseOver) {
+        return &m_artworkHoverFrame;
+    }
+    return nullptr;
+}
+
+FilterDelegate::ArtworkFrameGeometry FilterDelegate::artworkFrameGeometry(const QStyleOptionViewItem& option,
+                                                                          const QRectF& artwork, int cornerRadius) const
+{
+    const auto* frame = artworkFrame(option);
+    if(!frame) {
+        return {.rect = artwork, .radius = std::min(artwork.width(), artwork.height()) * cornerRadius / 200.0};
+    }
+
+    const QRectF rect  = artwork.intersected(QRectF{option.rect});
+    const qreal radius = std::min(rect.width(), rect.height()) * cornerRadius / 200.0;
+    const auto* view   = qobject_cast<const ExpandedTreeView*>(option.widget);
+    if(view && view->viewMode() == ExpandedTreeView::ViewMode::CoverFlow && !rect.isEmpty()) {
+        const int width = std::clamp(frame->width, 1, 20);
+        return {.rect = rect.adjusted(-width, -width, width, width), .radius = radius > 0.0 ? radius + width : 0.0};
+    }
+    if(!view || view->viewMode() != ExpandedTreeView::ViewMode::Icon || rect.isEmpty()) {
+        return {.rect = rect, .radius = radius};
+    }
+
+    const int width = std::clamp(frame->width, 1, 20);
+
+    QRectF available{option.rect};
+    if(option.index.isValid() && option.index.model() == view->model()
+       && view->visualRect(option.index) == option.rect) {
+        available = view->iconItemPaintRect(option.index).intersected(view->viewport()->rect());
+    }
+
+    const QRect textRect = iconTextRect(option);
+    if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Bottom) {
+        available.setBottom(std::min(available.bottom(), static_cast<qreal>(textRect.top())));
+    }
+    else if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Right) {
+        if(option.direction == Qt::RightToLeft) {
+            available.setLeft(std::max(available.left(), static_cast<qreal>(textRect.right() + 1)));
+        }
+        else {
+            available.setRight(std::min(available.right(), static_cast<qreal>(textRect.left())));
+        }
+    }
+
+    const qreal outset = std::clamp(std::min({rect.left() - available.left(), available.right() - rect.right(),
+                                              rect.top() - available.top(), available.bottom() - rect.bottom()}),
+                                    0.0, static_cast<qreal>(width));
+    return {.rect = rect.adjusted(-outset, -outset, outset, outset), .radius = radius > 0.0 ? radius + outset : 0.0};
+}
+
+void FilterDelegate::drawArtworkFrame(QPainter* painter, const QStyleOptionViewItem& option,
+                                      const ArtworkFrameGeometry& geometry, const QRectF& artwork,
+                                      int cornerRadius) const
+{
+    const QRectF rect = geometry.rect;
+    if(rect.isEmpty()) {
+        return;
+    }
+
+    const auto* frame    = artworkFrame(option);
+    const bool showFocus = qstyleoption_cast<const ExpandedTreeView::CoverFlowStyleOption*>(&option)
+                        && (option.state & QStyle::State_HasFocus);
+    if(!frame && !showFocus) {
+        return;
+    }
+
+    const auto group = !(option.state & QStyle::State_Enabled) ? QPalette::Disabled
+                     : option.state & QStyle::State_Active     ? QPalette::Active
+                                                               : QPalette::Inactive;
+    const qreal width
+        = frame ? std::min<qreal>(std::clamp(frame->width, 1, 20), std::min(rect.width(), rect.height()) / 2.0) : 0.0;
+
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    if(frame) {
+        QColor colour = frame->colour.isValid() ? frame->colour : option.palette.color(group, QPalette::Highlight);
+        if(frame == &m_artworkHoverFrame && !frame->colour.isValid()) {
+            colour.setAlphaF(colour.alphaF() * 0.65F);
+        }
+
+        QPainterPath border;
+        border.setFillRule(Qt::OddEvenFill);
+        border.addRect(rect.adjusted(-1.0, -1.0, 1.0, 1.0));
+
+        const QRectF inner = rect.adjusted(width, width, -width, -width);
+        if(!inner.isEmpty()) {
+            const qreal radius = std::max(0.0, geometry.radius - width);
+            border.addRoundedRect(inner, radius, radius);
+        }
+
+        painter->fillPath(border, colour);
+    }
+
+    if(showFocus) {
+        const qreal inset = width + 2.0;
+
+        QStyleOptionFocusRect focus;
+        focus.QStyleOption::operator=(option);
+        focus.state |= QStyle::State_KeyboardFocusChange;
+        focus.rect            = rect.adjusted(inset, inset, -inset, -inset).toRect();
+        focus.backgroundColor = option.palette.color(group, QPalette::Base);
+
+        if(!focus.rect.isEmpty()) {
+            // Some styles fill the focus rectangle; keep that fill off the surrounding frame
+            const qreal radius = std::max(0.0, geometry.radius - width);
+
+            QPainterPath interior;
+            interior.addRoundedRect(rect.adjusted(width, width, -width, -width), radius, radius);
+            painter->setClipPath(interior, Qt::IntersectClip);
+
+            Gui::clipRoundedRect(*painter, artwork.intersected(QRectF{option.rect}), cornerRadius);
+            const auto* style = option.widget ? option.widget->style() : QApplication::style();
+            style->drawPrimitive(QStyle::PE_FrameFocusRect, &focus, painter, option.widget);
+        }
+    }
+
+    painter->restore();
+}
+
+void FilterDelegate::drawArtworkLayer(QPainter* painter, const ArtworkFrameGeometry& geometry, const QPointF& position,
+                                      const QPixmap& layer)
+{
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+    QPainterPath mask;
+    mask.addRoundedRect(geometry.rect, geometry.radius, geometry.radius);
+    painter->setClipPath(mask, Qt::IntersectClip);
+    painter->drawPixmap(position, layer);
+    painter->restore();
+}
+
+void FilterDelegate::drawIconArtwork(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,
+                                     const QPixmap& artwork) const
+{
+    const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
+    painter->save();
+
+    const Qt::Alignment alignment = view && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Bottom
+                                      ? Qt::AlignHCenter | Qt::AlignBottom
+                                      : Qt::AlignCenter;
+    const QRect imageRect = artwork.isNull() ? rect
+                                             : QStyle::alignedRect(Qt::LeftToRight, alignment,
+                                                                   artwork.deviceIndependentSize().toSize(), rect);
+    if(artworkFrame(option)) {
+        const auto geometry   = artworkFrameGeometry(option, imageRect, m_artworkCornerRadius);
+        const QRect layerRect = geometry.rect.toAlignedRect();
+        const qreal dpr       = option.widget ? option.widget->devicePixelRatioF() : 1.0;
+        QPixmap layer         = createArtworkLayer(layerRect, dpr);
+        {
+            QPainter layerPainter{&layer};
+            layerPainter.setRenderHints(painter->renderHints());
+            layerPainter.translate(-layerRect.topLeft());
+            layerPainter.save();
+            layerPainter.setClipRect(option.rect);
+
+            layerPainter.drawPixmap(imageRect.topLeft(), artwork);
+
+            layerPainter.restore();
+            drawArtworkFrame(&layerPainter, option, geometry, imageRect, m_artworkCornerRadius);
+        }
+
+        drawArtworkLayer(painter, geometry, layerRect.topLeft(), layer);
+    }
+    else {
+        painter->setClipRect(option.rect, Qt::IntersectClip);
+        Gui::drawRoundedPixmap(*painter, rect, alignment, artwork, m_artworkCornerRadius);
+    }
+
+    painter->restore();
+}
+
+void FilterDelegate::drawOverlayItem(QPainter* painter, const QStyleOptionViewItem& option, const QPixmap& artwork,
+                                     const IconCaptionLineList& lines, QStyleOptionViewItem captionOption) const
 {
     const QRect decorationRect = artworkRect(option);
     const QRectF imageRect     = artwork.isNull()
@@ -710,29 +885,34 @@ void FilterDelegate::drawOverlayItem(QPainter* painter, QStyleOptionViewItem opt
                                    : QStyle::alignedRect(Qt::LeftToRight, Qt::AlignHCenter | Qt::AlignBottom,
                                                          artwork.deviceIndependentSize().toSize(), decorationRect);
 
-    const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : 1.0;
-    QPixmap layer{QSize{static_cast<int>(std::ceil(option.rect.width() * dpr)),
-                        static_cast<int>(std::ceil(option.rect.height() * dpr))}};
-    layer.setDevicePixelRatio(dpr);
-    layer.fill(Qt::transparent);
+    const qreal dpr       = option.widget ? option.widget->devicePixelRatioF() : 1.0;
+    const auto geometry   = artworkFrameGeometry(option, imageRect, m_artworkCornerRadius);
+    const QRect layerRect = geometry.rect.toAlignedRect();
+
+    QPixmap layer = createArtworkLayer(layerRect, dpr);
     {
         QPainter layerPainter{&layer};
         layerPainter.setRenderHints(painter->renderHints());
-        layerPainter.translate(-option.rect.topLeft());
+        layerPainter.translate(-layerRect.topLeft());
+        layerPainter.save();
+        layerPainter.setClipRect(option.rect);
         layerPainter.drawPixmap(imageRect.topLeft(), artwork);
 
         for(const auto role : {QPalette::Text, QPalette::Link}) {
-            if(option.palette.color(role).lightness() < 128) {
-                option.palette.setColor(role, Qt::white);
+            if(captionOption.palette.color(role).lightness() < 128) {
+                captionOption.palette.setColor(role, Qt::white);
             }
         }
         const int margin     = std::max(4, Gui::itemViewTextMargin(option.widget, &option));
         const QRect textRect = imageRect.adjusted(margin, 0, -margin, 0).toAlignedRect();
-        drawRichTextLines(&layerPainter, option, textRect, lines, imageRect);
+        drawRichTextLines(&layerPainter, captionOption, textRect, lines, imageRect);
+
+        layerPainter.restore();
+        drawArtworkFrame(&layerPainter, option, geometry, imageRect, m_artworkCornerRadius);
     }
 
-    // Mask artwork and captions together
-    Gui::drawRoundedPixmap(*painter, imageRect, option.rect.topLeft(), layer, m_artworkCornerRadius);
+    // Mask artwork, captions and the frame together to avoid seams at antialiased edges
+    drawArtworkLayer(painter, geometry, layerRect.topLeft(), layer);
 }
 
 void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionViewItem& option, QRect rect,
@@ -782,6 +962,7 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
     }
 
     painter->save();
+    painter->setClipRect(option.rect, Qt::IntersectClip);
 
     if(overlayCaption) {
         const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
@@ -953,7 +1134,6 @@ void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::C
     painter->save();
 
     painter->setOpacity(painter->opacity() * (reflection ? opacity : 1.0));
-    Gui::clipRoundedRect(*painter, opt.rect, option.cornerRadius);
 
     const bool inlineCaption = !reflection && settings.showLabels && settings.labelsOnArtwork && option.depth < 0.5;
     const auto drawArtwork   = [&](QPainter* target) {
@@ -975,32 +1155,25 @@ void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::C
         }
     };
 
-    if(inlineCaption) {
-        const qreal dpr = painter->device()->devicePixelRatioF();
-        QPixmap layer{QSize{static_cast<int>(std::ceil(opt.rect.width() * dpr)),
-                            static_cast<int>(std::ceil(opt.rect.height() * dpr))}};
-        layer.setDevicePixelRatio(dpr);
-        layer.fill(Qt::transparent);
+    if(inlineCaption || (!reflection && (artworkFrame(option) || option.state & QStyle::State_HasFocus))) {
+        const auto geometry   = artworkFrameGeometry(option, opt.rect, option.cornerRadius);
+        const QRect layerRect = geometry.rect.toAlignedRect();
+        const qreal dpr       = painter->device()->devicePixelRatioF();
+
+        QPixmap layer = createArtworkLayer(layerRect, dpr);
         {
             QPainter layerPainter{&layer};
             layerPainter.setRenderHints(painter->renderHints());
-            layerPainter.translate(-opt.rect.topLeft());
+            layerPainter.translate(-layerRect.topLeft());
             drawArtwork(&layerPainter);
+
+            drawArtworkFrame(&layerPainter, option, geometry, opt.rect, option.cornerRadius);
         }
-        painter->drawPixmap(QRectF{opt.rect}, layer, layer.rect());
+        drawArtworkLayer(painter, geometry, layerRect.topLeft(), layer);
     }
     else {
+        Gui::clipRoundedRect(*painter, opt.rect, option.cornerRadius);
         drawArtwork(painter);
-    }
-
-    if(!reflection && opt.state & QStyle::State_MouseOver) {
-        painter->setRenderHint(QPainter::Antialiasing);
-        painter->setBrush(Qt::NoBrush);
-        painter->setPen(QPen{opt.palette.color(QPalette::Text), 2.0});
-
-        const qreal radius
-            = std::max(0.0, (std::min(opt.rect.width(), opt.rect.height()) * option.cornerRadius / 200.0) - 1.0);
-        painter->drawRoundedRect(QRectF{opt.rect}.adjusted(1.0, 1.0, -1.0, -1.0), radius, radius);
     }
 
     painter->restore();

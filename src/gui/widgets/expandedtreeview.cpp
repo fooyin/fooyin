@@ -368,8 +368,9 @@ public:
     virtual void drawView(QPainter* painter, const QRegion& region) const = 0;
 
     [[nodiscard]] virtual QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const = 0;
-    [[nodiscard]] virtual ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const                 = 0;
-    [[nodiscard]] virtual QModelIndex findIndexAt(const QPoint& point, bool incSpans, bool incPadding) const   = 0;
+    [[nodiscard]] virtual QRect itemPaintRect(const QModelIndex& index) const;
+    [[nodiscard]] virtual ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const               = 0;
+    [[nodiscard]] virtual QModelIndex findIndexAt(const QPoint& point, bool incSpans, bool incPadding) const = 0;
     [[nodiscard]] virtual QModelIndex nearestSelectionIndex(const QPoint& point) const;
     [[nodiscard]] virtual QModelIndexList visibleIndexes(int margin) const                                        = 0;
     virtual void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) = 0;
@@ -433,6 +434,11 @@ public:
     QSize m_contentsSize;
     mutable int m_uniformRowHeight{0};
 };
+
+QRect BaseView::itemPaintRect(const QModelIndex& index) const
+{
+    return visualRect(index, RectRule::SingleSection, true);
+}
 
 QModelIndex BaseView::nearestSelectionIndex(const QPoint& /*point*/) const
 {
@@ -2007,6 +2013,7 @@ public:
 
     [[nodiscard]] bool canReuseMeasurements() const;
     [[nodiscard]] QRect rowRect(const QModelIndex& index) const;
+    [[nodiscard]] QRect itemPaintRect(const QModelIndex& index) const override;
     [[nodiscard]] int expansionRow(const QModelIndex& index, bool above) const;
     [[nodiscard]] int spacing() const override;
     [[nodiscard]] QSize effectiveIconSize() const override;
@@ -2050,7 +2057,6 @@ private:
     [[nodiscard]] QModelIndex iconItemIndex(const QModelIndex& index) const;
 
     void setupDecorationProps(QStyleOptionViewItem* opt) const;
-    [[nodiscard]] std::vector<ExpandedTreeViewItem> itemsOnRow(int y, int x) const;
     [[nodiscard]] QSize indexSizeHint(const QModelIndex& index, const QSize& decorationSize) const;
     [[nodiscard]] int itemWidth(int item) const;
     [[nodiscard]] int rowHeight(int rowStart) const;
@@ -2120,28 +2126,27 @@ void IconView::drawView(QPainter* painter, const QRegion& region) const
     QStyleOptionViewItem opt;
     m_view->initViewItemOption(&opt);
 
-    if(m_p->m_viewItems.empty() || header()->count() == 0) {
+    if(m_p->m_viewItems.empty() || header()->count() == 0 || m_segmentSize <= 0) {
         return;
     }
 
-    const QRect area       = region.boundingRect();
-    m_leftAndRight         = startAndEndColumns(area);
-    const int firstVisible = firstVisibleItem();
-    if(firstVisible < 0) {
-        return;
-    }
+    const QRect area    = region.boundingRect();
+    m_leftAndRight      = startAndEndColumns(area);
+    const int firstItem = firstVisibleItem();
 
+    // A frame from the preceding row can remain visible in the gap above the first item
+    const int firstVisible
+        = firstItem < 0 ? ((itemCount() - 1) / m_segmentSize) * m_segmentSize : std::max(0, firstItem - m_segmentSize);
     for(int rowStart{firstVisible}; rowStart < itemCount(); rowStart += m_segmentSize) {
-        const auto& item = viewItem(rowStart);
-        const int y      = item.y - verticalScrollBar()->value();
-        if(y > area.bottom()) {
+        if(itemPaintRect(viewItem(rowStart).index).top() > area.bottom()) {
             break;
         }
-        if(y + rowHeight(rowStart) < area.top()) {
-            continue;
-        }
-        for(const auto& rowItem : itemsOnRow(item.y, area.left())) {
-            drawItem(painter, opt, rowItem.index);
+        const int rowEnd = std::min(itemCount(), rowStart + m_segmentSize);
+        for(int item{rowStart}; item < rowEnd; ++item) {
+            const auto& index = viewItem(item).index;
+            if(itemPaintRect(index).intersects(area)) {
+                drawItem(painter, opt, index);
+            }
         }
     }
 }
@@ -2164,6 +2169,35 @@ QRect IconView::rowRect(const QModelIndex& index) const
         rect |= viewItem(i).rect();
     }
     return mapToViewport(rect);
+}
+
+QRect IconView::itemPaintRect(const QModelIndex& index) const
+{
+    const int item = m_p->viewIndex(index);
+    if(item < 0 || m_segmentSize <= 0) {
+        return {};
+    }
+
+    const QRect rect         = mapToViewport(viewItem(item).rect());
+    const QRect viewportRect = viewport()->rect();
+    const int column         = item % m_segmentSize;
+    const int rowStart       = item - column;
+
+    int left  = viewportRect.left();
+    int right = viewportRect.right() + 1;
+    if(column > 0) {
+        const QRect previous = mapToViewport(viewItem(item - 1).rect());
+        left                 = rect.left() - (std::max(0, rect.left() - previous.right() - 1) / 2);
+    }
+    if(column + 1 < m_segmentSize && item + 1 < itemCount()) {
+        const QRect next = mapToViewport(viewItem(item + 1).rect());
+        right            = rect.right() + 1 + (std::max(0, next.left() - rect.right() - 1) / 2);
+    }
+
+    const int top = rowStart == 0 ? viewportRect.top() : rect.top() - (m_rowSpacing / 2);
+    const int bottom
+        = rowStart + m_segmentSize >= itemCount() ? viewportRect.bottom() + 1 : rect.bottom() + 1 + (m_rowSpacing / 2);
+    return {QPoint{left, top}, QSize{std::max(0, right - left), std::max(0, bottom - top)}};
 }
 
 int IconView::expansionRow(const QModelIndex& index, bool above) const
@@ -2816,7 +2850,7 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
 
     // The delegate paints the item background along with its contents
     painter->save();
-    painter->setClipRect(mainOpt.rect, Qt::IntersectClip);
+    painter->setClipRect(itemPaintRect(index), Qt::IntersectClip);
     delegate(iconIndex)->paint(painter, mainOpt, iconIndex);
     painter->restore();
 
@@ -2873,24 +2907,6 @@ void IconView::setupDecorationProps(QStyleOptionViewItem* opt) const
             opt->displayAlignment   = Qt::AlignCenter;
             break;
     }
-}
-
-std::vector<ExpandedTreeViewItem> IconView::itemsOnRow(int y, int x) const
-{
-    std::vector<ExpandedTreeViewItem> result;
-
-    bool foundAjacant{false};
-    for(const auto& item : m_p->m_viewItems) {
-        if(item.y == y && item.x + item.width >= x) {
-            foundAjacant = true;
-            result.push_back(item);
-        }
-        else if(foundAjacant) {
-            break;
-        }
-    }
-
-    return result;
 }
 
 QSize IconView::indexSizeHint(const QModelIndex& index, const QSize& decorationSize) const
@@ -3824,10 +3840,11 @@ QSize CoverFlowView::availableIconSize() const
     const qreal reflection    = m_p->m_coverFlow.showReflection ? m_p->m_coverFlow.reflectionHeight / 100.0 : 0.0;
     const int gap             = reflection > 0.0 ? m_p->m_coverFlow.reflectionGap : 0;
     const bool overlay        = labelsOverlapReflections();
-    const int availableHeight = viewport()->height() - 16;
+    const int frameSpace      = 2 * m_p->m_coverFlow.frameWidth;
+    const int availableHeight = viewport()->height() - 16 - frameSpace;
     const int height = static_cast<int>((availableHeight - (overlay ? 0 : captionSpace) - gap) / (1.0 + reflection));
 
-    return {std::max(1, static_cast<int>(viewport()->width() * 0.45)),
+    return {std::max(1, static_cast<int>(viewport()->width() * 0.45) - frameSpace),
             std::max(1, overlay ? std::min(height, availableHeight - captionSpace) : height)};
 }
 
@@ -3875,8 +3892,9 @@ QRect CoverFlowView::captionRect() const
             ? static_cast<int>(artworkHeight * settings.reflectionHeight / 100.0) + settings.reflectionGap
             : 0;
 
-    const int top = settings.labelsAboveArtwork ? coverTop() - settings.labelSpacing - height
-                                                : coverTop() + artworkHeight + reflection + settings.labelSpacing;
+    const int top = settings.labelsAboveArtwork
+                      ? coverTop() - settings.frameWidth - settings.labelSpacing - height
+                      : coverTop() + artworkHeight + std::max(reflection, settings.frameWidth) + settings.labelSpacing;
     return {8, top, std::max(0, viewport()->width() - 16), height};
 }
 
@@ -3988,7 +4006,8 @@ int CoverFlowView::coverTop() const
     const int reservedSpace
         = labelsOverlapReflections() ? std::max(reflection, captionSpace) : reflection + captionSpace;
 
-    const int top = std::max(8, (viewport()->height() - height - reservedSpace) / 2);
+    const int top = std::max(8, (viewport()->height() - height - reservedSpace - (2 * settings.frameWidth)) / 2)
+                  + settings.frameWidth;
     return top + (settings.labelsAboveArtwork ? captionSpace : 0);
 }
 
@@ -4498,8 +4517,17 @@ void ExpandedTreeViewPrivate::setHoverIndex(const QPersistentModelIndex& index)
 
     auto* viewport = m_self->viewport();
 
-    const QRect oldHoverRect = m_view->visualRect(m_hoverIndex, RectRule::FullRow, false);
-    const QRect newHoverRect = m_view->visualRect(index, RectRule::FullRow, false);
+    if(m_viewMode == ViewMode::CoverFlow) {
+        m_hoverIndex = index;
+        viewport->update();
+        return;
+    }
+
+    const QRect oldHoverRect = m_viewMode == ViewMode::Icon
+                                 ? m_self->iconItemPaintRect(m_hoverIndex)
+                                 : m_view->visualRect(m_hoverIndex, RectRule::FullRow, false);
+    const QRect newHoverRect = m_viewMode == ViewMode::Icon ? m_self->iconItemPaintRect(index)
+                                                            : m_view->visualRect(index, RectRule::FullRow, false);
 
     viewport->update(QRect{0, newHoverRect.y(), viewport->width(), newHoverRect.height()});
     viewport->update(QRect{0, oldHoverRect.y(), viewport->width(), oldHoverRect.height()});
@@ -4993,6 +5021,7 @@ void CoverFlowSettings::normalise()
     labelSpacing       = std::clamp(labelSpacing, 0, 100);
     animationDuration  = std::clamp(animationDuration, 0, 500);
     scrollSensitivity  = std::clamp(scrollSensitivity, 10, 500);
+    frameWidth         = std::clamp(frameWidth, 0, 20);
     if(labelsOnArtwork) {
         labelsAboveArtwork = false;
     }
@@ -5022,6 +5051,7 @@ QJsonObject CoverFlowSettings::toJson() const
         {"AnimateScrolling"_L1, animateScrolling},
         {"AnimationDuration"_L1, animationDuration},
         {"ScrollSensitivity"_L1, scrollSensitivity},
+        {"FrameWidth"_L1, frameWidth},
     };
 }
 
@@ -5048,6 +5078,7 @@ void CoverFlowSettings::load(const QJsonObject& object)
     animateScrolling           = object.value("AnimateScrolling"_L1).toBool(animateScrolling);
     animationDuration          = object.value("AnimationDuration"_L1).toInt(animationDuration);
     scrollSensitivity          = object.value("ScrollSensitivity"_L1).toInt(scrollSensitivity);
+    frameWidth                 = object.value("FrameWidth"_L1).toInt(frameWidth);
     normalise();
 }
 
@@ -5435,6 +5466,12 @@ void ExpandedTreeView::setIconVerticalGap(int gap)
 
     p->doDelayedItemsLayout();
     viewport()->update();
+}
+
+QRect ExpandedTreeView::iconItemPaintRect(const QModelIndex& index) const
+{
+    p->layoutItems();
+    return p->m_view->itemPaintRect(index);
 }
 
 int ExpandedTreeView::iconScrollTopMargin(const QModelIndex& index) const
@@ -6905,10 +6942,12 @@ void ExpandedTreeView::currentChanged(const QModelIndex& current, const QModelIn
     }
 
     if(previous.isValid()) {
-        viewport()->update(p->m_view->visualRect(previous, RectRule::FullRow, false));
+        viewport()->update(p->m_viewMode == ViewMode::Icon ? iconItemPaintRect(previous)
+                                                           : p->m_view->visualRect(previous, RectRule::FullRow, false));
     }
     if(current.isValid()) {
-        viewport()->update(p->m_view->visualRect(current, RectRule::FullRow, false));
+        viewport()->update(p->m_viewMode == ViewMode::Icon ? iconItemPaintRect(current)
+                                                           : p->m_view->visualRect(current, RectRule::FullRow, false));
     }
 }
 
@@ -6917,11 +6956,14 @@ QRegion ExpandedTreeView::visualRegionForSelection(const QItemSelection& selecti
     QRegion selectionRegion;
 
     const QRect viewportRect = viewport()->rect();
+    if(p->m_viewMode == ViewMode::CoverFlow && !selection.isEmpty()) {
+        return viewportRect;
+    }
 
     if(p->m_viewMode != ViewMode::Tree) {
         const auto indexes = selection.indexes();
         for(const auto& index : indexes) {
-            const auto rect = visualRect(index);
+            const auto rect = p->m_viewMode == ViewMode::Icon ? iconItemPaintRect(index) : visualRect(index);
             if(viewportRect.intersects(rect)) {
                 selectionRegion += rect;
             }

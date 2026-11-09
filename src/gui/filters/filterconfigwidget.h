@@ -27,6 +27,7 @@
 
 class QCheckBox;
 class QComboBox;
+class QGroupBox;
 class QLineEdit;
 class QPushButton;
 class QSpinBox;
@@ -34,6 +35,7 @@ class QRadioButton;
 
 namespace Fooyin {
 class BackgroundConfigWidget;
+class ColourButton;
 
 namespace Filters {
 class FilterColumnRegistry;
@@ -102,6 +104,15 @@ private:
     QSpinBox* m_gridRightMargin;
     QSpinBox* m_gridBottomMargin;
     QSpinBox* m_artworkCornerRadius;
+    QGroupBox* m_artworkFrames;
+    QCheckBox* m_highlightHoveredCaptions;
+    QCheckBox* m_artworkHoverFrame;
+    QSpinBox* m_artworkHoverFrameWidth;
+    ColourButton* m_artworkHoverFrameColour;
+    QCheckBox* m_highlightSelectedCaptions;
+    QCheckBox* m_artworkSelectionFrame;
+    QSpinBox* m_artworkSelectionFrameWidth;
+    ColourButton* m_artworkSelectionFrameColour;
     QCheckBox* m_overrideArtworkMargins;
     QSpinBox* m_artworkLeftMargin;
     QSpinBox* m_artworkTopMargin;

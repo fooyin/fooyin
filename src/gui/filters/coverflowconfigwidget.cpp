@@ -188,7 +188,7 @@ CoverFlowConfigWidget::CoverFlowConfigWidget(QWidget* parent)
 
 CoverFlowSettings CoverFlowConfigWidget::settings() const
 {
-    CoverFlowSettings result;
+    auto result = m_preview->coverFlowSettings();
 
     for(const auto& control : m_integerControls) {
         result.*control.member = control.editor->value();
@@ -219,6 +219,7 @@ void CoverFlowConfigWidget::setSettings(const CoverFlowSettings& settings)
         m_labelPosition->setCurrentIndex(validated.labelsOnArtwork ? 2 : validated.labelsAboveArtwork ? 1 : 0);
     }
 
+    m_preview->setCoverFlowSettings(validated);
     updateControls();
 }
 
@@ -226,6 +227,16 @@ void CoverFlowConfigWidget::setArtworkSettings(const QSize& size, int cornerRadi
 {
     m_preview->changeIconSize(size);
     m_preview->setIconItemCornerRadius(cornerRadius);
+}
+
+void CoverFlowConfigWidget::setArtworkFrames(const ArtworkFrame& hover, const ArtworkFrame& selection)
+{
+    auto* delegate = qobject_cast<FilterDelegate*>(m_preview->itemDelegate());
+    delegate->setArtworkFrames(hover, selection);
+    auto settings       = m_preview->coverFlowSettings();
+    settings.frameWidth = std::max(hover.enabled ? hover.width : 0, selection.enabled ? selection.width : 0);
+    m_preview->setCoverFlowSettings(settings);
+    m_preview->viewport()->update();
 }
 
 QSize CoverFlowConfigWidget::sizeHint() const

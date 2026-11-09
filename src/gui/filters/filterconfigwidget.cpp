@@ -27,6 +27,7 @@
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/backgroundconfigwidget.h>
+#include <gui/widgets/colourbutton.h>
 #include <gui/widgets/hintlabel.h>
 
 #include <QButtonGroup>
@@ -90,6 +91,15 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_gridRightMargin{new QSpinBox(this)}
     , m_gridBottomMargin{new QSpinBox(this)}
     , m_artworkCornerRadius{new QSpinBox(this)}
+    , m_artworkFrames{new QGroupBox(tr("Highlighting"), this)}
+    , m_highlightHoveredCaptions{new QCheckBox(this)}
+    , m_artworkHoverFrame{new QCheckBox(this)}
+    , m_artworkHoverFrameWidth{new QSpinBox(this)}
+    , m_artworkHoverFrameColour{new ColourButton(tr("Custom colour"), true, this)}
+    , m_highlightSelectedCaptions{new QCheckBox(this)}
+    , m_artworkSelectionFrame{new QCheckBox(this)}
+    , m_artworkSelectionFrameWidth{new QSpinBox(this)}
+    , m_artworkSelectionFrameColour{new ColourButton(tr("Custom colour"), true, this)}
     , m_overrideArtworkMargins{new QCheckBox(tr("Custom margins"), this)}
     , m_artworkLeftMargin{new QSpinBox(this)}
     , m_artworkTopMargin{new QSpinBox(this)}
@@ -102,6 +112,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 
     auto* generalTab    = new QWidget(tabs);
     auto* appearanceTab = new QWidget(tabs);
+    auto* artworkTab    = new QWidget(tabs);
 
     auto* backgroundTab    = new QWidget(tabs);
     auto* backgroundLayout = new QVBoxLayout(backgroundTab);
@@ -110,6 +121,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 
     tabs->addTab(generalTab, tr("General"));
     tabs->addTab(appearanceTab, tr("Display"));
+    tabs->addTab(artworkTab, tr("Artwork"));
     tabs->addTab(backgroundTab, tr("Background"));
     tabs->addTab(m_expansionConfig, tr("Expansion"));
     tabs->addTab(m_coverFlowConfig, tr("Cover flow"));
@@ -216,6 +228,37 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     m_artworkCornerRadius->setSuffix(u" %"_s);
     m_artworkCornerRadius->setSpecialValueText(tr("Square"));
 
+    m_highlightHoveredCaptions->setToolTip(tr("Apply hover highlighting to captions in artwork views"));
+    m_highlightSelectedCaptions->setToolTip(
+        tr("Apply selection colours to caption backgrounds and text in artwork views"));
+
+    auto* framesLayout = new QGridLayout(m_artworkFrames);
+    framesLayout->setHorizontalSpacing(16);
+
+    framesLayout->addWidget(new QLabel(tr("Captions"), m_artworkFrames), 0, 1, Qt::AlignHCenter);
+    framesLayout->addWidget(new QLabel(tr("Frame"), m_artworkFrames), 0, 2, Qt::AlignHCenter);
+    framesLayout->addWidget(new QLabel(tr("Width"), m_artworkFrames), 0, 3, Qt::AlignHCenter);
+    framesLayout->addWidget(new QLabel(tr("Colour"), m_artworkFrames), 0, 4, Qt::AlignLeft);
+    framesLayout->addWidget(new QLabel(tr("Hover"), m_artworkFrames), 1, 0, Qt::AlignHCenter);
+    framesLayout->addWidget(m_highlightHoveredCaptions, 1, 1, Qt::AlignHCenter);
+    framesLayout->addWidget(m_artworkHoverFrame, 1, 2, Qt::AlignHCenter);
+    framesLayout->addWidget(m_artworkHoverFrameWidth, 1, 3);
+    framesLayout->addWidget(m_artworkHoverFrameColour, 1, 4);
+    framesLayout->addWidget(new QLabel(tr("Selection"), m_artworkFrames), 2, 0, Qt::AlignHCenter);
+    framesLayout->addWidget(m_highlightSelectedCaptions, 2, 1, Qt::AlignHCenter);
+    framesLayout->addWidget(m_artworkSelectionFrame, 2, 2, Qt::AlignHCenter);
+    framesLayout->addWidget(m_artworkSelectionFrameWidth, 2, 3);
+    framesLayout->addWidget(m_artworkSelectionFrameColour, 2, 4);
+    framesLayout->setColumnStretch(4, 1);
+
+    for(auto* width : {m_artworkHoverFrameWidth, m_artworkSelectionFrameWidth}) {
+        width->setRange(1, 20);
+        width->setSuffix(u" px"_s);
+    }
+    for(auto* colour : {m_artworkHoverFrameColour, m_artworkSelectionFrameColour}) {
+        colour->setToolTip(tr("Use a custom frame colour instead of the theme’s highlight colour."));
+    }
+
     for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin,
                         m_gridLeftMargin, m_gridTopMargin, m_gridRightMargin, m_gridBottomMargin}) {
         margin->setRange(0, 999);
@@ -224,7 +267,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
 
     m_overrideGridMargins->setToolTip(tr("Set the space around the entire artwork grid."));
 
-    auto* artworkGroup = new QGroupBox(tr("Artwork"), appearanceTab);
+    auto* artworkGroup = new QGroupBox(tr("Image"), artworkTab);
 
     auto* sizeLayout = new QGridLayout();
 
@@ -235,7 +278,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     sizeLayout->addWidget(m_iconHeight, row++, 3);
     sizeLayout->setColumnStretch(4, 1);
 
-    auto* gapsGroup  = new QGroupBox(tr("Gaps"), appearanceTab);
+    auto* gapsGroup  = new QGroupBox(tr("Gaps"), artworkTab);
     auto* gapsLayout = new QGridLayout(gapsGroup);
 
     row = 0;
@@ -246,7 +289,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     gapsLayout->setColumnStretch(2, 1);
     gapsLayout->setRowStretch(row, 1);
 
-    auto* marginsGroup  = new QGroupBox(tr("Artwork margins"), appearanceTab);
+    auto* marginsGroup  = new QGroupBox(tr("Artwork margins"), artworkTab);
     auto* marginsLayout = new QGridLayout(marginsGroup);
 
     row = 0;
@@ -262,7 +305,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     marginsLayout->setColumnStretch(4, 1);
     marginsLayout->setRowStretch(row, 1);
 
-    auto* gridMarginsGroup  = new QGroupBox(tr("Grid margins"), appearanceTab);
+    auto* gridMarginsGroup  = new QGroupBox(tr("Grid margins"), artworkTab);
     auto* gridMarginsLayout = new QGridLayout(gridMarginsGroup);
 
     row = 0;
@@ -340,21 +383,23 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     generalLayout->setColumnStretch(0, 1);
     generalLayout->setRowStretch(row, 1);
 
-    auto* spacingLayout = new QHBoxLayout();
-    spacingLayout->addWidget(gapsGroup, 1);
-    spacingLayout->addWidget(marginsGroup, 1);
-    spacingLayout->addWidget(gridMarginsGroup, 1);
+    auto* spacingLayout = new QVBoxLayout();
+    spacingLayout->addWidget(gapsGroup);
+    spacingLayout->addWidget(marginsGroup);
+    spacingLayout->addWidget(gridMarginsGroup);
 
     auto* appearanceTabLayout = new QGridLayout(appearanceTab);
+    appearanceTabLayout->addWidget(viewMode, 0, 0);
+    appearanceTabLayout->addWidget(displayOptions, 1, 0);
+    appearanceTabLayout->setRowStretch(2, 1);
 
-    row = 0;
-    appearanceTabLayout->addWidget(viewMode, row, 0);
-    appearanceTabLayout->addWidget(artworkGroup, row++, 1, 2, 1);
-    appearanceTabLayout->addWidget(displayOptions, row++, 0);
-    appearanceTabLayout->addLayout(spacingLayout, row++, 0, 1, 2);
-    appearanceTabLayout->setColumnStretch(0, 1);
-    appearanceTabLayout->setColumnStretch(1, 1);
-    appearanceTabLayout->setRowStretch(row, 1);
+    auto* artworkTabLayout = new QGridLayout(artworkTab);
+    artworkTabLayout->addWidget(artworkGroup, 0, 0);
+    artworkTabLayout->addLayout(spacingLayout, 0, 1);
+    artworkTabLayout->addWidget(m_artworkFrames, 1, 0, 1, 2);
+    artworkTabLayout->setColumnStretch(0, 1);
+    artworkTabLayout->setColumnStretch(1, 1);
+    artworkTabLayout->setRowStretch(2, 1);
 
     auto* mainLayout{contentLayout()};
     mainLayout->addWidget(tabs, 0, 0);
@@ -402,21 +447,31 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
     result.coverType                  = static_cast<Track::Cover>(m_coverType->currentData().toInt());
     result.coverSource
         = coverSource < 0 ? std::nullopt : std::optional{static_cast<ArtworkSourcePreference>(coverSource)};
-    result.showSummary            = m_showSummary->isChecked();
-    result.showHeader             = m_showHeader->isChecked();
-    result.showScrollbar          = m_showScrollbar->isChecked();
-    result.alternatingRows        = m_alternatingRows->isChecked();
-    result.rowHeight              = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0;
-    result.iconSize               = {m_iconWidth->value(), m_iconHeight->value()};
-    result.autoFitArtwork         = m_autoFitArtwork->isChecked();
-    result.artworkScaling         = artworkScalingFromInt(m_artworkScaling->currentData().toInt());
-    result.iconHorizontalGap      = m_iconHorizontalGap->value();
-    result.iconVerticalGap        = m_iconVerticalGap->value();
-    result.overrideGridMargins    = m_overrideGridMargins->isChecked();
-    result.gridMargins            = {m_gridLeftMargin->value(), m_gridTopMargin->value(), m_gridRightMargin->value(),
-                                     m_gridBottomMargin->value()};
-    result.artworkCornerRadius    = m_artworkCornerRadius->value();
-    result.overrideArtworkMargins = m_overrideArtworkMargins->isChecked();
+    result.showSummary         = m_showSummary->isChecked();
+    result.showHeader          = m_showHeader->isChecked();
+    result.showScrollbar       = m_showScrollbar->isChecked();
+    result.alternatingRows     = m_alternatingRows->isChecked();
+    result.rowHeight           = m_overrideRowHeight->isChecked() ? m_rowHeight->value() : 0;
+    result.iconSize            = {m_iconWidth->value(), m_iconHeight->value()};
+    result.autoFitArtwork      = m_autoFitArtwork->isChecked();
+    result.artworkScaling      = artworkScalingFromInt(m_artworkScaling->currentData().toInt());
+    result.iconHorizontalGap   = m_iconHorizontalGap->value();
+    result.iconVerticalGap     = m_iconVerticalGap->value();
+    result.overrideGridMargins = m_overrideGridMargins->isChecked();
+    result.gridMargins         = {m_gridLeftMargin->value(), m_gridTopMargin->value(), m_gridRightMargin->value(),
+                                  m_gridBottomMargin->value()};
+    result.artworkCornerRadius = m_artworkCornerRadius->value();
+    result.artworkHoverFrame
+        = {.enabled = m_artworkHoverFrame->isChecked(),
+           .width   = m_artworkHoverFrameWidth->value(),
+           .colour  = m_artworkHoverFrameColour->isChecked() ? m_artworkHoverFrameColour->colour() : QColor{}};
+    result.artworkSelectionFrame
+        = {.enabled = m_artworkSelectionFrame->isChecked(),
+           .width   = m_artworkSelectionFrameWidth->value(),
+           .colour  = m_artworkSelectionFrameColour->isChecked() ? m_artworkSelectionFrameColour->colour() : QColor{}};
+    result.highlightHoveredCaptions  = m_highlightHoveredCaptions->isChecked();
+    result.highlightSelectedCaptions = m_highlightSelectedCaptions->isChecked();
+    result.overrideArtworkMargins    = m_overrideArtworkMargins->isChecked();
     result.artworkMargins = {m_artworkLeftMargin->value(), m_artworkTopMargin->value(), m_artworkRightMargin->value(),
                              m_artworkBottomMargin->value()};
     result.coverFlow      = m_coverFlowConfig->settings();
@@ -485,6 +540,24 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_gridRightMargin->setValue(config.gridMargins.right());
     m_gridBottomMargin->setValue(config.gridMargins.bottom());
     m_artworkCornerRadius->setValue(config.artworkCornerRadius);
+    m_artworkHoverFrame->setChecked(config.artworkHoverFrame.enabled);
+    m_artworkHoverFrameWidth->setValue(config.artworkHoverFrame.width);
+    m_artworkHoverFrameWidth->setEnabled(config.artworkHoverFrame.enabled);
+    m_artworkHoverFrameColour->setChecked(config.artworkHoverFrame.colour.isValid());
+    m_artworkHoverFrameColour->setColour(config.artworkHoverFrame.colour.isValid()
+                                             ? config.artworkHoverFrame.colour
+                                             : palette().color(QPalette::Highlight));
+    m_artworkHoverFrameColour->setEnabled(config.artworkHoverFrame.enabled);
+    m_artworkSelectionFrame->setChecked(config.artworkSelectionFrame.enabled);
+    m_artworkSelectionFrameWidth->setValue(config.artworkSelectionFrame.width);
+    m_artworkSelectionFrameWidth->setEnabled(config.artworkSelectionFrame.enabled);
+    m_artworkSelectionFrameColour->setChecked(config.artworkSelectionFrame.colour.isValid());
+    m_artworkSelectionFrameColour->setColour(config.artworkSelectionFrame.colour.isValid()
+                                                 ? config.artworkSelectionFrame.colour
+                                                 : palette().color(QPalette::Highlight));
+    m_artworkSelectionFrameColour->setEnabled(config.artworkSelectionFrame.enabled);
+    m_highlightHoveredCaptions->setChecked(config.highlightHoveredCaptions);
+    m_highlightSelectedCaptions->setChecked(config.highlightSelectedCaptions);
     m_overrideArtworkMargins->setChecked(config.overrideArtworkMargins);
     for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin}) {
         margin->setEnabled(config.overrideArtworkMargins);
@@ -495,6 +568,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_artworkBottomMargin->setValue(config.artworkMargins.bottom());
     m_coverFlowConfig->setSettings(config.coverFlow);
     m_coverFlowConfig->setArtworkSettings(config.iconSize, config.artworkCornerRadius);
+    m_coverFlowConfig->setArtworkFrames(config.artworkHoverFrame, config.artworkSelectionFrame);
     m_background->setConfig(config.background);
     m_expansionConfig->setConfig(config);
     m_expansionDoubleClick->setEnabled(config.expandGroups);
@@ -521,6 +595,8 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
         &FilterWidget::ConfigData::autoFitArtwork, &FilterWidget::ConfigData::artworkScaling,
         &FilterWidget::ConfigData::iconVerticalGap, &FilterWidget::ConfigData::overrideGridMargins,
         &FilterWidget::ConfigData::gridMargins, &FilterWidget::ConfigData::artworkCornerRadius,
+        &FilterWidget::ConfigData::artworkHoverFrame, &FilterWidget::ConfigData::artworkSelectionFrame,
+        &FilterWidget::ConfigData::highlightHoveredCaptions, &FilterWidget::ConfigData::highlightSelectedCaptions,
         &FilterWidget::ConfigData::overrideArtworkMargins, &FilterWidget::ConfigData::artworkMargins,
         &FilterWidget::ConfigData::coverFlow, &FilterWidget::ConfigData::expandGroups,
         &FilterWidget::ConfigData::expansionPosition, &FilterWidget::ConfigData::expansionAnimated,
@@ -568,6 +644,10 @@ void FilterConfigDialog::setupConnections()
 
         const bool iconMode = !m_columnsMode->isChecked() && !coverFlow;
         m_artworkScaling->setEnabled(iconMode);
+        m_artworkFrames->setEnabled(!m_columnsMode->isChecked());
+        const bool hasCaptions = iconMode && !m_artworkNoLabelsMode->isChecked();
+        m_highlightHoveredCaptions->setEnabled(hasCaptions);
+        m_highlightSelectedCaptions->setEnabled(hasCaptions);
         m_overrideGridMargins->setEnabled(iconMode);
         for(auto* margin : {m_gridLeftMargin, m_gridTopMargin, m_gridRightMargin, m_gridBottomMargin}) {
             margin->setEnabled(iconMode && m_overrideGridMargins->isChecked());
@@ -589,16 +669,36 @@ void FilterConfigDialog::setupConnections()
     QObject::connect(m_autoFitArtwork, &QCheckBox::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_coverFlowConfig, &CoverFlowConfigWidget::settingsChanged, this, updateAutoFitArtwork);
     QObject::connect(m_overrideGridMargins, &QCheckBox::toggled, this, updateAutoFitArtwork);
+    QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
 
     const auto updateCoverFlowArtwork = [this]() {
         m_coverFlowConfig->setArtworkSettings({m_iconWidth->value(), m_iconHeight->value()},
                                               m_artworkCornerRadius->value());
     };
-    for(auto* editor : {m_iconWidth, m_iconHeight, m_artworkCornerRadius}) {
+    for(const auto* editor : {m_iconWidth, m_iconHeight, m_artworkCornerRadius}) {
         QObject::connect(editor, &QSpinBox::valueChanged, this, updateCoverFlowArtwork);
     }
 
-    QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
+    const auto updateArtworkFrames = [this]() {
+        const auto current{config()};
+        m_coverFlowConfig->setArtworkFrames(current.artworkHoverFrame, current.artworkSelectionFrame);
+    };
+    for(const auto* enabled : {m_artworkHoverFrame, m_artworkSelectionFrame}) {
+        QObject::connect(enabled, &QCheckBox::toggled, this, updateArtworkFrames);
+    }
+    for(const auto* width : {m_artworkHoverFrameWidth, m_artworkSelectionFrameWidth}) {
+        QObject::connect(width, &QSpinBox::valueChanged, this, updateArtworkFrames);
+    }
+    for(const auto* colour : {m_artworkHoverFrameColour, m_artworkSelectionFrameColour}) {
+        QObject::connect(colour, &ColourButton::colourUpdated, this, updateArtworkFrames);
+        QObject::connect(colour, &ColourButton::toggled, this, updateArtworkFrames);
+    }
+
+    QObject::connect(m_artworkHoverFrame, &QCheckBox::toggled, m_artworkHoverFrameWidth, &QWidget::setEnabled);
+    QObject::connect(m_artworkHoverFrame, &QCheckBox::toggled, m_artworkHoverFrameColour, &QWidget::setEnabled);
+    QObject::connect(m_artworkSelectionFrame, &QCheckBox::toggled, m_artworkSelectionFrameWidth, &QWidget::setEnabled);
+    QObject::connect(m_artworkSelectionFrame, &QCheckBox::toggled, m_artworkSelectionFrameColour, &QWidget::setEnabled);
+
     for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin}) {
         QObject::connect(m_overrideArtworkMargins, &QCheckBox::toggled, margin, &QWidget::setEnabled);
     }

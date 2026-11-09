@@ -33,6 +33,8 @@ namespace Fooyin {
 class ExpandedTreeView;
 
 namespace Filters {
+struct ArtworkFrame;
+
 class CoverFlowConfigWidget : public QWidget
 {
     Q_OBJECT
@@ -43,6 +45,7 @@ public:
     [[nodiscard]] CoverFlowSettings settings() const;
     void setSettings(const CoverFlowSettings& settings);
     void setArtworkSettings(const QSize& size, int cornerRadius);
+    void setArtworkFrames(const ArtworkFrame& hover, const ArtworkFrame& selection);
 
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;

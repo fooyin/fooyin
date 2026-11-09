@@ -21,12 +21,22 @@
 
 #include <gui/coverartworktypes.h>
 
+#include <QColor>
 #include <QDataStream>
 #include <QString>
 
 #include <vector>
 
 namespace Fooyin::Filters {
+struct ArtworkFrame
+{
+    bool enabled{false};
+    int width{2};
+    QColor colour{}; // An invalid colour follows the highlight colour
+
+    bool operator==(const ArtworkFrame& other) const = default;
+};
+
 struct FilterColumn
 {
     static constexpr qint32 Magic   = -0x46434F4C;

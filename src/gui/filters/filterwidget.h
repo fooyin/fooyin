@@ -161,6 +161,10 @@ public:
         bool overrideGridMargins{false};
         QMargins gridMargins{10, 10, 10, 10};
         int artworkCornerRadius{0};
+        ArtworkFrame artworkHoverFrame{.width = 2};
+        ArtworkFrame artworkSelectionFrame{.width = 4};
+        bool highlightHoveredCaptions{true};
+        bool highlightSelectedCaptions{true};
         bool overrideArtworkMargins{false};
         QMargins artworkMargins{8, 8, 8, 8};
         CoverFlowSettings coverFlow;

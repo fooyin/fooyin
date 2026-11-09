@@ -71,26 +71,30 @@ Q_LOGGING_CATEGORY(FILTER_WIDGET_TRACE, "fy.trace.filters.widget", QtInfoMsg)
 
 using namespace Qt::StringLiterals;
 
-constexpr auto FilterDoubleClickKey            = u"Filters/DoubleClickBehaviour";
-constexpr auto FilterMiddleClickKey            = u"Filters/MiddleClickBehaviour";
-constexpr auto FilterPlaylistEnabledKey        = u"Filters/SelectionPlaylistEnabled";
-constexpr auto FilterAutoSwitchKey             = u"Filters/AutoSwitchSelectionPlaylist";
-constexpr auto FilterAutoPlaylistKey           = u"Filters/SelectionPlaylistName";
-constexpr auto FilterRestoreStateKey           = u"Filters/RestoreState";
-constexpr auto FilterRowHeightKey              = u"Filters/RowHeight";
-constexpr auto FilterSendPlaybackKey           = u"Filters/StartPlaybackOnSend";
-constexpr auto FilterSourceKey                 = u"Filters/Source";
-constexpr auto FilterKeepAliveKey              = u"Filters/KeepAlive";
-constexpr auto FilterIconSizeKey               = u"Filters/IconSize";
-constexpr auto FilterAutoFitArtworkKey         = u"Filters/AutoFitArtwork";
-constexpr auto FilterArtworkScalingKey         = u"Filters/ArtworkScaling";
-constexpr auto FilterIconHorizontalGapKey      = u"Filters/IconHorizontalGap";
-constexpr auto FilterIconVerticalGapKey        = u"Filters/IconVerticalGap";
-constexpr auto FilterArtworkRadiusKey          = u"Filters/ArtworkCornerRadius";
-constexpr auto FilterOverrideArtworkMarginsKey = u"Filters/OverrideArtworkMargins";
-constexpr auto FilterArtworkMarginsKey         = u"Filters/ArtworkMargins";
-constexpr auto FilterOverrideGridMarginsKey    = u"Filters/OverrideGridMargins";
-constexpr auto FilterGridMarginsKey            = u"Filters/GridMargins";
+constexpr auto FilterDoubleClickKey               = u"Filters/DoubleClickBehaviour";
+constexpr auto FilterMiddleClickKey               = u"Filters/MiddleClickBehaviour";
+constexpr auto FilterPlaylistEnabledKey           = u"Filters/SelectionPlaylistEnabled";
+constexpr auto FilterAutoSwitchKey                = u"Filters/AutoSwitchSelectionPlaylist";
+constexpr auto FilterAutoPlaylistKey              = u"Filters/SelectionPlaylistName";
+constexpr auto FilterRestoreStateKey              = u"Filters/RestoreState";
+constexpr auto FilterRowHeightKey                 = u"Filters/RowHeight";
+constexpr auto FilterSendPlaybackKey              = u"Filters/StartPlaybackOnSend";
+constexpr auto FilterSourceKey                    = u"Filters/Source";
+constexpr auto FilterKeepAliveKey                 = u"Filters/KeepAlive";
+constexpr auto FilterIconSizeKey                  = u"Filters/IconSize";
+constexpr auto FilterAutoFitArtworkKey            = u"Filters/AutoFitArtwork";
+constexpr auto FilterArtworkScalingKey            = u"Filters/ArtworkScaling";
+constexpr auto FilterIconHorizontalGapKey         = u"Filters/IconHorizontalGap";
+constexpr auto FilterIconVerticalGapKey           = u"Filters/IconVerticalGap";
+constexpr auto FilterArtworkRadiusKey             = u"Filters/ArtworkCornerRadius";
+constexpr auto FilterArtworkHoverFrameKey         = u"Filters/ArtworkHoverFrame";
+constexpr auto FilterArtworkSelectionFrameKey     = u"Filters/ArtworkSelectionFrame";
+constexpr auto FilterHighlightHoveredCaptionsKey  = u"Filters/HighlightHoveredCaptions";
+constexpr auto FilterHighlightSelectedCaptionsKey = u"Filters/HighlightSelectedCaptions";
+constexpr auto FilterOverrideArtworkMarginsKey    = u"Filters/OverrideArtworkMargins";
+constexpr auto FilterArtworkMarginsKey            = u"Filters/ArtworkMargins";
+constexpr auto FilterOverrideGridMarginsKey       = u"Filters/OverrideGridMargins";
+constexpr auto FilterGridMarginsKey               = u"Filters/GridMargins";
 
 constexpr auto FilterExpandGroupsKey                = u"Filters/ExpandGroups";
 constexpr auto FilterExpansionPositionKey           = u"Filters/ExpansionPosition";
@@ -137,6 +141,22 @@ constexpr int FilterModelPinUpdateDelay = 50;
 
 namespace Fooyin::Filters {
 namespace {
+void loadArtworkFrame(const QJsonObject& object, ArtworkFrame& frame)
+{
+    frame.enabled = object.value("Enabled"_L1).toBool(frame.enabled);
+    frame.width   = std::clamp(object.value("Width"_L1).toInt(frame.width), 1, 20);
+    if(object.contains("Colour"_L1)) {
+        frame.colour = QColor{object.value("Colour"_L1).toString()};
+    }
+}
+
+QJsonObject artworkFrameToJson(const ArtworkFrame& frame)
+{
+    return {{"Enabled"_L1, frame.enabled},
+            {"Width"_L1, frame.width},
+            {"Colour"_L1, frame.colour.isValid() ? frame.colour.name(QColor::HexArgb) : QString{}}};
+}
+
 QString normaliseColour(const QString& value)
 {
     const QColor colour{value};
@@ -660,7 +680,15 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
     config.iconHorizontalGap   = m_settings->fileValue(FilterIconHorizontalGapKey, config.iconHorizontalGap).toInt();
     config.iconVerticalGap     = m_settings->fileValue(FilterIconVerticalGapKey, config.iconVerticalGap).toInt();
     config.artworkCornerRadius = m_settings->fileValue(FilterArtworkRadiusKey, config.artworkCornerRadius).toInt();
-    config.artworkMargins      = Gui::marginsFromJson(
+    loadArtworkFrame(QJsonObject::fromVariantMap(m_settings->fileValue(FilterArtworkHoverFrameKey).toMap()),
+                     config.artworkHoverFrame);
+    loadArtworkFrame(QJsonObject::fromVariantMap(m_settings->fileValue(FilterArtworkSelectionFrameKey).toMap()),
+                     config.artworkSelectionFrame);
+    config.highlightHoveredCaptions
+        = m_settings->fileValue(FilterHighlightHoveredCaptionsKey, config.highlightHoveredCaptions).toBool();
+    config.highlightSelectedCaptions
+        = m_settings->fileValue(FilterHighlightSelectedCaptionsKey, config.highlightSelectedCaptions).toBool();
+    config.artworkMargins = Gui::marginsFromJson(
         QJsonObject::fromVariantMap(m_settings->fileValue(FilterArtworkMarginsKey).toMap()), config.artworkMargins);
     config.overrideArtworkMargins
         = m_settings
@@ -768,6 +796,11 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
     m_settings->fileSet(FilterIconHorizontalGapKey, config.iconHorizontalGap);
     m_settings->fileSet(FilterIconVerticalGapKey, config.iconVerticalGap);
     m_settings->fileSet(FilterArtworkRadiusKey, config.artworkCornerRadius);
+    m_settings->fileSet(FilterArtworkHoverFrameKey, artworkFrameToJson(config.artworkHoverFrame).toVariantMap());
+    m_settings->fileSet(FilterArtworkSelectionFrameKey,
+                        artworkFrameToJson(config.artworkSelectionFrame).toVariantMap());
+    m_settings->fileSet(FilterHighlightHoveredCaptionsKey, config.highlightHoveredCaptions);
+    m_settings->fileSet(FilterHighlightSelectedCaptionsKey, config.highlightSelectedCaptions);
     m_settings->fileSet(FilterOverrideArtworkMarginsKey, config.overrideArtworkMargins);
     m_settings->fileSet(FilterArtworkMarginsKey, Gui::marginsToJson(config.artworkMargins).toVariantMap());
     m_settings->fileSet(FilterOverrideGridMarginsKey, config.overrideGridMargins);
@@ -837,6 +870,10 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterIconHorizontalGapKey);
     m_settings->fileRemove(FilterIconVerticalGapKey);
     m_settings->fileRemove(FilterArtworkRadiusKey);
+    m_settings->fileRemove(FilterArtworkHoverFrameKey);
+    m_settings->fileRemove(FilterArtworkSelectionFrameKey);
+    m_settings->fileRemove(FilterHighlightHoveredCaptionsKey);
+    m_settings->fileRemove(FilterHighlightSelectedCaptionsKey);
     m_settings->fileRemove(FilterOverrideArtworkMarginsKey);
     m_settings->fileRemove(FilterArtworkMarginsKey);
     m_settings->fileRemove(FilterOverrideGridMarginsKey);
@@ -882,6 +919,9 @@ void FilterWidget::applyConfig(const ConfigData& config)
 {
     auto validated{config};
 
+    validated.coverFlow.frameWidth
+        = std::max(validated.artworkHoverFrame.enabled ? validated.artworkHoverFrame.width : 0,
+                   validated.artworkSelectionFrame.enabled ? validated.artworkSelectionFrame.width : 0);
     validated.coverFlow.normalise();
     validated.background.normalise();
     validated.expansionBackground.normalise();
@@ -911,13 +951,15 @@ void FilterWidget::applyConfig(const ConfigData& config)
         validated.coverSource.reset();
     }
 
-    validated.rowHeight           = std::max(validated.rowHeight, 0);
-    validated.iconHorizontalGap   = std::max(validated.iconHorizontalGap, -1);
-    validated.iconVerticalGap     = std::max(validated.iconVerticalGap, 0);
-    validated.artworkCornerRadius = std::clamp(validated.artworkCornerRadius, 0, 100);
-    validated.artworkScaling      = artworkScalingFromInt(static_cast<int>(validated.artworkScaling));
-    validated.artworkMargins      = Gui::marginsFromJson({}, validated.artworkMargins);
-    validated.gridMargins         = Gui::marginsFromJson({}, validated.gridMargins);
+    validated.rowHeight                   = std::max(validated.rowHeight, 0);
+    validated.iconHorizontalGap           = std::max(validated.iconHorizontalGap, -1);
+    validated.iconVerticalGap             = std::max(validated.iconVerticalGap, 0);
+    validated.artworkCornerRadius         = std::clamp(validated.artworkCornerRadius, 0, 100);
+    validated.artworkHoverFrame.width     = std::clamp(validated.artworkHoverFrame.width, 1, 20);
+    validated.artworkSelectionFrame.width = std::clamp(validated.artworkSelectionFrame.width, 1, 20);
+    validated.artworkScaling              = artworkScalingFromInt(static_cast<int>(validated.artworkScaling));
+    validated.artworkMargins              = Gui::marginsFromJson({}, validated.artworkMargins);
+    validated.gridMargins                 = Gui::marginsFromJson({}, validated.gridMargins);
 
     if(!validated.iconSize.isValid()) {
         validated.iconSize = factoryConfig().iconSize;
@@ -981,6 +1023,10 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.iconVerticalGap != validated.iconVerticalGap
        || m_config.overrideGridMargins != validated.overrideGridMargins || m_config.gridMargins != validated.gridMargins
        || m_config.artworkCornerRadius != validated.artworkCornerRadius
+       || m_config.artworkHoverFrame != validated.artworkHoverFrame
+       || m_config.artworkSelectionFrame != validated.artworkSelectionFrame
+       || m_config.highlightHoveredCaptions != validated.highlightHoveredCaptions
+       || m_config.highlightSelectedCaptions != validated.highlightSelectedCaptions
        || m_config.overrideArtworkMargins != validated.overrideArtworkMargins
        || m_config.artworkMargins != validated.artworkMargins || m_config.expandGroups != validated.expandGroups
        || m_config.expansionAnimated != validated.expansionAnimated
@@ -1044,6 +1090,8 @@ void FilterWidget::applyConfig(const ConfigData& config)
 
     m_delegate->setArtworkCornerRadius(m_config.artworkCornerRadius);
     m_delegate->setArtworkScaling(m_config.artworkScaling);
+    m_delegate->setArtworkFrames(m_config.artworkHoverFrame, m_config.artworkSelectionFrame);
+    m_delegate->setCaptionHighlighting(m_config.highlightHoveredCaptions, m_config.highlightSelectedCaptions);
     updateArtworkMargins();
     m_view->changeIconSize(m_config.iconSize);
     m_model->setIconSize(m_view->effectiveIconSize());
@@ -1111,6 +1159,12 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
     config.overrideGridMargins = layout.value("OverrideGridMargins"_L1).toBool(config.overrideGridMargins);
     config.gridMargins         = Gui::marginsFromJson(layout.value("GridMargins"_L1).toObject(), config.gridMargins);
     config.artworkCornerRadius = layout.value("ArtworkCornerRadius"_L1).toInt(config.artworkCornerRadius);
+    loadArtworkFrame(layout.value("ArtworkHoverFrame"_L1).toObject(), config.artworkHoverFrame);
+    loadArtworkFrame(layout.value("ArtworkSelectionFrame"_L1).toObject(), config.artworkSelectionFrame);
+    config.highlightHoveredCaptions
+        = layout.value("HighlightHoveredCaptions"_L1).toBool(config.highlightHoveredCaptions);
+    config.highlightSelectedCaptions
+        = layout.value("HighlightSelectedCaptions"_L1).toBool(config.highlightSelectedCaptions);
     config.artworkMargins = Gui::marginsFromJson(layout.value("ArtworkMargins"_L1).toObject(), config.artworkMargins);
     config.overrideArtworkMargins
         = layout.value("OverrideArtworkMargins"_L1)
@@ -1211,6 +1265,10 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["OverrideGridMargins"_L1]               = config.overrideGridMargins;
     layout["GridMargins"_L1]                       = Gui::marginsToJson(config.gridMargins);
     layout["ArtworkCornerRadius"_L1]               = config.artworkCornerRadius;
+    layout["ArtworkHoverFrame"_L1]                 = artworkFrameToJson(config.artworkHoverFrame);
+    layout["ArtworkSelectionFrame"_L1]             = artworkFrameToJson(config.artworkSelectionFrame);
+    layout["HighlightHoveredCaptions"_L1]          = config.highlightHoveredCaptions;
+    layout["HighlightSelectedCaptions"_L1]         = config.highlightSelectedCaptions;
     layout["OverrideArtworkMargins"_L1]            = config.overrideArtworkMargins;
     layout["ArtworkMargins"_L1]                    = Gui::marginsToJson(config.artworkMargins);
     layout["ExpandGroups"_L1]                      = config.expandGroups;
