@@ -234,7 +234,7 @@ LayoutDropTarget LayoutUtils::resolveDropTarget(FyWidget* source, WidgetContaine
         return target;
     }
 
-    // Reserve panel edges for insertion into an existing splitter
+    // Keep exact panel edges available for insertion into outer splitters
     const QRect panelRect    = relativeGeometry(hovered, root);
     const QPoint local       = position - panelRect.topLeft();
     const int horizontalEdge = edgeThreshold(panelRect.width());
@@ -242,12 +242,55 @@ LayoutDropTarget LayoutUtils::resolveDropTarget(FyWidget* source, WidgetContaine
     const bool onEdge        = local.x() < horizontalEdge || local.x() >= panelRect.width() - horizontalEdge
                             || local.y() < verticalEdge || local.y() >= panelRect.height() - verticalEdge;
     if(!onEdge) {
-        // Interior drops populate empty containers before considering a new split
+        // Interior drops populate empty containers before considering insertion or a new split
         if(auto* container = qobject_cast<WidgetContainer*>(hovered); container && container->widgets().empty()) {
             tryTarget(container, 0, panelRect, tr("Move into empty area"));
             return target;
         }
+    }
 
+    for(const bool expanded : {false, true}) {
+        if(expanded && (modifiers != Qt::NoModifier || hovered == source || source->isAncestorOf(hovered))) {
+            break;
+        }
+        if(!expanded && !onEdge) {
+            continue;
+        }
+
+        const auto* current{hovered};
+        while(current && current != root) {
+            auto* container = qobject_cast<WidgetContainer*>(current->findParent());
+            if(auto* splitter = qobject_cast<SplitterWidget*>(container)) {
+                const QRect rect       = relativeGeometry(current, root);
+                const auto orientation = splitter->orientation();
+                const bool vertical    = orientation == Qt::Vertical;
+                const int length       = vertical ? rect.height() : rect.width();
+                const int coordinate   = vertical ? position.y() - rect.top() : position.x() - rect.left();
+                const int edge         = edgeThreshold(length);
+
+                if(expanded || coordinate < edge || coordinate >= length - edge) {
+                    const bool after = coordinate >= (expanded ? length / 2 : length - edge);
+                    const int gap    = splitter->widgetIndex(current->id()) + (after ? 1 : 0);
+
+                    const QRect marker = edgeMarker(rect, orientation, after);
+
+                    tryTarget(splitter, gap, marker,
+                              vertical ? (after ? tr("Place below %1") : tr("Place above %1")).arg(current->name())
+                                       : (after ? tr("Place after %1") : tr("Place before %1")).arg(current->name()));
+                    return target;
+                }
+            }
+
+            if(container && container->widgets().empty()) {
+                tryTarget(container, 0, relativeGeometry(container, root), tr("Move into empty area"));
+                return target;
+            }
+
+            current = container;
+        }
+    }
+
+    if(!onEdge) {
         if(hovered == root || !SplitTransferWidgetCommand::canSplit(source, hovered)) {
             return target;
         }
@@ -285,39 +328,6 @@ LayoutDropTarget LayoutUtils::resolveDropTarget(FyWidget* source, WidgetContaine
                                        : (after ? tr("Split %1: place right") : tr("Split %1: place left")))
                                  .arg(hovered->name());
         return target;
-    }
-
-    // Walk outward so the nearest matching splitter edge determines the insertion gap
-    const auto* current{hovered};
-    while(current && current != root) {
-        auto* container = qobject_cast<WidgetContainer*>(current->findParent());
-        if(auto* splitter = qobject_cast<SplitterWidget*>(container)) {
-            const QRect rect       = relativeGeometry(current, root);
-            const auto orientation = splitter->orientation();
-            const bool vertical    = orientation == Qt::Vertical;
-            const int length       = vertical ? rect.height() : rect.width();
-            const int coordinate   = vertical ? position.y() - rect.top() : position.x() - rect.left();
-            const int edge         = edgeThreshold(length);
-
-            if(coordinate < edge || coordinate >= length - edge) {
-                const bool after = coordinate >= length - edge;
-                const int gap    = splitter->widgetIndex(current->id()) + (after ? 1 : 0);
-
-                const QRect marker = edgeMarker(rect, orientation, after);
-
-                tryTarget(splitter, gap, marker,
-                          vertical ? (after ? tr("Place below %1") : tr("Place above %1")).arg(current->name())
-                                   : (after ? tr("Place after %1") : tr("Place before %1")).arg(current->name()));
-                return target;
-            }
-        }
-
-        if(container && container->widgets().empty()) {
-            tryTarget(container, 0, relativeGeometry(container, root), tr("Move into empty area"));
-            return target;
-        }
-
-        current = container;
     }
 
     if(auto* container = qobject_cast<WidgetContainer*>(hovered); container && container->widgets().empty()) {
