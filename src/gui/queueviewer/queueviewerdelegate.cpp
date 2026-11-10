@@ -52,8 +52,8 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     const auto* view = qobject_cast<const QAbstractItemView*>(opt.widget);
     if(opt.state.testFlag(QStyle::State_Selected) && view && view->alternatingRowColors()
        && style->name().compare(QStringLiteral("windows11"), Qt::CaseInsensitive) == 0) {
-        textOpt.palette.setColor(QPalette::Text,
-                                 QApplication::palette().color(opt.palette.currentColorGroup(), QPalette::HighlightedText));
+        textOpt.palette.setColor(
+            QPalette::Text, QApplication::palette().color(opt.palette.currentColorGroup(), QPalette::HighlightedText));
     }
 
     const auto leftRichText  = index.data(QueueViewerItem::RichTitle).value<RichText>();

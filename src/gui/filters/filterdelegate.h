@@ -72,8 +72,8 @@ private:
     [[nodiscard]] ArtworkFrameGeometry artworkFrameGeometry(const QStyleOptionViewItem& option, const QRectF& artwork,
                                                             int cornerRadius) const;
 
-    void drawArtworkFrame(QPainter* painter, const QStyleOptionViewItem& option, const ArtworkFrameGeometry& geometry,
-                          const QRectF& artwork, int cornerRadius) const;
+    void drawArtworkFrame(QPainter* painter, const QStyleOptionViewItem& option,
+                          const ArtworkFrameGeometry& geometry) const;
     static void drawArtworkLayer(QPainter* painter, const ArtworkFrameGeometry& geometry, const QPointF& position,
                                  const QPixmap& layer);
     void drawIconArtwork(QPainter* painter, const QStyleOptionViewItem& option, const QRect& rect,

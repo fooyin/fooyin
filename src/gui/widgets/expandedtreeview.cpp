@@ -2053,7 +2053,6 @@ private:
     void layoutGrid(int width, FittedMeasurements& measurements);
     void resetGrid();
     void drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     [[nodiscard]] QModelIndex iconItemIndex(const QModelIndex& index) const;
 
     void setupDecorationProps(QStyleOptionViewItem* opt) const;
@@ -2799,7 +2798,6 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
 
     const QModelIndex hover = m_p->m_hoverIndex;
     const bool hoverRow     = index.parent() == hover.parent() && index.row() == hover.row();
-    const bool rowFocused   = m_view->hasFocus();
 
     opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
 
@@ -2808,16 +2806,9 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
         opt.features.setFlag(QStyleOptionViewItem::Alternate, visualRow & 1);
     }
 
-    const QModelIndex current = m_view->currentIndex();
-
-    bool currentRowHasFocus{false};
-
     if(m_view->selectionModel()->isSelected(index)) {
         opt.state |= QStyle::State_Selected;
         opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
-    }
-    if(rowFocused && current.parent() == index.parent() && current.row() == index.row()) {
-        currentRowHasFocus = true;
     }
 
     if(opt.state & QStyle::State_Enabled) {
@@ -2853,35 +2844,6 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
     painter->setClipRect(itemPaintRect(index), Qt::IntersectClip);
     delegate(iconIndex)->paint(painter, mainOpt, iconIndex);
     painter->restore();
-
-    if(currentRowHasFocus) {
-        drawFocus(painter, opt, index);
-    }
-}
-
-void IconView::drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    QStyleOptionFocusRect focusOpt;
-    focusOpt.QStyleOption::operator=(option);
-    focusOpt.state |= QStyle::State_KeyboardFocusChange;
-    const QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
-    focusOpt.backgroundColor      = option.palette.color(
-        cg, m_view->selectionModel()->isSelected(index) ? QPalette::Highlight : QPalette::Window);
-
-    const auto item  = indexToViewItem(index);
-    const auto& rect = mapToViewport(item.rect());
-
-    if(rect.width() > 0) {
-        focusOpt.rect = QStyle::visualRect(m_view->layoutDirection(), viewport()->rect(), rect);
-        // Some styles fill the focus rectangle as well as drawing its outline
-        const Qt::Edges squareEdges
-            = haveBottomCaptions() ? Qt::Edges{Qt::BottomEdge}
-            : haveSideCaptions()
-                ? Qt::Edges{m_view->layoutDirection() == Qt::RightToLeft ? Qt::LeftEdge : Qt::RightEdge}
-                : Qt::Edges{};
-        Gui::drawRoundedStylePrimitive(painter, QStyle::PE_FrameFocusRect, focusOpt, m_view,
-                                       m_view->iconItemCornerRadius(), squareEdges);
-    }
 }
 
 QModelIndex IconView::iconItemIndex(const QModelIndex& index) const

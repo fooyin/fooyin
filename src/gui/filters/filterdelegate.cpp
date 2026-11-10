@@ -264,6 +264,9 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
             painter->fillRect(backgroundOpt.rect, backgroundOpt.backgroundBrush);
             backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
+        if(iconMode) {
+            backgroundOpt.state &= ~QStyle::State_HasFocus;
+        }
 
         Gui::drawRoundedStyleControl(painter, QStyle::CE_ItemViewItem, backgroundOpt, backgroundOpt.widget,
                                      backgroundRadius, squareEdges);
@@ -770,26 +773,22 @@ FilterDelegate::ArtworkFrameGeometry FilterDelegate::artworkFrameGeometry(const 
 }
 
 void FilterDelegate::drawArtworkFrame(QPainter* painter, const QStyleOptionViewItem& option,
-                                      const ArtworkFrameGeometry& geometry, const QRectF& artwork,
-                                      int cornerRadius) const
+                                      const ArtworkFrameGeometry& geometry) const
 {
     const QRectF rect = geometry.rect;
     if(rect.isEmpty()) {
         return;
     }
 
-    const auto* frame    = artworkFrame(option);
-    const bool showFocus = qstyleoption_cast<const ExpandedTreeView::CoverFlowStyleOption*>(&option)
-                        && (option.state & QStyle::State_HasFocus);
-    if(!frame && !showFocus) {
+    const auto* frame = artworkFrame(option);
+    if(!frame) {
         return;
     }
 
-    const auto group = !(option.state & QStyle::State_Enabled) ? QPalette::Disabled
-                     : option.state & QStyle::State_Active     ? QPalette::Active
-                                                               : QPalette::Inactive;
-    const qreal width
-        = frame ? std::min<qreal>(std::clamp(frame->width, 1, 20), std::min(rect.width(), rect.height()) / 2.0) : 0.0;
+    const auto group  = !(option.state & QStyle::State_Enabled) ? QPalette::Disabled
+                      : option.state & QStyle::State_Active     ? QPalette::Active
+                                                                : QPalette::Inactive;
+    const qreal width = std::min<qreal>(std::clamp(frame->width, 1, 20), std::min(rect.width(), rect.height()) / 2.0);
 
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
@@ -811,29 +810,6 @@ void FilterDelegate::drawArtworkFrame(QPainter* painter, const QStyleOptionViewI
         }
 
         painter->fillPath(border, colour);
-    }
-
-    if(showFocus) {
-        const qreal inset = width + 2.0;
-
-        QStyleOptionFocusRect focus;
-        focus.QStyleOption::operator=(option);
-        focus.state |= QStyle::State_KeyboardFocusChange;
-        focus.rect            = rect.adjusted(inset, inset, -inset, -inset).toRect();
-        focus.backgroundColor = option.palette.color(group, QPalette::Base);
-
-        if(!focus.rect.isEmpty()) {
-            // Some styles fill the focus rectangle; keep that fill off the surrounding frame
-            const qreal radius = std::max(0.0, geometry.radius - width);
-
-            QPainterPath interior;
-            interior.addRoundedRect(rect.adjusted(width, width, -width, -width), radius, radius);
-            painter->setClipPath(interior, Qt::IntersectClip);
-
-            Gui::clipRoundedRect(*painter, artwork.intersected(QRectF{option.rect}), cornerRadius);
-            const auto* style = option.widget ? option.widget->style() : QApplication::style();
-            style->drawPrimitive(QStyle::PE_FrameFocusRect, &focus, painter, option.widget);
-        }
     }
 
     painter->restore();
@@ -878,7 +854,7 @@ void FilterDelegate::drawIconArtwork(QPainter* painter, const QStyleOptionViewIt
             layerPainter.drawPixmap(imageRect.topLeft(), artwork);
 
             layerPainter.restore();
-            drawArtworkFrame(&layerPainter, option, geometry, imageRect, m_artworkCornerRadius);
+            drawArtworkFrame(&layerPainter, option, geometry);
         }
 
         drawArtworkLayer(painter, geometry, layerRect.topLeft(), layer);
@@ -923,7 +899,7 @@ void FilterDelegate::drawOverlayItem(QPainter* painter, const QStyleOptionViewIt
         drawRichTextLines(&layerPainter, captionOption, textRect, lines, imageRect);
 
         layerPainter.restore();
-        drawArtworkFrame(&layerPainter, option, geometry, imageRect, m_artworkCornerRadius);
+        drawArtworkFrame(&layerPainter, option, geometry);
     }
 
     // Mask artwork, captions and the frame together to avoid seams at antialiased edges
@@ -1170,7 +1146,7 @@ void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::C
         }
     };
 
-    if(inlineCaption || (!reflection && (artworkFrame(option) || option.state & QStyle::State_HasFocus))) {
+    if(inlineCaption || (!reflection && artworkFrame(option))) {
         const auto geometry   = artworkFrameGeometry(option, opt.rect, option.cornerRadius);
         const QRect layerRect = geometry.rect.toAlignedRect();
         const qreal dpr       = painter->device()->devicePixelRatioF();
@@ -1182,7 +1158,7 @@ void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::C
             layerPainter.translate(-layerRect.topLeft());
             drawArtwork(&layerPainter);
 
-            drawArtworkFrame(&layerPainter, option, geometry, opt.rect, option.cornerRadius);
+            drawArtworkFrame(&layerPainter, option, geometry);
         }
         drawArtworkLayer(painter, geometry, layerRect.topLeft(), layer);
     }
