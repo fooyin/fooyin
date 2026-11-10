@@ -247,15 +247,22 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
         painter->save();
         painter->setClipRect(backgroundOpt.rect, Qt::IntersectClip);
 
+        const bool hasBgBrush = backgroundOpt.backgroundBrush.style() != Qt::NoBrush;
+
         if(backgroundRadius > 0) {
             Gui::clipRoundedRect(*painter, backgroundOpt.rect, backgroundRadius, squareEdges);
         }
-        if(!(backgroundOpt.state & QStyle::State_Selected) && backgroundOpt.backgroundBrush.style() != Qt::NoBrush) {
+        if(!(backgroundOpt.state & QStyle::State_Selected) && hasBgBrush) {
             painter->fillRect(backgroundOpt.rect, backgroundOpt.backgroundBrush);
             backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
+
         Gui::drawRoundedStyleControl(painter, QStyle::CE_ItemViewItem, backgroundOpt, backgroundOpt.widget,
                                      backgroundRadius, squareEdges);
+        if(!(backgroundOpt.state & (QStyle::State_Selected | QStyle::State_MouseOver)) && !hasBgBrush
+           && backgroundOpt.features.testFlag(QStyleOptionViewItem::Alternate) && backgroundOpt.text.isEmpty()) {
+            painter->fillRect(backgroundOpt.rect, backgroundOpt.palette.brush(QPalette::AlternateBase));
+        }
 
         painter->restore();
     };
