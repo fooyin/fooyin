@@ -91,9 +91,17 @@ int alignedLineX(const QRect& rect, int lineWidth, Qt::Alignment alignment)
 QColor selectionTextColour(const QStyleOptionViewItem& option)
 {
     const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
-    if(view && view->viewMode() == ExpandedTreeView::ViewMode::Icon
-       && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay) {
-        return QApplication::palette().color(option.palette.currentColorGroup(), QPalette::HighlightedText);
+    if(view && view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
+        const QStyle* style = view->style();
+        if(style && style->name().compare("windows11"_L1, Qt::CaseInsensitive) == 0) {
+            return QApplication::palette().color(option.palette.currentColorGroup(), QPalette::HighlightedText);
+        }
+        if(style && style->name().compare("windowsvista"_L1, Qt::CaseInsensitive) == 0) {
+            return option.palette.color(QPalette::Text);
+        }
+        if(view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay) {
+            return QApplication::palette().color(option.palette.currentColorGroup(), QPalette::HighlightedText);
+        }
     }
     return option.palette.color(Gui::itemViewSelectionTextRole(option));
 }

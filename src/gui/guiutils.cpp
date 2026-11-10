@@ -426,13 +426,9 @@ bool styleSupportsDarkMode(const QString& styleName)
 #endif
 }
 
-bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool alternatingRows)
+bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool /*alternatingRows*/)
 {
-    if(styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0) {
-        // Windows 11 uses an accent selection with contrasting text for alternating rows
-        return !alternatingRows;
-    }
-    return styleName.compare("windowsvista"_L1, Qt::CaseInsensitive) == 0;
+    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0;
 }
 
 QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option)
