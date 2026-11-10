@@ -310,7 +310,9 @@ void SearchControllerPrivate::removeWidget(const Id& widgetId, QObject* object)
     m_searchableWidgets.erase(widgetId);
     for(const auto& [sourceId, connections] : m_connections) {
         if(connections.contains(widgetId)) {
-            Q_EMIT m_self->connectionChanged(sourceId);
+            QMetaObject::invokeMethod(
+                m_self, [self = m_self, sourceId]() { Q_EMIT self->connectionChanged(sourceId); },
+                Qt::QueuedConnection);
         }
     }
 }
