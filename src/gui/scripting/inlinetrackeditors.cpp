@@ -278,8 +278,10 @@ DrawTrackTextResult drawTrackTextBlocks(QPainter* painter, const QStyleOptionVie
 
         int remainingWidth = rect.width();
         int editorHeight{0};
+        const bool fromRight = (alignment & Qt::AlignRight);
 
-        for(const auto& block : logicalLine.blocks) {
+        for(int i{0}; std::cmp_less(i, logicalLine.blocks.size()); ++i) {
+            const auto& block = logicalLine.blocks[fromRight ? logicalLine.blocks.size() - i - 1 : i];
             const bool isIcon = block.type == RichTextBlock::Type::PlayingIcon;
             const auto editor = editors ? inlineTrackEditorType(block) : InlineTrackEditor::None;
             if((block.text.isEmpty() && !isIcon) || remainingWidth <= 0 || (isIcon && playingIcon.isNull())) {
@@ -313,7 +315,7 @@ DrawTrackTextResult drawTrackTextBlocks(QPainter* painter, const QStyleOptionVie
                 continue;
             }
 
-            const QString text = fm.elidedText(block.text, Qt::ElideRight, remainingWidth);
+            const QString text = fm.elidedText(block.text, fromRight ? Qt::ElideLeft : Qt::ElideRight, remainingWidth);
             if(text.isEmpty()) {
                 continue;
             }
@@ -332,6 +334,10 @@ DrawTrackTextResult drawTrackTextBlocks(QPainter* painter, const QStyleOptionVie
             if(text != block.text) {
                 break;
             }
+        }
+
+        if(fromRight) {
+            std::ranges::reverse(line.blocks);
         }
 
         line.baseline.ascent = std::max(line.baseline.ascent, editorHeight - line.baseline.descent);

@@ -38,11 +38,14 @@ struct ElidedHeaderText
     int width{0};
 };
 
-ElidedHeaderText elideText(const RichText& text, const QFont& baseFont, int availableWidth)
+ElidedHeaderText elideText(const RichText& text, const QFont& baseFont, int availableWidth,
+                           Qt::TextElideMode mode = Qt::ElideRight)
 {
     ElidedHeaderText result;
+    const bool fromRight = (mode == Qt::ElideLeft);
 
-    for(auto block : text.blocks) {
+    for(int i{0}; std::cmp_less(i, text.blocks.size()); ++i) {
+        auto block          = text.blocks[fromRight ? text.blocks.size() - i - 1 : i];
         const int remaining = availableWidth - result.width;
         if(remaining <= 0) {
             break;
@@ -57,13 +60,17 @@ ElidedHeaderText elideText(const RichText& text, const QFont& baseFont, int avai
         }
         const auto original{block.text};
 
-        block.text = fm.elidedText(original, Qt::ElideRight, remaining);
+        block.text = fm.elidedText(original, mode, remaining);
         result.width += fm.horizontalAdvance(block.text);
         result.text.blocks.push_back(std::move(block));
 
         if(result.text.blocks.back().text != original) {
             break;
         }
+    }
+
+    if(fromRight) {
+        std::ranges::reverse(result.text.blocks);
     }
 
     return result;
@@ -214,7 +221,7 @@ std::vector<InlineTrackEditorHit> drawRichTextLayout(QPainter* painter, const QS
             hits.insert(hits.end(), right.editors.begin(), right.editors.end());
         }
         else {
-            const auto right        = elideText(line.right, option.font, rightWidth);
+            const auto right        = elideText(line.right, option.font, rightWidth, Qt::ElideLeft);
             const auto left         = elideText(line.left, option.font, std::max(0, rect.width() - right.width - gap));
             const int leftBaseline  = y + ((line.height - line.leftBaseline.height()) / 2) + line.leftBaseline.ascent;
             const int rightBaseline = y + ((line.height - line.rightBaseline.height()) / 2) + line.rightBaseline.ascent;
