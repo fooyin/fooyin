@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+- **Interface**
+  - Add configurable hover and selection frame highlighting for artwork
+  - Expand move target areas during layout editing
+  - Remove native focus frames from artwork views
+
+### Fixes
+
+- **Interface**
+  - Limit filter expansion footer width to track content
+  - Fix alternating row colours in right-caption icon view on Windows
+  - Preserve trailing content when eliding right-aligned text
+  - Fix a crash during searchable widget destruction ([#1890](https://github.com/fooyin/fooyin/issues/1890))
+  - Fix selection text colours in some widgets on Windows
+
+
 ## [0.15.0](https://github.com/fooyin/fooyin/releases/tag/v0.15.0) (2026-11-08)
 
 ### New Features
