@@ -94,6 +94,13 @@ public:
         return {0, m_layout.height};
     }
 
+    void setContentWidth(int width)
+    {
+        if(std::exchange(m_contentWidth, width) != width) {
+            update();
+        }
+    }
+
 protected:
     void paintEvent(QPaintEvent* /*event*/) override
     {
@@ -101,11 +108,15 @@ protected:
         QStyleOptionViewItem option;
         option.initFrom(this);
         option.font = font();
-        drawRichTextLayout(&painter, option, rect().adjusted(4, 0, -4, 0), m_layout);
+
+        const QRect contentRect{0, 0, std::min(width(), m_contentWidth), height()};
+        const QRect visualRect = QStyle::visualRect(layoutDirection(), rect(), contentRect);
+        drawRichTextLayout(&painter, option, visualRect.adjusted(4, 0, -4, 0), m_layout);
     }
 
 private:
     RichTextLayout m_layout;
+    int m_contentWidth{QWIDGETSIZE_MAX};
 };
 
 FilterExpansionWidget::FilterExpansionWidget(TrackSelectionController* selection, CoverRepository* coverRepo,
@@ -561,6 +572,9 @@ int FilterExpansionWidget::heightForWidth(int width) const
 bool FilterExpansionWidget::eventFilter(QObject* watched, QEvent* event)
 {
     if(watched == m_tracks->viewport()) {
+        if(event->type() == QEvent::Resize) {
+            scheduleLayoutUpdate();
+        }
         if(event->type() == QEvent::Wheel) {
             const auto* wheel      = static_cast<QWheelEvent*>(event);
             const QPointF position = QPointF{m_tracks->viewport()->mapTo(parentWidget(), QPoint{})} + wheel->position();
@@ -669,6 +683,7 @@ void FilterExpansionWidget::changeEvent(QEvent* event)
     }
     if(event->type() == QEvent::FontChange || event->type() == QEvent::LayoutDirectionChange) {
         updateLayout();
+        scheduleLayoutUpdate();
         Q_EMIT contentChanged();
     }
 }
@@ -839,6 +854,19 @@ void FilterExpansionWidget::scheduleLayoutUpdate()
     QMetaObject::invokeMethod(
         this,
         [this]() {
+            const int availableWidth = m_tracks->viewport()->width();
+            int footerWidth{availableWidth};
+            if(!m_stretchColumns) {
+                QRect trackBounds;
+                for(int track{0}; std::cmp_less(track, m_model->tracks().size()); ++track) {
+                    trackBounds |= m_tracks->visualRect(m_model->indexForTrack(track));
+                }
+                if(trackBounds.isValid()) {
+                    footerWidth = std::clamp(trackBounds.width(), 0, availableWidth);
+                }
+            }
+            m_footer->setContentWidth(footerWidth);
+
             if(m_previewMode) {
                 // QWidgetItem otherwise derives the height from the inner text layout
                 setFixedHeight(heightForWidth(width()));
