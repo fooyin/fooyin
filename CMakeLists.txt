@@ -13,7 +13,7 @@ endif()
 
 project(
     fooyin
-    VERSION 0.15.0
+    VERSION 0.15.1
     DESCRIPTION "A customisable music player"
     HOMEPAGE_URL "https://www.fooyin.org"
     LANGUAGES CXX

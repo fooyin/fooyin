@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.15.1](https://github.com/fooyin/fooyin/releases/tag/v0.15.1) (2026-11-10)
 
 ### Improvements
 

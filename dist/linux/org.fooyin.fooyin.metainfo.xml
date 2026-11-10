@@ -62,6 +62,16 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.15.1" date="2026-11-10">
+            <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.15.1</url>
+            <description>
+                <p>Adds configurable hover and selection frame highlighting for artwork and expands move target areas during
+                    layout editing.</p>
+                <p>This release also fixes filter expansion footer sizing, selection text colours and
+                    alternating row colours in right-caption icon views on Windows, right-aligned text elision,
+                    and a crash during searchable widget destruction.</p>
+            </description>
+        </release>
         <release version="0.15.0" date="2026-11-08">
             <url type="details">https://github.com/fooyin/fooyin/releases/tag/v0.15.0</url>
             <description>
