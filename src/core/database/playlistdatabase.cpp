@@ -216,7 +216,7 @@ bool PlaylistDatabase::writePlaylist(const Playlist& playlist)
         }
     }
 
-    if(playlist.tracksModified() && !insertPlaylistTracks(playlist.dbId(), playlist.tracks())) {
+    if(playlist.entriesModified() && !insertPlaylistTracks(playlist.dbId(), playlist.tracks())) {
         return false;
     }
 
