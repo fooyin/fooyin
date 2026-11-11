@@ -177,6 +177,7 @@ private:
     ActionManager* m_actionManager;
     PlaylistInteractor* m_playlistInteractor;
     PlaylistHandler* m_playlistHandler;
+    TrackSelectionController* m_selection;
     SettingsManager* m_settings;
 
     std::unique_ptr<QFileIconProvider> m_iconProvider;

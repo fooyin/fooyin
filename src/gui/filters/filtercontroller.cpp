@@ -382,17 +382,30 @@ void FilterControllerPrivate::handleAction(FilterWidget* filter, const TrackActi
         return;
     }
 
-    if(filter->autoSwitch()) {
-        options |= PlaylistAction::Switch;
-    }
-    if(filter->sendPlayback()) {
-        options |= PlaylistAction::StartPlayback;
-    }
-    if(action == TrackAction::Play && filter->source() == FilterSource::Library) {
-        options |= PlaylistAction::TempPlaylist;
+    if(action == TrackAction::Play && filter->source() == FilterSource::CurrentPlaylist) {
+        if(filter->sendPlayback()) {
+            options |= PlaylistAction::StartPlayback;
+        }
+        m_trackSelection->executeAction(action, options);
+        return;
     }
 
-    m_trackSelection->executeAction(action, options);
+    auto request = m_trackSelection->prepareBrowsingAction(
+        action, filter->sendPlayback(),
+        {.name             = filter->source() == FilterSource::Library ? filter->playlistName() : QString{},
+         .show             = filter->autoSwitch(),
+         .preservePlayback = filter->preservePlaybackPlaylist()});
+    request.options |= options;
+
+    if(options.testFlag(PlaylistAction::TempPlaylist)) {
+        if(const auto* selection = m_trackSelection->selectedSelection()) {
+            const TrackSelection snapshot{*selection};
+            m_trackSelection->executeAction(request, snapshot);
+        }
+    }
+    else {
+        m_trackSelection->executeAction(request, filter->widgetContext());
+    }
 }
 
 void FilterControllerPrivate::filterContextMenu(FilterWidget* widget, const QPoint& pos, WidgetContext* context,
@@ -675,16 +688,11 @@ void FilterControllerPrivate::handleSelectionChanged(FilterWidget* filter, const
                                      << "selectedTracks=" << stage->selectedTracks.size();
 
     if(filter->source() == FilterSource::Library && filter->playlistEnabled() && m_trackSelection) {
-        PlaylistAction::ActionOptions options{PlaylistAction::None};
-
-        if(filter->preservePlaybackPlaylist()) {
-            options |= PlaylistAction::PreservePlaybackPlaylist;
-        }
-        if(filter->autoSwitch()) {
-            options |= PlaylistAction::Switch;
-        }
-
-        m_trackSelection->executeAction(TrackAction::SendNewPlaylist, options, filter->playlistName());
+        m_trackSelection->updateResultsPlaylist(
+            Gui::sortTracksForLibraryViewerPlaylist(m_settings, stage->selectedTracks),
+            {.name             = filter->playlistName(),
+             .show             = filter->autoSwitch(),
+             .preservePlayback = filter->preservePlaybackPlaylist()});
     }
 
     const int stageIndex      = location->stageIndex;

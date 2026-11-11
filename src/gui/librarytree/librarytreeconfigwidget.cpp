@@ -21,6 +21,7 @@
 
 #include "librarytreegroupeditordialog.h"
 #include "librarytreescriptcontext.h"
+#include "widgets/browsingconfigwidget.h"
 
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
@@ -50,10 +51,10 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     , m_groupsRegistry{groupsRegistry}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
-    , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
-    , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
-    , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
-    , m_preservePlaybackPlaylist{new QCheckBox(tr("Preserve playback playlist"), this)}
+    , m_playbackOnSend{new QCheckBox(this)}
+    , m_playlistEnabled{new QCheckBox(this)}
+    , m_autoSwitch{new QCheckBox(this)}
+    , m_preservePlaybackPlaylist{new QCheckBox(this)}
     , m_playlistName{new QLineEdit(this)}
     , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
     , m_expandOnSingleClick{new QCheckBox(tr("Single-click expands/collapses nodes"), this)}
@@ -86,35 +87,20 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     tabs->addTab(styleTab, tr("Appearance"));
     tabs->addTab(backgroundTab, tr("Background"));
 
-    m_playbackOnSend->setToolTip(
-        tr(R"(For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately.)"));
+    auto* clickBehaviour = new BrowsingActionConfigWidget({.doubleClick    = m_doubleClick,
+                                                           .middleClick    = m_middleClick,
+                                                           .startPlayback  = m_playbackOnSend,
+                                                           .resultsEnabled = m_playlistEnabled},
+                                                          generalTab);
+    clickBehaviour->layout()->addWidget(m_expandOnSingleClick);
 
-    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalTab);
-    auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
-
-    int row{0};
-    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + u":"_s, this), row, 0);
-    clickBehaviourLayout->addWidget(m_doubleClick, row++, 1);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, this), row, 0);
-    clickBehaviourLayout->addWidget(m_middleClick, row++, 1);
-    clickBehaviourLayout->addWidget(m_playbackOnSend, row++, 0, 1, 2);
-    clickBehaviourLayout->addWidget(m_expandOnSingleClick, row++, 0, 1, 2);
-    clickBehaviourLayout->setColumnStretch(clickBehaviourLayout->columnCount(), 1);
-
-    auto* selectionPlaylist       = new QGroupBox(tr("Library Selection Playlist"), generalTab);
-    auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
-
-    m_preservePlaybackPlaylist->setToolTip(
-        tr("When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its "
-           "name instead of replacing its tracks."));
-
-    row = 0;
-    selectionPlaylistLayout->addWidget(m_playlistEnabled, row++, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_autoSwitch, row++, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_preservePlaybackPlaylist, row++, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + u":"_s, this), row, 0);
-    selectionPlaylistLayout->addWidget(m_playlistName, row++, 1, 1, 2);
-    selectionPlaylistLayout->setColumnStretch(2, 1);
+    auto* selectionPlaylist
+        = new ResultsPlaylistConfigWidget(m_playlistEnabled, m_autoSwitch, m_preservePlaybackPlaylist, m_playlistName,
+                                          {.doubleClick    = m_doubleClick,
+                                           .middleClick    = m_middleClick,
+                                           .startPlayback  = m_playbackOnSend,
+                                           .resultsEnabled = m_playlistEnabled},
+                                          generalTab);
 
     m_summaryNodeTitle->setPlaceholderText(defaultLibraryTreeSummaryTitle());
     m_summaryNodeTitle->setToolTip(
@@ -123,7 +109,7 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     auto* generalGroup       = new QGroupBox(tr("General"), generalTab);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
-    row = 0;
+    int row{0};
     generalGroupLayout->addWidget(m_restoreState, row++, 0, 1, 3);
     generalGroupLayout->addWidget(m_showSummaryNode, row++, 0, 1, 3);
     generalGroupLayout->addWidget(new QLabel(tr("Summary title") + u":"_s, this), row, 0);
@@ -212,12 +198,12 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
 
     row = 0;
     generalLayout->addWidget(generalGroup, row, 0);
-    generalLayout->addWidget(clickBehaviour, row++, 1);
-    generalLayout->addWidget(searchingGroup, row, 0);
-    generalLayout->addWidget(selectionPlaylist, row++, 1);
+    generalLayout->addWidget(searchingGroup, row++, 1);
+    generalLayout->addWidget(clickBehaviour, row++, 0, 1, 2);
+    generalLayout->addWidget(selectionPlaylist, row++, 0, 1, 2);
     generalLayout->setColumnStretch(0, 1);
     generalLayout->setColumnStretch(1, 1);
-    generalLayout->setRowStretch(2, 1);
+    generalLayout->setRowStretch(row, 1);
 
     auto* styleLayout = new QGridLayout(styleTab);
 
@@ -242,18 +228,15 @@ LibraryTreeConfigDialog::LibraryTreeConfigDialog(LibraryTreeWidget* libraryTree,
     TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse"), TrackAction::None);
     TrackSelectionController::addAction(m_doubleClick, tr("Expand/collapse or play now"), TrackAction::Play);
     TrackSelectionController::addStandardActions(m_doubleClick);
+    BrowsingActionConfigWidget::addResultsActions(m_doubleClick);
 
     TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
     TrackSelectionController::addStandardActions(m_middleClick);
+    BrowsingActionConfigWidget::addResultsActions(m_middleClick);
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, m_rowHeight, &QWidget::setEnabled);
     QObject::connect(m_showSummaryNode, &QCheckBox::toggled, m_summaryNodeTitle, &QWidget::setEnabled);
     QObject::connect(m_showControls, &QCheckBox::toggled, m_controlsPosition, &QWidget::setEnabled);
-    QObject::connect(m_playlistEnabled, &QCheckBox::toggled, this, [this](bool checked) {
-        m_playlistName->setEnabled(checked);
-        m_autoSwitch->setEnabled(checked);
-        m_preservePlaybackPlaylist->setEnabled(checked);
-    });
     QObject::connect(m_manageGroupings, &QPushButton::clicked, this, [this]() {
         auto* dialog = new LibraryTreeGroupEditorDialog(m_groupsRegistry, this);
         dialog->open();
@@ -333,9 +316,6 @@ void LibraryTreeConfigDialog::setConfig(const LibraryTreeWidget::ConfigData& con
     m_iconWidth->setValue(config.iconSize.width());
     m_iconHeight->setValue(config.iconSize.height());
     m_artworkCornerRadius->setValue(config.artworkCornerRadius);
-    m_playlistName->setEnabled(m_playlistEnabled->isChecked());
-    m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
-    m_preservePlaybackPlaylist->setEnabled(m_playlistEnabled->isChecked());
 
     m_playingRowFont->setChecked(!config.playingRowFont.isEmpty());
     if(config.playingRowFont.isEmpty()) {

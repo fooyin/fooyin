@@ -44,17 +44,20 @@ inline QStringList defaultDisabledSections()
 }
 
 constexpr auto DefaultItems = std::to_array<StaticContextMenu::Item>({
-    {.id    = Constants::Actions::AddToCurrent,
-     .title = {.context = "FilterWidget", .sourceText = QT_TRANSLATE_NOOP("FilterWidget", "Add to current playlist")},
+    {.id = Constants::Actions::AddToCurrent,
+     .title
+     = {.context = "FilterWidget", .sourceText = QT_TRANSLATE_NOOP("FilterWidget", "Append to current playlist")},
      .isSeparator = false},
-    {.id    = Constants::Actions::AddToActive,
-     .title = {.context = "FilterWidget", .sourceText = QT_TRANSLATE_NOOP("FilterWidget", "Add to active playlist")},
+    {.id = Constants::Actions::AddToActive,
+     .title
+     = {.context = "FilterWidget", .sourceText = QT_TRANSLATE_NOOP("FilterWidget", "Append to playing playlist")},
      .isSeparator = false},
     {.id    = Constants::Actions::SendToCurrent,
      .title = {.context = "FilterWidget", .sourceText = QT_TRANSLATE_NOOP("FilterWidget", "Replace current playlist")},
      .isSeparator = false},
-    {.id          = Constants::Actions::SendToNew,
-     .title       = {.context = "FilterWidget", .sourceText = QT_TRANSLATE_NOOP("FilterWidget", "Create new playlist")},
+    {.id = Constants::Actions::SendToNew,
+     .title
+     = {.context = "FilterWidget", .sourceText = QT_TRANSLATE_NOOP("FilterWidget", "Create or replace named playlist")},
      .isSeparator = false},
     {.id          = Constants::Actions::AddToPlaylist,
      .title       = {.context = "FilterWidget", .sourceText = QT_TRANSLATE_NOOP("FilterWidget", "Add to playlist")},

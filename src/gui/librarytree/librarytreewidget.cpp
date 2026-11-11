@@ -1190,29 +1190,9 @@ void LibraryTreeWidget::syncSelectionPlaylist(const TrackList& tracks) const
         return;
     }
 
-    const QString playlistName{m_config.playlistName};
-
-    if(m_config.preservePlaybackPlaylist) {
-        if(const auto* activePlaylist = m_playlistHandler->activePlaylist();
-           activePlaylist && activePlaylist->name() == playlistName) {
-            const QString playbackPlaylistName = playlistName + u" ("_s + tr("Playback") + u")"_s;
-
-            if(auto* playbackPlaylist = m_playlistHandler->playlistByName(playbackPlaylistName)) {
-                m_playlistHandler->movePlaylistTracks(activePlaylist->id(), playbackPlaylist->id());
-            }
-            else {
-                m_playlistHandler->renamePlaylist(activePlaylist->id(), playbackPlaylistName);
-            }
-        }
-    }
-
-    if(auto* playlist = m_playlistHandler->createPlaylist(playlistName, tracks)) {
-        playlist->changeCurrentIndex(-1);
-
-        if(m_config.autoSwitch) {
-            m_playlistController->changeCurrentPlaylist(playlist);
-        }
-    }
+    m_trackSelection->updateResultsPlaylist(tracks, {.name             = m_config.playlistName,
+                                                     .show             = m_config.autoSwitch,
+                                                     .preservePlayback = m_config.preservePlaybackPlaylist});
 }
 
 void LibraryTreeWidget::queueSelectedTracks(bool next) const
@@ -1475,16 +1455,12 @@ void LibraryTreeWidget::handleDoubleClick(const QModelIndex& index)
         return;
     }
 
-    PlaylistAction::ActionOptions options;
-
-    if(m_config.autoSwitch) {
-        options |= PlaylistAction::Switch;
-    }
-    if(m_config.sendPlayback) {
-        options |= PlaylistAction::StartPlayback;
-    }
-
-    m_trackSelection->executeAction(m_doubleClickAction, options);
+    const auto request
+        = m_trackSelection->prepareBrowsingAction(m_doubleClickAction, m_config.sendPlayback,
+                                                  {.name             = m_config.playlistName,
+                                                   .show             = m_config.autoSwitch,
+                                                   .preservePlayback = m_config.preservePlaybackPlaylist});
+    m_trackSelection->executeAction(request, m_widgetContext);
     m_removeFromQueueAction->setVisible(m_doubleClickAction == TrackAction::AddToQueue
                                         || m_doubleClickAction == TrackAction::SendToQueue);
 }
@@ -1495,16 +1471,12 @@ void LibraryTreeWidget::handleMiddleClick(const QModelIndex& index) const
         return;
     }
 
-    PlaylistAction::ActionOptions options;
-
-    if(m_config.autoSwitch) {
-        options |= PlaylistAction::Switch;
-    }
-    if(m_config.sendPlayback) {
-        options |= PlaylistAction::StartPlayback;
-    }
-
-    m_trackSelection->executeAction(m_middleClickAction, options);
+    const auto request
+        = m_trackSelection->prepareBrowsingAction(m_middleClickAction, m_config.sendPlayback,
+                                                  {.name             = m_config.playlistName,
+                                                   .show             = m_config.autoSwitch,
+                                                   .preservePlayback = m_config.preservePlaybackPlaylist});
+    m_trackSelection->executeAction(request, m_widgetContext);
     m_removeFromQueueAction->setVisible(m_middleClickAction == TrackAction::AddToQueue
                                         || m_middleClickAction == TrackAction::SendToQueue);
 }

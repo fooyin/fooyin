@@ -29,6 +29,7 @@
 #include <core/track.h>
 #include <gui/coverartworktypes.h>
 #include <gui/fywidget.h>
+#include <gui/trackselectioncontroller.h>
 #include <gui/widgets/backgroundconfig.h>
 #include <gui/widgets/expandedtreeview.h>
 
@@ -132,7 +133,7 @@ public:
 
     struct ConfigData
     {
-        int doubleClickAction{1};
+        int doubleClickAction{static_cast<int>(TrackAction::PlayResultsPlaylist)};
         int middleClickAction{0};
         // -1 inherits the filter action
         int expansionDoubleClickAction{-1};

@@ -20,7 +20,8 @@
                                         "Columns": "0",
                                         "Group": "Default",
                                         "ID": "955f29805de446d7a9b6195a94bfd817",
-                                        "Index": 0
+                                        "Index": 0,
+                                        "DoubleClickAction": 10
                                     }
                                 },
                                 {
@@ -28,7 +29,8 @@
                                         "Columns": "1",
                                         "Group": "Default",
                                         "ID": "4fee1a754b3e47ff86f4c711fbf0f0eb",
-                                        "Index": 1
+                                        "Index": 1,
+                                        "DoubleClickAction": 10
                                     }
                                 },
                                 {
@@ -36,7 +38,8 @@
                                         "Columns": "2",
                                         "Group": "Default",
                                         "ID": "3b20c1db282d4bfe9a95c776e6723608",
-                                        "Index": 2
+                                        "Index": 2,
+                                        "DoubleClickAction": 10
                                     }
                                 },
                                 {
@@ -44,7 +47,8 @@
                                         "Columns": "3",
                                         "Group": "Default",
                                         "ID": "34777508a4ae4ec5939620f235e8ec1a",
-                                        "Index": 3
+                                        "Index": 3,
+                                        "DoubleClickAction": 10
                                     }
                                 }
                             ]

@@ -23,6 +23,7 @@
 #include "expansionconfigwidget.h"
 #include "filtercolumneditordialog.h"
 #include "filterconstants.h"
+#include "widgets/browsingconfigwidget.h"
 
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
@@ -59,10 +60,10 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_doubleClick{new QComboBox(this)}
     , m_expansionMiddleClick{new QComboBox(this)}
     , m_expansionDoubleClick{new QComboBox(this)}
-    , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
-    , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
-    , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
-    , m_preservePlaybackPlaylist{new QCheckBox(tr("Preserve playback playlist"), this)}
+    , m_playbackOnSend{new QCheckBox(this)}
+    , m_playlistEnabled{new QCheckBox(this)}
+    , m_autoSwitch{new QCheckBox(this)}
+    , m_preservePlaybackPlaylist{new QCheckBox(this)}
     , m_playlistName{new QLineEdit(this)}
     , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
     , m_columnsMode{new QRadioButton(tr("Columns"), this)}
@@ -126,51 +127,37 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     tabs->addTab(m_expansionConfig, tr("Expansion"));
     tabs->addTab(m_coverFlowConfig, tr("Cover flow"));
 
-    m_playbackOnSend->setToolTip(
-        tr("For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately."));
-
-    auto* playlistClickHint
-        = new HintLabel(tr("Set to <b>Play</b> to start playback at the first matching track."), this);
-    playlistClickHint->setWordWrap(true);
-
-    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalTab);
-    auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
-
+    auto* clickBehaviour = new BrowsingActionConfigWidget({.doubleClick         = m_doubleClick,
+                                                           .middleClick         = m_middleClick,
+                                                           .startPlayback       = m_playbackOnSend,
+                                                           .resultsEnabled      = m_playlistEnabled,
+                                                           .expandedDoubleClick = m_expansionDoubleClick,
+                                                           .expandedMiddleClick = m_expansionMiddleClick},
+                                                          generalTab);
+    auto* selectionPlaylist
+        = new ResultsPlaylistConfigWidget(m_playlistEnabled, m_autoSwitch, m_preservePlaybackPlaylist, m_playlistName,
+                                          {.doubleClick         = m_doubleClick,
+                                           .middleClick         = m_middleClick,
+                                           .startPlayback       = m_playbackOnSend,
+                                           .resultsEnabled      = m_playlistEnabled,
+                                           .expandedDoubleClick = m_expansionDoubleClick,
+                                           .expandedMiddleClick = m_expansionMiddleClick},
+                                          generalTab);
     int row{0};
-    clickBehaviourLayout->addWidget(new QLabel(tr("Filter items"), clickBehaviour), row, 1);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Expanded tracks"), clickBehaviour), row++, 2);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + u":"_s, clickBehaviour), row, 0);
-    clickBehaviourLayout->addWidget(m_doubleClick, row, 1);
-    clickBehaviourLayout->addWidget(m_expansionDoubleClick, row++, 2);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, clickBehaviour), row, 0);
-    clickBehaviourLayout->addWidget(m_middleClick, row, 1);
-    clickBehaviourLayout->addWidget(m_expansionMiddleClick, row++, 2);
-    clickBehaviourLayout->addWidget(m_playbackOnSend, row++, 0, 1, 3);
-    clickBehaviourLayout->addWidget(playlistClickHint, row++, 0, 1, 3);
-    clickBehaviourLayout->setColumnStretch(1, 1);
-    clickBehaviourLayout->setColumnStretch(2, 1);
 
-    m_preservePlaybackPlaylist->setToolTip(
-        tr("When this selection playlist is used for playback, preserve it with ‘(Playback)’ appended to its "
-           "name instead of replacing its tracks."));
-
-    auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), generalTab);
-    auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
-
-    selectionPlaylist->setToolTip(
-        tr("In current playlist mode, matching tracks are selected directly in the playlist."));
-
-    row = 0;
-    selectionPlaylistLayout->addWidget(m_playlistEnabled, row++, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_autoSwitch, row++, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(m_preservePlaybackPlaylist, row++, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(new QLabel(tr("Name") + u":"_s, this), row, 0);
-    selectionPlaylistLayout->addWidget(m_playlistName, row++, 1, 1, 2);
-    selectionPlaylistLayout->setColumnStretch(2, 1);
-
-    const auto updateSourceMode = [this, selectionPlaylist]() {
+    const auto updateSourceMode = [this, selectionPlaylist, clickBehaviour]() {
         const bool playlistSource = m_source->currentData().toInt() == static_cast<int>(FilterSource::CurrentPlaylist);
         selectionPlaylist->setEnabled(!playlistSource);
+        clickBehaviour->setResultsAvailable(!playlistSource);
+
+        if(playlistSource) {
+            for(auto* combo : {m_doubleClick, m_middleClick, m_expansionDoubleClick, m_expansionMiddleClick}) {
+                const auto action = static_cast<TrackAction>(combo->currentData().toInt());
+                if(action == TrackAction::PlayResultsPlaylist || action == TrackAction::ReplaceResultsPlaylist) {
+                    TrackSelectionController::setCurrentAction(combo, static_cast<int>(TrackAction::Play));
+                }
+            }
+        }
     };
     QObject::connect(m_source, &QComboBox::currentIndexChanged, selectionPlaylist, updateSourceMode);
     updateSourceMode();
@@ -413,6 +400,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         TrackSelectionController::addAction(box, tr("None"), TrackAction::None);
         TrackSelectionController::addAction(box, tr("Play now"), TrackAction::Play);
         TrackSelectionController::addStandardActions(box);
+        BrowsingActionConfigWidget::addResultsActions(box);
     }
 
     setupConnections();
@@ -573,8 +561,6 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_expansionConfig->setConfig(config);
     m_expansionDoubleClick->setEnabled(config.expandGroups);
     m_expansionMiddleClick->setEnabled(config.expandGroups);
-
-    updatePlaylistControls();
 }
 
 void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& previous,
@@ -702,7 +688,6 @@ void FilterConfigDialog::setupConnections()
     for(auto* margin : {m_artworkLeftMargin, m_artworkTopMargin, m_artworkRightMargin, m_artworkBottomMargin}) {
         QObject::connect(m_overrideArtworkMargins, &QCheckBox::toggled, margin, &QWidget::setEnabled);
     }
-    QObject::connect(m_playlistEnabled, &QCheckBox::toggled, this, &FilterConfigDialog::updatePlaylistControls);
     QObject::connect(m_manageColumns, &QPushButton::clicked, this, [this]() {
         auto* dialog = new FilterColumnEditorDialog(m_columnRegistry, this);
         dialog->open();
@@ -715,14 +700,6 @@ void FilterConfigDialog::setupConnections()
     QObject::connect(m_filterWidget, &FilterWidget::configChanged, this, &FilterConfigDialog::syncCurrentConfig);
     QObject::connect(m_filterWidget, &FilterWidget::expansionLayoutChanged, this,
                      &FilterConfigDialog::syncCurrentConfig);
-}
-
-void FilterConfigDialog::updatePlaylistControls()
-{
-    const bool enabled = m_playlistEnabled->isChecked();
-    m_playlistName->setEnabled(enabled);
-    m_autoSwitch->setEnabled(enabled);
-    m_preservePlaybackPlaylist->setEnabled(enabled);
 }
 
 } // namespace Fooyin::Filters

@@ -76,7 +76,9 @@ enum class TrackAction
     AddToQueue,
     SendToQueue,
     QueueNext,
-    AddCurrentPlaylistAndPlayIfStopped
+    AddCurrentPlaylistAndPlayIfStopped,
+    PlayResultsPlaylist,
+    ReplaceResultsPlaylist
 };
 
 enum class TrackContextMenuArea : uint8_t
@@ -115,6 +117,24 @@ enum ActionOption : uint8_t
 };
 Q_DECLARE_FLAGS(ActionOptions, ActionOption)
 } // namespace PlaylistAction
+
+struct ResultsPlaylistOptions
+{
+    QString name;
+    bool show{true};
+    bool preservePlayback{true};
+};
+
+// Capture before async loading so later UI changes can't redirect the action
+struct BrowsingAction
+{
+    TrackAction action{TrackAction::None};
+    PlaylistAction::ActionOptions options;
+    std::optional<UId> playlistId;
+    ResultsPlaylistOptions results;
+    QString playlistName;
+    bool appendToNamedPlaylist{false};
+};
 
 class FYGUI_EXPORT TrackSelectionController : public QObject
 {
@@ -180,10 +200,20 @@ public:
 
     void executeAction(TrackAction action, PlaylistAction::ActionOptions options = {},
                        const QString& playlistName = {});
+
+    //! Capture the current or playing playlist before loading tracks.
+    [[nodiscard]] BrowsingAction prepareBrowsingAction(TrackAction action, bool startPlayback,
+                                                       const ResultsPlaylistOptions& results = {}) const;
+    void executeAction(const BrowsingAction& action, const TrackSelection& selection);
+    void executeAction(const BrowsingAction& action, WidgetContext* context);
+    //! Update the named browsing results playlist and optionally show it.
+    bool updateResultsPlaylist(const TrackList& tracks, const ResultsPlaylistOptions& options);
+
     //! Starts a temporary playback sequence at @p trackIndex without changing the current selection.
     void startPlayback(const TrackList& tracks, int trackIndex = 0);
 
 Q_SIGNALS:
+    void actionDestinationsChanged();
     void actionExecuted(Fooyin::TrackAction action);
     void selectionChanged();
     void displaySelectionChanged();

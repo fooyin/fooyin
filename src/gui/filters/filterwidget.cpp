@@ -932,6 +932,15 @@ void FilterWidget::applyConfig(const ConfigData& config)
     if(validated.source != FilterSource::Library && validated.source != FilterSource::CurrentPlaylist) {
         validated.source = FilterSource::Library;
     }
+    if(validated.source == FilterSource::CurrentPlaylist) {
+        for(auto* action : {&validated.doubleClickAction, &validated.middleClickAction,
+                            &validated.expansionDoubleClickAction, &validated.expansionMiddleClickAction}) {
+            if(*action == static_cast<int>(TrackAction::PlayResultsPlaylist)
+               || *action == static_cast<int>(TrackAction::ReplaceResultsPlaylist)) {
+                *action = static_cast<int>(TrackAction::Play);
+            }
+        }
+    }
     if(validated.viewMode != ExpandedTreeView::ViewMode::Tree && validated.viewMode != ExpandedTreeView::ViewMode::Icon
        && validated.viewMode != ExpandedTreeView::ViewMode::CoverFlow) {
         validated.viewMode = ExpandedTreeView::ViewMode::Tree;

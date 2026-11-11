@@ -58,7 +58,6 @@ protected:
 
 private:
     void setupConnections();
-    void updatePlaylistControls();
 
     FilterWidget* m_filterWidget;
     ExpansionConfigWidget* m_expansionConfig;

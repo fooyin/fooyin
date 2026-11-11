@@ -663,6 +663,8 @@ set(SOURCES
     widgets/backgroundimagesource.cpp
     widgets/backgroundrenderer.cpp
     widgets/backgroundrenderer.h
+    widgets/browsingconfigwidget.cpp
+    widgets/browsingconfigwidget.h
     widgets/checkboxdelegate.cpp
     widgets/clickablelabel.cpp
     widgets/colourbutton.cpp

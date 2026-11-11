@@ -46,7 +46,8 @@
                                                                 "Group": "Default",
                                                                 "ID": "1c827a58f07a4a939b185d9c0285f936",
                                                                 "Index": 0,
-                                                                "State": "AAAAJXjaY2BgYGRgYOhigNAgwGj/AcqACjAAACPXAb4="
+                                                                "State": "AAAAJXjaY2BgYGRgYOhigNAgwGj/AcqACjAAACPXAb4=",
+                                                                "DoubleClickAction": 10
                                                             }
                                                         },
                                                         {
@@ -55,7 +56,8 @@
                                                                 "Group": "Default",
                                                                 "ID": "09356ff889694ff7941174448bd67b7a",
                                                                 "Index": 1,
-                                                                "State": "AAAAJXjaY2BgYGRgYFjKAKFBgNH+A5QBFWAAACcBAdk="
+                                                                "State": "AAAAJXjaY2BgYGRgYFjKAKFBgNH+A5QBFWAAACcBAdk=",
+                                                                "DoubleClickAction": 10
                                                             }
                                                         }
                                                     ]

@@ -24,6 +24,7 @@
 #include "dirproxymodel.h"
 #include "dirtree.h"
 #include "internalguisettings.h"
+#include "playlist/playlistcontroller.h"
 
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
@@ -186,6 +187,7 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     , m_actionManager{actionManager}
     , m_playlistInteractor{playlistInteractor}
     , m_playlistHandler{m_playlistInteractor->handler()}
+    , m_selection{selection}
     , m_settings{settings}
     , m_mainLayout{new QVBoxLayout(this)}
     , m_controlLayout{new QHBoxLayout()}
@@ -210,10 +212,10 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     , m_goBack{new QAction(tr("Go back"), this)}
     , m_goForward{new QAction(tr("Go forwards"), this)}
     , m_playAction{new QAction(tr("&Play"), this)}
-    , m_addCurrent{new QAction(tr("Add to &current playlist"), this)}
-    , m_addActive{new QAction(tr("Add to &active playlist"), this)}
+    , m_addCurrent{new QAction(tr("Append to &current playlist"), this)}
+    , m_addActive{new QAction(tr("Append to &playing playlist"), this)}
     , m_sendCurrent{new QAction(tr("&Replace current playlist"), this)}
-    , m_sendNew{new QAction(tr("Create &new playlist"), this)}
+    , m_sendNew{new QAction(tr("Create or append to &named playlist"), this)}
     , m_addQueue{new QAction(tr("Add to playback &queue"), this)}
     , m_queueNext{new QAction(tr("Queue to play next"), this)}
     , m_sendQueue{new QAction(tr("Replace playback q&ueue"), this)}
@@ -295,7 +297,7 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     QObject::connect(m_addCurrent, &QAction::triggered, this,
                      [this]() { handleAction(TrackAction::AddCurrentPlaylist, true); });
 
-    m_addActive->setStatusTip(tr("Append selected tracks to the active playlist"));
+    m_addActive->setStatusTip(tr("Append selected tracks to the playing playlist"));
     auto* addActiveCmd
         = m_actionManager->registerAction(m_addActive, Constants::Actions::AddToActive, m_context->context());
     addActiveCmd->setCategories(tracksCategory);
@@ -309,7 +311,7 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     QObject::connect(m_sendCurrent, &QAction::triggered, this,
                      [this]() { handleAction(TrackAction::SendCurrentPlaylist, true); });
 
-    m_sendNew->setStatusTip(tr("Create a new playlist containing the selected tracks"));
+    m_sendNew->setStatusTip(tr("Create a named playlist or append to it if it already exists"));
     auto* sendNewCmd = m_actionManager->registerAction(m_sendNew, Constants::Actions::SendToNew, m_context->context());
     sendNewCmd->setCategories(tracksCategory);
     QObject::connect(m_sendNew, &QAction::triggered, this,
@@ -361,6 +363,17 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
         m_proxyModel->resetPalette();
         Gui::updateItemViewStyle(m_dirTree, resolvedStyle.palette);
     });
+
+    const auto updateDestinations = [this]() {
+        const auto* playlist   = m_playlistInteractor->playlistController()->currentPlaylist();
+        const QString name     = playlist ? playlist->name() : QString{};
+        const QString menuName = QString{name}.replace("&"_L1, "&&"_L1);
+        m_addCurrent->setText(name.isEmpty() ? tr("Append to current playlist") : tr("Append to ‘%1’").arg(menuName));
+        m_sendCurrent->setText(name.isEmpty() ? tr("Replace current playlist")
+                                              : tr("Replace contents of ‘%1’").arg(menuName));
+    };
+    QObject::connect(m_selection, &TrackSelectionController::actionDestinationsChanged, this, updateDestinations);
+    updateDestinations();
 
     m_config = defaultConfig();
     applyConfig(m_config);
@@ -856,6 +869,10 @@ QStringList DirBrowser::selectedFilePaths() const
 
 void DirBrowser::handleAction(TrackAction action, bool onlySelection)
 {
+    if(action == TrackAction::None) {
+        return;
+    }
+
     QModelIndexList selected = m_dirTree->selectionModel()->selectedRows();
 
     if(selected.empty()) {
@@ -913,49 +930,33 @@ void DirBrowser::handleAction(TrackAction action, bool onlySelection)
         firstPath = files.front().path();
     }
 
+    if(action == TrackAction::Play) {
+        handlePlayAction(files, firstPath, onlySelection);
+        return;
+    }
+
     QDir parentDir{firstPath};
     parentDir.cdUp();
-    const QString playlistName = parentDir.dirName();
 
-    const bool startPlayback = m_sendPlayback;
-
-    switch(action) {
-        case(TrackAction::Play):
-            handlePlayAction(files, firstPath, onlySelection);
-            break;
-        case(TrackAction::AddCurrentPlaylist):
-            m_playlistInteractor->filesToCurrentPlaylist(files);
-            break;
-        case(TrackAction::AddCurrentPlaylistAndPlayIfStopped):
-            m_playlistInteractor->filesToCurrentPlaylistAndPlayIfStopped(files);
-            break;
-        case(TrackAction::SendCurrentPlaylist):
-            m_playlistInteractor->filesToCurrentPlaylistReplace(files, startPlayback);
-            break;
-        case(TrackAction::SendNewPlaylist):
-            m_playlistInteractor->filesToNewPlaylist(playlistName, files, startPlayback);
-            break;
-        case(TrackAction::AddActivePlaylist):
-            m_playlistInteractor->filesToActivePlaylist(files);
-            break;
-        case(TrackAction::AddToQueue):
-            m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
-                m_playlistInteractor->playerController()->queueTracks(loadQueueTracks(tracks));
-            });
-            break;
-        case(TrackAction::QueueNext):
-            m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
-                m_playlistInteractor->playerController()->queueTracksNext(loadQueueTracks(tracks));
-            });
-            break;
-        case(TrackAction::SendToQueue):
-            m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
-                m_playlistInteractor->playerController()->replaceTracks(loadQueueTracks(tracks));
-            });
-            break;
-        case(TrackAction::None):
-            break;
+    auto request         = m_selection->prepareBrowsingAction(action, m_sendPlayback);
+    request.playlistName = parentDir.dirName();
+    if(action == TrackAction::SendNewPlaylist) {
+        request.appendToNamedPlaylist = true;
+        const auto* playlist          = m_playlistHandler->playlistByName(request.playlistName);
+        request.playlistId            = playlist ? std::optional{playlist->id()} : std::nullopt;
     }
+
+    const QPointer guard{this};
+    m_playlistInteractor->filesToTracks(files, [guard, request](const TrackList& tracks) {
+        if(guard) {
+            TrackSelection selection;
+            selection.tracks = tracks;
+            if(guard->m_playlist) {
+                selection.playlistId = guard->m_playlist->id();
+            }
+            guard->m_selection->executeAction(request, selection);
+        }
+    });
 }
 
 void DirBrowser::handlePlayAction(const QList<QUrl>& files, const QString& startingFile, bool onlySelection)

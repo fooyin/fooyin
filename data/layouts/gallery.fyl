@@ -51,7 +51,8 @@
                                         "ID": "e7ace6eab284422f9b8d2e8708ef5912",
                                         "Index": 0,
                                         "PlaylistEnabled": false,
-                                        "State": "AAAAJXjaY2BgYGRgYNjAAKFBgNH+A5QBFWAAAChLAeQ="
+                                        "State": "AAAAJXjaY2BgYGRgYNjAAKFBgNH+A5QBFWAAAChLAeQ=",
+                                        "DoubleClickAction": 5
                                     }
                                 },
                                 {

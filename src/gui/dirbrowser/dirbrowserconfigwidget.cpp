@@ -19,6 +19,8 @@
 
 #include "dirbrowserconfigwidget.h"
 
+#include "widgets/browsingconfigwidget.h"
+
 #include <gui/guiutils.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/backgroundconfigwidget.h>
@@ -53,25 +55,16 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
     , m_showHidden{new QCheckBox(tr("Show hidden"), this)}
     , m_doubleClick{new QComboBox(this)}
     , m_middleClick{new QComboBox(this)}
-    , m_playbackOnSend{new QCheckBox(tr("Start playback immediately"), this)}
+    , m_playbackOnSend{new QCheckBox(this)}
     , m_playingRowFont{new FontButton(tr("Font") + u":"_s, true, this)}
     , m_playingRowColour{new ColourButton(tr("Background colour") + u":"_s, true, this)}
     , m_background{new BackgroundConfigWidget(this)}
 {
-    m_playbackOnSend->setToolTip(
-        tr("For ‘Replace current playlist’ and ‘Create new playlist’, start playback immediately."));
     m_restoreSort->setToolTip(tr("Restore the sort column on startup and when changing directories."));
 
-    auto* generalPage          = new QWidget(this);
-    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), generalPage);
-    auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
-
-    clickBehaviourLayout->addWidget(new QLabel(tr("Double-click") + u":"_s, this), 0, 0);
-    clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
-    clickBehaviourLayout->addWidget(new QLabel(tr("Middle-click") + u":"_s, this), 1, 0);
-    clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
-    clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
-    clickBehaviourLayout->setColumnStretch(2, 1);
+    auto* generalPage    = new QWidget(this);
+    auto* clickBehaviour = new BrowsingActionConfigWidget(
+        {.doubleClick = m_doubleClick, .middleClick = m_middleClick, .startPlayback = m_playbackOnSend}, generalPage);
 
     auto* browserMode       = new QGroupBox(tr("Browser Mode"), generalPage);
     auto* browserModeLayout = new QVBoxLayout(browserMode);
@@ -136,6 +129,10 @@ DirBrowserConfigDialog::DirBrowserConfigDialog(DirBrowser* browser, QWidget* par
 
     TrackSelectionController::addAction(m_middleClick, tr("None"), TrackAction::None);
     TrackSelectionController::addStandardActions(m_middleClick);
+    for(auto* combo : {m_doubleClick, m_middleClick}) {
+        combo->setItemText(combo->findData(static_cast<int>(TrackAction::SendNewPlaylist)),
+                           tr("Create or append to named playlist"));
+    }
 
     QObject::connect(m_treeMode, &QRadioButton::toggled, this,
                      [this](bool checked) { m_indentList->setEnabled(!checked); });
