@@ -666,4 +666,54 @@ void PlaylistWidgetSession::restoreSelectedPlaylistIndexes(const PlaylistWidgetS
 
     host.playlistView()->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
 }
+
+PlaylistWidgetSession::EntrySelection
+PlaylistWidgetSession::selectedPlaylistEntries(const PlaylistWidgetSessionHost& host)
+{
+    const auto entryAt = [](const QModelIndex& index) {
+        if(!index.isValid() || index.data(PlaylistItem::Type).toInt() != PlaylistItem::Track) {
+            return UId{};
+        }
+        return index.data(PlaylistItem::Role::PersistentItemData).value<PlaylistTrack>().entryId;
+    };
+
+    EntrySelection selection;
+    const auto selected = filterSelectedIndexes(host.playlistView());
+    for(const QModelIndex& index : selected) {
+        if(const UId entry = entryAt(index); entry.isValid()) {
+            selection.selected.push_back(entry);
+        }
+    }
+    selection.current = entryAt(host.playlistView()->currentIndex());
+
+    return selection;
+}
+
+void PlaylistWidgetSession::restoreSelectedPlaylistEntries(const PlaylistWidgetSessionHost& host,
+                                                           const EntrySelection& selection)
+{
+    auto* selectionModel = host.playlistView()->selectionModel();
+    if(const QModelIndex current = host.playlistModel()->indexAtTrackEntry(selection.current); current.isValid()) {
+        selectionModel->setCurrentIndex(current, QItemSelectionModel::NoUpdate);
+    }
+
+    if(selection.selected.empty()) {
+        return;
+    }
+
+    const int columnCount = static_cast<int>(host.layoutState().columns.size());
+
+    QItemSelection indexesToSelect;
+    indexesToSelect.reserve(static_cast<qsizetype>(selection.selected.size()));
+
+    for(const UId& entry : selection.selected) {
+        const QModelIndex index = host.playlistModel()->indexAtTrackEntry(entry);
+        if(index.isValid()) {
+            const QModelIndex last = index.siblingAtColumn(columnCount - 1);
+            indexesToSelect.append({index, last.isValid() ? last : index});
+        }
+    }
+
+    selectionModel->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
+}
 } // namespace Fooyin

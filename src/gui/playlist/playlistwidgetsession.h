@@ -166,6 +166,14 @@ protected:
     static std::vector<int> selectedPlaylistIndexes(const PlaylistWidgetSessionHost& host);
     static void restoreSelectedPlaylistIndexes(const PlaylistWidgetSessionHost& host, const std::vector<int>& indexes);
 
+    struct EntrySelection
+    {
+        std::vector<UId> selected;
+        UId current;
+    };
+    static EntrySelection selectedPlaylistEntries(const PlaylistWidgetSessionHost& host);
+    static void restoreSelectedPlaylistEntries(const PlaylistWidgetSessionHost& host, const EntrySelection& selection);
+
 private:
     State m_state;
     uint64_t m_searchRequestToken{0};
