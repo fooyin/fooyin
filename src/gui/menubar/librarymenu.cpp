@@ -19,6 +19,8 @@
 
 #include "librarymenu.h"
 
+#include "dialog/statisticsdialog.h"
+
 #include <core/application.h>
 #include <core/database/trackdatabase.h>
 #include <gui/guiconstants.h>
@@ -112,6 +114,18 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     quickSearchCmd->setCategories(libraryCategory);
     QObject::connect(quickSearch, &QAction::triggered, this, &LibraryMenu::requestQuickSearch);
 
+    auto* statistics = new QAction(tr("S&tatistics"), this);
+    statistics->setStatusTip(tr("Show library statistics, listening statistics and playback history"));
+    auto* statisticsCmd = actionManager->registerAction(statistics, Constants::Actions::Statistics);
+    statisticsCmd->setCategories(libraryCategory);
+    QObject::connect(statistics, &QAction::triggered, this, [core]() {
+        auto* dialog = new StatisticsDialog(core->playbackHistoryService(), core->library(), core->settingsManager(),
+                                            Utils::getMainWindow());
+        dialog->show();
+        dialog->raise();
+        dialog->activateWindow();
+    });
+
     auto* openSettings = new QAction(tr("&Configure"), this);
     Gui::setThemeIcon(openSettings, Constants::Icons::Settings);
     openSettings->setStatusTip(tr("Open the library page in the settings dialog"));
@@ -169,6 +183,7 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     libraryMenu->addAction(recentlyPlayedCmd);
     libraryMenu->addAction(recentlyAddedCmd);
     libraryMenu->addSeparator();
+    libraryMenu->addAction(statisticsCmd);
     libraryMenu->addAction(openSettingsCmd);
 }
 

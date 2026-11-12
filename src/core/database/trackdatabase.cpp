@@ -116,7 +116,7 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q, const std::shared_ptr<Fooyin
     track.setCuePath(q.value(16).toString());
     track.setOffset(q.value(17).toULongLong());
     track.setDuration(q.value(18).toULongLong());
-    track.setFileSize(q.value(19).toInt());
+    track.setFileSize(q.value(19).toULongLong());
     track.setBitrate(q.value(20).toInt());
     track.setSampleRate(q.value(21).toInt());
     track.setSampleFrames(q.value(22).toULongLong());

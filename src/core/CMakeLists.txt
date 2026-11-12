@@ -32,6 +32,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/visualisationservice.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryfilter.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/librarystatistics.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryutils.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/library/pendingtrackcoverprovider.h
@@ -41,6 +42,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/network/remoteioservice.h
     ${CMAKE_SOURCE_DIR}/include/core/network/remotesourceprovider.h
     ${CMAKE_SOURCE_DIR}/include/core/network/remotestreamdevice.h
+    ${CMAKE_SOURCE_DIR}/include/core/player/playbackhistorydefs.h
+    ${CMAKE_SOURCE_DIR}/include/core/player/playbackhistoryservice.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playbackqueue.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playercontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playerdefs.h
@@ -83,6 +86,8 @@ set(SOURCES
     database/generaldatabase.h
     database/librarydatabase.cpp
     database/librarydatabase.h
+    database/playbackhistorydatabase.cpp
+    database/playbackhistorydatabase.h
     database/playbackqueuedatabase.cpp
     database/playbackqueuedatabase.h
     database/playlistdatabase.cpp
@@ -285,6 +290,7 @@ set(SOURCES
     network/streamdeviceutils.h
     playback/playbackcursor.cpp
     playback/playbackcursor.h
+    playback/playbackhistoryservice.cpp
     playback/playbackorder.cpp
     playback/playbackorder.h
     playback/playbackordernavigator.cpp

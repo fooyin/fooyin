@@ -32,6 +32,12 @@ constexpr auto RawRatingTagPrefix = "_FY_RATING_RAW_";
 constexpr auto CueIndex01Sector   = "_CUE_INDEX01_SECTOR";
 constexpr auto CueEndSector       = "_CUE_END_SECTOR";
 
+namespace PlaybackSource {
+constexpr auto Provider    = "_STREAM_PROVIDER";
+constexpr auto ExternalId  = "_FY_SOURCE_ID";
+constexpr auto OriginalUri = "_FY_SOURCE_ORIGINAL_URI";
+} // namespace PlaybackSource
+
 namespace MetaData {
 constexpr auto Title             = "TITLE";
 constexpr auto Artist            = "ARTIST";

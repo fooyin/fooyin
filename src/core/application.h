@@ -46,6 +46,7 @@ class LibraryManager;
 class MusicLibrary;
 class NetworkAccessManager;
 class PendingTrackCoverProvider;
+class PlaybackHistoryService;
 class PlayerController;
 class Playlist;
 class PlaylistHandler;
@@ -80,6 +81,7 @@ public:
     [[nodiscard]] PluginManager* pluginManager() const;
     [[nodiscard]] PlayerController* playerController() const;
     [[nodiscard]] ScriptContextService* scriptContextService() const;
+    [[nodiscard]] PlaybackHistoryService* playbackHistoryService() const;
     [[nodiscard]] LibraryManager* libraryManager() const;
     [[nodiscard]] MusicLibrary* library() const;
     [[nodiscard]] PendingTrackCoverProvider* pendingTrackCoverProvider() const;
@@ -131,6 +133,7 @@ private:
     PlaylistHandler* m_playlistHandler;
     PlayerController* m_playerController;
     ScriptContextService* m_scriptContext;
+    std::unique_ptr<PlaybackHistoryService> m_playbackHistoryService;
     PlaybackQueueStore m_playbackQueueStore;
     std::unique_ptr<EngineHandler> m_engine;
     SortingRegistry* m_sortingRegistry;

@@ -1815,6 +1815,8 @@ void PlayerController::commitCurrentTrack(const Player::TrackChangeRequest& requ
     p->m_settings->set<Settings::Core::ActiveTrack>(QVariant::fromValue(p->m_session.currentTrack().track));
     p->m_settings->set<Settings::Core::ActiveTrackId>(p->m_session.currentTrack().track.id());
 
+    Q_EMIT playbackItemCommitted(p->m_session.currentItemId(), p->m_session.currentTrack().track,
+                                 p->m_session.lastChangeContext());
     Q_EMIT currentTrackChanged(p->m_session.currentTrack().track);
     Q_EMIT playlistTrackChanged(p->m_session.currentTrack());
     Q_EMIT playlistTrackUpdated(p->m_session.currentTrack());
@@ -2223,6 +2225,11 @@ uint64_t PlayerController::playedThreshold() const
 bool PlayerController::playedThresholdReached() const
 {
     return p->m_progressTracker.playedThresholdReached();
+}
+
+uint64_t PlayerController::currentPlaybackItemId() const
+{
+    return p->m_session.currentItemId();
 }
 
 int PlayerController::bitrate() const

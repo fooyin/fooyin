@@ -21,6 +21,7 @@
 
 #include <core/coresettings.h>
 #include <core/internalcoresettings.h>
+#include <core/player/playbackhistorydefs.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/abrepeatcontrols.h>
@@ -30,6 +31,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -69,6 +71,7 @@ private:
     QCheckBox* m_rewindPrevious;
     QCheckBox* m_skipUnavailable;
     QCheckBox* m_stopIfActiveDeleted;
+    QComboBox* m_listeningHistoryMode;
 
     QSpinBox* m_seekStep;
     QSpinBox* m_seekStepLarge;
@@ -98,6 +101,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
     , m_stopIfActiveDeleted{new QCheckBox(tr("Stop playback if the active playlist is deleted"), this)}
+    , m_listeningHistoryMode{new QComboBox(this)}
     , m_seekStep{new QSpinBox(this)}
     , m_seekStepLarge{new QSpinBox(this)}
     , m_volumeStep{new QDoubleSpinBox(this)}
@@ -120,6 +124,10 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
         "If the current track has been playing for more than 5 s, restart it instead of moving to the previous track"));
     m_skipUnavailable->setToolTip(
         tr("If the current track in a playlist is unavailable, silently continue to the next track"));
+
+    m_listeningHistoryMode->addItem(tr("Off"), static_cast<int>(ListeningHistoryMode::Off));
+    m_listeningHistoryMode->addItem(tr("Totals only"), static_cast<int>(ListeningHistoryMode::TotalsOnly));
+    m_listeningHistoryMode->addItem(tr("Full history"), static_cast<int>(ListeningHistoryMode::FullHistory));
 
     QObject::connect(m_restoreActivePlaylistState, &QCheckBox::toggled, this, &PlaybackPageWidget::updateWidgetState);
     QObject::connect(m_stopAfterCurrent, &QCheckBox::toggled, this, &PlaybackPageWidget::updateWidgetState);
@@ -151,6 +159,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     generalGroupLayout->addWidget(m_playbackFollowsCursor, row, 0, 1, 2);
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 2, 1, 2);
     generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 4);
+    generalGroupLayout->addWidget(new QLabel(tr("Listening statistics") + u":"_s, this), row, 0);
+    generalGroupLayout->addWidget(m_listeningHistoryMode, row++, 1, 1, 3);
     generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 4);
     generalGroupLayout->addWidget(m_playedTimeSlider, row++, 0, 1, 4);
     generalGroupLayout->setColumnStretch(1, 1);
@@ -252,6 +262,8 @@ void PlaybackPageWidget::load()
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
     m_skipUnavailable->setChecked(m_settings->value<Settings::Core::Internal::PlaylistSkipUnavailable>());
     m_stopIfActiveDeleted->setChecked(m_settings->value<Settings::Core::StopIfActivePlaylistDeleted>());
+    m_listeningHistoryMode->setCurrentIndex(
+        std::clamp(m_settings->value<Settings::Core::ListeningHistoryMode>(), 0, 2));
 
     m_seekStep->setValue(m_settings->value<Settings::Gui::SeekStepSmall>());
     m_seekStepLarge->setValue(m_settings->value<Settings::Gui::SeekStepLarge>());
@@ -292,6 +304,7 @@ void PlaybackPageWidget::apply()
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
     m_settings->set<Settings::Core::Internal::PlaylistSkipUnavailable>(m_skipUnavailable->isChecked());
     m_settings->set<Settings::Core::StopIfActivePlaylistDeleted>(m_stopIfActiveDeleted->isChecked());
+    m_settings->set<Settings::Core::ListeningHistoryMode>(m_listeningHistoryMode->currentData().toInt());
 
     m_settings->set<Settings::Gui::SeekStepSmall>(m_seekStep->value());
     m_settings->set<Settings::Gui::SeekStepLarge>(m_seekStepLarge->value());
@@ -334,6 +347,7 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->reset<Settings::Core::Internal::PlaylistSkipUnavailable>();
     m_settings->reset<Settings::Core::StopIfActivePlaylistDeleted>();
+    m_settings->reset<Settings::Core::ListeningHistoryMode>();
     m_settings->reset<Settings::Gui::SeekStepSmall>();
     m_settings->reset<Settings::Gui::SeekStepLarge>();
     m_settings->reset<Settings::Gui::VolumeStep>();

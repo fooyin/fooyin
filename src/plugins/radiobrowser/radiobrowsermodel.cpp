@@ -44,36 +44,6 @@ constexpr auto DefaultRadioIconSize      = 36;
 
 namespace Fooyin::RadioBrowser {
 namespace {
-Track trackForStation(const RadioStation& station)
-{
-    Track track{station.effectiveStreamUrl()};
-    track.setTitle(station.name);
-
-    if(!station.tags.isEmpty()) {
-        track.setGenres(splitStationTags(station.tags));
-    }
-    if(!station.codec.isEmpty()) {
-        track.setCodec(station.codec);
-    }
-    if(station.bitrate > 0) {
-        track.setBitrate(station.bitrate);
-    }
-    if(!station.favicon.isEmpty()) {
-        track.replaceExtraTag(u"COVERART"_s, station.favicon);
-    }
-
-    track.setMetadataWasRead(true);
-    track.setExtraProperty(u"_STREAM_PROVIDER"_s, station.local ? u"local"_s : u"radio-browser.info"_s);
-    track.setExtraProperty(u"_RADIO_BROWSER_STATIONUUID"_s, station.uuid);
-    track.setExtraProperty(u"_RADIO_BROWSER_STREAMURL"_s, station.streamUrl);
-    track.setExtraProperty(u"_RADIO_BROWSER_RESOLVED_STREAMURL"_s, station.resolvedStreamUrl);
-    track.setExtraProperty(u"_RADIO_BROWSER_HOMEPAGE"_s, station.homepage);
-    track.setExtraProperty(u"_RADIO_BROWSER_FAVICON"_s, station.favicon);
-    track.setExtraProperty(u"_RADIO_BROWSER_HLS"_s, station.hls ? u"true"_s : u"false"_s);
-
-    return track;
-}
-
 QString stationColumnText(const RadioStation& station, int column)
 {
     switch(column) {
@@ -314,7 +284,7 @@ QMimeData* RadioBrowserModel::mimeData(const QModelIndexList& indexes) const
     tracks.reserve(rows.size());
 
     for(const int row : rows) {
-        if(Track track = trackForStation(m_stations.at(row)); track.isValid()) {
+        if(Track track = Utils::trackForStation(m_stations.at(row)); track.isValid()) {
             tracks.push_back(std::move(track));
         }
     }

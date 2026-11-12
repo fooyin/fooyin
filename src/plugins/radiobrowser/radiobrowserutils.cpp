@@ -19,6 +19,8 @@
 
 #include "radiobrowserutils.h"
 
+#include <core/constants.h>
+
 #include <QColor>
 #include <QFont>
 #include <QPainter>
@@ -53,6 +55,42 @@ QString stationInitials(const QString& name)
     return initials.isEmpty() ? u"R"_s : initials;
 }
 } // namespace
+
+Track trackForStation(const RadioStation& station, const QString& streamUrl)
+{
+    Track track{streamUrl.isEmpty() ? station.effectiveStreamUrl() : streamUrl};
+    track.setTitle(station.name);
+
+    if(!station.tags.isEmpty()) {
+        track.setGenres(splitStationTags(station.tags));
+    }
+    if(!station.codec.isEmpty()) {
+        track.setCodec(station.codec);
+    }
+    if(station.bitrate > 0) {
+        track.setBitrate(station.bitrate);
+    }
+    if(!station.favicon.isEmpty()) {
+        track.replaceExtraTag(u"COVERART"_s, station.favicon);
+    }
+
+    track.setMetadataWasRead(true);
+    track.setExtraProperty(QLatin1StringView{Constants::PlaybackSource::Provider},
+                           station.local ? u"local"_s : u"radio-browser.info"_s);
+    track.setExtraProperty(QLatin1StringView{Constants::PlaybackSource::ExternalId}, station.uuid);
+    track.setExtraProperty(QLatin1StringView{Constants::PlaybackSource::OriginalUri}, station.streamUrl);
+    track.setExtraProperty(u"_RADIO_BROWSER_STATIONUUID"_s, station.uuid);
+    track.setExtraProperty(u"_RADIO_BROWSER_STATIONNAME"_s, station.name);
+    track.setExtraProperty(u"_RADIO_BROWSER_STREAMURL"_s, station.streamUrl);
+    track.setExtraProperty(u"_RADIO_BROWSER_HOMEPAGE"_s, station.homepage);
+    track.setExtraProperty(u"_RADIO_BROWSER_FAVICON"_s, station.favicon);
+    track.setExtraProperty(u"_RADIO_BROWSER_COUNTRY"_s, station.country);
+    track.setExtraProperty(u"_RADIO_BROWSER_COUNTRYCODE"_s, station.countryCode);
+    track.setExtraProperty(u"_RADIO_BROWSER_LANGUAGE"_s, station.language);
+    track.setExtraProperty(u"_RADIO_BROWSER_HLS"_s, station.hls ? u"true"_s : u"false"_s);
+
+    return track;
+}
 
 QIcon placeholderIcon(const RadioStation& station, int size)
 {

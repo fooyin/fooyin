@@ -183,6 +183,10 @@ set(SOURCES
     dialog/iconpickerdialog.h
     dialog/importlayoutdialog.cpp
     dialog/importlayoutdialog.h
+    dialog/librarybreakdownmodel.cpp
+    dialog/librarybreakdownmodel.h
+    dialog/listeninghistorymodel.cpp
+    dialog/listeninghistorymodel.h
     dialog/playbackpropertiestab.cpp
     dialog/playbackpropertiestab.h
     dialog/propertiesdialog.cpp
@@ -190,6 +194,8 @@ set(SOURCES
     dialog/saveplaylistsdialog.h
     dialog/searchdialog.cpp
     dialog/searchdialog.h
+    dialog/statisticsdialog.cpp
+    dialog/statisticsdialog.h
     dirbrowser/dirbrowser.cpp
     dirbrowser/dirbrowser.h
     dirbrowser/dirbrowserconfigwidget.cpp

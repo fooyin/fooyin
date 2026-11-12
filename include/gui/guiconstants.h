@@ -197,6 +197,7 @@ constexpr auto ToggleMainWindow          = "View.ToggleMainWindow";
 constexpr auto FocusSearchBar            = "View.FocusSearchBar";
 constexpr auto QuickSearch               = "Library.QuickSearch";
 constexpr auto SearchLibrary             = "Library.SearchLibrary";
+constexpr auto Statistics                = "Library.Statistics";
 constexpr auto Refresh                   = "Library.Refresh";
 constexpr auto Rescan                    = "Library.Rescan";
 constexpr auto Stop                      = "Playback.Stop";

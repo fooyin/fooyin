@@ -138,6 +138,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager, DbConnectionPoolPtr
     m_settings->createSetting<SavePlaycountToMetadata>(false, u"Library/SavePlaycountToFile"_s);
     m_settings->createSetting<PlayedThreshold>(0.5, u"Playback/PlayedThreshold"_s);
     m_settings->createSetting<PlayedThresholdTime>(240000, u"Playback/PlayedThresholdTime"_s);
+    m_settings->createSetting<Settings::Core::ListeningHistoryMode>(2, u"Playback/ListeningHistoryMode"_s);
     m_settings->createSetting<ExternalSortScript>(u"%filepath%"_s, u"Library/ExternalSortScript"_s);
     m_settings->createSetting<LibraryViewPlaylistSortScript>(QString{}, u"Library/LibraryViewPlaylistSortScript"_s);
     m_settings->createTempSetting<Shutdown>(false);

@@ -401,7 +401,9 @@
         </sql>
     </revision>
     <revision version="20">
-        <description>Add the Love playback statistic.</description>
+        <description>
+            Add the Love playback statistic.
+        </description>
         <sql>
             ALTER TABLE TrackStats ADD COLUMN Loved INTEGER NOT NULL DEFAULT 0;
         </sql>
@@ -422,6 +424,82 @@
         </description>
         <sql>
             ALTER TABLE Tracks ADD COLUMN SampleFrames INTEGER DEFAULT 0;
+        </sql>
+    </revision>
+    <revision version="23">
+        <description>
+            Add playback history sources, events, daily listening totals, and timed stream metadata spans.
+        </description>
+        <sql>
+            CREATE TABLE IF NOT EXISTS PlaybackSources (
+                SourceID INTEGER PRIMARY KEY,
+                Kind INTEGER NOT NULL,
+                StableKey TEXT NOT NULL UNIQUE,
+                DisplayName TEXT,
+                OriginalURI TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS PlaybackEvents (
+                EventID INTEGER PRIMARY KEY,
+                SourceID INTEGER NOT NULL REFERENCES PlaybackSources(SourceID) ON DELETE CASCADE,
+                StartedAt INTEGER NOT NULL,
+                EndedAt INTEGER,
+                LastCheckpointAt INTEGER NOT NULL,
+                ListeningTimeMs INTEGER NOT NULL DEFAULT 0,
+                PlayedAt INTEGER,
+                Title TEXT,
+                Artists TEXT,
+                Album TEXT,
+                AlbumArtists TEXT,
+                Genres TEXT,
+                Composers TEXT,
+                Date TEXT,
+                Year INTEGER NOT NULL DEFAULT 0,
+                TrackNumber TEXT,
+                DiscNumber TEXT,
+                FilePath TEXT,
+                DurationMs INTEGER NOT NULL DEFAULT 0,
+                Codec TEXT,
+                CodecProfile TEXT,
+                Encoding TEXT,
+                Bitrate INTEGER NOT NULL DEFAULT 0,
+                BitDepth INTEGER NOT NULL DEFAULT 0,
+                SampleRate INTEGER NOT NULL DEFAULT 0
+            );
+
+            CREATE TABLE IF NOT EXISTS StreamMetadataSpans (
+                SpanID INTEGER PRIMARY KEY,
+                EventID INTEGER NOT NULL REFERENCES PlaybackEvents(EventID) ON DELETE CASCADE,
+                StartedOffsetMs INTEGER NOT NULL,
+                EndedOffsetMs INTEGER,
+                RawStreamTitle TEXT,
+                Title TEXT,
+                Artists TEXT,
+                Album TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS PlaybackDailyTotals (
+                SourceID INTEGER NOT NULL REFERENCES PlaybackSources(SourceID) ON DELETE CASCADE,
+                Day INTEGER NOT NULL,
+                ListeningTimeMs INTEGER NOT NULL DEFAULT 0,
+                LastListenedAt INTEGER NOT NULL,
+                PRIMARY KEY (SourceID, Day)
+            );
+
+            CREATE TABLE IF NOT EXISTS PlaybackDailySummary (
+                Kind INTEGER NOT NULL,
+                Day INTEGER NOT NULL,
+                ListeningTimeMs INTEGER NOT NULL DEFAULT 0,
+                PRIMARY KEY (Kind, Day)
+            );
+
+            CREATE INDEX IF NOT EXISTS PlaybackEventsStartedIndex ON PlaybackEvents(StartedAt);
+            CREATE INDEX IF NOT EXISTS PlaybackEventsPlayedIndex ON PlaybackEvents(PlayedAt) WHERE PlayedAt IS NOT NULL;
+            CREATE INDEX IF NOT EXISTS PlaybackEventsSourceIndex ON PlaybackEvents(SourceID, StartedAt);
+            CREATE INDEX IF NOT EXISTS PlaybackEventsOpenIndex ON PlaybackEvents(EndedAt) WHERE EndedAt IS NULL;
+            CREATE INDEX IF NOT EXISTS StreamMetadataSpansEventIndex
+                ON StreamMetadataSpans(EventID, StartedOffsetMs);
+            CREATE INDEX IF NOT EXISTS PlaybackDailyTotalsDayIndex ON PlaybackDailyTotals(Day);
         </sql>
     </revision>
 </schema>

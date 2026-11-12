@@ -20,11 +20,13 @@
 #include "radiobrowsercontroller.h"
 
 #include "radiobrowserservice.h"
+#include "radiobrowserutils.h"
 #include "radiodiscovery.h"
 #include "radioiconprovider.h"
 #include "radiostationstore.h"
 #include "radiostreamresolver.h"
 
+#include <core/constants.h>
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
 #include <gui/statusevent.h>
@@ -79,57 +81,22 @@ QString categoryTypeName(const RadioCategoryType type)
     return RadioBrowserController::tr("categories");
 }
 
-Track applyStationMetadata(Track track, const RadioStation& station)
-{
-    if(!station.name.isEmpty()) {
-        track.setTitle(station.name);
-    }
-    if(!station.tags.isEmpty()) {
-        track.setGenres(splitStationTags(station.tags));
-    }
-    if(!station.codec.isEmpty()) {
-        track.setCodec(station.codec);
-    }
-    if(station.bitrate > 0) {
-        track.setBitrate(station.bitrate);
-    }
-    if(!station.favicon.isEmpty()) {
-        track.replaceExtraTag(u"COVERART"_s, station.favicon);
-    }
-
-    track.setMetadataWasRead(true);
-    track.setExtraProperty(u"_STREAM_PROVIDER"_s, station.local ? u"local"_s : u"radio-browser.info"_s);
-    track.setExtraProperty(u"_RADIO_BROWSER_STATIONUUID"_s, station.uuid);
-    track.setExtraProperty(u"_RADIO_BROWSER_STATIONNAME"_s, station.name);
-    track.setExtraProperty(u"_RADIO_BROWSER_STREAMURL"_s, station.streamUrl);
-    track.setExtraProperty(u"_RADIO_BROWSER_RESOLVED_STREAMURL"_s, track.filepath());
-    track.setExtraProperty(u"_RADIO_BROWSER_HOMEPAGE"_s, station.homepage);
-    track.setExtraProperty(u"_RADIO_BROWSER_FAVICON"_s, station.favicon);
-    track.setExtraProperty(u"_RADIO_BROWSER_COUNTRY"_s, station.country);
-    track.setExtraProperty(u"_RADIO_BROWSER_COUNTRYCODE"_s, station.countryCode);
-    track.setExtraProperty(u"_RADIO_BROWSER_LANGUAGE"_s, station.language);
-    track.setExtraProperty(u"_RADIO_BROWSER_HLS"_s, station.hls ? u"true"_s : u"false"_s);
-
-    return track;
-}
-
 RadioStation stationFromTrack(const Track& track)
 {
     const Track::ExtraProperties properties = track.extraProperties();
 
     RadioStation station;
-    station.uuid              = propertyValue(properties, u"RADIO_BROWSER_STATIONUUID"_s);
-    station.name              = propertyValue(properties, u"RADIO_BROWSER_STATIONNAME"_s);
-    station.streamUrl         = propertyValue(properties, u"RADIO_BROWSER_STREAMURL"_s);
-    station.resolvedStreamUrl = propertyValue(properties, u"RADIO_BROWSER_RESOLVED_STREAMURL"_s);
-    station.homepage          = propertyValue(properties, u"RADIO_BROWSER_HOMEPAGE"_s);
-    station.favicon           = propertyValue(properties, u"RADIO_BROWSER_FAVICON"_s);
-    station.country           = propertyValue(properties, u"RADIO_BROWSER_COUNTRY"_s);
-    station.countryCode       = propertyValue(properties, u"RADIO_BROWSER_COUNTRYCODE"_s);
-    station.language          = propertyValue(properties, u"RADIO_BROWSER_LANGUAGE"_s);
-    station.hls               = propertyValue(properties, u"RADIO_BROWSER_HLS"_s) == u"true"_s;
+    station.uuid        = propertyValue(properties, u"RADIO_BROWSER_STATIONUUID"_s);
+    station.name        = propertyValue(properties, u"RADIO_BROWSER_STATIONNAME"_s);
+    station.streamUrl   = propertyValue(properties, u"RADIO_BROWSER_STREAMURL"_s);
+    station.homepage    = propertyValue(properties, u"RADIO_BROWSER_HOMEPAGE"_s);
+    station.favicon     = propertyValue(properties, u"RADIO_BROWSER_FAVICON"_s);
+    station.country     = propertyValue(properties, u"RADIO_BROWSER_COUNTRY"_s);
+    station.countryCode = propertyValue(properties, u"RADIO_BROWSER_COUNTRYCODE"_s);
+    station.language    = propertyValue(properties, u"RADIO_BROWSER_LANGUAGE"_s);
+    station.hls         = propertyValue(properties, u"RADIO_BROWSER_HLS"_s) == u"true"_s;
 
-    const QString provider = propertyValue(properties, u"STREAM_PROVIDER"_s);
+    const QString provider = properties.value(QString::fromLatin1(Constants::PlaybackSource::Provider));
     station.local          = provider == u"local"_s;
 
     if(provider != u"radio-browser.info"_s && !station.local) {
@@ -515,9 +482,7 @@ int RadioBrowserController::resolveStations(const RadioStationList& stations, QO
 
 Track RadioBrowserController::trackForStation(const RadioStation& station, const QString& streamUrl)
 {
-    Track track{streamUrl.isEmpty() ? station.effectiveStreamUrl() : streamUrl};
-    track.setTitle(station.name);
-    return applyStationMetadata(track, station);
+    return Utils::trackForStation(station, streamUrl);
 }
 
 void RadioBrowserController::saveStation(const RadioStation& station)
