@@ -25,6 +25,7 @@
 #include <gui/trackdisplay.h>
 
 #include <QBasicTimer>
+#include <QElapsedTimer>
 #include <QPixmap>
 
 namespace Fooyin {
@@ -48,16 +49,29 @@ enum class CoverAction : uint8_t
     OpenProperties,
 };
 
+enum class CoverStyle : uint8_t
+{
+    Cover = 0,
+    Disc,
+};
+
 class CoverWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
+    static constexpr int MaxSpinSpeedRpm       = 60;
+    static constexpr int MaxSpinRampDurationMs = 10000;
+
     struct ConfigData
     {
         Track::Cover coverType{Track::Cover::Front};
         Qt::Alignment coverAlignment{Qt::AlignCenter};
         ArtworkScaling artworkScaling{ArtworkScaling::Fit};
+        CoverStyle style{CoverStyle::Cover};
+        bool spinDisc{true};
+        int spinSpeedRpm{6};
+        int spinRampDurationMs{1000};
         TrackDisplayPreference trackPreference{TrackDisplayPreference::PlayingTrack};
         bool fadeCoverChanges{false};
         int fadeDurationMs{1000};
@@ -107,6 +121,11 @@ private:
     [[nodiscard]] bool coversMatch(const QPixmap& lhs, const QPixmap& rhs) const;
     [[nodiscard]] QPixmap effectiveCover(const QPixmap& cover) const;
     [[nodiscard]] QPixmap scaledCover(const QPixmap& cover) const;
+    [[nodiscard]] QPixmap scaledDiscCover(const QPixmap& cover) const;
+    [[nodiscard]] qreal discAngle() const;
+    [[nodiscard]] qreal discSpeedRpm() const;
+
+    void updateDiscRotation();
 
     [[nodiscard]] Track displayTrack() const;
     [[nodiscard]] static bool sameDisplayTrack(const Track& lhs, const Track& rhs);
@@ -138,6 +157,11 @@ private:
     ArtworkScaling m_artworkScaling;
 
     QBasicTimer m_resizeTimer;
+    QBasicTimer m_rotationTimer;
+    QElapsedTimer m_rotationElapsed;
+    qreal m_discAngle;
+    qreal m_spinStartSpeedRpm;
+    qreal m_spinTargetSpeedRpm;
 
     bool m_fadeCoverChanges;
     PixmapFadeController* m_fadeController;

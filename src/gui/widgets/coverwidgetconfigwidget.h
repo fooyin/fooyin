@@ -28,6 +28,7 @@ class QButtonGroup;
 class QComboBox;
 
 namespace Fooyin {
+class DoubleSliderEditor;
 class SliderEditor;
 
 class CoverWidgetConfigDialog : public WidgetConfigDialog<CoverWidget, CoverWidget::ConfigData>
@@ -46,7 +47,11 @@ private:
     QButtonGroup* m_coverTypeGroup;
     QButtonGroup* m_alignmentGroup;
     QComboBox* m_trackPreference;
+    QComboBox* m_style;
     QComboBox* m_artworkScaling;
+    QCheckBox* m_spinDisc;
+    SliderEditor* m_spinSpeed;
+    DoubleSliderEditor* m_spinRampDuration;
 
     QCheckBox* m_fadeEnabled;
     SliderEditor* m_fadeDuration;
