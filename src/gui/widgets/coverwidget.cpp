@@ -85,6 +85,117 @@ constexpr auto RotationInterval = 16;
 #endif
 
 namespace Fooyin {
+namespace {
+CoverStyle coverStyleFromInt(int value)
+{
+    switch(value) {
+        case static_cast<int>(CoverStyle::Disc):
+            return CoverStyle::Disc;
+        case static_cast<int>(CoverStyle::Vinyl):
+            return CoverStyle::Vinyl;
+        default:
+            return CoverStyle::Cover;
+    }
+}
+
+void paintCD(QPainter& painter, const QPixmap& artwork, const QRectF& outer)
+{
+    const QPointF centre  = outer.center();
+    const qreal radius    = outer.width() / 2.0;
+    const qreal hubRadius = radius * 0.28;
+
+    painter.drawPixmap(0, 0, artwork);
+
+    QConicalGradient sheen{centre, 30.0};
+    sheen.setColorAt(0.0, QColor{255, 110, 90, 35});
+    sheen.setColorAt(0.16, QColor{255, 235, 120, 45});
+    sheen.setColorAt(0.32, QColor{100, 255, 185, 35});
+    sheen.setColorAt(0.48, QColor{235, 250, 255, 65});
+    sheen.setColorAt(0.58, QColor{110, 170, 255, 40});
+    sheen.setColorAt(0.74, QColor{230, 130, 255, 45});
+    sheen.setColorAt(0.9, QColor{255, 225, 245, 65});
+    sheen.setColorAt(1.0, QColor{255, 110, 90, 35});
+    painter.fillRect(artwork.rect(), sheen);
+
+    QRadialGradient rim{centre, radius};
+    rim.setColorAt(0.0, Qt::transparent);
+    rim.setColorAt(0.965, Qt::transparent);
+    rim.setColorAt(0.98, QColor{225, 230, 240, 110});
+    rim.setColorAt(0.99, QColor{255, 255, 255, 210});
+    rim.setColorAt(1.0, QColor{65, 70, 80, 160});
+    painter.fillRect(artwork.rect(), rim);
+
+    QRadialGradient hub{centre, hubRadius};
+    hub.setColorAt(0.0, QColor{225, 228, 235, 230});
+    hub.setColorAt(0.48, QColor{250, 251, 255, 245});
+    hub.setColorAt(0.52, QColor{180, 185, 195, 210});
+    hub.setColorAt(0.78, QColor{225, 228, 235, 220});
+    hub.setColorAt(0.8, QColor{250, 251, 255, 240});
+    hub.setColorAt(0.94, QColor{210, 215, 225, 220});
+    hub.setColorAt(0.97, QColor{65, 70, 80, 220});
+    hub.setColorAt(1.0, QColor{240, 242, 248, 220});
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(hub);
+    painter.drawEllipse(centre, hubRadius, hubRadius);
+}
+
+void paintVinyl(QPainter& painter, const QPixmap& artwork, const QRectF& outer)
+{
+    const QPointF centre    = outer.center();
+    const qreal radius      = outer.width() / 2.0;
+    const qreal labelRadius = radius * 0.33;
+
+    QRadialGradient surface{centre, radius};
+    surface.setColorAt(0.0, QColor{28, 28, 30});
+    surface.setColorAt(0.4, QColor{22, 22, 24});
+    surface.setColorAt(0.96, QColor{14, 14, 16});
+    surface.setColorAt(1.0, QColor{50, 50, 52});
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(surface);
+    painter.drawEllipse(outer);
+
+    const qreal grooveSpacing     = std::max(3.0, radius * 0.016);
+    const qreal firstGrooveRadius = radius * 0.4;
+    const int grooveCount         = static_cast<int>(std::ceil(((radius * 0.96) - firstGrooveRadius) / grooveSpacing));
+
+    painter.setPen(QPen{QColor{255, 255, 255, 12}, 1.0});
+    painter.setBrush(Qt::NoBrush);
+    for(int grooveIndex{0}; grooveIndex < grooveCount; ++grooveIndex) {
+        const qreal grooveRadius = firstGrooveRadius + (grooveIndex * grooveSpacing);
+        painter.drawEllipse(centre, grooveRadius, grooveRadius);
+    }
+
+    QConicalGradient sheen{centre, 30.0};
+    sheen.setColorAt(0.0, Qt::transparent);
+    sheen.setColorAt(0.12, QColor{255, 255, 255, 5});
+    sheen.setColorAt(0.18, QColor{255, 255, 255, 28});
+    sheen.setColorAt(0.24, QColor{255, 255, 255, 5});
+    sheen.setColorAt(0.5, Qt::transparent);
+    sheen.setColorAt(0.62, QColor{255, 255, 255, 5});
+    sheen.setColorAt(0.68, QColor{255, 255, 255, 20});
+    sheen.setColorAt(0.74, QColor{255, 255, 255, 5});
+    sheen.setColorAt(1.0, Qt::transparent);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(sheen);
+    painter.drawEllipse(outer);
+
+    painter.setBrush(Qt::NoBrush);
+    painter.setPen(QPen{QColor{255, 255, 255, 18}, 0.8});
+    painter.drawEllipse(centre, radius * 0.365, radius * 0.365);
+
+    QPainterPath label;
+    label.addEllipse(centre, labelRadius, labelRadius);
+    painter.save();
+    painter.setClipPath(label);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.drawPixmap(QRectF{centre.x() - labelRadius, centre.y() - labelRadius, labelRadius * 2.0, labelRadius * 2.0},
+                       artwork, artwork.rect());
+    painter.restore();
+    painter.setPen(QPen{QColor{0, 0, 0, 120}, 1.0});
+    painter.drawPath(label);
+}
+} // namespace
+
 CoverWidget::CoverWidget(ActionManager* actionManager, PlayerController* playerController,
                          PlaylistHandler* playlistHandler, TrackSelectionController* trackSelection,
                          std::shared_ptr<AudioLoader> audioLoader, CoverRepository* coverRepository,
@@ -149,10 +260,8 @@ CoverWidget::ConfigData CoverWidget::defaultConfig() const
         m_settings->fileValue(CoverWidgetCoverTypeKey, static_cast<int>(config.coverType)).toInt());
     config.coverAlignment = static_cast<Qt::Alignment>(
         m_settings->fileValue(CoverWidgetCoverAlignmentKey, static_cast<int>(config.coverAlignment)).toInt());
-    config.style = m_settings->fileValue(CoverWidgetStyleKey, static_cast<int>(config.style)).toInt()
-                        == static_cast<int>(CoverStyle::Disc)
-                     ? CoverStyle::Disc
-                     : CoverStyle::Cover;
+    config.style
+        = coverStyleFromInt(m_settings->fileValue(CoverWidgetStyleKey, static_cast<int>(config.style)).toInt());
 
     if(m_settings->fileContains(CoverWidgetArtworkScalingKey)) {
         config.artworkScaling = artworkScalingFromInt(m_settings->fileValue(CoverWidgetArtworkScalingKey).toInt());
@@ -203,7 +312,7 @@ void CoverWidget::applyConfig(const ConfigData& config)
     const bool coverTypeChanged       = m_coverType != config.coverType;
     const auto artworkScaling         = artworkScalingFromInt(static_cast<int>(config.artworkScaling));
     const bool scalingChanged         = m_artworkScaling != artworkScaling;
-    const auto style                  = config.style == CoverStyle::Disc ? CoverStyle::Disc : CoverStyle::Cover;
+    const auto style                  = coverStyleFromInt(static_cast<int>(config.style));
     const bool styleChanged           = m_config.style != style;
     const bool alignmentChanged       = m_coverAlignment != config.coverAlignment;
     const bool fadeEnabledChanged     = m_fadeCoverChanges != config.fadeCoverChanges;
@@ -319,9 +428,7 @@ CoverWidget::ConfigData CoverWidget::configFromLayout(const QJsonObject& layout)
     config.coverType
         = static_cast<Track::Cover>(layout.value("CoverType"_L1).toInt(static_cast<int>(config.coverType)));
     config.coverAlignment = static_cast<Qt::Alignment>(layout.value("CoverAlignment"_L1).toInt(config.coverAlignment));
-    config.style = layout.value("Style"_L1).toInt(static_cast<int>(config.style)) == static_cast<int>(CoverStyle::Disc)
-                     ? CoverStyle::Disc
-                     : CoverStyle::Cover;
+    config.style          = coverStyleFromInt(layout.value("Style"_L1).toInt(static_cast<int>(config.style)));
 
     if(layout.contains("ArtworkScaling"_L1)) {
         config.artworkScaling = artworkScalingFromInt(layout.value("ArtworkScaling"_L1).toInt());
@@ -465,8 +572,8 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* styleMenu  = new QMenu(tr("Style"), menu);
     auto* styleGroup = new QActionGroup(styleMenu);
-    for(const auto& [text, style] :
-        {std::pair{tr("Cover"), CoverStyle::Cover}, std::pair{tr("Disc"), CoverStyle::Disc}}) {
+    for(const auto& [text, style] : {std::pair{tr("Cover"), CoverStyle::Cover}, std::pair{tr("Disc"), CoverStyle::Disc},
+                                     std::pair{tr("Vinyl"), CoverStyle::Vinyl}}) {
         auto* action = styleMenu->addAction(text);
         styleGroup->addAction(action);
         action->setCheckable(true);
@@ -677,7 +784,7 @@ void CoverWidget::paintEvent(QPaintEvent* /*event*/)
 {
     QStylePainter painter{this};
 
-    if(m_config.style == CoverStyle::Disc) {
+    if(m_config.style != CoverStyle::Cover) {
         const auto discRect = QStyle::alignedRect(layoutDirection(), Qt::AlignVCenter | m_coverAlignment,
                                                   m_scaledCover.deviceIndependentSize().toSize(), contentsRect());
         painter.setRenderHint(QPainter::SmoothPixmapTransform);
@@ -717,7 +824,7 @@ QPixmap CoverWidget::effectiveCover(const QPixmap& cover) const
 
 QPixmap CoverWidget::scaledCover(const QPixmap& cover) const
 {
-    if(m_config.style == CoverStyle::Disc) {
+    if(m_config.style != CoverStyle::Cover) {
         return scaledDiscCover(cover);
     }
 
@@ -745,8 +852,8 @@ QPixmap CoverWidget::scaledDiscCover(const QPixmap& cover) const
     const QRectF outer     = QRectF{QPointF{}, disc.deviceIndependentSize()}.adjusted(1.0, 1.0, -1.0, -1.0);
     const QPointF centre   = outer.center();
     const qreal radius     = outer.width() / 2.0;
-    const qreal holeRadius = radius * 0.132;
-    const qreal hubRadius  = radius * 0.28;
+    const bool vinyl       = (m_config.style == CoverStyle::Vinyl);
+    const qreal holeRadius = radius * (vinyl ? 0.024 : 0.132);
 
     QPainterPath outline;
     outline.addEllipse(outer);
@@ -754,39 +861,13 @@ QPixmap CoverWidget::scaledDiscCover(const QPixmap& cover) const
 
     QPainter painter{&disc};
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawPixmap(0, 0, artwork);
 
-    QConicalGradient sheen{centre, 30.0};
-    sheen.setColorAt(0.0, QColor{255, 110, 90, 35});
-    sheen.setColorAt(0.16, QColor{255, 235, 120, 45});
-    sheen.setColorAt(0.32, QColor{100, 255, 185, 35});
-    sheen.setColorAt(0.48, QColor{235, 250, 255, 65});
-    sheen.setColorAt(0.58, QColor{110, 170, 255, 40});
-    sheen.setColorAt(0.74, QColor{230, 130, 255, 45});
-    sheen.setColorAt(0.9, QColor{255, 225, 245, 65});
-    sheen.setColorAt(1.0, QColor{255, 110, 90, 35});
-    painter.fillRect(disc.rect(), sheen);
-
-    QRadialGradient rim{centre, radius};
-    rim.setColorAt(0.0, Qt::transparent);
-    rim.setColorAt(0.965, Qt::transparent);
-    rim.setColorAt(0.98, QColor{225, 230, 240, 110});
-    rim.setColorAt(0.99, QColor{255, 255, 255, 210});
-    rim.setColorAt(1.0, QColor{65, 70, 80, 160});
-    painter.fillRect(disc.rect(), rim);
-
-    QRadialGradient hub{centre, hubRadius};
-    hub.setColorAt(0.0, QColor{225, 228, 235, 230});
-    hub.setColorAt(0.48, QColor{250, 251, 255, 245});
-    hub.setColorAt(0.52, QColor{180, 185, 195, 210});
-    hub.setColorAt(0.78, QColor{225, 228, 235, 220});
-    hub.setColorAt(0.8, QColor{250, 251, 255, 240});
-    hub.setColorAt(0.94, QColor{210, 215, 225, 220});
-    hub.setColorAt(0.97, QColor{65, 70, 80, 220});
-    hub.setColorAt(1.0, QColor{240, 242, 248, 220});
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(hub);
-    painter.drawEllipse(centre, hubRadius, hubRadius);
+    if(vinyl) {
+        paintVinyl(painter, artwork, outer);
+    }
+    else {
+        paintCD(painter, artwork, outer);
+    }
 
     QPixmap mask{disc.size()};
     mask.setDevicePixelRatio(disc.devicePixelRatio());
@@ -828,8 +909,8 @@ qreal CoverWidget::discSpeedRpm() const
 
 void CoverWidget::updateDiscRotation()
 {
-    const bool canRotate = m_config.style == CoverStyle::Disc && !m_cover.isNull() && m_track.isValid()
-                        && sameDisplayTrack(m_track, m_playerController->currentTrack());
+    const bool canRotate = m_config.style != CoverStyle::Cover && m_config.spinDisc && !m_cover.isNull()
+                        && m_track.isValid() && sameDisplayTrack(m_track, m_playerController->currentTrack());
     if(!canRotate) {
         if(m_rotationTimer.isActive()) {
             m_discAngle = discAngle();

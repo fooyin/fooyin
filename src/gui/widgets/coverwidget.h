@@ -53,6 +53,7 @@ enum class CoverStyle : uint8_t
 {
     Cover = 0,
     Disc,
+    Vinyl,
 };
 
 class CoverWidget : public FyWidget

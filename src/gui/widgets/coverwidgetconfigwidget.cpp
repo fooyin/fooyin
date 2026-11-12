@@ -98,6 +98,7 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
 
     m_style->addItem(tr("Cover"), static_cast<int>(CoverStyle::Cover));
     m_style->addItem(tr("Disc"), static_cast<int>(CoverStyle::Disc));
+    m_style->addItem(tr("Vinyl"), static_cast<int>(CoverStyle::Vinyl));
 
     m_spinDisc->setToolTip(tr("Rotate the disc while its track is playing"));
 
@@ -133,7 +134,7 @@ CoverWidgetConfigDialog::CoverWidgetConfigDialog(CoverWidget* coverWidget, QWidg
     displayLayout->setColumnStretch(1, 1);
 
     const auto updateStyleControls = [this, artworkScalingLabel, spinSpeedLabel, spinRampLabel]() {
-        const bool disc     = m_style->currentData().toInt() == static_cast<int>(CoverStyle::Disc);
+        const bool disc     = m_style->currentData().toInt() != static_cast<int>(CoverStyle::Cover);
         const bool spinning = disc && m_spinDisc->isChecked();
         m_artworkScaling->setEnabled(!disc);
         artworkScalingLabel->setEnabled(!disc);
