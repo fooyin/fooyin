@@ -113,7 +113,6 @@ protected:
     void openConfigDialog() override;
 
 private:
-    [[nodiscard]] bool coversMatch(const QPixmap& lhs, const QPixmap& rhs) const;
     [[nodiscard]] QPixmap effectiveCover(const QPixmap& cover) const;
     [[nodiscard]] QPixmap scaledCover(const QPixmap& cover) const;
     [[nodiscard]] qreal discAngle() const;
@@ -126,7 +125,7 @@ private:
 
     void setFadeCoverChanges(bool enabled);
     void stopCoverFade();
-    void setCoverPixmap(const QPixmap& cover);
+    void setCoverPixmap(const QPixmap& cover, bool forceRescale = false);
     void updatePlaceholderCover();
     void handleSelectionChanged();
 

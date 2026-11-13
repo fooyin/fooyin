@@ -65,10 +65,12 @@ void PixmapFadeController::setDurationMs(const int durationMs)
     m_animation->setDuration(m_durationMs);
 }
 
-void PixmapFadeController::setPixmap(const QPixmap& pixmap)
+bool PixmapFadeController::setPixmap(const QPixmap& pixmap)
 {
     if(pixmapsMatch(m_pixmap, pixmap)) {
-        return;
+        // Retain the latest cache key so subsequent updates avoid comparing pixels again
+        m_pixmap = pixmap;
+        return false;
     }
 
     const QPixmap prevPixmap{m_pixmap};
@@ -76,7 +78,7 @@ void PixmapFadeController::setPixmap(const QPixmap& pixmap)
 
     if(!m_enabled || pixmap.isNull()) {
         stop();
-        return;
+        return true;
     }
 
     m_prevPixmap = prevPixmap;
@@ -84,6 +86,7 @@ void PixmapFadeController::setPixmap(const QPixmap& pixmap)
     m_progress = 0.0;
     requestUpdate();
     m_animation->start();
+    return true;
 }
 
 void PixmapFadeController::stop()

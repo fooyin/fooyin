@@ -40,7 +40,7 @@ public:
     void setUpdateCallback(std::function<void()> callback);
     void setEnabled(bool enabled);
     void setDurationMs(int durationMs);
-    void setPixmap(const QPixmap& pixmap);
+    bool setPixmap(const QPixmap& pixmap);
     void stop();
 
     [[nodiscard]] bool enabled() const;

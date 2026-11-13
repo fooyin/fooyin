@@ -120,8 +120,14 @@ CoverWidget::CoverWidget(ActionManager* actionManager, PlayerController* playerC
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this, &CoverWidget::reloadCover);
     QObject::connect(m_trackSelection, &TrackSelectionController::displaySelectionChanged, this,
                      &CoverWidget::handleSelectionChanged);
-    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &CoverWidget::reloadCover,
-                     Qt::QueuedConnection);
+    QObject::connect(
+        m_coverProvider, &CoverProvider::coverAdded, this,
+        [this](const Track& track) {
+            if(m_track.isValid() && sameDisplayTrack(m_track, track)) {
+                reloadCover();
+            }
+        },
+        Qt::QueuedConnection);
     QObject::connect(m_coverProvider, &CoverProvider::placeholderChanged, this, [this]() {
         updatePlaceholderCover();
         reloadCover();
@@ -130,7 +136,7 @@ CoverWidget::CoverWidget(ActionManager* actionManager, PlayerController* playerC
     m_settings->subscribe<Settings::Gui::IconTheme>(this, &CoverWidget::reloadCover);
     m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this]() {
         updatePlaceholderCover();
-        setCoverPixmap(m_cover);
+        setCoverPixmap(m_cover, true);
     });
 
     applyConfig(defaultConfig());
@@ -260,10 +266,6 @@ void CoverWidget::applyConfig(const ConfigData& config)
     if(coverTypeChanged || trackPreferenceChanged) {
         ++m_actionRequestId;
         reloadCover();
-        if(styleChanged) {
-            rescaleCover();
-        }
-        return;
     }
 
     if(styleChanged || scalingChanged || (alignmentChanged && m_artworkScaling == ArtworkScaling::Fill)) {
@@ -438,7 +440,7 @@ void CoverWidget::changeEvent(QEvent* event)
     FyWidget::changeEvent(event);
     if(event->type() == QEvent::PaletteChange && m_config.style != CoverStyle::Cover) {
         updatePlaceholderCover();
-        setCoverPixmap(m_cover);
+        setCoverPixmap(m_cover, true);
     }
 }
 
@@ -712,14 +714,6 @@ void CoverWidget::openConfigDialog()
     showConfigDialog(new CoverWidgetConfigDialog(this, this), Qt::NonModal);
 }
 
-bool CoverWidget::coversMatch(const QPixmap& lhs, const QPixmap& rhs) const
-{
-    const QPixmap effectiveLhs = effectiveCover(lhs);
-    const QPixmap effectiveRhs = effectiveCover(rhs);
-
-    return PixmapFadeController::pixmapsMatch(effectiveLhs, effectiveRhs);
-}
-
 QPixmap CoverWidget::effectiveCover(const QPixmap& cover) const
 {
     return cover.isNull() ? m_noCover : cover;
@@ -763,8 +757,8 @@ qreal CoverWidget::discSpeedRpm() const
 
 void CoverWidget::updateDiscRotation()
 {
-    const bool canRotate = m_config.style != CoverStyle::Cover && m_config.spinDisc && !m_cover.isNull()
-                        && m_track.isValid() && sameDisplayTrack(m_track, m_playerController->currentTrack());
+    const bool canRotate = m_config.style != CoverStyle::Cover && m_config.spinDisc && m_track.isValid()
+                        && sameDisplayTrack(m_track, m_playerController->currentTrack());
     if(!canRotate) {
         if(m_rotationTimer.isActive()) {
             m_discAngle = discAngle();
@@ -855,24 +849,13 @@ void CoverWidget::stopCoverFade()
     m_fadeController->stop();
 }
 
-void CoverWidget::setCoverPixmap(const QPixmap& cover)
+void CoverWidget::setCoverPixmap(const QPixmap& cover, bool forceRescale)
 {
-    if(coversMatch(m_cover, cover)) {
-        m_cover = cover;
-        updateDiscRotation();
-        if(m_fadeController->progress() < 1.0
-           && PixmapFadeController::pixmapsMatch(m_fadeController->pixmap(), effectiveCover(cover))) {
-            return;
-        }
-        m_fadeController->setPixmap(effectiveCover(cover));
-        rescaleCover();
-        return;
-    }
-
     m_cover = cover;
     updateDiscRotation();
-    m_fadeController->setPixmap(effectiveCover(cover));
-    rescaleCover();
+    if(m_fadeController->setPixmap(effectiveCover(cover)) || forceRescale) {
+        rescaleCover();
+    }
 }
 
 void CoverWidget::updatePlaceholderCover()
