@@ -63,6 +63,7 @@ constexpr auto Album         = "\251alb";
 constexpr auto AlbumArtist   = "aART";
 constexpr auto Genre         = "\251gen";
 constexpr auto Composer      = "\251wrt";
+constexpr auto ComposerAlt   = "\251com";
 constexpr auto Performer     = "perf";
 constexpr auto PerformerAlt  = "----:com.apple.iTunes:PERFORMER";
 constexpr auto Comment       = "\251cmt";

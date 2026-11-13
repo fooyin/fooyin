@@ -78,6 +78,38 @@ constexpr auto Mp4TrackPeakAlt   = "----:com.apple.iTunes:REPLAYGAIN_TRACK_PEAK"
 constexpr auto Mp4ReleaseType    = "----:com.apple.iTunes:MusicBrainz Album Type";
 constexpr auto Mp4ReleaseTypeAlt = "----:com.apple.iTunes:RELEASETYPE";
 
+constexpr std::array mp4ExtraTextTags{
+    std::pair{"\251lyr", "LYRICS"},
+    std::pair{"\251arg", "ARRANGER"},
+    std::pair{"\251aut", "AUTHOR"},
+    std::pair{"\251nrt", "NARRATOR"},
+    std::pair{"\251ope", "ORIGINALARTIST"},
+    std::pair{"\251pub", "PUBLISHER"},
+    std::pair{"\251mal", "FILECREATORURL"},
+    std::pair{"\251lal", "LABELURL"},
+    std::pair{"\251prl", "WEBSITE"},
+    std::pair{"\251phg", "PRODUCEDNOTICE"},
+    std::pair{"ownr", "OWNER"},
+    std::pair{"ldes", "PODCASTLONGDESC"},
+    std::pair{"keyw", "PODCASTKEYWORDS"},
+    std::pair{"xid ", "XID"},
+    std::pair{"----:com.apple.iTunes:Acoustid Id", "ACOUSTID_ID"},
+    std::pair{"----:com.apple.iTunes:Acoustid Fingerprint", "ACOUSTID_FINGERPRINT"},
+    std::pair{"----:com.apple.iTunes:iTunes_CDDB_1", "ITUNES_CDDB_1"},
+    std::pair{"----:com.apple.iTunes:MusicBrainz Disc Id", "MUSICBRAINZ_DISCID"},
+    std::pair{"----:com.apple.iTunes:MusicBrainz Composer Id", "MUSICBRAINZ_COMPOSERID"},
+    std::pair{"----:com.apple.iTunes:MusicBrainz Original Artist Id", "MUSICBRAINZ_ORIGINALARTISTID"},
+    std::pair{"----:com.apple.iTunes:MusicBrainz Original Album Id", "MUSICBRAINZ_ORIGINALALBUMID"},
+    std::pair{"----:com.apple.iTunes:MusicBrainz TRM Id", "MUSICBRAINZ_TRMID"},
+};
+
+constexpr std::array mp4ExtraTagAliases{
+    std::pair{"\251con", "CONDUCTOR"},
+    std::pair{"\251prd", "PRODUCER"},
+    std::pair{"\251lab", "LABEL"},
+    std::pair{"\251isr", "ISRC"},
+};
+
 QByteArray createPngCover(const QSize& size)
 {
     QImage image(size, QImage::Format_ARGB32);
@@ -381,6 +413,15 @@ TEST_F(TagWriterTest, M4aWrite)
         track.addExtraTag(u"WRITETEST"_s, u"Success"_s);
         track.removeExtraTag(u"TEST"_s);
 
+        for(const auto& tag : mp4ExtraTextTags | std::views::values) {
+            track.replaceExtraTag(QString::fromLatin1(tag), u"Updated text\nSecond line"_s);
+        }
+        track.replaceExtraTag(u"BPM"_s, u"123"_s);
+        track.replaceExtraTag(u"COMPILATION"_s, u"1"_s);
+        track.replaceExtraTag(u"MEDIAKIND"_s, u"2"_s);
+        track.replaceExtraTag(u"ITUNESADVISORY"_s, u"4"_s);
+        track.replaceExtraTag(u"GENREID"_s, u"4294967295"_s);
+
         ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     }
 
@@ -408,6 +449,16 @@ TEST_F(TagWriterTest, M4aWrite)
         const auto writeTag = track.extraTag(u"WRITETEST"_s);
         ASSERT_TRUE(!writeTag.isEmpty());
         EXPECT_EQ(writeTag.front(), u"Success"_s);
+
+        for(const auto& tag : mp4ExtraTextTags | std::views::values) {
+            SCOPED_TRACE(tag);
+            EXPECT_EQ(track.extraTag(QString::fromLatin1(tag)), QStringList{u"Updated text\nSecond line"_s});
+        }
+        EXPECT_EQ(track.extraTag(u"BPM"_s), QStringList{u"123"_s});
+        EXPECT_EQ(track.extraTag(u"COMPILATION"_s), QStringList{u"1"_s});
+        EXPECT_EQ(track.extraTag(u"MEDIAKIND"_s), QStringList{u"2"_s});
+        EXPECT_EQ(track.extraTag(u"ITUNESADVISORY"_s), QStringList{u"4"_s});
+        EXPECT_EQ(track.extraTag(u"GENREID"_s), QStringList{u"4294967295"_s});
     }
 }
 
@@ -476,11 +527,32 @@ TEST_F(TagWriterTest, M4aWriteCanonicalisesExtraTagAliases)
 
         mp4File.tag()->setItem(Mp4ReleaseType, {TagLib::String{"Album"}});
         mp4File.tag()->setItem(Mp4ReleaseTypeAlt, {TagLib::String{"Album"}});
+
+        for(const auto& [alias, tag] : mp4ExtraTagAliases) {
+            mp4File.tag()->setItem(alias, {TagLib::String{"Original text"}});
+            const auto canonical = TagLib::String{"----:com.apple.iTunes:"} + tag;
+            mp4File.tag()->setItem(canonical, {TagLib::String{"Original text"}});
+        }
+        mp4File.tag()->setItem("tmpo", TagLib::MP4::Item{123});
+        mp4File.tag()->setItem("stik", TagLib::MP4::Item{static_cast<unsigned char>(2)});
+        mp4File.tag()->setItem("geID", TagLib::MP4::Item{42});
+
         ASSERT_TRUE(mp4File.save());
     }
 
     Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
+
+    for(const auto& tag : mp4ExtraTagAliases | std::views::values) {
+        SCOPED_TRACE(tag);
+        EXPECT_EQ(track.extraTag(QString::fromLatin1(tag)), QStringList{u"Original text"_s});
+        track.replaceExtraTag(QString::fromLatin1(tag), u"Updated text"_s);
+    }
+    track.replaceExtraTag(u"BPM"_s, u"invalid"_s);
+    track.replaceExtraTag(u"MEDIAKIND"_s, u"256"_s);
+    track.replaceExtraTag(u"GENREID"_s, u"4294967296"_s);
+    track.addExtraTag(u"©NEW"_s, u"Unresolved native tag"_s);
+
     ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     ASSERT_TRUE(file.flush());
 
@@ -491,6 +563,17 @@ TEST_F(TagWriterTest, M4aWriteCanonicalisesExtraTagAliases)
     const auto& items = mp4File.tag()->itemMap();
     EXPECT_EQ(mp4StringItem(items, Mp4ReleaseType), u"Album"_s);
     EXPECT_FALSE(items.contains(Mp4ReleaseTypeAlt));
+
+    for(const auto& [alias, tag] : mp4ExtraTagAliases) {
+        SCOPED_TRACE(tag);
+        const QByteArray canonical = QByteArray{"----:com.apple.iTunes:"} + tag;
+        EXPECT_EQ(mp4StringItem(items, canonical.constData()), u"Updated text"_s);
+        EXPECT_FALSE(items.contains(alias));
+    }
+    EXPECT_EQ(items["tmpo"].toInt(), 123);
+    EXPECT_EQ(items["stik"].toByte(), 2);
+    EXPECT_EQ(items["geID"].toUInt(), 42U);
+    EXPECT_FALSE(items.contains(""));
 }
 
 TEST_F(TagWriterTest, M4aRemoveExtraTagRemovesAllAliases)
@@ -512,12 +595,28 @@ TEST_F(TagWriterTest, M4aRemoveExtraTagRemovesAllAliases)
 
         mp4File.tag()->setItem(Mp4ReleaseType, {TagLib::String{"Album"}});
         mp4File.tag()->setItem(Mp4ReleaseTypeAlt, {TagLib::String{"Album"}});
+
+        for(const auto& atom : mp4ExtraTextTags | std::views::keys) {
+            mp4File.tag()->setItem(atom, {TagLib::String{"Text to remove"}});
+        }
+        for(const auto& [alias, tag] : mp4ExtraTagAliases) {
+            mp4File.tag()->setItem(alias, {TagLib::String{"Text to remove"}});
+            const auto canonical = TagLib::String{"----:com.apple.iTunes:"} + tag;
+            mp4File.tag()->setItem(canonical, {TagLib::String{"Text to remove"}});
+        }
         ASSERT_TRUE(mp4File.save());
     }
 
     Track track{file.closeAndGetFileName()};
     ASSERT_TRUE(m_parser.readTrack(source, track));
     track.removeExtraTag(u"RELEASETYPE"_s);
+
+    for(const auto& tag : mp4ExtraTextTags | std::views::values) {
+        track.removeExtraTag(QString::fromLatin1(tag));
+    }
+    for(const auto& tag : mp4ExtraTagAliases | std::views::values) {
+        track.removeExtraTag(QString::fromLatin1(tag));
+    }
     ASSERT_TRUE(m_parser.writeTrack(source, track, Flags));
     ASSERT_TRUE(file.flush());
 
@@ -528,6 +627,16 @@ TEST_F(TagWriterTest, M4aRemoveExtraTagRemovesAllAliases)
     const auto& items = mp4File.tag()->itemMap();
     EXPECT_FALSE(items.contains(Mp4ReleaseType));
     EXPECT_FALSE(items.contains(Mp4ReleaseTypeAlt));
+
+    for(const auto& [atom, tag] : mp4ExtraTextTags) {
+        SCOPED_TRACE(tag);
+        EXPECT_FALSE(items.contains(atom));
+    }
+    for(const auto& [alias, tag] : mp4ExtraTagAliases) {
+        SCOPED_TRACE(tag);
+        EXPECT_FALSE(items.contains(alias));
+        EXPECT_FALSE(items.contains(TagLib::String{"----:com.apple.iTunes:"} + tag));
+    }
 }
 
 TEST_F(TagWriterTest, M4aWriteHonoursTextRatingTagSettings)

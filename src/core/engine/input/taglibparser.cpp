@@ -403,6 +403,16 @@ constexpr std::array mp4ToTag{
     std::pair("cpil", "COMPILATION"),
     std::pair("tmpo", "BPM"),
     std::pair("cprt", "COPYRIGHT"),
+    std::pair("\251lyr", "LYRICS"),
+    std::pair("\251arg", "ARRANGER"),
+    std::pair("\251aut", "AUTHOR"),
+    std::pair("\251nrt", "NARRATOR"),
+    std::pair("\251ope", "ORIGINALARTIST"),
+    std::pair("\251pub", "PUBLISHER"),
+    std::pair("\251mal", "FILECREATORURL"),
+    std::pair("\251lal", "LABELURL"),
+    std::pair("\251prl", "WEBSITE"),
+    std::pair("\251phg", "PRODUCEDNOTICE"),
     std::pair("\251too", "ENCODING"),
     std::pair("\251enc", "ENCODEDBY"),
     std::pair("\251grp", "GROUPING"),
@@ -415,8 +425,14 @@ constexpr std::array mp4ToTag{
     std::pair("shwm", "SHOWWORKMOVEMENT"),
     std::pair("pgap", "GAPLESSPLAYBACK"),
     std::pair("pcst", "PODCAST"),
+    std::pair("stik", "MEDIAKIND"),
+    std::pair("rtng", "ITUNESADVISORY"),
+    std::pair("geID", "GENREID"),
+    std::pair("ownr", "OWNER"),
     std::pair("catg", "PODCASTCATEGORY"),
     std::pair("desc", "PODCASTDESC"),
+    std::pair("ldes", "PODCASTLONGDESC"),
+    std::pair("keyw", "PODCASTKEYWORDS"),
     std::pair("egid", "PODCASTID"),
     std::pair("purl", "PODCASTURL"),
     std::pair("tves", "TVEPISODE"),
@@ -428,6 +444,10 @@ constexpr std::array mp4ToTag{
     std::pair("\251mvn", "MOVEMENTNAME"),
     std::pair("\251mvi", "MOVEMENTNUMBER"),
     std::pair("\251mvc", "MOVEMENTCOUNT"),
+    std::pair("xid ", "XID"),
+    std::pair("----:com.apple.iTunes:Acoustid Id", "ACOUSTID_ID"),
+    std::pair("----:com.apple.iTunes:Acoustid Fingerprint", "ACOUSTID_FINGERPRINT"),
+    std::pair("----:com.apple.iTunes:iTunes_CDDB_1", "ITUNES_CDDB_1"),
     std::pair("----:com.apple.iTunes:MusicBrainz Track Id", "MUSICBRAINZ_TRACKID"),
     std::pair("----:com.apple.iTunes:MusicBrainz Artist Id", "MUSICBRAINZ_ARTISTID"),
     std::pair("----:com.apple.iTunes:MusicBrainz Album Id", "MUSICBRAINZ_ALBUMID"),
@@ -435,6 +455,11 @@ constexpr std::array mp4ToTag{
     std::pair("----:com.apple.iTunes:MusicBrainz Release Group Id", "MUSICBRAINZ_RELEASEGROUPID"),
     std::pair("----:com.apple.iTunes:MusicBrainz Release Track Id", "MUSICBRAINZ_RELEASETRACKID"),
     std::pair("----:com.apple.iTunes:MusicBrainz Work Id", "MUSICBRAINZ_WORKID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Disc Id", "MUSICBRAINZ_DISCID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Composer Id", "MUSICBRAINZ_COMPOSERID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Original Artist Id", "MUSICBRAINZ_ORIGINALARTISTID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz Original Album Id", "MUSICBRAINZ_ORIGINALALBUMID"),
+    std::pair("----:com.apple.iTunes:MusicBrainz TRM Id", "MUSICBRAINZ_TRMID"),
     std::pair("----:com.apple.iTunes:MusicBrainz Album Release Country", "RELEASECOUNTRY"),
     std::pair("----:com.apple.iTunes:MusicBrainz Album Status", "RELEASESTATUS"),
     std::pair("----:com.apple.iTunes:MusicBrainz Album Type", "RELEASETYPE"),
@@ -463,84 +488,11 @@ constexpr std::array mp4ToTag{
     std::pair("----:com.apple.iTunes:replaygain_album_peak", "REPLAYGAIN_ALBUM_PEAK"),
     std::pair("----:com.apple.iTunes:replaygain_track_gain", "REPLAYGAIN_TRACK_GAIN"),
     std::pair("----:com.apple.iTunes:replaygain_track_peak", "REPLAYGAIN_TRACK_PEAK"),
-};
-
-constexpr std::array tagToMp4{
-    std::pair(Tag::Title, Mp4::Title),
-    std::pair(Tag::Artist, Mp4::Artist),
-    std::pair(Tag::Album, Mp4::Album),
-    std::pair(Tag::AlbumArtist, Mp4::AlbumArtist),
-    std::pair(Tag::Genre, Mp4::Genre),
-    std::pair(Tag::Composer, Mp4::Composer),
-    std::pair(Tag::Performer, Mp4::Performer),
-    std::pair(Tag::Comment, Mp4::Comment),
-    std::pair(Tag::Date, Mp4::Date),
-    std::pair(Tag::Rating, Mp4::Rating),
-    std::pair(Tag::TrackNumber, Mp4::TrackNumber),
-    std::pair(Tag::Disc, Mp4::Disc),
-    std::pair("COMPILATION", "cpil"),
-    std::pair("BPM", "tmpo"),
-    std::pair("COPYRIGHT", "cprt"),
-    std::pair("ENCODING", "\251too"),
-    std::pair("ENCODEDBY", "\251enc"),
-    std::pair("GROUPING", "\251grp"),
-    std::pair("ALBUMSORT", "soal"),
-    std::pair("ALBUMARTISTSORT", "soaa"),
-    std::pair("ARTISTSORT", "soar"),
-    std::pair("TITLESORT", "sonm"),
-    std::pair("COMPOSERSORT", "soco"),
-    std::pair("SHOWSORT", "sosn"),
-    std::pair("SHOWWORKMOVEMENT", "shwm"),
-    std::pair("GAPLESSPLAYBACK", "pgap"),
-    std::pair("PODCAST", "pcst"),
-    std::pair("PODCASTCATEGORY", "catg"),
-    std::pair("PODCASTDESC", "desc"),
-    std::pair("PODCASTID", "egid"),
-    std::pair("PODCASTURL", "purl"),
-    std::pair("TVEPISODE", "tves"),
-    std::pair("TVEPISODEID", "tven"),
-    std::pair("TVNETWORK", "tvnn"),
-    std::pair("TVSEASON", "tvsn"),
-    std::pair("TVSHOW", "tvsh"),
-    std::pair("WORK", "\251wrk"),
-    std::pair("MOVEMENTNAME", "\251mvn"),
-    std::pair("MOVEMENTNUMBER", "\251mvi"),
-    std::pair("MOVEMENTCOUNT", "\251mvc"),
-    std::pair("MUSICBRAINZ_TRACKID", "----:com.apple.iTunes:MusicBrainz Track Id"),
-    std::pair("MUSICBRAINZ_ARTISTID", "----:com.apple.iTunes:MusicBrainz Artist Id"),
-    std::pair("MUSICBRAINZ_ALBUMID", "----:com.apple.iTunes:MusicBrainz Album Id"),
-    std::pair("MUSICBRAINZ_ALBUMARTISTID", "----:com.apple.iTunes:MusicBrainz Album Artist Id"),
-    std::pair("MUSICBRAINZ_RELEASEGROUPID", "----:com.apple.iTunes:MusicBrainz Release Group Id"),
-    std::pair("MUSICBRAINZ_RELEASETRACKID", "----:com.apple.iTunes:MusicBrainz Release Track Id"),
-    std::pair("MUSICBRAINZ_WORKID", "----:com.apple.iTunes:MusicBrainz Work Id"),
-    std::pair("RELEASECOUNTRY", "----:com.apple.iTunes:MusicBrainz Album Release Country"),
-    std::pair("RELEASESTATUS", "----:com.apple.iTunes:MusicBrainz Album Status"),
-    std::pair("RELEASETYPE", "----:com.apple.iTunes:MusicBrainz Album Type"),
-    std::pair("ARTISTS", "----:com.apple.iTunes:ARTISTS"),
-    std::pair("ORIGINALDATE", "----:com.apple.iTunes:ORIGINALDATE"),
-    std::pair("ASIN", "----:com.apple.iTunes:ASIN"),
-    std::pair("LABEL", "----:com.apple.iTunes:LABEL"),
-    std::pair("LYRICIST", "----:com.apple.iTunes:LYRICIST"),
-    std::pair("CONDUCTOR", "----:com.apple.iTunes:CONDUCTOR"),
-    std::pair("REMIXER", "----:com.apple.iTunes:REMIXER"),
-    std::pair("ENGINEER", "----:com.apple.iTunes:ENGINEER"),
-    std::pair("PRODUCER", "----:com.apple.iTunes:PRODUCER"),
-    std::pair("DJMIXER", "----:com.apple.iTunes:DJMIXER"),
-    std::pair("MIXER", "----:com.apple.iTunes:MIXER"),
-    std::pair("SUBTITLE", "----:com.apple.iTunes:SUBTITLE"),
-    std::pair("DISCSUBTITLE", "----:com.apple.iTunes:DISCSUBTITLE"),
-    std::pair("MOOD", "----:com.apple.iTunes:MOOD"),
-    std::pair("ISRC", "----:com.apple.iTunes:ISRC"),
-    std::pair("CATALOGNUMBER", "----:com.apple.iTunes:CATALOGNUMBER"),
-    std::pair("BARCODE", "----:com.apple.iTunes:BARCODE"),
-    std::pair("SCRIPT", "----:com.apple.iTunes:SCRIPT"),
-    std::pair("LANGUAGE", "----:com.apple.iTunes:LANGUAGE"),
-    std::pair("LICENSE", "----:com.apple.iTunes:LICENSE"),
-    std::pair("MEDIA", "----:com.apple.iTunes:MEDIA"),
-    std::pair("REPLAYGAIN_ALBUM_GAIN", "----:com.apple.iTunes:replaygain_album_gain"),
-    std::pair("REPLAYGAIN_ALBUM_PEAK", "----:com.apple.iTunes:replaygain_album_peak"),
-    std::pair("REPLAYGAIN_TRACK_GAIN", "----:com.apple.iTunes:replaygain_track_gain"),
-    std::pair("REPLAYGAIN_TRACK_PEAK", "----:com.apple.iTunes:replaygain_track_peak"),
+    std::pair("\251com", Tag::Composer),
+    std::pair("\251con", "CONDUCTOR"),
+    std::pair("\251prd", "PRODUCER"),
+    std::pair("\251lab", "LABEL"),
+    std::pair("\251isr", "ISRC"),
 };
 
 QString findMp4Tag(const TagLib::String& tag)
@@ -555,9 +507,9 @@ QString findMp4Tag(const TagLib::String& tag)
 
 TagLib::String findMp4Tag(const QString& tag)
 {
-    for(const auto& [key, value] : tagToMp4) {
-        if(tag == QLatin1String(key)) {
-            return value;
+    for(const auto& [key, value] : mp4ToTag) {
+        if(tag == QLatin1StringView{value}) {
+            return key;
         }
     }
     return {};
@@ -1903,6 +1855,90 @@ void removeMp4TagAliases(TagLib::MP4::Tag* mp4Tags, const QString& tag)
     }
 }
 
+enum class Mp4ValueType : uint8_t
+{
+    Text = 0,
+    Bool,
+    Int,
+    UInt,
+    Byte,
+};
+
+Mp4ValueType mp4ValueType(const TagLib::String& name)
+{
+    if(name == "cpil" || name == "pgap" || name == "pcst" || name == "shwm") {
+        return Mp4ValueType::Bool;
+    }
+    if(name == "tmpo" || name == "\251mvi" || name == "\251mvc") {
+        return Mp4ValueType::Int;
+    }
+    if(name == "tves" || name == "tvsn" || name == "geID") {
+        return Mp4ValueType::UInt;
+    }
+    if(name == "stik" || name == "rtng") {
+        return Mp4ValueType::Byte;
+    }
+    return Mp4ValueType::Text;
+}
+
+QStringList mp4ItemValues(const TagLib::String& name, const TagLib::MP4::Item& item)
+{
+    switch(mp4ValueType(name)) {
+        case Mp4ValueType::Bool:
+            return {QString::number(item.toBool())};
+        case Mp4ValueType::Int:
+            return {QString::number(item.toInt())};
+        case Mp4ValueType::UInt:
+            return {QString::number(item.toUInt())};
+        case Mp4ValueType::Byte:
+            return {QString::number(item.toByte())};
+        case Mp4ValueType::Text:
+            return convertStringList(item.toStringList());
+    }
+    return {};
+}
+
+TagLib::MP4::Item mp4Item(const TagLib::String& name, const QStringList& values)
+{
+    if(values.isEmpty()) {
+        return {};
+    }
+
+    const auto type = mp4ValueType(name);
+    if(type == Mp4ValueType::Text) {
+        return convertStringList(values);
+    }
+
+    bool valid{false};
+    const auto value = values.front().toLongLong(&valid);
+    if(!valid) {
+        return {};
+    }
+
+    switch(type) {
+        case Mp4ValueType::Bool:
+            return TagLib::MP4::Item{value != 0};
+        case Mp4ValueType::Int:
+            if(value >= std::numeric_limits<int16_t>::min() && value <= std::numeric_limits<int16_t>::max()) {
+                return TagLib::MP4::Item{static_cast<int>(value)};
+            }
+            break;
+        case Mp4ValueType::UInt:
+            if(value >= 0 && std::cmp_less_equal(value, std::numeric_limits<unsigned int>::max())) {
+                return TagLib::MP4::Item{static_cast<unsigned int>(value)};
+            }
+            break;
+        case Mp4ValueType::Byte:
+            if(value >= 0 && std::cmp_less_equal(value, std::numeric_limits<unsigned char>::max())) {
+                return TagLib::MP4::Item{static_cast<unsigned char>(value)};
+            }
+            break;
+        case Mp4ValueType::Text:
+            break;
+    }
+    return {};
+}
+
 void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy& policy, bool skipExtra = false)
 {
     if(mp4Tags->isEmpty()) {
@@ -1911,13 +1947,21 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
 
     const auto& items = mp4Tags->itemMap();
 
+    if(items.contains(Mp4::ComposerAlt)) {
+        auto composers = track.composers();
+        for(const auto& composer : convertStringList(items["\251com"].toStringList())) {
+            if(!composers.contains(composer)) {
+                composers.append(composer);
+            }
+        }
+        track.setComposers(composers);
+    }
     if(items.contains(Mp4::PerformerAlt)) {
         const auto performer = items[Mp4::PerformerAlt].toStringList();
         if(performer.size() > 0) {
             track.setPerformers(convertStringList(performer));
         }
     }
-
     if(items.contains(Mp4::TrackNumber)) {
         const TagLib::MP4::Item::IntPair& trackNumbers = items[Mp4::TrackNumber].toIntPair();
         if(trackNumbers.first > 0) {
@@ -1945,7 +1989,6 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
             track.setTrackTotal(convertString(trackTotal.toString()));
         }
     }
-
     if(items.contains(Mp4::Disc)) {
         const TagLib::MP4::Item::IntPair& discNumbers = items[Mp4::Disc].toIntPair();
         if(discNumbers.first > 0) {
@@ -1974,7 +2017,7 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
         }
     }
 
-    auto convertRating = [](int rating) -> float {
+    const auto convertRating = [](int rating) -> float {
         if(rating < 20) {
             return 0.0;
         }
@@ -1999,46 +2042,39 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
         track.setRawRatingTag(u"rate"_s, QString::number(rating));
         track.setRating(convertRating(rating));
     }
-
     if(items.contains(Mp4::RatingAlt)) {
         const QString rawRating = convertString(items[Mp4::RatingAlt].toStringList().toString("\n"));
         readTextRatingTag(track, policy.rating, u"FMPS_RATING"_s, QString::fromLatin1(Mp4::RatingAlt), rawRating,
                           false);
         track.setRawRatingTag(u"FMPS_RATING"_s, rawRating);
     }
-
     if(items.contains(Mp4::RatingAlt2)) {
         const QString rawRating = convertString(items[Mp4::RatingAlt2].toStringList().toString("\n"));
         readTextRatingTag(track, policy.rating, u"RATING"_s, QString::fromLatin1(Mp4::RatingAlt2), rawRating, true);
         track.setRawRatingTag(u"RATING"_s, rawRating);
     }
-
     if(items.contains(Mp4::PlayCount)) {
         readPlaycountTag(track, policy.playcount, u"FMPS_PLAYCOUNT"_s,
                          convertString(items[Mp4::PlayCount].toStringList().toString("\n")));
     }
-
     if(items.contains(Mp4::ReplayGain::TrackGain)) {
         track.setRGTrackGain(gainStringToFloat(items[Mp4::ReplayGain::TrackGain].toStringList().toString("\n")));
     }
     if(items.contains(Mp4::ReplayGain::TrackGainAlt)) {
         track.setRGTrackGain(gainStringToFloat(items[Mp4::ReplayGain::TrackGainAlt].toStringList().toString("\n")));
     }
-
     if(items.contains(Mp4::ReplayGain::TrackPeak)) {
         track.setRGTrackPeak(peakStringToFloat(items[Mp4::ReplayGain::TrackPeak].toStringList().toString("\n")));
     }
     if(items.contains(Mp4::ReplayGain::TrackPeakAlt)) {
         track.setRGTrackPeak(peakStringToFloat(items[Mp4::ReplayGain::TrackPeakAlt].toStringList().toString("\n")));
     }
-
     if(items.contains(Mp4::ReplayGain::AlbumGain)) {
         track.setRGAlbumGain(gainStringToFloat(items[Mp4::ReplayGain::AlbumGain].toStringList().toString("\n")));
     }
     if(items.contains(Mp4::ReplayGain::AlbumGainAlt)) {
         track.setRGAlbumGain(gainStringToFloat(items[Mp4::ReplayGain::AlbumGainAlt].toStringList().toString("\n")));
     }
-
     if(items.contains(Mp4::ReplayGain::AlbumPeak)) {
         track.setRGAlbumPeak(peakStringToFloat(items[Mp4::ReplayGain::AlbumPeak].toStringList().toString("\n")));
     }
@@ -2055,6 +2091,7 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
             AlbumArtist,
             Genre,
             Composer,
+            ComposerAlt,
             Performer,
             PerformerAlt,
             Comment,
@@ -2086,7 +2123,7 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Track& track, const TagPolicy&
         for(const auto& [key, item] : items) {
             if(!baseMp4Tags.contains(key)) {
                 const QString tagName = mp4TagName(key);
-                const auto values     = convertStringList(item.toStringList());
+                const auto values     = mp4ItemValues(key, item);
                 if(policy.playcount.shouldReadTag(tagName, track.playCount() > 0) && !values.isEmpty()) {
                     readPlaycountTag(track, policy.playcount, tagName, values.front());
                 }
@@ -2130,6 +2167,11 @@ TagLib::String prefixMp4FreeFormName(const QString& name, const TagLib::MP4::Ite
     }
 
     if(name.startsWith("----"_L1) || (name.length() == 4 && name[0] == u'\251')) {
+        for(const auto& key : items | std::views::keys) {
+            if(convertString(key).compare(name, Qt::CaseInsensitive) == 0) {
+                return key;
+            }
+        }
         return {};
     }
 
@@ -2211,6 +2253,7 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Track& track, AudioReader::Wr
             }
         }
 
+        mp4Tags->removeItem(Mp4::ComposerAlt);
         mp4Tags->setItem(Mp4::PerformerAlt, {convertString(track.performer())});
     }
 
@@ -2304,8 +2347,15 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Track& track, AudioReader::Wr
                 if(tagName.isEmpty()) {
                     tagName = prefixMp4FreeFormName(tag, mp4Tags->itemMap());
                 }
+                if(tagName.isEmpty()) {
+                    continue;
+                }
+                const auto item = mp4Item(tagName, values);
+                if(!item.isValid()) {
+                    continue;
+                }
                 removeMp4TagAliases(mp4Tags, tag);
-                mp4Tags->setItem(tagName, convertStringList(values));
+                mp4Tags->setItem(tagName, item);
             }
         }
 
