@@ -25,7 +25,9 @@
 #include "settings/scrobblersettings.h"
 
 #include <core/constants.h>
+#include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
+#include <core/player/playbacklisteningtracker.h>
 #include <core/player/playercontroller.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -42,6 +44,7 @@ constexpr auto NowPlayingFinalRefreshLeadMs = 180000;
 constexpr auto MinNowPlayingRefreshDelayMs  = 1000;
 constexpr auto TrackStatsSyncIntervalMs     = 60 * 60 * 1000;
 constexpr auto RecentLovedChangeIntervalMs  = 60 * 1000;
+constexpr auto UnknownStreamThresholdMs     = 30000;
 
 namespace Fooyin::Scrobbler {
 namespace {
@@ -51,6 +54,14 @@ QString trackSyncKey(const Track& track)
         return track.hash();
     }
     return QString::number(track.id()) + u':' + track.uniqueFilepath();
+}
+
+bool sameStreamSong(const Track& first, const Track& second)
+{
+    return first.title().trimmed().compare(second.title().trimmed(), Qt::CaseInsensitive) == 0
+        && std::ranges::equal(first.artists(), second.artists(), [](const QString& left, const QString& right) {
+               return left.trimmed().compare(right.trimmed(), Qt::CaseInsensitive) == 0;
+           });
 }
 
 QString trackStatsSyncKey(const ScrobblerService* service, const Fooyin::Track& track)
@@ -78,11 +89,57 @@ Scrobbler::Scrobbler(PlayerController* playerController, MusicLibrary* library,
         service->resumePendingSubmissions();
     }
 
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &Scrobbler::updateNowPlaying);
+    const auto* tracker = m_playerController->listeningTracker();
+    QObject::connect(tracker, &PlaybackListeningTracker::sessionStarted, this, [this](const ListeningSession& session) {
+        finishStreamSong();
+        updateStreamSong(session);
+    });
+    QObject::connect(tracker, &PlaybackListeningTracker::metadataChanged, this,
+                     [this](const ListeningSession& session) {
+                         if(session.track.isRemote()) {
+                             updateStreamSong(session);
+                         }
+                         else {
+                             for(const auto& service : m_services) {
+                                 if(service->isEnabled()) {
+                                     service->refreshMetadata(session.track);
+                                 }
+                             }
+                             updateNowPlayingTimer(true);
+                         }
+                     });
+    QObject::connect(tracker, &PlaybackListeningTracker::sessionEnded, this, &Scrobbler::finishStreamSong);
+    QObject::connect(tracker, &PlaybackListeningTracker::listeningTimeChanged, this,
+                     [this](uint64_t itemId, uint64_t deltaMs) {
+                         if(m_streamSong && m_streamSong->itemId == itemId
+                            && m_settings->value<Settings::Scrobbler::ScrobblingEnabled>()
+                            && m_settings->value<Settings::Scrobbler::StreamMode>()
+                                   == static_cast<int>(StreamScrobbleMode::Scrobbling)) {
+                             m_streamSong->listenedMs += deltaMs;
+                             scrobbleStreamSong();
+                         }
+                     });
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this](const Track& track) {
+        if(!track.isRemote()) {
+            updateNowPlaying(track);
+        }
+    });
     QObject::connect(m_playerController, &PlayerController::trackPlayed, this, &Scrobbler::scrobble);
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &Scrobbler::handlePlayStateChanged);
     QObject::connect(m_library, &MusicLibrary::tracksStatsChanged, this, &Scrobbler::handleTrackStatsChanged);
 
+    m_settings->subscribe<Settings::Scrobbler::StreamMode>(this, &Scrobbler::resetStreamTracking);
+    m_settings->subscribe<Settings::Scrobbler::ScrobblingEnabled>(this, &Scrobbler::resetStreamTracking);
+    m_settings->subscribe<Settings::Scrobbler::SendNowPlaying>(this, [this]() {
+        if(m_playerController->playState() == Player::PlayState::Playing) {
+            for(const auto& service : m_services) {
+                if(service->isEnabled()) {
+                    service->refreshNowPlaying();
+                }
+            }
+        }
+        updateNowPlayingTimer(true);
+    });
     m_settings->subscribe<Settings::Scrobbler::SyncPlaybackStats>(this, [this]() {
         m_lastTrackStatsSync.clear();
         m_remoteLovedStates.clear();
@@ -180,6 +237,7 @@ bool Scrobbler::removeCustomService(ScrobblerService* service)
 
 void Scrobbler::saveCache()
 {
+    scrobbleStreamSong();
     for(const auto& service : m_services) {
         service->saveCache();
     }
@@ -202,12 +260,102 @@ void Scrobbler::timerEvent(QTimerEvent* event)
     QObject::timerEvent(event);
 }
 
+void Scrobbler::updateStreamSong(const ListeningSession& session)
+{
+    if(!session.track.isRemote()) {
+        return;
+    }
+
+    const Track& track = session.track;
+    const bool hasSong = track.hasArtists() && !track.title().trimmed().isEmpty();
+    if(!hasSong) {
+        finishStreamSong();
+        return;
+    }
+
+    if(m_streamSong && m_streamSong->itemId == session.itemId && sameStreamSong(m_streamSong->track, track)) {
+        m_streamSong->track = track;
+        for(auto& service : m_services) {
+            if(service->isEnabled()) {
+                service->refreshMetadata(track);
+            }
+        }
+        scrobbleStreamSong();
+        return;
+    }
+
+    finishStreamSong();
+    m_streamSong = StreamSong{.track     = track,
+                              .itemId    = session.itemId,
+                              .timestamp = static_cast<uint64_t>(QDateTime::currentSecsSinceEpoch())};
+    updateNowPlaying(track);
+}
+
+void Scrobbler::finishStreamSong()
+{
+    scrobbleStreamSong();
+    m_streamSong.reset();
+
+    for(auto& service : m_services) {
+        if(m_playerController->currentTrack().isRemote()) {
+            service->restartScrobbleSession({});
+        }
+    }
+    updateNowPlayingTimer(true);
+}
+
+void Scrobbler::scrobbleStreamSong()
+{
+    if(!m_streamSong || m_streamSong->submitted || !m_settings->value<Settings::Scrobbler::ScrobblingEnabled>()
+       || m_settings->value<Settings::Scrobbler::StreamMode>() != static_cast<int>(StreamScrobbleMode::Scrobbling)) {
+        return;
+    }
+
+    const auto duration = m_streamSong->track.duration();
+    if(duration > 0 && duration < 30000) {
+        return;
+    }
+
+    const auto threshold = duration == 0 ? UnknownStreamThresholdMs
+                                         : PlaybackListeningTracker::listeningThreshold(
+                                               duration, m_settings->value<Settings::Core::PlayedThreshold>(),
+                                               m_settings->value<Settings::Core::PlayedThresholdTime>());
+    if(m_streamSong->listenedMs < threshold) {
+        return;
+    }
+
+    bool queued{false};
+    for(auto& service : m_services) {
+        if(service->isEnabled()) {
+            queued |= service->scrobbleStream(m_streamSong->track, m_streamSong->timestamp);
+        }
+    }
+    m_streamSong->submitted = queued;
+}
+
+void Scrobbler::resetStreamTracking()
+{
+    if(const auto session = m_playerController->listeningTracker()->currentSession()) {
+        updateStreamSong(*session);
+        if(m_streamSong) {
+            for(const auto& service : m_services) {
+                if(service->isEnabled()) {
+                    service->refreshNowPlaying();
+                }
+            }
+        }
+    }
+    updateNowPlayingTimer(true);
+}
+
 void Scrobbler::handlePlayStateChanged(Player::PlayState state, Player::PlayState previous)
 {
     if(previous == Player::PlayState::Stopped && state == Player::PlayState::Playing) {
         const Track track = m_playerController->currentTrack();
-        for(auto& service : m_services) {
-            service->restartScrobbleSession(track);
+        if(!track.isRemote()) {
+            for(auto& service : m_services) {
+                service->restartScrobbleSession(track);
+            }
         }
     }
 
@@ -283,11 +431,21 @@ void Scrobbler::handleFetchedTrackStats(const RemoteTrackStats& stats)
 
 int Scrobbler::nextNowPlayingRefreshDelay() const
 {
-    const bool shouldRefresh = std::ranges::any_of(m_services, [](const auto& service) { return service->isEnabled(); })
+    const bool shouldRefresh = m_settings->value<Settings::Scrobbler::ScrobblingEnabled>()
+                            && m_settings->value<Settings::Scrobbler::SendNowPlaying>()
+                            && std::ranges::any_of(m_services, [](const auto& service) { return service->isEnabled(); })
                             && m_playerController->playState() == Player::PlayState::Playing
                             && m_playerController->currentTrack().isValid();
     if(!shouldRefresh) {
         return 0;
+    }
+
+    if(m_playerController->currentTrack().isRemote()) {
+        return m_streamSong
+                    && m_settings->value<Settings::Scrobbler::StreamMode>()
+                           != static_cast<int>(StreamScrobbleMode::Disabled)
+                 ? NowPlayingRefreshIntervalMs
+                 : 0;
     }
 
     const uint64_t durationMs = m_playerController->currentTrack().duration();
@@ -419,8 +577,9 @@ void Scrobbler::updateNowPlaying(const Track& track)
         if(service->isEnabled()) {
             service->updateNowPlaying(track);
 
-            if(m_settings->value<Settings::Scrobbler::SyncPlaybackStats>() && service->supportsTrackStatsSync()
-               && service->details().syncPlaybackStats && service->isAuthenticated()) {
+            if(!track.isRemote() && m_settings->value<Settings::Scrobbler::SyncPlaybackStats>()
+               && service->supportsTrackStatsSync() && service->details().syncPlaybackStats
+               && service->isAuthenticated()) {
                 const QString key   = trackStatsSyncKey(service.get(), track);
                 const auto lastSync = m_lastTrackStatsSync.find(key);
                 if(lastSync == m_lastTrackStatsSync.cend() || now - lastSync->second >= TrackStatsSyncIntervalMs) {

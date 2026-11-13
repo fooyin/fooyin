@@ -31,6 +31,10 @@
 #include <QLoggingCategory>
 #include <QSaveFile>
 #include <QTimerEvent>
+#include <QUuid>
+
+#include <algorithm>
+#include <ranges>
 
 Q_LOGGING_CATEGORY(SCROBBLER_CACHE, "fy.scrobbler")
 
@@ -51,6 +55,7 @@ Metadata::Metadata(ScriptParser* parser, SettingsManager* settings, const Track&
     , albumArtist{parser->evaluate(settings->value<Settings::Scrobbler::AlbumArtistField>(), track)}
     , trackNum{track.trackNumber()}
     , duration{track.duration() / 1000}
+    , radio{track.isRemote()}
 {
     if(track.hasExtraTag(u"MUSICBRAINZ_TRACKID"_s)) {
         const auto values = track.extraTag(u"MUSICBRAINZ_TRACKID"_s);
@@ -120,6 +125,8 @@ void ScrobblerCache::readCache()
         return;
     }
 
+    m_account = obj.value("ActiveAccount"_L1).toString();
+
     if(!obj.contains("Tracks"_L1)) {
         qCWarning(SCROBBLER_CACHE) << "No tracks in json";
         return;
@@ -150,6 +157,7 @@ void ScrobblerCache::readCache()
         metadata.artist             = trackObj.value("Artist"_L1).toString();
         metadata.albumArtist        = trackObj.value("AlbumArtist"_L1).toString();
         metadata.trackNum           = trackObj.value("Track"_L1).toString();
+        metadata.radio              = trackObj.value("Radio"_L1).toBool();
         metadata.duration           = trackObj.value("Duration"_L1).toVariant().toULongLong();
         metadata.musicBrainzId      = trackObj.value("MusicbrainzTrackId"_L1).toString();
         metadata.musicBrainzAlbumId = trackObj.value("MusicbrainzAlbumId"_L1).toString();
@@ -165,23 +173,73 @@ void ScrobblerCache::readCache()
             continue;
         }
 
-        m_items.emplace_back(std::make_unique<CacheItem>(metadata, timestamp));
+        auto item = std::make_unique<CacheItem>(metadata, timestamp, trackObj.value("Account"_L1).toString());
+        item->id  = trackObj.value("Id"_L1).toString();
+        if(item->id.isEmpty()) {
+            item->id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        }
+        m_items.emplace_back(std::move(item));
     }
 
     qCDebug(SCROBBLER_CACHE) << "Restored" << m_items.size() << "cached scrobbles from" << m_filepath;
 }
 
+QString ScrobblerCache::account() const
+{
+    return m_account;
+}
+
+void ScrobblerCache::setAccount(const QString& account)
+{
+    if(account.isEmpty() || account == m_account) {
+        return;
+    }
+
+    if(m_account.isEmpty()) {
+        for(const auto& item : m_items) {
+            if(item->account.isEmpty()) {
+                item->account = account;
+            }
+        }
+    }
+    m_account = account;
+    writeCache();
+}
+
 CacheItem* ScrobblerCache::add(const Track& track, const uint64_t timestamp)
 {
-    auto* item
-        = m_items.emplace_back(std::make_unique<CacheItem>(Metadata{&m_scriptParser, m_settings, track}, timestamp))
-              .get();
+    Metadata metadata{&m_scriptParser, m_settings, track};
+    if(!metadata.isValid() || timestamp == 0) {
+        return nullptr;
+    }
+    auto* item = m_items.emplace_back(std::make_unique<CacheItem>(std::move(metadata), timestamp, m_account)).get();
+    item->id   = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
     if(!m_writeTimer.isActive()) {
         m_writeTimer.start(WriteInterval, this);
     }
 
     return item;
+}
+
+bool ScrobblerCache::updateMetadata(const QString& id, const Track& track)
+{
+    if(id.isEmpty()) {
+        return false;
+    }
+    const auto item = std::ranges::find_if(m_items, [this, &id](const auto& entry) {
+        return entry->id == id && entry->account == m_account && !entry->submitted;
+    });
+    if(item == m_items.cend()) {
+        return false;
+    }
+    Metadata metadata{&m_scriptParser, m_settings, track};
+    if(!metadata.isValid() || metadata == (*item)->metadata) {
+        return false;
+    }
+    (*item)->metadata = std::move(metadata);
+    writeCache();
+    return true;
 }
 
 void ScrobblerCache::remove(CacheItem* item)
@@ -191,13 +249,18 @@ void ScrobblerCache::remove(CacheItem* item)
 
 int ScrobblerCache::count() const
 {
-    return static_cast<int>(m_items.size());
+    return static_cast<int>(
+        std::ranges::count_if(m_items, [this](const auto& item) { return item->account == m_account; }));
 };
 
 CacheItemList ScrobblerCache::items() const
 {
     CacheItemList items;
-    std::ranges::transform(m_items, std::back_inserter(items), [](const auto& item) { return item.get(); });
+    for(const auto& item : m_items) {
+        if(item->account == m_account) {
+            items.push_back(item.get());
+        }
+    }
     return items;
 }
 
@@ -218,7 +281,7 @@ void ScrobblerCache::flush(const CacheItemList& items)
 
 void ScrobblerCache::writeCache()
 {
-    if(m_items.empty()) {
+    if(m_items.empty() && m_account.isEmpty()) {
         QFile file{m_filepath};
         file.remove();
         return;
@@ -230,11 +293,14 @@ void ScrobblerCache::writeCache()
 
     for(const auto& item : std::as_const(m_items)) {
         QJsonObject object;
+        object["Id"_L1]                 = item->id;
+        object["Account"_L1]            = item->account;
         object["Title"_L1]              = item->metadata.title;
         object["Album"_L1]              = item->metadata.album;
         object["Artist"_L1]             = item->metadata.artist;
         object["AlbumArtist"_L1]        = item->metadata.albumArtist;
         object["Track"_L1]              = item->metadata.trackNum;
+        object["Radio"_L1]              = item->metadata.radio;
         object["Duration"_L1]           = QJsonValue::fromVariant(static_cast<quint64>(item->metadata.duration));
         object["MusicbrainzTrackId"_L1] = item->metadata.musicBrainzId;
         object["MusicbrainzAlbumId"_L1] = item->metadata.musicBrainzAlbumId;
@@ -244,7 +310,8 @@ void ScrobblerCache::writeCache()
     }
 
     QJsonObject object;
-    object["Tracks"_L1] = array;
+    object["Tracks"_L1]        = array;
+    object["ActiveAccount"_L1] = m_account;
     const QJsonDocument doc{object};
 
     QSaveFile file{m_filepath};

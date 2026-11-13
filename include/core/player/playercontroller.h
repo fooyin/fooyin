@@ -29,6 +29,7 @@
 
 namespace Fooyin {
 class PlayerControllerPrivate;
+class PlaybackListeningTracker;
 class PlaylistHandler;
 class SettingsManager;
 
@@ -61,6 +62,8 @@ public:
     [[nodiscard]] bool playedThresholdReached() const;
     /** Returns the id of the current distinct playback item, or zero if idle. */
     [[nodiscard]] uint64_t currentPlaybackItemId() const;
+    /** Returns the live listening tracker, regardless of history recording mode. */
+    [[nodiscard]] PlaybackListeningTracker* listeningTracker() const;
     /** Returns the current bitrate. */
     [[nodiscard]] int bitrate() const;
     /** Returns the decoder backend used for the current track. */

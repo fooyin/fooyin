@@ -28,6 +28,7 @@
 #include <core/track.h>
 
 #include <QBasicTimer>
+#include <QDeadlineTimer>
 #include <QLoggingCategory>
 #include <QObject>
 #include <QString>
@@ -96,7 +97,9 @@ public:
     void restartScrobbleSession(const Track& track);
     void updateNowPlaying(const Track& track);
     void refreshNowPlaying();
+    void refreshMetadata(const Track& track);
     void scrobble(const Track& track);
+    bool scrobbleStream(const Track& track, uint64_t timestamp);
     void updateLoved(const Track& track);
     [[nodiscard]] bool hasPendingLoved(const Track& track);
     virtual void fetchTrackStats(const Track& track);
@@ -157,17 +160,22 @@ protected:
     void handleTestError(const char* error);
     void handleAuthError(const char* error);
     void cleanupAuth();
+    bool synchroniseAccount();
+    void stopSubmissions();
     void deleteAll();
 
     void doDelayedSubmit(bool initial = false);
     void doDelayedLovedSubmit(bool initial = false);
     void setSubmitted(bool submitted);
     void setSubmitError(bool error);
+    void setSubmitCooldown(int delayMs);
     void setScrobbled(bool scrobbled);
 
     void timerEvent(QTimerEvent* event) override;
 
 private:
+    [[nodiscard]] QString cacheAccount() const;
+
     NetworkAccessManager* m_network;
     SettingsManager* m_settings;
     AccountStore m_accountStore;
@@ -184,10 +192,13 @@ private:
     QBasicTimer m_submitTimer;
     QBasicTimer m_lovedSubmitTimer;
     bool m_submitError;
+    int m_submitFailures;
+    QDeadlineTimer m_submitCooldown;
     bool m_lovedSubmitError;
 
     Track m_currentTrack;
     uint64_t m_timestamp;
+    QString m_pendingScrobbleId;
     bool m_scrobbled;
     bool m_submitted;
     bool m_lovedSubmitted;

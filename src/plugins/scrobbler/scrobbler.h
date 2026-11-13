@@ -34,6 +34,7 @@
 class QString;
 
 namespace Fooyin {
+struct ListeningSession;
 class NetworkAccessManager;
 class MusicLibrary;
 class PlayerController;
@@ -66,6 +67,20 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
+    struct StreamSong
+    {
+        Track track;
+        uint64_t itemId{0};
+        uint64_t timestamp{0};
+        uint64_t listenedMs{0};
+        bool submitted{false};
+    };
+
+    void updateStreamSong(const ListeningSession& session);
+    void finishStreamSong();
+    void scrobbleStreamSong();
+    void resetStreamTracking();
+
     struct PendingImportedLovedChange
     {
         bool loved{false};
@@ -110,6 +125,7 @@ private:
     std::unordered_map<QString, std::unordered_map<QString, RemoteLovedState>> m_remoteLovedStates;
     std::unordered_map<QString, RemoteLovedState> m_selectedRemoteLoved;
     QBasicTimer m_nowPlayingTimer;
+    std::optional<StreamSong> m_streamSong;
 };
 } // namespace Scrobbler
 } // namespace Fooyin

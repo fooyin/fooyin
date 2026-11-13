@@ -39,12 +39,16 @@ public:
     QString albumArtist;
     QString trackNum;
     uint64_t duration{0};
+    bool radio{false};
     QString musicBrainzId;
     QString musicBrainzAlbumId;
 
+    bool operator==(const Metadata&) const = default;
+
     [[nodiscard]] bool isValid() const
     {
-        return !title.isEmpty() && !artist.isEmpty() && duration >= 30;
+        return !title.trimmed().isEmpty() && !artist.trimmed().isEmpty()
+            && (duration >= 30 || (radio && duration == 0));
     }
 };
 
@@ -52,8 +56,10 @@ struct CacheItem
 {
     Metadata metadata;
     uint64_t timestamp{0};
+    QString account;
     bool submitted{false};
     bool hasError{false};
+    QString id;
 };
 using CacheItemUPtrList = std::vector<std::unique_ptr<CacheItem>>;
 using CacheItemList     = std::vector<CacheItem*>;
@@ -68,8 +74,12 @@ public:
 
     void readCache();
 
+    [[nodiscard]] QString account() const;
+    void setAccount(const QString& account);
+
     CacheItem* add(const Track& track, uint64_t timestamp);
     void remove(CacheItem* item);
+    bool updateMetadata(const QString& id, const Track& track);
     [[nodiscard]] int count() const;
     [[nodiscard]] CacheItemList items() const;
     void flush(const CacheItemList& items);
@@ -84,6 +94,7 @@ private:
     ScriptParser m_scriptParser;
 
     QString m_filepath;
+    QString m_account;
     QBasicTimer m_writeTimer;
     CacheItemUPtrList m_items;
 };

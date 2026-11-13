@@ -28,6 +28,7 @@
 
 #include <QApplication>
 #include <QClipboard>
+#include <QCryptographicHash>
 #include <QDesktopServices>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -52,8 +53,8 @@ constexpr auto MinLovedDelayOnError    = 30000;
 namespace {
 bool canBeScrobbled(const Fooyin::Track& track)
 {
-    return track.isValid() && !track.isRemote() && track.hasArtists() && !track.title().isEmpty()
-        && track.duration() >= 30000;
+    return track.isValid() && track.hasArtists() && !track.title().trimmed().isEmpty()
+        && (track.duration() >= 30000 || (track.isRemote() && track.duration() == 0));
 }
 } // namespace
 
@@ -69,6 +70,8 @@ ScrobblerService::ScrobblerService(ServiceDetails details, NetworkAccessManager*
     , m_cache{nullptr}
     , m_lovedCache{nullptr}
     , m_submitError{false}
+    , m_submitFailures{0}
+    , m_submitCooldown{0}
     , m_lovedSubmitError{false}
     , m_timestamp{0}
     , m_scrobbled{false}
@@ -140,27 +143,24 @@ void ScrobblerService::updateDetails(const ServiceDetails& details)
 {
     const bool wasActive          = isEnabled() && isAuthenticated();
     const bool wasSubmittingLoved = m_details.submitLoved;
+    const QString previousAccount = cacheAccount();
 
     if(isCustom() && details.name != m_details.name) {
         deleteSession();
     }
+    if(details.token != m_details.token || details.url != m_details.url) {
+        stopSubmissions();
+    }
     m_details = details;
+    if(isAuthenticated()) {
+        synchroniseAccount();
+    }
 
     const bool isActive = isEnabled() && isAuthenticated();
     if(!isActive) {
-        if(m_submitTimer.isActive()) {
-            m_submitTimer.stop();
-        }
-        if(m_lovedSubmitTimer.isActive()) {
-            m_lovedSubmitTimer.stop();
-        }
-        if(!m_replies.empty() || m_authSession || m_submitted) {
-            deleteAll();
-            setSubmitted(false);
-            m_lovedSubmitted = false;
-        }
+        stopSubmissions();
     }
-    else if(!wasActive) {
+    else if(!wasActive || previousAccount != cacheAccount()) {
         doDelayedSubmit();
         doDelayedLovedSubmit();
     }
@@ -256,6 +256,10 @@ void ScrobblerService::resumePendingSubmissions()
         return;
     }
 
+    if(isAuthenticated()) {
+        synchroniseAccount();
+    }
+
     const int pendingCount = m_cache->count();
     if(!isEnabled()) {
         qCDebug(SCROBBLER) << "Pending scrobbles will not resume for disabled service" << name() << "count"
@@ -281,6 +285,7 @@ void ScrobblerService::restartScrobbleSession(const Track& track)
     m_currentTrack = track;
     m_timestamp    = static_cast<uint64_t>(QDateTime::currentSecsSinceEpoch());
     m_scrobbled    = false;
+    m_pendingScrobbleId.clear();
 }
 
 void ScrobblerService::updateNowPlaying(const Track& track)
@@ -303,38 +308,78 @@ void ScrobblerService::refreshNowPlaying()
     updateNowPlaying();
 }
 
-void ScrobblerService::scrobble(const Track& track)
+void ScrobblerService::refreshMetadata(const Track& track)
 {
-    if(!settings()->value<Settings::Scrobbler::ScrobblingEnabled>()) {
-        return;
-    }
-
-    if(!canBeScrobbled(track)) {
-        return;
-    }
-
-    if(m_scrobbled) {
-        return;
-    }
-
     if(track.id() != m_currentTrack.id() || track.uniqueFilepath() != m_currentTrack.uniqueFilepath()) {
         return;
     }
-
-    if(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>()) {
-        if(!allowedByFilter(track)) {
-            return;
-        }
-    }
-
-    setScrobbled(true);
-    cache()->add(track, m_timestamp);
-
-    if(!isAuthenticated()) {
+    if(isAuthenticated() && !synchroniseAccount()) {
         return;
     }
 
-    doDelayedSubmit(true);
+    const Metadata previous{&m_scriptParser, m_settings, m_currentTrack};
+    m_currentTrack = track;
+    if(m_cache) {
+        m_cache->updateMetadata(m_pendingScrobbleId, track);
+    }
+
+    const Metadata current{&m_scriptParser, m_settings, track};
+    if(current != previous) {
+        refreshNowPlaying();
+    }
+}
+
+void ScrobblerService::scrobble(const Track& track)
+{
+    if(m_scrobbled || !settings()->value<Settings::Scrobbler::ScrobblingEnabled>()) {
+        return;
+    }
+    if(track.isRemote() || !canBeScrobbled(track)) {
+        return;
+    }
+    if(track.id() != m_currentTrack.id() || track.uniqueFilepath() != m_currentTrack.uniqueFilepath()) {
+        return;
+    }
+    if(m_settings->value<Settings::Scrobbler::EnableScrobbleFilter>() && !allowedByFilter(track)) {
+        return;
+    }
+
+    if(isAuthenticated() && !synchroniseAccount()) {
+        return;
+    }
+
+    if(const auto* item = cache()->add(track, m_timestamp)) {
+        m_pendingScrobbleId = item->id;
+        setScrobbled(true);
+        doDelayedSubmit(true);
+    }
+}
+
+bool ScrobblerService::scrobbleStream(const Track& track, uint64_t timestamp)
+{
+    if(!settings()->value<Settings::Scrobbler::ScrobblingEnabled>()
+       || settings()->value<Settings::Scrobbler::StreamMode>() != static_cast<int>(StreamScrobbleMode::Scrobbling)) {
+        return false;
+    }
+    if(!track.isRemote() || !canBeScrobbled(track)) {
+        return false;
+    }
+    if(settings()->value<Settings::Scrobbler::EnableScrobbleFilter>() && !allowedByFilter(track)) {
+        return false;
+    }
+
+    if(isAuthenticated() && !synchroniseAccount()) {
+        return false;
+    }
+
+    if(const auto* item = cache()->add(track, timestamp)) {
+        m_pendingScrobbleId = item->id;
+        cache()->writeCache();
+        doDelayedSubmit(true);
+        return true;
+    }
+
+    return false;
 }
 
 void ScrobblerService::updateLoved(const Track& track)
@@ -346,6 +391,10 @@ void ScrobblerService::updateLoved(const Track& track)
     Metadata metadata{&m_scriptParser, m_settings, track};
     if(metadata.artist.isEmpty() || metadata.title.isEmpty()) {
         qCWarning(SCROBBLER) << "Unable to submit Loved state without an artist and title for" << track.filepath();
+        return;
+    }
+
+    if(isAuthenticated() && !synchroniseAccount()) {
         return;
     }
 
@@ -449,11 +498,14 @@ bool ScrobblerService::removeReply(QNetworkReply* reply)
 
 bool ScrobblerService::shouldUpdateNowPlaying(const Track& track)
 {
-    if(!settings()->value<Settings::Scrobbler::ScrobblingEnabled>()) {
+    if(!settings()->value<Settings::Scrobbler::ScrobblingEnabled>()
+       || !settings()->value<Settings::Scrobbler::SendNowPlaying>()) {
         return false;
     }
 
-    if(!isAuthenticated() || !canBeScrobbled(track)) {
+    if(!isAuthenticated() || !canBeScrobbled(track)
+       || (track.isRemote()
+           && settings()->value<Settings::Scrobbler::StreamMode>() == static_cast<int>(StreamScrobbleMode::Disabled))) {
         return false;
     }
 
@@ -535,8 +587,59 @@ void ScrobblerService::deleteAll()
     cleanupAuth();
 }
 
+QString ScrobblerService::cacheAccount() const
+{
+    const QString identity = requiresAuthentication() ? username().trimmed().toCaseFolded() : details().token.trimmed();
+    if(identity.isEmpty()) {
+        return {};
+    }
+    const QByteArray key
+        = url().adjusted(QUrl::NormalizePathSegments | QUrl::RemoveFragment | QUrl::StripTrailingSlash).toEncoded()
+        + '\0' + identity.toUtf8();
+    return QString::fromLatin1(QCryptographicHash::hash(key, QCryptographicHash::Sha256).toHex());
+}
+
+void ScrobblerService::stopSubmissions()
+{
+    m_submitTimer.stop();
+    m_lovedSubmitTimer.stop();
+    deleteAll();
+    m_submitted      = false;
+    m_lovedSubmitted = false;
+    if(m_cache) {
+        for(auto* item : m_cache->items()) {
+            item->submitted = false;
+        }
+    }
+}
+
+bool ScrobblerService::synchroniseAccount()
+{
+    if(!m_cache || !m_lovedCache || !isAuthenticated()) {
+        return false;
+    }
+    const QString account = cacheAccount();
+    if(account.isEmpty()) {
+        return false;
+    }
+    if(m_cache->account() != account || m_lovedCache->account() != account) {
+        stopSubmissions();
+        m_submitError    = false;
+        m_submitFailures = 0;
+        m_submitCooldown.setRemainingTime(0);
+        m_lovedSubmitError = false;
+        m_cache->setAccount(account);
+        m_lovedCache->setAccount(account);
+    }
+    return true;
+}
+
 void ScrobblerService::doDelayedSubmit(bool initial)
 {
+    if(isAuthenticated() && !synchroniseAccount()) {
+        return;
+    }
+
     const int pendingCount = m_cache ? m_cache->count() : 0;
     if(m_submitted) {
         if(pendingCount > 0) {
@@ -560,9 +663,9 @@ void ScrobblerService::doDelayedSubmit(bool initial)
         return;
     }
 
-    const int scrobbleDelay = m_settings->value<Settings::Scrobbler::ScrobblingDelay>();
+    const int scrobbleDelay = std::clamp(m_settings->value<Settings::Scrobbler::ScrobblingDelay>(), 0, 600) * 1000;
 
-    if(initial && !m_submitError && scrobbleDelay <= 0) {
+    if(initial && !m_submitError && m_submitCooldown.hasExpired() && scrobbleDelay <= 0) {
         if(m_submitTimer.isActive()) {
             m_submitTimer.stop();
         }
@@ -570,7 +673,8 @@ void ScrobblerService::doDelayedSubmit(bool initial)
         submit();
     }
     else if(!m_submitTimer.isActive()) {
-        const int delay = std::max(scrobbleDelay, m_submitError ? MinScrobbleDelayOnError : MinScrobbleDelay);
+        const int delay
+            = std::max({scrobbleDelay, MinScrobbleDelay, static_cast<int>(m_submitCooldown.remainingTime())});
         qCDebug(SCROBBLER) << "Scheduling scrobble submit for" << name() << "count" << pendingCount << "delayMs"
                            << delay << "afterError" << m_submitError;
         m_submitTimer.start(delay, this);
@@ -579,6 +683,9 @@ void ScrobblerService::doDelayedSubmit(bool initial)
 
 void ScrobblerService::doDelayedLovedSubmit(const bool initial)
 {
+    if(isAuthenticated() && !synchroniseAccount()) {
+        return;
+    }
     if(m_lovedSubmitted || !m_lovedCache || m_lovedCache->count() == 0 || !m_details.submitLoved || !isEnabled()
        || !isAuthenticated()) {
         return;
@@ -603,7 +710,20 @@ void ScrobblerService::setSubmitted(bool submitted)
 
 void ScrobblerService::setSubmitError(bool error)
 {
-    m_submitError = error;
+    m_submitError    = error;
+    m_submitFailures = error ? std::min(m_submitFailures + 1, 8) : 0;
+    if(error) {
+        setSubmitCooldown(std::min(60 * 60 * 1000, MinScrobbleDelayOnError * (1 << (m_submitFailures - 1))));
+    }
+}
+
+void ScrobblerService::setSubmitCooldown(int delayMs)
+{
+    const auto remaining = static_cast<int>(m_submitCooldown.remainingTime());
+    m_submitCooldown.setRemainingTime(std::max(remaining, delayMs));
+    if(m_submitTimer.isActive()) {
+        m_submitTimer.start(static_cast<int>(m_submitCooldown.remainingTime()), this);
+    }
 }
 
 void ScrobblerService::setScrobbled(bool scrobbled)
@@ -615,19 +735,19 @@ void ScrobblerService::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_submitTimer.timerId()) {
         m_submitTimer.stop();
-
-        if(!isEnabled() || !isAuthenticated()) {
+        if(!isEnabled() || !synchroniseAccount()) {
             return;
         }
-
         submit();
     }
     else if(event->timerId() == m_lovedSubmitTimer.timerId()) {
         m_lovedSubmitTimer.stop();
 
-        if(m_details.submitLoved && isEnabled() && isAuthenticated()) {
-            m_lovedSubmitted = true;
-            submitLoved(*m_lovedCache->first());
+        if(m_details.submitLoved && isEnabled() && synchroniseAccount()) {
+            if(const auto item = m_lovedCache->first()) {
+                m_lovedSubmitted = true;
+                submitLoved(*item);
+            }
         }
     }
     QObject::timerEvent(event);

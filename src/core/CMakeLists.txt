@@ -44,6 +44,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/network/remotestreamdevice.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playbackhistorydefs.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playbackhistoryservice.h
+    ${CMAKE_SOURCE_DIR}/include/core/player/playbacklisteningtracker.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playbackqueue.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playercontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playerdefs.h
@@ -291,6 +292,7 @@ set(SOURCES
     playback/playbackcursor.cpp
     playback/playbackcursor.h
     playback/playbackhistoryservice.cpp
+    playback/playbacklisteningtracker.cpp
     playback/playbackorder.cpp
     playback/playbackorder.h
     playback/playbackordernavigator.cpp

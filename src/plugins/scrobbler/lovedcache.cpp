@@ -60,26 +60,28 @@ void LovedCache::set(Metadata metadata, const bool loved)
     }
 
     const uint64_t revision = ++m_revision;
-    m_items.insert_or_assign(key, LovedItem{key, std::move(metadata), loved, revision});
+    m_items.insert_or_assign(
+        std::pair{m_account, key},
+        LovedItem{
+            .key = key, .metadata = std::move(metadata), .loved = loved, .revision = revision, .account = m_account});
     scheduleWrite();
 }
 
 bool LovedCache::contains(const Metadata& metadata) const
 {
-    return m_items.contains(itemKey(metadata));
+    return m_items.contains({m_account, itemKey(metadata)});
 }
 
 std::optional<LovedItem> LovedCache::first() const
 {
-    if(m_items.empty()) {
-        return {};
-    }
-    return m_items.cbegin()->second;
+    const auto item
+        = std::ranges::find_if(m_items, [this](const auto& entry) { return entry.first.first == m_account; });
+    return item == m_items.cend() ? std::nullopt : std::optional{item->second};
 }
 
 void LovedCache::remove(const QString& key, const uint64_t revision)
 {
-    const auto item = m_items.find(key);
+    const auto item = m_items.find({m_account, key});
     if(item == m_items.cend() || item->second.revision != revision) {
         return;
     }
@@ -90,12 +92,40 @@ void LovedCache::remove(const QString& key, const uint64_t revision)
 
 int LovedCache::count() const
 {
-    return static_cast<int>(m_items.size());
+    return static_cast<int>(
+        std::ranges::count_if(m_items, [this](const auto& entry) { return entry.first.first == m_account; }));
+}
+
+QString LovedCache::account() const
+{
+    return m_account;
+}
+
+void LovedCache::setAccount(const QString& account)
+{
+    if(account.isEmpty() || account == m_account) {
+        return;
+    }
+
+    if(m_account.isEmpty()) {
+        auto items = std::move(m_items);
+        m_items.clear();
+        for(auto& item : items | std::views::values) {
+            if(item.account.isEmpty()) {
+                item.account = account;
+            }
+            const auto newKey = std::pair{item.account, item.key};
+            m_items.insert_or_assign(newKey, std::move(item));
+        }
+    }
+
+    m_account = account;
+    writeCache();
 }
 
 void LovedCache::writeCache()
 {
-    if(m_items.empty()) {
+    if(m_items.empty() && m_account.isEmpty()) {
         QFile::remove(m_filepath);
         return;
     }
@@ -103,6 +133,7 @@ void LovedCache::writeCache()
     QJsonArray tracks;
     for(const auto& item : m_items | std::views::values) {
         QJsonObject object;
+        object["Account"_L1]            = item.account;
         object["Key"_L1]                = item.key;
         object["Title"_L1]              = item.metadata.title;
         object["Artist"_L1]             = item.metadata.artist;
@@ -120,7 +151,7 @@ void LovedCache::writeCache()
 
     QTextStream stream{&file};
     stream.setEncoding(QStringConverter::Encoding::Utf8);
-    stream << QJsonDocument{QJsonObject{{"Tracks"_L1, tracks}}}.toJson();
+    stream << QJsonDocument{QJsonObject{{"Tracks"_L1, tracks}, {"ActiveAccount"_L1, m_account}}}.toJson();
     if(!file.commit()) {
         qCWarning(LOVED_CACHE) << "Unable to write Loved cache" << m_filepath << file.errorString();
     }
@@ -149,11 +180,14 @@ void LovedCache::readCache()
         return;
     }
 
+    m_account = document.object().value("ActiveAccount"_L1).toString();
+
     const QJsonArray tracks = document.object().value("Tracks"_L1).toArray();
     for(const QJsonValue& value : tracks) {
         const QJsonObject object = value.toObject();
 
         LovedItem item;
+        item.account                = object.value("Account"_L1).toString();
         item.key                    = object.value("Key"_L1).toString();
         item.metadata.title         = object.value("Title"_L1).toString();
         item.metadata.artist        = object.value("Artist"_L1).toString();
@@ -165,8 +199,9 @@ void LovedCache::readCache()
             continue;
         }
 
-        m_revision = std::max(m_revision, item.revision);
-        m_items.insert_or_assign(item.key, std::move(item));
+        m_revision     = std::max(m_revision, item.revision);
+        const auto key = std::pair{item.account, item.key};
+        m_items.insert_or_assign(key, std::move(item));
     }
 }
 

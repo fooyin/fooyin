@@ -30,6 +30,7 @@
 
 #include <core/coresettings.h>
 #include <core/library/libraryutils.h>
+#include <core/player/playbacklisteningtracker.h>
 #include <core/player/playbackqueue.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -254,6 +255,7 @@ public:
     bool m_repeatSeekPending{false};
     PlaybackSession m_session;
     PlaybackProgressTracker m_progressTracker;
+    PlaybackListeningTracker m_listeningTracker;
     bool m_stopCurrentSkip{false};
     bool m_stopAfterCurrentArmed{false};
     PlaybackQueueItemId m_stopAfterQueueItemId{0};
@@ -276,6 +278,7 @@ PlayerControllerPrivate::PlayerControllerPrivate(PlayerController* self, Setting
     , m_settings{settings}
     , m_playlistHandler{playlistHandler}
     , m_playMode{static_cast<Playlist::PlayModes>(m_settings->value<Settings::Core::PlayMode>())}
+    , m_listeningTracker{self}
     , m_stopAfterCurrentArmed{m_settings->value<Settings::Core::StopAfterCurrent>()}
     , m_navigator{m_settings,
                   m_playlistHandler,
@@ -575,6 +578,10 @@ bool PlayerControllerPrivate::updatePlaystate(Player::PlayState state)
 
     const auto prevState = std::exchange(m_playState, state);
     if(prevState != state) {
+        if(state == Player::PlayState::Playing && !m_listeningTracker.currentSession()
+           && m_session.currentTrack().isValid() && !m_session.hasPendingRequest()) {
+            m_listeningTracker.start(m_session.currentItemId(), m_session.currentTrack().track);
+        }
         Q_EMIT m_self->playStateChanged(state, prevState);
         Q_EMIT m_self->playbackSnapshotChanged(m_self->playbackSnapshot());
         return true;
@@ -631,6 +638,7 @@ void PlayerControllerPrivate::restoreRemoteCurrentTrackFromPlaylist()
 bool PlayerControllerPrivate::enterStoppedState(bool requestTransportStop)
 {
     m_self->clearABRepeat();
+    m_listeningTracker.finish();
     restoreRemoteCurrentTrackFromPlaylist();
 
     if(!updatePlaystate(Player::PlayState::Stopped)) {
@@ -739,6 +747,7 @@ void PlayerControllerPrivate::syncPlaylistTrackState(const UId& playlistId)
         syncCommittedPlaylistTrack();
 
         if(currentTrackChanged) {
+            m_listeningTracker.updateMetadata(m_session.currentTrack().track);
             Q_EMIT m_self->currentTrackUpdated(m_session.currentTrack().track);
         }
         if(playlistTrackChanged) {
@@ -754,6 +763,7 @@ void PlayerControllerPrivate::syncPlaylistTrackState(const UId& playlistId)
             m_session.clearDetachedCurrentPlaylistTrack();
             syncCommittedPlaylistTrack();
             if(currentTrackChanged) {
+                m_listeningTracker.updateMetadata(m_session.currentTrack().track);
                 Q_EMIT m_self->currentTrackUpdated(m_session.currentTrack().track);
             }
             if(playlistTrackChanged) {
@@ -1430,6 +1440,7 @@ PlayerController::~PlayerController() = default;
 
 void PlayerController::reset()
 {
+    p->m_listeningTracker.finish();
     clearABRepeat();
     p->m_session.resetCurrentTrackState();
     p->m_progressTracker.reset();
@@ -1688,7 +1699,9 @@ void PlayerController::syncPlayStateFromEngine(Player::PlayState state)
 
 void PlayerController::setCurrentPosition(uint64_t ms)
 {
+    const auto listenedBefore                            = p->m_progressTracker.timeListened();
     const PlaybackProgressTracker::PositionUpdate update = p->m_progressTracker.updatePosition(ms);
+    p->m_listeningTracker.addListeningTime(p->m_progressTracker.timeListened() - listenedBefore);
 
     if(update.reachedPlayedThreshold && p->m_session.currentTrack().isValid()
        && !p->m_session.currentTrack().track.isRemote()) {
@@ -1770,6 +1783,7 @@ void PlayerController::commitCurrentTrack(const Player::TrackChangeRequest& requ
         return;
     }
 
+    p->m_listeningTracker.finish();
     clearABRepeat();
     const auto result = p->m_session.commitRequest(requestWithId);
     if(result.isQueueTrack) {
@@ -1815,6 +1829,7 @@ void PlayerController::commitCurrentTrack(const Player::TrackChangeRequest& requ
     p->m_settings->set<Settings::Core::ActiveTrack>(QVariant::fromValue(p->m_session.currentTrack().track));
     p->m_settings->set<Settings::Core::ActiveTrackId>(p->m_session.currentTrack().track.id());
 
+    p->m_listeningTracker.start(p->m_session.currentItemId(), p->m_session.currentTrack().track);
     Q_EMIT playbackItemCommitted(p->m_session.currentItemId(), p->m_session.currentTrack().track,
                                  p->m_session.lastChangeContext());
     Q_EMIT currentTrackChanged(p->m_session.currentTrack().track);
@@ -1857,6 +1872,7 @@ void PlayerController::updateCurrentTrack(const Track& track)
         if((range.start && *range.start >= track.duration()) || (range.end && *range.end > track.duration())) {
             clearABRepeat();
         }
+        p->m_listeningTracker.updateMetadata(p->m_session.currentTrack().track);
         Q_EMIT currentTrackUpdated(p->m_session.currentTrack().track);
         Q_EMIT playlistTrackUpdated(p->m_session.currentTrack());
         if(durationChanged) {
@@ -2230,6 +2246,11 @@ bool PlayerController::playedThresholdReached() const
 uint64_t PlayerController::currentPlaybackItemId() const
 {
     return p->m_session.currentItemId();
+}
+
+PlaybackListeningTracker* PlayerController::listeningTracker() const
+{
+    return &p->m_listeningTracker;
 }
 
 int PlayerController::bitrate() const

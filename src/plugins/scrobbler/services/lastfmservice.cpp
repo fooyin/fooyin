@@ -221,6 +221,7 @@ void LastFmService::loadSession()
     }
 
     settings.endGroup();
+    synchroniseAccount();
 }
 
 void LastFmService::deleteSession()
@@ -232,6 +233,8 @@ void LastFmService::deleteSession()
 
 void LastFmService::logout()
 {
+    stopSubmissions();
+    m_trackStatsReplies.clear();
     m_username.clear();
     m_sessionKey.clear();
 
@@ -245,24 +248,18 @@ void LastFmService::testApi()
 
 void LastFmService::updateNowPlaying()
 {
-    const Track track = currentTrack();
+    const Metadata metadata{scriptParser(), settings(), currentTrack()};
 
     std::map<QString, QString> params
-        = {{u"method"_s, u"track.updateNowPlaying"_s},
-           {u"artist"_s, scriptParser()->evaluate(settings()->value<Settings::Scrobbler::ArtistField>(), track)},
-           {u"track"_s, scriptParser()->evaluate(settings()->value<Settings::Scrobbler::TitleField>(), track)}};
-
-    const QString album = scriptParser()->evaluate(settings()->value<Settings::Scrobbler::AlbumField>(), track);
-    if(!album.isEmpty()) {
-        params.emplace(u"album"_s, album);
+        = {{u"method"_s, u"track.updateNowPlaying"_s}, {u"artist"_s, metadata.artist}, {u"track"_s, metadata.title}};
+    if(!metadata.album.isEmpty()) {
+        params.emplace(u"album"_s, metadata.album);
     }
-
-    if(settings()->value<Settings::Scrobbler::SendAlbumArtist>()) {
-        const QString albumArtist
-            = scriptParser()->evaluate(settings()->value<Settings::Scrobbler::AlbumArtistField>(), track);
-        if(!albumArtist.isEmpty()) {
-            params.emplace(u"albumArtist"_s, albumArtist);
-        }
+    if(settings()->value<Settings::Scrobbler::SendAlbumArtist>() && !metadata.albumArtist.isEmpty()) {
+        params.emplace(u"albumArtist"_s, metadata.albumArtist);
+    }
+    if(!metadata.musicBrainzId.isEmpty()) {
+        params.emplace(u"mbid"_s, metadata.musicBrainzId);
     }
 
     QNetworkReply* reply = createRequest(params);
@@ -271,7 +268,7 @@ void LastFmService::updateNowPlaying()
 
 void LastFmService::submit()
 {
-    if(!isAuthenticated()) {
+    if(!synchroniseAccount()) {
         return;
     }
 
@@ -294,7 +291,15 @@ void LastFmService::submit()
 
         params.emplace(u"track[%1]"_s.arg(i), md.title);
         params.emplace(u"artist[%1]"_s.arg(i), md.artist);
-        params.emplace(u"duration[%1]"_s.arg(i), QString::number(md.duration));
+        if(!md.musicBrainzId.isEmpty()) {
+            params.emplace(u"mbid[%1]"_s.arg(i), md.musicBrainzId);
+        }
+        if(md.duration > 0) {
+            params.emplace(u"duration[%1]"_s.arg(i), QString::number(md.duration));
+        }
+        if(md.radio) {
+            params.emplace(u"chosenByUser[%1]"_s.arg(i), u"0"_s);
+        }
         params.emplace(u"timestamp[%1]"_s.arg(i), QString::number(item->timestamp));
 
         if(!md.album.isEmpty()) {
@@ -444,6 +449,7 @@ void LastFmService::authFinished(QNetworkReply* reply)
     m_username   = obj.value("name"_L1).toString();
     m_sessionKey = obj.value("key"_L1).toString();
 
+    synchroniseAccount();
     saveSession();
     resumePendingSubmissions();
 
@@ -592,6 +598,13 @@ void LastFmService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& 
         return;
     }
     setSubmitted(false);
+    std::ranges::for_each(items, [](auto* item) { item->submitted = false; });
+
+    const auto retry = [this](const QString& message) {
+        qCWarning(SCROBBLER) << message;
+        setSubmitError(true);
+        doDelayedSubmit();
+    };
 
     QJsonObject obj;
     QString errorStr;
@@ -601,164 +614,97 @@ void LastFmService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& 
         if(errorInfo.apiErrorCode == static_cast<int>(ScrobbleError::InvalidMethodSignature)) {
             if(items.size() == 1 && items.front()->hasError) {
                 qCWarning(SCROBBLER) << "Discarding cached Last.fm scrobble after repeated signature failure:"
-                                     << items.front()->metadata.artist << u"-"_s << items.front()->metadata.title
-                                     << "timestamp" << items.front()->timestamp;
+                                     << items.front()->metadata.artist << items.front()->metadata.title;
                 cache()->flush(items);
+                cache()->writeCache();
                 setSubmitError(false);
                 doDelayedSubmit();
                 return;
             }
-
-            qCWarning(SCROBBLER) << "Retrying Last.fm scrobbles individually after signature failure for batch of"
-                                 << items.size();
-            std::ranges::for_each(items, [](const auto& item) {
-                item->submitted = false;
-                item->hasError  = true;
-            });
-            setSubmitError(true);
-            doDelayedSubmit();
-            return;
+            std::ranges::for_each(items, [](auto* item) { item->hasError = true; });
         }
 
-        setSubmitError(true);
-        qCWarning(SCROBBLER) << "Unable to scrobble for" << name() << "count" << items.size() << ":" << errorStr;
-        std::ranges::for_each(items, [](const auto& item) { item->submitted = false; });
-        doDelayedSubmit();
+        if(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 429
+           || errorInfo.apiErrorCode == static_cast<int>(ScrobbleError::RateLimitExceeded)) {
+            bool ok{false};
+            const auto seconds = reply->rawHeader("Retry-After").toLongLong(&ok);
+            const int cooldown
+                = ok ? static_cast<int>(std::clamp<qint64>(seconds, 0, 24LL * 60 * 60) * 1000) : 6 * 60 * 1000;
+            setSubmitCooldown(cooldown);
+        }
+        retry(errorStr);
         return;
     }
 
-    cache()->flush(items);
-    setSubmitError(false);
-
-    const auto handleError = [this](const char* message, const bool submit = false) {
-        qCWarning(SCROBBLER) << message;
-        if(submit) {
-            doDelayedSubmit();
+    const auto integer = [](const QJsonValue& value) -> std::optional<qint64> {
+        if(!value.isString() && !value.isDouble()) {
+            return {};
         }
+
+        bool ok{false};
+        const qint64 number = value.toVariant().toString().toLongLong(&ok);
+        return ok ? std::optional{number} : std::nullopt;
     };
 
-    if(!obj.contains("scrobbles"_L1)) {
-        handleError("Reply from server is missing scrobbles", true);
+    const QJsonObject scrobbles = obj.value("scrobbles"_L1).toObject();
+    const QJsonObject attr      = scrobbles.value("@attr"_L1).toObject();
+
+    const auto accepted      = integer(attr.value("accepted"_L1));
+    const auto ignored       = integer(attr.value("ignored"_L1));
+    const QJsonValue results = scrobbles.value("scrobble"_L1);
+    const QJsonArray array   = results.isObject() ? QJsonArray{results.toObject()} : results.toArray();
+
+    if(!accepted || !ignored || *accepted < 0 || *ignored < 0 || std::cmp_greater(*accepted, items.size())
+       || std::cmp_greater(*ignored, items.size()) || *accepted + *ignored != static_cast<qint64>(items.size())
+       || array.size() != static_cast<qsizetype>(items.size())) {
+        retry(u"Invalid Last.fm scrobble response; keeping the submitted batch"_s);
         return;
     }
 
-    const QJsonValue scrobblesVal = obj.value("scrobbles"_L1);
-    if(!scrobblesVal.isObject()) {
-        handleError("Scrobbles is not an object", true);
-        return;
-    }
-
-    obj = scrobblesVal.toObject();
-    if(obj.isEmpty()) {
-        handleError("Scrobbles object is empty", true);
-        return;
-    }
-
-    if(!obj.contains("@attr"_L1) || !obj.contains("scrobble"_L1)) {
-        handleError("Scrobbles object is missing values", true);
-        return;
-    }
-
-    const QJsonValue attr = obj.value("@attr"_L1);
-    if(!attr.isObject()) {
-        handleError("Scrobbles attr is not an object", true);
-        return;
-    }
-
-    const QJsonObject attrObj = attr.toObject();
-    if(attrObj.isEmpty()) {
-        handleError("Scrobbles attr is empty", true);
-        return;
-    }
-
-    if(!attrObj.contains("accepted"_L1) || !attrObj.contains("ignored"_L1)) {
-        handleError("Scrobbles attr is missing values", true);
-        return;
-    }
-
-    const int accepted = attrObj.value("accepted"_L1).toInt();
-    const int ignored  = attrObj.value("ignored"_L1).toInt();
-
-    qCDebug(SCROBBLER) << "Scrobbles accepted:" << accepted;
-    qCDebug(SCROBBLER) << "Scrobbles ignored:" << ignored;
-
-    QJsonArray array;
-
-    const QJsonValue scrobbleVal = obj.value("scrobble"_L1);
-    if(scrobbleVal.isObject()) {
-        const QJsonObject scrobbleObj = scrobbleVal.toObject();
-        if(scrobbleObj.isEmpty()) {
-            handleError("Scrobble object is empty", true);
+    std::vector<qint64> codes;
+    qint64 acceptedResults{0};
+    for(int i{0}; std::cmp_less(i, array.size()); ++i) {
+        const QJsonObject result = array.at(i).toObject();
+        const auto code          = integer(result.value("ignoredMessage"_L1).toObject().value("code"_L1));
+        const auto timestamp     = integer(result.value("timestamp"_L1));
+        if(!code || *code < 0 || !timestamp || *timestamp < 0
+           || std::cmp_not_equal(*timestamp, items.at(i)->timestamp)) {
+            retry(u"Ambiguous Last.fm scrobble result; keeping the submitted batch"_s);
             return;
         }
-        array.append(scrobbleObj);
+        codes.push_back(*code);
+        acceptedResults += (*code == 0);
     }
-    else if(scrobbleVal.isArray()) {
-        array = scrobbleVal.toArray();
-        if(array.isEmpty()) {
-            handleError("Scrobble array is empty", true);
-            return;
-        }
-    }
-    else {
-        handleError("Scrobble is not an object or array", true);
+
+    if(acceptedResults != *accepted) {
+        retry(u"Inconsistent Last.fm scrobble counts; keeping the submitted batch"_s);
         return;
     }
 
-    for(const auto& value : std::as_const(array)) {
-        if(!value.isObject()) {
-            handleError("Scrobble array value is not an object");
-            continue;
-        }
-
-        const QJsonObject trackJson = value.toObject();
-        if(trackJson.isEmpty()) {
-            continue;
-        }
-
-        if(!trackJson.contains("artist"_L1) || !trackJson.contains("album"_L1) || !trackJson.contains("albumArtist"_L1)
-           || !trackJson.contains("track"_L1) || !trackJson.contains("timestamp"_L1)
-           || !trackJson.contains("ignoredMessage"_L1)) {
-            handleError("Scrobble is missing values");
-            continue;
-        }
-
-        const QJsonValue artist     = trackJson.value("artist"_L1);
-        const QJsonValue album      = trackJson.value("album"_L1);
-        const QJsonValue track      = trackJson.value("track"_L1);
-        const QJsonValue ignoredMsg = trackJson.value("ignoredMessage"_L1);
-
-        if(!artist.isObject() || !album.isObject() || !track.isObject() || !ignoredMsg.isObject()) {
-            handleError("Scrobble values are not objects");
-            continue;
-        }
-
-        const QJsonObject artistObj    = artist.toObject();
-        const QJsonObject albumObj     = album.toObject();
-        const QJsonObject trackObj     = track.toObject();
-        const QJsonObject ignoreMsgObj = ignoredMsg.toObject();
-
-        if(artistObj.isEmpty() || albumObj.isEmpty() || trackObj.isEmpty() || ignoreMsgObj.isEmpty()) {
-            handleError("Scrobble values objects are empty");
-            continue;
-        }
-
-        if(!artistObj.contains("#text"_L1) || !albumObj.contains("#text"_L1) || !trackObj.contains("#text"_L1)) {
-            continue;
-        }
-
-        const QString trackText = trackObj.value("#text"_L1).toString();
-
-        if(ignoreMsgObj.value("code"_L1).toBool()) {
-            const QString ignoredMsgText
-                = uR"(Scrobble for "%1" ignored: %2)"_s.arg(trackText, ignoreMsgObj.value("#text"_L1).toString());
-            handleError(ignoredMsgText.toUtf8().constData());
+    CacheItemList completed;
+    bool deferred{false};
+    for(int i{0}; std::cmp_less(i, items.size()); ++i) {
+        const auto code = codes.at(i);
+        if(code == 0) {
+            completed.push_back(items.at(i));
         }
         else {
-            qCDebug(SCROBBLER) << "Scrobble accepted:" << trackText;
+            qCWarning(SCROBBLER) << "Last.fm ignored scrobble:" << items.at(i)->metadata.title << "code" << code;
+            if(code >= 1 && code <= 4) {
+                completed.push_back(items.at(i));
+            }
+            else {
+                deferred = true;
+                if(code == 5) {
+                    setSubmitCooldown(60 * 60 * 1000);
+                }
+            }
         }
     }
 
+    cache()->flush(completed);
+    cache()->writeCache();
+    setSubmitError(deferred);
     doDelayedSubmit();
 }
 

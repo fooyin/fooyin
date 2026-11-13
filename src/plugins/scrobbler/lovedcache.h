@@ -34,6 +34,7 @@ struct LovedItem
     Metadata metadata;
     bool loved{false};
     uint64_t revision{0};
+    QString account;
 };
 
 class LovedCache : public QObject
@@ -44,6 +45,8 @@ public:
     explicit LovedCache(QString filepath, QObject* parent = nullptr);
 
     void set(Metadata metadata, bool loved);
+    [[nodiscard]] QString account() const;
+    void setAccount(const QString& account);
     [[nodiscard]] bool contains(const Metadata& metadata) const;
     [[nodiscard]] std::optional<LovedItem> first() const;
     void remove(const QString& key, uint64_t revision);
@@ -60,7 +63,8 @@ private:
     static QString itemKey(const Metadata& metadata);
 
     QString m_filepath;
-    std::map<QString, LovedItem> m_items;
+    QString m_account;
+    std::map<std::pair<QString, QString>, LovedItem> m_items;
     uint64_t m_revision{0};
     QBasicTimer m_writeTimer;
 };

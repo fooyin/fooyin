@@ -24,6 +24,7 @@
 #include "core/database/trackdatabase.h"
 
 #include <core/constants.h>
+#include <core/player/playbacklisteningtracker.h>
 #include <core/player/playercontroller.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
@@ -48,55 +49,6 @@ namespace {
 qint64 currentTimeMs()
 {
     return QDateTime::currentMSecsSinceEpoch();
-}
-
-QString propertyValue(const Track::ExtraProperties& properties, QLatin1StringView key)
-{
-    return properties.value(QString{key});
-}
-
-QString normalisedRemoteUri(const QString& uri)
-{
-    const QUrl url{uri};
-    if(!url.isValid() || url.scheme().isEmpty()) {
-        return uri.trimmed();
-    }
-
-    return url.adjusted(QUrl::NormalizePathSegments | QUrl::RemoveFragment).toString(QUrl::FullyEncoded);
-}
-
-PlaybackSource playbackSourceForTrack(const Track& track)
-{
-    PlaybackSource source;
-
-    if(!track.isRemote()) {
-        source.kind        = PlaybackSourceKind::LocalTrack;
-        source.displayName = track.effectiveTitle();
-        source.originalUri = track.filepath();
-
-        const QString segment = u"%1\x1f%2\x1f%3"_s.arg(track.subsong()).arg(track.offset()).arg(track.duration());
-        source.stableKey      = track.hash().isEmpty() ? u"local:path:%1\x1f%2"_s.arg(track.uniqueFilepath(), segment)
-                                                       : u"local:hash:%1\x1f%2"_s.arg(track.hash(), segment);
-        return source;
-    }
-
-    source.kind = PlaybackSourceKind::RemoteStream;
-
-    const auto properties    = track.extraProperties();
-    const QString provider   = propertyValue(properties, QLatin1StringView{Constants::PlaybackSource::Provider});
-    const QString externalId = propertyValue(properties, QLatin1StringView{Constants::PlaybackSource::ExternalId});
-    source.displayName       = track.effectiveTitle();
-
-    source.originalUri = propertyValue(properties, QLatin1StringView{Constants::PlaybackSource::OriginalUri});
-    if(source.originalUri.isEmpty()) {
-        source.originalUri = track.filepath();
-    }
-
-    const QString providerKey = provider.trimmed().toCaseFolded();
-    source.stableKey          = !providerKey.isEmpty() && !externalId.isEmpty()
-                                  ? u"remote:provider:%1:%2"_s.arg(providerKey, externalId.trimmed())
-                                  : u"remote:url:%1"_s.arg(normalisedRemoteUri(source.originalUri));
-    return source;
 }
 
 QString rawStreamTitle(const Track& track)
@@ -126,10 +78,16 @@ PlaybackHistoryService::PlaybackHistoryService(PlayerController* playerControlle
     m_database->initialise(DbConnectionProvider{m_dbPool});
     recoverOpenEvents();
 
-    QObject::connect(m_playerController, &PlayerController::playbackItemCommitted, this,
-                     [this](uint64_t itemId, const Track& track) {
-                         finaliseEvent();
-                         startEvent(itemId, track);
+    const auto* tracker = m_playerController->listeningTracker();
+    QObject::connect(tracker, &PlaybackListeningTracker::sessionStarted, this,
+                     [this](const ListeningSession& session) { startEvent(session.itemId, session.track); });
+    QObject::connect(tracker, &PlaybackListeningTracker::sessionEnded, this, &PlaybackHistoryService::finaliseEvent);
+    QObject::connect(tracker, &PlaybackListeningTracker::listeningTimeChanged, this,
+                     [this](uint64_t itemId, uint64_t deltaMs) {
+                         if(m_currentEvent && itemId == m_currentItemId) {
+                             m_currentEvent->listeningTimeMs += deltaMs;
+                             m_currentEvent->lastCheckpointAt = currentTimeMs();
+                         }
                      });
     QObject::connect(m_playerController, &PlayerController::trackPlayed, this, [this](const Track& track) {
         if(m_trackingMode == ListeningHistoryMode::FullHistory && m_currentEvent && !track.isRemote()
@@ -140,11 +98,12 @@ PlaybackHistoryService::PlaybackHistoryService(PlayerController* playerControlle
     });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      &PlaybackHistoryService::handlePlayState);
-    QObject::connect(m_playerController, &PlayerController::currentTrackUpdated, this, [this](const Track& track) {
-        if(m_currentEvent && track.isRemote()) {
-            updateStreamMetadata(track, true);
-        }
-    });
+    QObject::connect(tracker, &PlaybackListeningTracker::metadataChanged, this,
+                     [this](const ListeningSession& session) {
+                         if(m_currentEvent && session.track.isRemote()) {
+                             updateStreamMetadata(session.track, true);
+                         }
+                     });
 }
 
 PlaybackHistoryService::~PlaybackHistoryService()
@@ -160,12 +119,7 @@ PlaybackSourceKind PlaybackHistoryService::currentSourceKind() const
 
 std::optional<PlaybackEvent> PlaybackHistoryService::currentEvent() const
 {
-    auto event{m_currentEvent};
-    if(event && m_listeningTimer.isValid()) {
-        event->listeningTimeMs += static_cast<uint64_t>(m_listeningTimer.elapsed());
-        event->lastCheckpointAt = currentTimeMs();
-    }
-    return event;
+    return m_currentEvent;
 }
 
 QFuture<PlaybackHistoryOverview> PlaybackHistoryService::queryOverview(PlaybackHistoryScope scope) const
@@ -302,8 +256,8 @@ void PlaybackHistoryService::setTrackingMode(int mode)
 
     finaliseEvent();
     m_trackingMode = selected;
-    if(m_playerController->playState() != Player::PlayState::Stopped) {
-        startEvent(m_playerController->currentPlaybackItemId(), m_playerController->currentTrack());
+    if(const auto session = m_playerController->listeningTracker()->currentSession()) {
+        startEvent(session->itemId, session->track);
     }
 }
 
@@ -320,8 +274,8 @@ bool PlaybackHistoryService::clearHistory()
     m_currentItemId = 0;
     Q_EMIT historyCleared();
 
-    if(m_playerController->playState() != Player::PlayState::Stopped) {
-        startEvent(m_playerController->currentPlaybackItemId(), m_playerController->currentTrack());
+    if(const auto session = m_playerController->listeningTracker()->currentSession()) {
+        startEvent(session->itemId, session->track);
     }
 
     return true;
@@ -378,14 +332,16 @@ void PlaybackHistoryService::startEvent(uint64_t itemId, const Track& track)
         m_totalsCheckpointMs   = 0;
         m_checkpointTimer.start(CheckpointIntervalMs, this);
         m_listeningTimer.invalidate();
-        if(m_playerController->playState() == Player::PlayState::Playing) {
-            m_listeningTimer.start();
-        }
         Q_EMIT historyChanged(m_currentEvent->id);
         return;
     }
 
-    const qint64 sourceId = m_database->upsertSource(playbackSourceForTrack(track));
+    const auto session = m_playerController->listeningTracker()->currentSession();
+    if(!session) {
+        return;
+    }
+
+    const qint64 sourceId = m_database->upsertSource(session->source);
     if(sourceId < 0) {
         return;
     }
@@ -423,9 +379,6 @@ void PlaybackHistoryService::startEvent(uint64_t itemId, const Track& track)
     m_checkpointTimer.start(CheckpointIntervalMs, this);
     m_listeningTimer.invalidate();
 
-    if(m_playerController->playState() == Player::PlayState::Playing) {
-        m_listeningTimer.start();
-    }
     if(track.isRemote()) {
         updateStreamMetadata(track);
     }
@@ -487,16 +440,8 @@ bool PlaybackHistoryService::checkpointEvent()
 
 void PlaybackHistoryService::updateListeningTime()
 {
-    if(!m_currentEvent || !m_listeningTimer.isValid()) {
-        return;
-    }
-
-    m_currentEvent->listeningTimeMs += static_cast<uint64_t>(m_listeningTimer.elapsed());
-    if(m_playerController->playState() == Player::PlayState::Playing) {
-        m_listeningTimer.restart();
-    }
-    else {
-        m_listeningTimer.invalidate();
+    if(m_currentEvent) {
+        m_currentEvent->lastCheckpointAt = currentTimeMs();
     }
 }
 
@@ -550,9 +495,6 @@ void PlaybackHistoryService::handlePlayState(Player::PlayState state, Player::Pl
     if(state == Player::PlayState::Playing) {
         if(!m_currentEvent && m_playerController->currentTrack().isValid()) {
             startEvent(m_playerController->currentPlaybackItemId(), m_playerController->currentTrack());
-        }
-        if(m_currentEvent && !m_listeningTimer.isValid()) {
-            m_listeningTimer.start();
         }
         return;
     }

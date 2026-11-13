@@ -195,6 +195,7 @@ void ListenBrainzService::loadSession()
     }
 
     settings.endGroup();
+    synchroniseAccount();
 }
 
 void ListenBrainzService::deleteSession()
@@ -217,6 +218,7 @@ void ListenBrainzService::deleteSession()
 
 void ListenBrainzService::logout()
 {
+    stopSubmissions();
     detailsRef().token.clear();
     saveSession();
 }
@@ -251,6 +253,10 @@ void ListenBrainzService::updateNowPlaying()
 
 void ListenBrainzService::submit()
 {
+    if(!synchroniseAccount()) {
+        return;
+    }
+
     const CacheItemList items = cache()->items();
     CacheItemList sentItems;
 

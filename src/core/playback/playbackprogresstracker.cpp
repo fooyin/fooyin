@@ -19,6 +19,7 @@
 
 #include "playbackprogresstracker.h"
 
+#include <core/player/playbacklisteningtracker.h>
 #include <utils/timeconstants.h>
 
 #include <algorithm>
@@ -65,18 +66,14 @@ void PlaybackProgressTracker::onTrackCommitted(uint64_t totalDurationMs, double 
 void PlaybackProgressTracker::updateDuration(uint64_t totalDurationMs, double playedThresholdFraction,
                                              uint64_t playedThresholdTimeMs)
 {
-    m_totalDuration   = totalDurationMs;
-    m_playedThreshold = 0;
-    if(m_totalDuration > 200) {
-        const auto playedThresholdFractionMs
-            = static_cast<uint64_t>(static_cast<double>(m_totalDuration - 200) * playedThresholdFraction);
-        m_playedThreshold = std::min(playedThresholdFractionMs, playedThresholdTimeMs);
-    }
+    m_totalDuration = totalDurationMs;
+    m_playedThreshold
+        = PlaybackListeningTracker::listeningThreshold(totalDurationMs, playedThresholdFraction, playedThresholdTimeMs);
 }
 
 bool PlaybackProgressTracker::restartTracking()
 {
-    if(m_totalDuration == 0 || m_trackingActive) {
+    if(m_trackingActive) {
         return false;
     }
 

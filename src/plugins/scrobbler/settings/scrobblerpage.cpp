@@ -28,6 +28,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -54,8 +55,12 @@ private:
     SettingsManager* m_settings;
 
     QCheckBox* m_scrobblingEnabled;
+    QCheckBox* m_sendNowPlaying;
     QLabel* m_delayLabel;
     QSpinBox* m_scrobbleDelay;
+
+    QLabel* m_streamModeLabel;
+    QComboBox* m_streamMode;
 
     QCheckBox* m_syncPlaybackStats;
 
@@ -76,8 +81,11 @@ private:
 ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_scrobblingEnabled{new QCheckBox(tr("Enable scrobbling"), this)}
+    , m_sendNowPlaying{new QCheckBox(tr("Send Now Playing updates"), this)}
     , m_delayLabel{new QLabel(tr("Scrobble delay") + ":"_L1, this)}
     , m_scrobbleDelay{new QSpinBox(this)}
+    , m_streamModeLabel{new QLabel(tr("Radio streams") + ":"_L1, this)}
+    , m_streamMode{new QComboBox(this)}
     , m_syncPlaybackStats{new QCheckBox(tr("Synchronise playback statistics"), this)}
     , m_filterScrobbles{new QCheckBox(tr("Filter scrobbles"), this)}
     , m_filterLabel{new QLabel(tr("Query") + ":"_L1, this)}
@@ -91,6 +99,10 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
     , m_sendAlbumArtist{new QCheckBox(tr("Album Artist"), this)}
     , m_albumArtistParam{new ScriptLineEdit(this)}
 {
+    m_streamMode->addItem(tr("Disabled"));
+    m_streamMode->addItem(tr("Now Playing only"));
+    m_streamMode->addItem(tr("Now Playing & scrobbling"));
+
     const QString delayTip = tr("Time to wait before submitting scrobbles");
 
     m_delayLabel->setToolTip(delayTip);
@@ -114,9 +126,12 @@ ScrobblerPageWidget::ScrobblerPageWidget(SettingsManager* settings)
 
     int row{0};
     generalLayout->addWidget(m_scrobblingEnabled, row++, 0, 1, 2);
+    generalLayout->addWidget(m_sendNowPlaying, row++, 0, 1, 2);
     generalLayout->addWidget(m_delayLabel, row, 0);
     generalLayout->addLayout(delayLayout, row++, 1);
-    generalLayout->setColumnStretch(1, 1);
+    generalLayout->addWidget(m_streamModeLabel, row, 0);
+    generalLayout->addWidget(m_streamMode, row++, 1);
+    generalLayout->setColumnStretch(2, 1);
 
     auto* syncGroup  = new QGroupBox(tr("Synchronisation"), this);
     auto* syncLayout = new QGridLayout(syncGroup);
@@ -172,7 +187,9 @@ void ScrobblerPageWidget::load()
 {
     m_scrobblingEnabled->setChecked(m_settings->value<Settings::Scrobbler::ScrobblingEnabled>());
     m_scrobbleDelay->setValue(m_settings->value<Settings::Scrobbler::ScrobblingDelay>());
+    m_sendNowPlaying->setChecked(m_settings->value<Settings::Scrobbler::SendNowPlaying>());
 
+    m_streamMode->setCurrentIndex(m_settings->value<Settings::Scrobbler::StreamMode>());
     m_syncPlaybackStats->setChecked(m_settings->value<Settings::Scrobbler::SyncPlaybackStats>());
 
     m_titleParam->setScript(m_settings->value<Settings::Scrobbler::TitleField>());
@@ -189,8 +206,13 @@ void ScrobblerPageWidget::load()
 
 void ScrobblerPageWidget::apply()
 {
+    if(!m_scrobblingEnabled->isChecked()) {
+        m_settings->set<Settings::Scrobbler::ScrobblingEnabled>(false);
+    }
+    m_settings->set<Settings::Scrobbler::SendNowPlaying>(m_sendNowPlaying->isChecked());
     m_settings->set<Settings::Scrobbler::ScrobblingEnabled>(m_scrobblingEnabled->isChecked());
     m_settings->set<Settings::Scrobbler::ScrobblingDelay>(m_scrobbleDelay->value());
+    m_settings->set<Settings::Scrobbler::StreamMode>(m_streamMode->currentIndex());
     m_settings->set<Settings::Scrobbler::SyncPlaybackStats>(m_syncPlaybackStats->isChecked());
 
     m_settings->set<Settings::Scrobbler::TitleField>(m_titleParam->text());
@@ -207,6 +229,8 @@ void ScrobblerPageWidget::reset()
 {
     m_settings->reset<Settings::Scrobbler::ScrobblingEnabled>();
     m_settings->reset<Settings::Scrobbler::ScrobblingDelay>();
+    m_settings->reset<Settings::Scrobbler::SendNowPlaying>();
+    m_settings->reset<Settings::Scrobbler::StreamMode>();
     m_settings->reset<Settings::Scrobbler::SyncPlaybackStats>();
 
     m_settings->reset<Settings::Scrobbler::TitleField>();
@@ -223,6 +247,9 @@ void ScrobblerPageWidget::updateWidgetState()
 {
     const bool enabled = m_scrobblingEnabled->isChecked();
 
+    m_sendNowPlaying->setEnabled(enabled);
+    m_streamModeLabel->setEnabled(enabled);
+    m_streamMode->setEnabled(enabled);
     m_delayLabel->setEnabled(enabled);
     m_scrobbleDelay->setEnabled(enabled);
     m_filterScrobbles->setEnabled(enabled);

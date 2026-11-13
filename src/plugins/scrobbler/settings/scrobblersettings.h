@@ -41,11 +41,20 @@ enum ScrobblerSettings : uint32_t
     ArtistField          = 8 | Type::String,
     AlbumArtistField     = 9 | Type::String,
     SyncPlaybackStats    = 10 | Type::Bool,
+    StreamMode           = 11 | Type::Int,
+    SendNowPlaying       = 12 | Type::Bool,
 };
 Q_ENUM_NS(ScrobblerSettings)
 } // namespace Settings::Scrobbler
 
 namespace Scrobbler {
+enum class StreamScrobbleMode : uint8_t
+{
+    Disabled = 0,
+    NowPlaying,
+    Scrobbling,
+};
+
 class ScrobblerSettings
 {
 public:
