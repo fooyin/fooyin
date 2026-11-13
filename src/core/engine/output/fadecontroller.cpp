@@ -221,6 +221,16 @@ bool FadeController::beginPauseFade(bool fadingEnabled, const Engine::FadingValu
     return true;
 }
 
+FadeController::FadeResult FadeController::finishPauseFade()
+{
+    if(m_state != FadeState::FadingToPause || m_activeTransitionId == 0) {
+        return {};
+    }
+
+    m_pipelineFader->faderFadeOut(0, 1.0, 0);
+    return handlePipelineFadeEvent(true, m_activeTransitionId);
+}
+
 bool FadeController::beginStopFade(bool fadingEnabled, const Engine::FadingValues& fadingValues, double /*volume*/,
                                    Engine::PlaybackState playbackState, uint64_t transportTransitionId)
 {

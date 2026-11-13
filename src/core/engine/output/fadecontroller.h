@@ -86,6 +86,9 @@ public:
     bool beginPauseFade(bool fadingEnabled, const Engine::FadingValues& fadingValues, double volume,
                         uint64_t transportTransitionId = 0);
 
+    //! Finish a pause fade when audio cannot advance it to completion.
+    FadeResult finishPauseFade();
+
     //! Begin stop fade-out if configured and currently playing.
     bool beginStopFade(bool fadingEnabled, const Engine::FadingValues& fadingValues, double volume,
                        Engine::PlaybackState playbackState, uint64_t transportTransitionId = 0);

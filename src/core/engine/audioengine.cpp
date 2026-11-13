@@ -1224,6 +1224,11 @@ void AudioEngine::pause()
         const uint64_t transitionId = beginTransportTransition();
         if(m_fadeController.beginPauseFade(m_fadingEnabled, m_fadingValues, m_volume, transitionId)) {
             setPhase(Playback::Phase::FadingToPause, PhaseChangeReason::TransportPauseFadeQueued);
+            const auto stream = m_decoder.activeStream();
+            if(m_inputBuffering.active || !stream || stream->readLimitReached()
+               || (stream->endOfInput() && stream->bufferEmpty())) {
+                applyFadeResult(m_fadeController.finishPauseFade());
+            }
             return;
         }
         clearTransportTransition();
@@ -2180,6 +2185,7 @@ void AudioEngine::startSeekCrossfade(uint64_t positionMs, int fadeOutDurationMs,
     }
 
     m_transitions.clearTrackEnding();
+    clearTrackEndLatch();
 
     if(wasDecoding || hasPlaybackState(Engine::PlaybackState::Playing)) {
         m_decoder.ensureDecodeTimerRunning();
@@ -2233,6 +2239,7 @@ void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId, int
 
     m_transitions.setSeekInProgress(true);
     m_transitions.clearTrackEnding();
+    clearTrackEndLatch();
     clearPendingAnalysisData();
 
     if(wasDecoding) {
@@ -2244,7 +2251,7 @@ void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId, int
         m_pipeline.cleanupOrphanImmediate();
     }
 
-    auto stream = m_decoder.activeStream();
+    const auto stream = m_decoder.activeStream();
     if(!stream) {
         m_transitions.setSeekInProgress(false);
         restorePhaseFromTransport();
@@ -2256,6 +2263,9 @@ void AudioEngine::performSimpleSeek(uint64_t positionMs, uint64_t requestId, int
     }
 
     const uint64_t seekPosMs = absoluteTrackPositionMs(positionMs, m_currentTrack.offset());
+    if(stream->state() == AudioStream::State::Stopped) {
+        m_pipeline.switchToStream(stream->id());
+    }
     m_pipeline.resetStreamForSeek(stream->id(), seekPosMs);
 
     m_decoder.seek(seekPosMs);
@@ -2569,6 +2579,7 @@ void AudioEngine::applyFadeResult(const FadeController::FadeResult& result)
 
 void AudioEngine::beginAudiblePauseCompletion(const uint64_t transportTransitionId)
 {
+    clearInputBufferingState(false);
     const auto outputSnapshot = m_pipeline.outputQueueSnapshot();
     const auto outputFormat   = m_pipeline.outputFormat();
 
@@ -3799,7 +3810,16 @@ void AudioEngine::handleTrackEndingSignals(const AudioStreamPtr& stream, uint64_
         const bool engineOwnedGaplessEnd
             = gaplessBoundaryMode && preparedGaplessActive && m_autoAdvanceState.boundaryAnchorSeen;
         const bool shouldFlushDspOnEnd = stream->endOfInput() && stream->bufferEmpty() && !engineOwnedGaplessEnd;
-        signalTrackEndOnce(shouldFlushDspOnEnd);
+        if(signalTrackEndOnce(shouldFlushDspOnEnd) && currentStreamFullyDrained) {
+            // The remaining audio may be too short to complete a fade, so finish through the normal drain
+            // path instead of waiting for its callback
+            if(m_fadeController.state() == FadeState::FadingToStop) {
+                stop();
+            }
+            else {
+                applyFadeResult(m_fadeController.finishPauseFade());
+            }
+        }
     }
 }
 
@@ -4270,6 +4290,7 @@ void AudioEngine::maybeUpdateInputBuffering(const char* reason)
 
     m_decoder.requestDecodeReserveMs(targetMs);
     m_decoder.ensureDecodeTimerRunning();
+    applyFadeResult(m_fadeController.finishPauseFade());
 }
 
 void AudioEngine::schedulePipelineWakeDrainTask()

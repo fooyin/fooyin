@@ -246,21 +246,33 @@ TEST(FadeControllerTest, LateCompletionAfterCancelForReinitIsIgnored)
 
 TEST(FadeControllerTest, PauseFadeCompletionArmsResumeFadeIn)
 {
-    FakePipeline pipeline;
-    FadeController controller{&pipeline};
+    for(const bool finishWithoutAudio : {false, true}) {
+        SCOPED_TRACE(finishWithoutAudio);
+        FakePipeline pipeline;
+        FadeController controller{&pipeline};
 
-    Engine::FadingValues values;
-    values.pause.out = 250;
-    values.pause.in  = 420;
+        Engine::FadingValues values;
+        values.pause.out = 250;
+        values.pause.in  = 420;
 
-    ASSERT_TRUE(controller.beginPauseFade(true, values, 0.75, 1));
-    const auto result = controller.handlePipelineFadeEvent(true, 1);
-    EXPECT_TRUE(result.pauseNow);
-    EXPECT_TRUE(controller.hasPendingResumeFadeIn());
+        ASSERT_TRUE(controller.beginPauseFade(true, values, 0.75, 1));
+        const auto result
+            = finishWithoutAudio ? controller.finishPauseFade() : controller.handlePipelineFadeEvent(true, 1);
+        EXPECT_TRUE(result.pauseNow);
+        EXPECT_EQ(result.transportTransitionId, 1);
+        EXPECT_TRUE(controller.hasPendingResumeFadeIn());
+        EXPECT_FALSE(controller.hasPendingFade());
+        EXPECT_FALSE(controller.handlePipelineFadeEvent(true, 1).pauseNow);
+        EXPECT_FALSE(controller.finishPauseFade().pauseNow);
+        if(finishWithoutAudio) {
+            EXPECT_EQ(pipeline.lastFadeOutDurationMs, 0);
+            EXPECT_FALSE(pipeline.fading);
+        }
 
-    EXPECT_TRUE(controller.applyPlayFade(Engine::PlaybackState::Playing, true, values, 0.75));
-    EXPECT_EQ(pipeline.lastFadeInDurationMs, 420);
-    EXPECT_FALSE(controller.hasPendingResumeFadeIn());
+        EXPECT_TRUE(controller.applyPlayFade(Engine::PlaybackState::Playing, true, values, 0.75));
+        EXPECT_EQ(pipeline.lastFadeInDurationMs, 420);
+        EXPECT_FALSE(controller.hasPendingResumeFadeIn());
+    }
 }
 
 TEST(FadeControllerTest, ResumeWithoutPauseFadeResetsFader)
