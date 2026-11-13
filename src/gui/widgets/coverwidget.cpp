@@ -123,7 +123,7 @@ CoverWidget::CoverWidget(ActionManager* actionManager, PlayerController* playerC
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &CoverWidget::reloadCover,
                      Qt::QueuedConnection);
     QObject::connect(m_coverProvider, &CoverProvider::placeholderChanged, this, [this]() {
-        m_noCover = m_coverProvider->placeholderCover(m_coverType);
+        updatePlaceholderCover();
         reloadCover();
     });
 
@@ -239,19 +239,23 @@ void CoverWidget::applyConfig(const ConfigData& config)
 
     m_fadeController->setDurationMs(m_config.fadeDurationMs);
     m_fadeController->setEnabled(m_config.fadeCoverChanges);
+
+    if(styleChanged || coverTypeChanged) {
+        updatePlaceholderCover();
+        if(styleChanged) {
+            m_fadeController->setPixmap(effectiveCover(m_cover));
+            stopCoverFade();
+        }
+    }
+
     updateDiscRotation();
-
     Q_EMIT configChanged();
-
     if(!m_fadeCoverChanges) {
         stopCoverFade();
     }
 
     if(coverTypeChanged || trackPreferenceChanged) {
         ++m_actionRequestId;
-        if(coverTypeChanged) {
-            m_noCover = m_coverProvider->placeholderCover(m_coverType);
-        }
         reloadCover();
         if(styleChanged) {
             rescaleCover();
@@ -424,6 +428,15 @@ void CoverWidget::saveLayoutData(QJsonObject& layout)
 void CoverWidget::loadLayoutData(const QJsonObject& layout)
 {
     applyConfig(configFromLayout(layout));
+}
+
+void CoverWidget::changeEvent(QEvent* event)
+{
+    FyWidget::changeEvent(event);
+    if(event->type() == QEvent::PaletteChange && m_config.style != CoverStyle::Cover) {
+        updatePlaceholderCover();
+        setCoverPixmap(m_cover);
+    }
 }
 
 void CoverWidget::resizeEvent(QResizeEvent* event)
@@ -712,8 +725,8 @@ QPixmap CoverWidget::effectiveCover(const QPixmap& cover) const
 QPixmap CoverWidget::scaledCover(const QPixmap& cover) const
 {
     if(m_config.style != CoverStyle::Cover) {
-        return Gui::renderDiscArtwork(effectiveCover(cover), contentsRect().size(), devicePixelRatioF(),
-                                      m_config.style);
+        return Gui::renderDiscArtwork(effectiveCover(cover), contentsRect().size(), devicePixelRatioF(), m_config.style,
+                                      palette().color(QPalette::Mid));
     }
 
     return Gui::scaleArtworkPixmap(effectiveCover(cover), contentsRect().size(), devicePixelRatioF(), m_artworkScaling,
@@ -857,6 +870,17 @@ void CoverWidget::setCoverPixmap(const QPixmap& cover)
     updateDiscRotation();
     m_fadeController->setPixmap(effectiveCover(cover));
     rescaleCover();
+}
+
+void CoverWidget::updatePlaceholderCover()
+{
+    if(m_config.style == CoverStyle::Cover) {
+        m_noCover = m_coverProvider->placeholderCover(m_coverType);
+    }
+    else {
+        m_noCover = QPixmap{1, 1};
+        m_noCover.fill(palette().color(QPalette::Mid));
+    }
 }
 
 void CoverWidget::handleSelectionChanged()

@@ -103,6 +103,7 @@ Q_SIGNALS:
     void requestArtworkRemoval(const Fooyin::TrackList& tracks, Fooyin::Track::Cover type);
 
 protected:
+    void changeEvent(QEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
@@ -126,6 +127,7 @@ private:
     void setFadeCoverChanges(bool enabled);
     void stopCoverFade();
     void setCoverPixmap(const QPixmap& cover);
+    void updatePlaceholderCover();
     void handleSelectionChanged();
 
     void performAction(CoverAction action);

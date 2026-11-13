@@ -1261,7 +1261,8 @@ void FilterDelegate::paintCoverFlowCaption(QPainter* painter, QStyleOptionViewIt
 QPixmap FilterDelegate::coverFlowPixmap(const QStyleOptionViewItem& option, const QModelIndex& index,
                                         CoverStyle style) const
 {
-    const QVariant decoration = index.data(Qt::DecorationRole);
+    const bool placeholder    = style != CoverStyle::Cover && index.data(FilterItem::IsPlaceholderCover).toBool();
+    const QVariant decoration = placeholder ? QVariant{} : index.data(Qt::DecorationRole);
     qint64 sourceKey{0};
     switch(decoration.userType()) {
         case QMetaType::QPixmap:
@@ -1279,27 +1280,29 @@ QPixmap FilterDelegate::coverFlowPixmap(const QStyleOptionViewItem& option, cons
 
     const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : 1.0;
     const auto mode = Gui::itemViewIconMode(option);
-    if(sourceKey == 0) {
+    if(sourceKey == 0 && !placeholder) {
         sourceKey = option.icon.cacheKey();
     }
 
-    const QString key = u"cover-%1-%2-%3-%4-%5-%6-%7-%8-%9-%10"_s.arg(decoration.userType())
-                            .arg(sourceKey)
-                            .arg(option.decorationSize.width())
-                            .arg(option.decorationSize.height())
-                            .arg(dpr)
-                            .arg(static_cast<int>(mode))
-                            .arg(QApplication::palette().cacheKey())
-                            .arg(QIcon::themeName())
-                            .arg(reinterpret_cast<quintptr>(QApplication::style()))
-                            .arg(static_cast<int>(style));
+    const QColor fallbackColour = option.palette.color(QPalette::Mid);
+    const QString key           = u"cover-%1-%2-%3-%4-%5-%6-%7-%8-%9-%10-%11"_s.arg(decoration.userType())
+                                      .arg(sourceKey)
+                                      .arg(option.decorationSize.width())
+                                      .arg(option.decorationSize.height())
+                                      .arg(dpr)
+                                      .arg(static_cast<int>(mode))
+                                      .arg(option.palette.cacheKey())
+                                      .arg(QIcon::themeName())
+                                      .arg(reinterpret_cast<quintptr>(QApplication::style()))
+                                      .arg(static_cast<int>(style))
+                                      .arg(fallbackColour.rgba());
     if(const auto* cached = m_coverFlowPixmaps.object(key)) {
         return *cached;
     }
 
-    QPixmap pixmap = option.icon.pixmap(option.decorationSize, dpr, mode);
+    QPixmap pixmap = placeholder ? QPixmap{} : option.icon.pixmap(option.decorationSize, dpr, mode);
     if(style != CoverStyle::Cover) {
-        pixmap = Gui::renderDiscArtwork(pixmap, option.decorationSize, dpr, style);
+        pixmap = Gui::renderDiscArtwork(pixmap, option.decorationSize, dpr, style, fallbackColour);
     }
     cacheCoverFlowPixmap(key, pixmap);
     return pixmap;

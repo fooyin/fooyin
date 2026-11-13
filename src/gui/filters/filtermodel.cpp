@@ -25,6 +25,7 @@
 #include <core/library/musiclibrary.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
+#include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guiutils.h>
 #include <gui/widgets/autoheaderview.h>
@@ -270,7 +271,7 @@ void FilterModelPrivate::coverUpdated(const Track& track)
             auto* parentItem = &m_nodes.at(parentKey);
 
             const QModelIndex nodeIndex = m_self->indexOfItem(parentItem);
-            Q_EMIT m_self->dataChanged(nodeIndex, nodeIndex, {Qt::DecorationRole});
+            Q_EMIT m_self->dataChanged(nodeIndex, nodeIndex, {Qt::DecorationRole, FilterItem::IsPlaceholderCover});
         }
     }
 }
@@ -370,7 +371,7 @@ void FilterModel::setIconSize(const QSize& size)
         return;
     }
 
-    p->dataUpdated({Qt::DecorationRole});
+    p->dataUpdated({Qt::DecorationRole, FilterItem::IsPlaceholderCover});
 }
 
 void FilterModel::setShowSummary(bool show)
@@ -396,7 +397,7 @@ void FilterModel::setShowSummary(bool show)
 void FilterModel::setShowDecoration(bool show)
 {
     if(std::exchange(p->m_showDecoration, show) != show) {
-        p->dataUpdated({Qt::DecorationRole, Qt::SizeHintRole});
+        p->dataUpdated({Qt::DecorationRole, FilterItem::IsPlaceholderCover, Qt::SizeHintRole});
     }
 }
 
@@ -411,7 +412,7 @@ void FilterModel::setShowLabels(bool show)
 void FilterModel::setCoverType(Track::Cover type)
 {
     if(std::exchange(p->m_coverType, type) != type) {
-        p->dataUpdated({Qt::DecorationRole});
+        p->dataUpdated({Qt::DecorationRole, FilterItem::IsPlaceholderCover});
     }
 }
 
@@ -419,7 +420,7 @@ void FilterModel::setCoverSource(std::optional<ArtworkSourcePreference> source)
 {
     if(std::exchange(p->m_coverSource, source) != source) {
         p->m_coverProvider->setSourcePreference(source);
-        p->dataUpdated({Qt::DecorationRole});
+        p->dataUpdated({Qt::DecorationRole, FilterItem::IsPlaceholderCover});
     }
 }
 
@@ -526,6 +527,15 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
                                                                    p->m_coverType);
                 }
                 return p->m_coverProvider->trackCoverThumbnail({}, p->m_decorationSize, p->m_coverType);
+            }
+            break;
+        case FilterItem::IsPlaceholderCover:
+            if(p->m_showDecoration) {
+                const int trackId = item->firstTrackId();
+                const Track track = trackId >= 0 ? p->trackForId(trackId) : Track{};
+                return p->m_coverProvider->repository()
+                    ->trackCoverThumbnail(track, p->m_decorationSize, p->m_coverType, p->m_coverSource)
+                    .isNull();
             }
             break;
         case FilterItem::CoverKey:

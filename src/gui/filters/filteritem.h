@@ -58,7 +58,8 @@ public:
         IconLabel,
         IconCaptionLines,
         RichColumn,
-        CoverKey
+        CoverKey,
+        IsPlaceholderCover
     };
 
     FilterItem() = default;

@@ -139,15 +139,21 @@ QPainterPath discArtworkPath(const QRectF& rect, CoverStyle style)
     return outline;
 }
 
-QPixmap renderDiscArtwork(const QPixmap& cover, const QSize& size, qreal dpr, CoverStyle style)
+QPixmap renderDiscArtwork(const QPixmap& cover, const QSize& size, qreal dpr, CoverStyle style,
+                          const QColor& fallbackColour)
 {
     const int diameter = std::min(size.width(), size.height());
     if(diameter <= 2) {
         return {};
     }
 
+    QPixmap source{cover};
+    if(source.isNull()) {
+        source = QPixmap{1, 1};
+        source.fill(fallbackColour);
+    }
     const QPixmap artwork
-        = scaleArtworkPixmap(cover, QSize{diameter, diameter}, dpr, ArtworkScaling::Fill, Qt::AlignCenter);
+        = scaleArtworkPixmap(source, QSize{diameter, diameter}, dpr, ArtworkScaling::Fill, Qt::AlignCenter);
     if(artwork.isNull()) {
         return {};
     }

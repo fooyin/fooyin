@@ -26,5 +26,6 @@
 
 namespace Fooyin::Gui {
 QPainterPath discArtworkPath(const QRectF& rect, CoverStyle style);
-QPixmap renderDiscArtwork(const QPixmap& cover, const QSize& size, qreal dpr, CoverStyle style);
+QPixmap renderDiscArtwork(const QPixmap& cover, const QSize& size, qreal dpr, CoverStyle style,
+                          const QColor& fallbackColour);
 } // namespace Fooyin::Gui
