@@ -120,7 +120,6 @@ void FilterView::changeEvent(QEvent* event)
 
     switch(event->type()) {
         case QEvent::FontChange:
-        case QEvent::PaletteChange:
         case QEvent::StyleChange:
             Q_EMIT displayChanged();
             break;

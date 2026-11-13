@@ -50,6 +50,7 @@ namespace Fooyin {
 class ActionManager;
 class AdvancedSettingsRegistry;
 class Application;
+class ArtworkPaletteController;
 class CoverRepository;
 class ConversionController;
 class Command;
@@ -177,6 +178,8 @@ private:
     void updateColourScheme() const;
     void scheduleThemeUpdate(bool refreshSystemBaseline = false);
     void applyTheme();
+    void updateArtworkPalette();
+    void publishAppStyle(const QPalette& palette);
     void handleSystemThemeChanged();
     bool setIconTheme() const;
     void updateApplicationIcon();
@@ -254,6 +257,7 @@ private:
     GuiStyleProvider* m_styleProvider;
     std::unique_ptr<AdvancedSettingsRegistry> m_advancedSettingsRegistry;
     CoverRepository* m_coverRepository;
+    ArtworkPaletteController* m_artworkPaletteController;
 
     GuiPluginContext m_guiPluginContext;
 
@@ -286,6 +290,7 @@ private:
     CoverProvider m_coverProvider;
 
     QBasicTimer m_themeUpdateTimer;
+    QPalette m_themePalette;
     bool m_themeUpdatePending;
     bool m_refreshSystemBaseline;
     bool m_applyingTheme;

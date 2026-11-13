@@ -128,7 +128,10 @@ CoverWidget::CoverWidget(ActionManager* actionManager, PlayerController* playerC
     });
 
     m_settings->subscribe<Settings::Gui::IconTheme>(this, &CoverWidget::reloadCover);
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &CoverWidget::reloadCover);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this]() {
+        updatePlaceholderCover();
+        setCoverPixmap(m_cover);
+    });
 
     applyConfig(defaultConfig());
     reloadCover();

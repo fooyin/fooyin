@@ -25,6 +25,7 @@
 #include "filterpipeline.h"
 #include "filterrows.h"
 #include "filterwidget.h"
+#include "guistyleutils.h"
 #include "tracklistwidget.h"
 
 #include <core/coresettings.h>
@@ -367,7 +368,12 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, ActionM
     , m_columnRegistry{new FilterColumnRegistry(settings, m_self)}
 {
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(m_self, [this]() { scheduleAllRecomputes(); });
-    m_styleProvider->subscribe(m_self, [this]() { scheduleAllRecomputes(); });
+    m_styleProvider->subscribe(m_self,
+                               [this, tracker = Gui::StyleChangeTracker{}](const ResolvedAppStyle& style) mutable {
+                                   if(tracker.update(style, {u"Fooyin::Filters::FilterView"_s}).fonts) {
+                                       scheduleAllRecomputes();
+                                   }
+                               });
 
     if(m_libraryManager) {
         QObject::connect(m_libraryManager, &LibraryManager::librariesChanged, m_self,

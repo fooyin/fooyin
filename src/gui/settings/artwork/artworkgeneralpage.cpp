@@ -20,10 +20,14 @@
 #include "artworkgeneralpage.h"
 
 #include "internalguisettings.h"
+#include "theme/artworkpalettecontroller.h"
 
 #include <gui/coverrepository.h>
 #include <gui/guiconstants.h>
 #include <gui/guipaths.h>
+#include <gui/guisettings.h>
+#include <gui/guiutils.h>
+#include <gui/widgets/hintlabel.h>
 #include <gui/widgets/scriptlineedit.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
@@ -53,6 +57,7 @@ public:
     void reset() override;
 
 private:
+    void updateArtworkColourOptions();
     void updateCacheSize();
 
     SettingsManager* m_settings;
@@ -60,6 +65,9 @@ private:
 
     QRadioButton* m_preferDirectory;
     QRadioButton* m_preferEmbedded;
+
+    QButtonGroup* m_artworkColourModes;
+    QLabel* m_artworkColourHint;
 
     ScriptLineEdit* m_thumbnailGroupScript;
     QSpinBox* m_pixmapCache;
@@ -72,6 +80,8 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings, CoverRepository*
     , m_coverRepository{coverRepository}
     , m_preferDirectory{new QRadioButton(tr("Prefer directory artwork"), this)}
     , m_preferEmbedded{new QRadioButton(tr("Prefer embedded artwork"), this)}
+    , m_artworkColourModes{new QButtonGroup(this)}
+    , m_artworkColourHint{new HintLabel(this)}
     , m_thumbnailGroupScript{new ScriptLineEdit(this)}
     , m_pixmapCache{new QSpinBox(this)}
     , m_coverFlowCache{new QSpinBox(this)}
@@ -86,6 +96,33 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings, CoverRepository*
 
     sourceLayout->addWidget(m_preferDirectory);
     sourceLayout->addWidget(m_preferEmbedded);
+
+    auto* artworkColoursGroupBox = new QGroupBox(tr("Artwork colours"), this);
+    auto* artworkColoursLayout   = new QVBoxLayout(artworkColoursGroupBox);
+    auto* offMode                = new QRadioButton(tr("&Off"), artworkColoursGroupBox);
+    auto* accentMode             = new QRadioButton(tr("&Accent"), artworkColoursGroupBox);
+    auto* tonalMode              = new QRadioButton(tr("&Tonal"), artworkColoursGroupBox);
+
+    m_artworkColourModes->addButton(offMode, static_cast<int>(ArtworkColourMode::Off));
+    m_artworkColourModes->addButton(accentMode, static_cast<int>(ArtworkColourMode::Accent));
+    m_artworkColourModes->addButton(tonalMode, static_cast<int>(ArtworkColourMode::Tonal));
+    offMode->setChecked(true);
+    offMode->setToolTip(tr("Off uses the selected theme’s colours."));
+    accentMode->setToolTip(tr("Accent changes highlights and links."));
+    tonalMode->setToolTip(tr("Tonal changes highlights and links, and tints backgrounds."));
+    m_artworkColourHint->setWordWrap(true);
+
+    artworkColoursLayout->addWidget(offMode);
+    artworkColoursLayout->addWidget(accentMode);
+    artworkColoursLayout->addWidget(tonalMode);
+    artworkColoursLayout->addWidget(m_artworkColourHint);
+
+    QWidget::setTabOrder(m_preferEmbedded, offMode);
+    QWidget::setTabOrder(offMode, accentMode);
+    QWidget::setTabOrder(accentMode, tonalMode);
+    QWidget::setTabOrder(tonalMode, m_thumbnailGroupScript);
+
+    m_settings->subscribe<Settings::Gui::Style>(this, &ArtworkPageWidget::updateArtworkColourOptions);
 
     auto* thumbnailsGroupBox = new QGroupBox(tr("Thumbnails"), this);
     auto* thumbnailsLayout   = new QGridLayout(thumbnailsGroupBox);
@@ -136,13 +173,23 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings, CoverRepository*
     auto* layout = new QGridLayout(this);
     row          = 0;
     layout->addWidget(sourceGroupBox, row++, 0);
+    layout->addWidget(artworkColoursGroupBox, row++, 0);
     layout->addWidget(thumbnailsGroupBox, row++, 0);
     layout->addWidget(cacheGroupBox, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
+    updateArtworkColourOptions();
 }
 
 void ArtworkPageWidget::load()
 {
+    const int artworkMode = m_settings->value<Settings::Gui::Internal::ArtworkColours>();
+    auto* mode            = m_artworkColourModes->button(artworkMode);
+    if(!mode) {
+        mode = m_artworkColourModes->button(static_cast<int>(ArtworkColourMode::Off));
+    }
+    mode->setChecked(true);
+    updateArtworkColourOptions();
+
     const auto sourcePref = static_cast<ArtworkSourcePreference>(
         m_settings->value<Settings::Gui::Internal::TrackCoverSourcePreference>());
     if(sourcePref == ArtworkSourcePreference::PreferEmbedded) {
@@ -160,6 +207,8 @@ void ArtworkPageWidget::load()
 
 void ArtworkPageWidget::apply()
 {
+    m_settings->set<Settings::Gui::Internal::ArtworkColours>(m_artworkColourModes->checkedId());
+
     const ArtworkSourcePreference sourcePref = m_preferEmbedded->isChecked() ? ArtworkSourcePreference::PreferEmbedded
                                                                              : ArtworkSourcePreference::PreferDirectory;
 
@@ -171,10 +220,28 @@ void ArtworkPageWidget::apply()
 
 void ArtworkPageWidget::reset()
 {
+    m_settings->reset<Settings::Gui::Internal::ArtworkColours>();
     m_settings->reset<Settings::Gui::Internal::TrackCoverSourcePreference>();
     m_settings->reset<Settings::Gui::Internal::TrackCoverThumbnailGroupScript>();
     m_settings->reset<Settings::Gui::Internal::PixmapCacheSize>();
     m_settings->reset<Settings::Gui::Internal::CoverFlowCacheSize>();
+}
+
+void ArtworkPageWidget::updateArtworkColourOptions()
+{
+    QString styleName = m_settings->value<Settings::Gui::Style>();
+    if(styleName.isEmpty()) {
+        styleName = m_settings->value<Settings::Gui::Internal::SystemStyle>();
+    }
+
+    const bool supported = Gui::styleSupportsCustomPalette(styleName);
+    for(auto* button : m_artworkColourModes->buttons()) {
+        button->setEnabled(supported);
+    }
+    m_artworkColourHint->setText(
+        supported ? tr("The selected theme supplies the base appearance and is restored when playback stops or "
+                       "artwork is missing.")
+                  : tr("Artwork colours are only supported with the Fusion style on Windows."));
 }
 
 void ArtworkPageWidget::updateCacheSize()

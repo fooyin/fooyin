@@ -6067,9 +6067,27 @@ void ExpandedTreeView::initViewItemOption(QStyleOptionViewItem* option) const
 
 void ExpandedTreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles)
 {
+    if(!roles.empty() && std::ranges::all_of(roles, [](int role) {
+           return role == Qt::ForegroundRole || role == Qt::BackgroundRole;
+       })) {
+        viewport()->update();
+        return;
+    }
+
     p->m_view->dataChanged(topLeft, bottomRight, roles);
 
-    QAbstractItemView::dataChanged(topLeft, bottomRight, roles);
+    const bool appearanceOnly = !roles.empty() && std::ranges::all_of(roles, [](int role) {
+        return role == Qt::DecorationRole || role == Qt::FontRole || role == Qt::TextAlignmentRole
+            || role == Qt::SizeHintRole || role == Qt::ForegroundRole || role == Qt::BackgroundRole;
+    });
+    if(appearanceOnly) {
+        updateEditorGeometries();
+        updateGeometry();
+        viewport()->update();
+    }
+    else {
+        QAbstractItemView::dataChanged(topLeft, bottomRight, roles);
+    }
 
     if(!p->m_extendSpansIntoParents) {
         return;

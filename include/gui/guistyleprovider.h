@@ -51,23 +51,25 @@ public:
     {
         using CallbackType = std::remove_cvref_t<Callback>;
 
-        auto wrapper = [cb = std::forward<Callback>(callback)](const ResolvedAppStyle& style) mutable {
+        // Replay and later notifications must share the same callback state
+        auto cb      = std::make_shared<CallbackType>(std::forward<Callback>(callback));
+        auto wrapper = [cb](const ResolvedAppStyle& style) {
             if constexpr(std::invocable<CallbackType&, const ResolvedAppStyle&>) {
-                std::invoke(cb, style);
+                std::invoke(*cb, style);
             }
             else {
-                std::invoke(cb);
+                std::invoke(*cb);
             }
         };
 
         QObject::connect(this, &GuiStyleProvider::styleChanged, context, std::move(wrapper));
 
         if(replayCurrent && m_isResolved) {
-            if constexpr(std::invocable<Callback&, const ResolvedAppStyle&>) {
-                std::invoke(callback, m_style);
+            if constexpr(std::invocable<CallbackType&, const ResolvedAppStyle&>) {
+                std::invoke(*cb, m_style);
             }
             else {
-                std::invoke(callback);
+                std::invoke(*cb);
             }
         }
     }

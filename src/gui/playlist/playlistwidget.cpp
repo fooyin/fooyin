@@ -20,6 +20,7 @@
 #include "playlistwidget.h"
 
 #include "contextmenuids.h"
+#include "guistyleutils.h"
 #include "internalguisettings.h"
 #include "playlist/presetregistry.h"
 #include "playlistcolumnregistry.h"
@@ -2095,10 +2096,19 @@ void PlaylistWidget::setupConnections()
     QObject::connect(m_resetThrottler, &SignalThrottler::triggered, this, &PlaylistWidget::resetModel);
     // clang-format on
 
-    m_styleProvider->subscribe(this, [this] {
-        refreshViewStyle();
-        resetModelThrottled();
-    });
+    m_styleProvider->subscribe(
+        this, [this, tracker = Gui::StyleChangeTracker{}](const ResolvedAppStyle& style) mutable {
+            const auto changes = tracker.update(style, {u"Fooyin::PlaylistView"_s, u"Fooyin::PlaylistHeaderView"_s});
+            if(changes.fonts) {
+                refreshViewStyle();
+                resetModelThrottled();
+            }
+            else if(changes.palette) {
+                Gui::refreshItemViewPalette(m_playlistView, style.palette);
+                m_playlistView->viewport()->update();
+                m_header->viewport()->update();
+            }
+        });
 
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this,
                      &PlaylistWidget::handleColumnRemoved);

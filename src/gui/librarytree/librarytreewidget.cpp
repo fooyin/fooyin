@@ -20,6 +20,7 @@
 #include "librarytreewidget.h"
 
 #include "contextmenuids.h"
+#include "guistyleutils.h"
 #include "internalguisettings.h"
 #include "librarytree/librarytreecontroller.h"
 #include "librarytreeconfigwidget.h"
@@ -823,11 +824,6 @@ void LibraryTreeWidget::setupConnections()
     QObject::connect(m_model, &LibraryTreeModel::modelLoaded, this, [this]() { restoreState(m_pendingState); });
     QObject::connect(m_model, &LibraryTreeModel::modelResetFinished, this,
                      [this]() { restoreState(std::exchange(m_pendingResetState, {}), true); });
-    QObject::connect(m_libraryTree, &LibraryTreeView::displayAboutToChange, this, [this]() {
-        if(m_pendingResetState.isEmpty()) {
-            m_pendingResetState = saveState();
-        }
-    });
 
     QObject::connect(m_libraryTree, &LibraryTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { handleDoubleClick(index); });
@@ -896,14 +892,24 @@ void LibraryTreeWidget::setupConnections()
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
                      [this](auto* playlist) { activePlaylistChanged(playlist); });
 
-    m_styleProvider->subscribe(this, [this](const ResolvedAppStyle& resolvedStyle) {
-        const bool initialStyle = !std::exchange(m_styleInitialised, true);
-        m_libraryTree->setViewPalette(resolvedStyle.palette);
-        m_model->resetPalette();
-        if(initialStyle) {
-            reset();
-        }
-    });
+    m_styleProvider->subscribe(
+        this, [this, tracker = Gui::StyleChangeTracker{}](const ResolvedAppStyle& resolvedStyle) mutable {
+            const auto changes      = tracker.update(resolvedStyle, {u"Fooyin::LibraryTreeView"_s});
+            const bool initialStyle = !std::exchange(m_styleInitialised, true);
+            if(changes.palette) {
+                m_libraryTree->setViewPalette(resolvedStyle.palette);
+                m_model->resetPalette();
+            }
+            if(initialStyle) {
+                reset();
+            }
+            else if(changes.fonts) {
+                if(m_pendingResetState.isEmpty()) {
+                    m_pendingResetState = saveState();
+                }
+                m_model->refreshText();
+            }
+        });
 
     m_settings->subscribe<Settings::Core::UseVariousForCompilations>(this, [this]() { reset(); });
 

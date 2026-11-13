@@ -271,7 +271,15 @@ LyricsWidget::LyricsWidget(const CorePluginContext& core, LyricsPlaybackService*
     auto* subscription = m_scriptContext->subscribe(this);
     subscription->setDependencies({.sources = {m_lyricsService->dataSource()}, .unclassified = false});
 
-    m_styleProvider->subscribe(this, [this]() { applyConfig(m_config); });
+    m_styleProvider->subscribe(this, [this]() {
+        m_model->setColours(m_config.colours.isValid() ? m_config.colours.value<Colours>() : Colours{});
+        m_model->setFonts(m_config.baseFont, m_config.lineFont, m_config.wordLineFont, m_config.wordFont);
+        updateViewportPadding();
+        if(!m_currentLyrics.isValid() && m_currentTrack.isValid()) {
+            m_lyricsView->setDisplayString(noLyricsDisplayText(m_currentTrack));
+        }
+        m_lyricsView->viewport()->update();
+    });
 
     syncLyrics();
 }

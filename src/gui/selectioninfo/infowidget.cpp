@@ -19,6 +19,7 @@
 
 #include "infowidget.h"
 
+#include "guistyleutils.h"
 #include "infodelegate.h"
 #include "infomodel.h"
 #include "infoview.h"
@@ -184,10 +185,19 @@ InfoPanel::InfoPanel(TrackList tracks, LibraryManager* libraryManager, ActionMan
     m_view->header()->setSectionResizeMode(1, QHeaderView::Fixed);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { queueViewReset(); });
 
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
-        const auto resolvedStyle = var.value<ResolvedAppStyle>();
-        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
-    });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(
+        this, [this, tracker = Gui::StyleChangeTracker{m_settings->value<Settings::Gui::ResolvedAppStyle>()
+                                                           .value<ResolvedAppStyle>()}](const QVariant& var) mutable {
+            const auto resolvedStyle = var.value<ResolvedAppStyle>();
+            const auto changes       = tracker.update(resolvedStyle, {u"QAbstractItemView"_s, u"QHeaderView"_s});
+            if(changes.fonts) {
+                Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+            }
+            else if(changes.palette) {
+                Gui::refreshItemViewPalette(m_view, resolvedStyle.palette);
+                m_view->viewport()->update();
+            }
+        });
 
     setupActions();
     loadPersistentSettings();
@@ -245,10 +255,19 @@ InfoPanel::InfoPanel(Application* app, ActionManager* actionManager, TrackSelect
 
     setupActions();
 
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
-        const auto resolvedStyle = var.value<ResolvedAppStyle>();
-        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
-    });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(
+        this, [this, tracker = Gui::StyleChangeTracker{m_settings->value<Settings::Gui::ResolvedAppStyle>()
+                                                           .value<ResolvedAppStyle>()}](const QVariant& var) mutable {
+            const auto resolvedStyle = var.value<ResolvedAppStyle>();
+            const auto changes       = tracker.update(resolvedStyle, {u"QAbstractItemView"_s, u"QHeaderView"_s});
+            if(changes.fonts) {
+                Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+            }
+            else if(changes.palette) {
+                Gui::refreshItemViewPalette(m_view, resolvedStyle.palette);
+                m_view->viewport()->update();
+            }
+        });
 
     resetModel();
 }

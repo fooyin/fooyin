@@ -126,7 +126,6 @@ void LibraryTreeView::changeEvent(QEvent* event)
 
     switch(event->type()) {
         case QEvent::FontChange:
-        case QEvent::PaletteChange:
         case QEvent::StyleChange:
             Q_EMIT displayAboutToChange();
             break;
@@ -138,7 +137,6 @@ void LibraryTreeView::changeEvent(QEvent* event)
 
     switch(event->type()) {
         case QEvent::FontChange:
-        case QEvent::PaletteChange:
         case QEvent::StyleChange:
             Q_EMIT displayChanged();
             break;

@@ -68,6 +68,7 @@ public:
     ~LibraryTreeModel() override;
 
     void resetPalette();
+    void refreshText();
     void setRowHeight(int height);
     void setPlayingRowStyle(const QString& font, const QColor& colour);
     void setSummaryNodeConfig(bool show, const QString& title);

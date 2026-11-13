@@ -20,6 +20,7 @@
 #include "filterexpansionmodel.h"
 
 #include <gui/guiconstants.h>
+#include <gui/guiutils.h>
 #include <gui/iconloader.h>
 #include <utils/datastream.h>
 
@@ -48,7 +49,11 @@ QVariant ExpansionTrackModel::data(const QModelIndex& index, int role) const
         case Qt::FontRole:
             return row.font ? QVariant::fromValue(*row.font) : QVariant{};
         case Qt::BackgroundRole:
-            return row.background.isValid() ? QVariant::fromValue(row.background) : QVariant{};
+            if(row.background.isValid()) {
+                return row.background;
+            }
+            return row.playingIcon != ScriptPlayingIcon::None ? QVariant::fromValue(Gui::defaultPlayingRowColour())
+                                                              : QVariant{};
         case InlineEditorsRole:
             return QVariant::fromValue(row.inlineEditors);
         case LayoutRole:

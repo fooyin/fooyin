@@ -361,6 +361,7 @@ QImage readImageOriginal(QByteArray data)
 struct CoverLoader
 {
     QString key;
+    uint64_t requestSequence{0};
     Track track;
     Track::Cover type;
     ArtworkSourcePreference sourcePreference{ArtworkSourcePreference::PreferDirectory};
@@ -896,10 +897,11 @@ QFuture<QPixmap> CoverRepositoryPrivate::requestPixmap(const CoverRequestKey& re
 
     QueuedPixmapRequest request{
         .key = requestKey, .loader = loader, .priority = priority, .sequence = pendingRequest.sequence};
+    request.loader.requestSequence = request.sequence;
     m_pendingPixmapRequests.emplace(requestKey, std::move(pendingRequest));
 
     if(loader.isThumb) {
-        auto cachedResult = QtConcurrent::run(&m_thumbnailCachePool, [loader]() {
+        auto cachedResult = QtConcurrent::run(&m_thumbnailCachePool, [loader = request.loader]() {
             CoverLoader result{loader};
             result.cover = loadCachedThumbnail(loader);
             return result;
@@ -932,7 +934,7 @@ QFuture<QPixmap> CoverRepositoryPrivate::requestPixmap(const CoverRequestKey& re
 void CoverRepositoryPrivate::finishPixmapRequest(const CoverRequestKey& requestKey, const CoverLoader& result)
 {
     const auto pendingIt = m_pendingPixmapRequests.find(requestKey);
-    if(pendingIt == m_pendingPixmapRequests.cend()) {
+    if(pendingIt == m_pendingPixmapRequests.cend() || pendingIt->second.sequence != result.requestSequence) {
         processPixmapQueue();
         return;
     }
@@ -990,14 +992,14 @@ void CoverRepositoryPrivate::finishPixmapRequestFromLocalLoad(const CoverRequest
 void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& requestKey, const CoverLoader& loader,
                                                   const CoverLoader& remoteLoader, std::vector<QUrl> urls, size_t index)
 {
-    if(index >= urls.size()) {
-        finishPixmapRequestFromLocalLoad(requestKey, loader);
+    const auto pendingIt = m_pendingPixmapRequests.find(requestKey);
+    if(pendingIt == m_pendingPixmapRequests.end() || pendingIt->second.sequence != loader.requestSequence) {
+        finishActivePixmapRequest(requestKey, loader);
         return;
     }
 
-    const auto pendingIt = m_pendingPixmapRequests.find(requestKey);
-    if(pendingIt == m_pendingPixmapRequests.end()) {
-        finishActivePixmapRequest(requestKey, {});
+    if(index >= urls.size()) {
+        finishPixmapRequestFromLocalLoad(requestKey, loader);
         return;
     }
 
@@ -1007,8 +1009,9 @@ void CoverRepositoryPrivate::requestRemoteArtwork(const CoverRequestKey& request
         url, m_self,
         [this, requestKey, loader, remoteLoader, urls = std::move(urls), index](std::optional<QByteArray> data,
                                                                                 const QString& error) mutable {
-            if(!m_pendingPixmapRequests.contains(requestKey)) {
-                finishActivePixmapRequest(requestKey, {});
+            const auto pending = m_pendingPixmapRequests.find(requestKey);
+            if(pending == m_pendingPixmapRequests.end() || pending->second.sequence != loader.requestSequence) {
+                finishActivePixmapRequest(requestKey, loader);
                 return;
             }
 

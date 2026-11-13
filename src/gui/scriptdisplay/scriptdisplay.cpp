@@ -19,6 +19,7 @@
 
 #include "scriptdisplay.h"
 
+#include "guistyleutils.h"
 #include "scriptdisplayconfigdialog.h"
 #include "scripting/scriptcommandhandler.h"
 
@@ -181,7 +182,17 @@ ScriptDisplay::ScriptDisplay(Application* core, TrackSelectionController* trackS
     m_settings->subscribe<Settings::Gui::RatingFullStarSymbol>(this, &ScriptDisplay::updateText);
     m_settings->subscribe<Settings::Gui::RatingHalfStarSymbol>(this, &ScriptDisplay::updateText);
     m_settings->subscribe<Settings::Gui::RatingEmptyStarSymbol>(this, &ScriptDisplay::updateText);
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, &ScriptDisplay::updateText);
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(
+        this, [this, tracker = Gui::StyleChangeTracker{m_settings->value<Settings::Gui::ResolvedAppStyle>()
+                                                           .value<ResolvedAppStyle>()}](const QVariant& var) mutable {
+            const auto changes = tracker.update(var.value<ResolvedAppStyle>(), {u"Fooyin::ScriptDisplay"_s});
+            if(changes.fonts) {
+                updateText();
+            }
+            else if(changes.palette) {
+                m_text->viewport()->update();
+            }
+        });
 
     QObject::connect(m_text, &QTextBrowser::anchorClicked, this,
                      [this](const QUrl& url) { activateLink(url.toString()); });

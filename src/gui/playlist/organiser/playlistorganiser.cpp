@@ -19,6 +19,7 @@
 
 #include "playlistorganiser.h"
 
+#include "guistyleutils.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/presetregistry.h"
 #include "playlistorganiserconfigwidget.h"
@@ -139,6 +140,17 @@ public:
     explicit OrganiserTreeView(QWidget* parent = nullptr)
         : QTreeView(parent)
     { }
+
+    void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) override
+    {
+        if(!roles.empty() && std::ranges::all_of(roles, [](int role) {
+               return role == Qt::ForegroundRole || role == Qt::BackgroundRole;
+           })) {
+            viewport()->update();
+            return;
+        }
+        QTreeView::dataChanged(topLeft, bottomRight, roles);
+    }
 
 protected:
     void mousePressEvent(QMouseEvent* event) override
@@ -325,11 +337,18 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::playlistsLoaded, this,
                      [this]() { selectCurrentPlaylist(); });
 
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this]() {
-        applyConfig(m_config);
-        m_organiserTree->doItemsLayout();
-        m_organiserTree->viewport()->update();
-    });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(
+        this, [this, tracker = Gui::StyleChangeTracker{m_settings->value<Settings::Gui::ResolvedAppStyle>()
+                                                           .value<ResolvedAppStyle>()}](const QVariant& var) mutable {
+            const auto changes = tracker.update(var.value<ResolvedAppStyle>(), {u"QAbstractItemView"_s});
+            if(changes.palette) {
+                applyConfig(m_config);
+                m_organiserTree->viewport()->update();
+            }
+            if(changes.fonts) {
+                m_organiserTree->doItemsLayout();
+            }
+        });
 
     if(m_model->restoreModel(m_settings->fileValue(OrganiserModel).toByteArray())) {
         const auto state = m_settings->fileValue(OrganiserState).toByteArray();

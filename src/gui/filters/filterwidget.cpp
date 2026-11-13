@@ -28,6 +28,7 @@
 #include "filteritem.h"
 #include "filtermodel.h"
 #include "filterview.h"
+#include "guistyleutils.h"
 #include "internalguisettings.h"
 
 #include <core/coresettings.h>
@@ -1568,11 +1569,20 @@ void FilterWidget::setupConnections()
                          refreshExpansionScripts({});
                      });
 
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
-        const auto resolvedStyle = var.value<ResolvedAppStyle>();
-        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
-        scheduleExpansionUpdate();
-    });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(
+        this, [this, tracker = Gui::StyleChangeTracker{m_settings->value<Settings::Gui::ResolvedAppStyle>()
+                                                           .value<ResolvedAppStyle>()}](const QVariant& var) mutable {
+            const auto resolvedStyle = var.value<ResolvedAppStyle>();
+            const auto changes       = tracker.update(resolvedStyle, {u"Fooyin::Filters::FilterView"_s});
+            if(changes.fonts) {
+                Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+                scheduleExpansionUpdate();
+            }
+            else if(changes.palette) {
+                Gui::refreshItemViewPalette(m_view, resolvedStyle.palette);
+                m_view->viewport()->update();
+            }
+        });
 
     m_settings->subscribe<Settings::Gui::TrackEditorAppearance>(this, [this]() { refreshExpansionScripts({}); });
 
@@ -1925,9 +1935,6 @@ ExpansionRequest FilterWidget::expansionRequest(std::shared_ptr<const TrackList>
         }
     }
     request.playingRowColour = QColor{m_config.expansionPlayingRowColour};
-    if(!request.playingRowColour.isValid()) {
-        request.playingRowColour = Gui::defaultPlayingRowColour();
-    }
 
     if(m_player) {
         request.queue = m_player->playbackQueue().tracks();

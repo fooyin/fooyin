@@ -20,6 +20,7 @@
 #include "queueviewer.h"
 
 #include "contextmenuids.h"
+#include "guistyleutils.h"
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
 #include "queueviewerconfigwidget.h"
@@ -656,10 +657,19 @@ void QueueViewer::setupConnections()
     });
     QObject::connect(m_view, &QAbstractItemView::doubleClicked, this, &QueueViewer::handleQueueDoubleClicked);
 
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
-        const auto resolvedStyle = var.value<ResolvedAppStyle>();
-        Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
-    });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(
+        this, [this, tracker = Gui::StyleChangeTracker{m_settings->value<Settings::Gui::ResolvedAppStyle>()
+                                                           .value<ResolvedAppStyle>()}](const QVariant& var) mutable {
+            const auto resolvedStyle = var.value<ResolvedAppStyle>();
+            const auto changes       = tracker.update(resolvedStyle, {u"QAbstractItemView"_s, u"QHeaderView"_s});
+            if(changes.fonts) {
+                Gui::updateItemViewStyle(m_view, resolvedStyle.palette);
+            }
+            else if(changes.palette) {
+                Gui::refreshItemViewPalette(m_view, resolvedStyle.palette);
+                m_view->viewport()->update();
+            }
+        });
     m_settings->subscribe<Settings::Gui::PlaybackQueueFollowCurrent>(this, [this](bool enabled) {
         if(enabled) {
             scrollToCurrentTrack();

@@ -23,6 +23,7 @@
 #include "dirdelegate.h"
 #include "dirproxymodel.h"
 #include "dirtree.h"
+#include "guistyleutils.h"
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
 
@@ -357,12 +358,21 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
     QObject::connect(
         m_proxyModel, &QAbstractItemModel::modelReset, this, [this]() { handleModelReset(); }, Qt::QueuedConnection);
 
-    settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this](const QVariant& var) {
-        const auto resolvedStyle = var.value<ResolvedAppStyle>();
-        Gui::refreshItemViewPalette(m_dirTree, resolvedStyle.palette);
-        m_proxyModel->resetPalette();
-        Gui::updateItemViewStyle(m_dirTree, resolvedStyle.palette);
-    });
+    settings->subscribe<Settings::Gui::ResolvedAppStyle>(
+        this,
+        [this, tracker
+               = Gui::StyleChangeTracker{settings->value<Settings::Gui::ResolvedAppStyle>().value<ResolvedAppStyle>()}](
+            const QVariant& var) mutable {
+            const auto resolvedStyle = var.value<ResolvedAppStyle>();
+            const auto changes       = tracker.update(resolvedStyle, {u"QAbstractItemView"_s, u"QHeaderView"_s});
+            if(changes.palette) {
+                Gui::refreshItemViewPalette(m_dirTree, resolvedStyle.palette);
+                m_proxyModel->resetPalette();
+            }
+            if(changes.fonts) {
+                Gui::updateItemViewStyle(m_dirTree, resolvedStyle.palette);
+            }
+        });
 
     const auto updateDestinations = [this]() {
         const auto* playlist   = m_playlistInteractor->playlistController()->currentPlaylist();

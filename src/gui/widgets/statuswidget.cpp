@@ -19,6 +19,7 @@
 
 #include "statuswidget.h"
 
+#include "guistyleutils.h"
 #include "internalguisettings.h"
 
 #include <core/application.h>
@@ -229,10 +230,19 @@ void StatusWidgetPrivate::setupConnections()
     m_settings->subscribe<Settings::Gui::ApplicationIcon>(this, refreshApplicationIcon);
     m_settings->subscribe<Settings::Gui::CustomApplicationIcon>(this, refreshApplicationIcon);
 
-    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(this, [this]() {
-        updatePlayingText();
-        updateSelectionText();
-    });
+    m_settings->subscribe<Settings::Gui::ResolvedAppStyle>(
+        this, [this, tracker = Gui::StyleChangeTracker{m_settings->value<Settings::Gui::ResolvedAppStyle>()
+                                                           .value<ResolvedAppStyle>()}](const QVariant& var) mutable {
+            const auto changes = tracker.update(var.value<ResolvedAppStyle>(), {u"Fooyin::StatusLabel"_s});
+            if(changes.fonts) {
+                updatePlayingText();
+                updateSelectionText();
+            }
+            else if(changes.palette) {
+                m_playingText->update();
+                m_selectionText->update();
+            }
+        });
     m_settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(this, [this](bool) { updateActionVisibility(); });
     m_settings->subscribe<Settings::Gui::Internal::StatusShowSelection>(this, [this]() {
         updateSelectionVisibility();

@@ -151,14 +151,15 @@ void LyricsModel::setColours(const Colours& colours)
 {
     m_colours = colours;
 
-    beginResetModel();
-
     m_text.clear();
     for(const auto& line : m_lyrics.lines) {
         m_text.push_back(textForLine(line));
     }
 
-    endResetModel();
+    if(!m_lyrics.lines.empty()) {
+        Q_EMIT dataChanged(index(1, 0), index(static_cast<int>(m_lyrics.lines.size()), 0),
+                           {RichTextRole, ProgressColourRole, ProgressBaseColourRole});
+    }
 }
 
 QColor LyricsModel::backgroundColour(const QPalette& palette) const
@@ -169,6 +170,11 @@ QColor LyricsModel::backgroundColour(const QPalette& palette) const
 void LyricsModel::setFonts(const QString& baseFont, const QString& lineFont, const QString& wordLineFont,
                            const QString& wordFont)
 {
+    const auto previousBaseFont     = m_baseFont;
+    const auto previousLineFont     = m_lineFont;
+    const auto previousWordLineFont = m_wordLineFont;
+    const auto previousWordFont     = m_wordFont;
+
     if(baseFont.isEmpty() || !m_baseFont.fromString(baseFont)) {
         m_baseFont = Lyrics::defaultFont(*m_styleProvider);
     }
@@ -183,6 +189,11 @@ void LyricsModel::setFonts(const QString& baseFont, const QString& lineFont, con
 
     if(wordFont.isEmpty() || !m_wordFont.fromString(wordFont)) {
         m_wordFont = Lyrics::defaultWordFont(*m_styleProvider);
+    }
+
+    if(previousBaseFont == m_baseFont && previousLineFont == m_lineFont && previousWordLineFont == m_wordLineFont
+       && previousWordFont == m_wordFont) {
+        return;
     }
 
     beginResetModel();

@@ -125,6 +125,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<SeekStepLarge>(30000, u"Interface/SeekIncrementLarge"_s);
     m_settings->createSetting<ShowStatusTips>(true, u"Interface/ShowStatusTips"_s);
     m_settings->createSetting<CustomTheme>(QVariant{}, u"Theme/CustomTheme"_s);
+    m_settings->createSetting<Internal::ArtworkColours>(0, u"Theme/ArtworkColours"_s);
     m_settings->createSetting<ShowSplitterHandles>(false, u"Interface/SplitterHandles"_s);
     m_settings->createSetting<LockSplitterHandles>(false, u"Interface/LockSplitterHandles"_s);
     m_settings->createSetting<SplitterHandleSize>(-1, u"Interface/SplitterHandleSize"_s);

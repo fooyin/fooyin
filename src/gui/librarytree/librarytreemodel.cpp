@@ -37,6 +37,7 @@
 #include <gui/scripting/scriptformatter.h>
 #include <gui/trackmimedata.h>
 #include <utils/datastream.h>
+#include <utils/modelutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -987,6 +988,11 @@ LibraryTreeModel::~LibraryTreeModel()
 }
 
 void LibraryTreeModel::resetPalette()
+{
+    Utils::recursiveDataChanged(this, {}, {Qt::BackgroundRole, Qt::DecorationRole});
+}
+
+void LibraryTreeModel::refreshText()
 {
     p->m_playingItems.clear();
     p->updatePlayingTitles();

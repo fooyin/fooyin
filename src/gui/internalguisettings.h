@@ -257,6 +257,7 @@ enum GuiInternalSettings : uint32_t
     PlaylistInlineEditDelayMs                = 57 | Type::Int,
     GlobalBackground                         = 58 | Type::Variant,
     CoverFlowCacheSize                       = 59 | Type::Int,
+    ArtworkColours                           = 60 | Type::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

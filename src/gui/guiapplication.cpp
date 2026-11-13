@@ -52,6 +52,7 @@
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "systemtrayicon.h"
+#include "theme/artworkpalettecontroller.h"
 #include "verification/verificationcontroller.h"
 #include "widgets.h"
 #include "widgets/globalbackgroundcontroller.h"
@@ -283,6 +284,7 @@ GuiApplication::GuiApplication(Application* core)
     , m_styleProvider{new GuiStyleProvider(m_settings, this)}
     , m_advancedSettingsRegistry{std::make_unique<AdvancedSettingsRegistry>(m_settings)}
     , m_coverRepository{new CoverRepository(m_core->audioLoader(), m_core->remoteIoService(), m_settings, this)}
+    , m_artworkPaletteController{new ArtworkPaletteController(m_coverRepository, m_playerController, m_settings, this)}
     , m_guiPluginContext{m_actionManager,
                          m_layoutProvider.get(),
                          m_selectionController.get(),
@@ -329,6 +331,9 @@ GuiApplication::GuiApplication(Application* core)
     m_logWidget->restoreState(stateSettings);
 
     m_coverRepository->setPendingTrackCoverProvider(m_core->pendingTrackCoverProvider());
+
+    QObject::connect(m_artworkPaletteController, &ArtworkPaletteController::paletteChanged, this,
+                     &GuiApplication::updateArtworkPalette);
 
     m_guiPluginContext.conversionService = m_conversionController;
     QObject::connect(m_conversionController, &ConversionController::convertedFilesReady, this,
@@ -1884,30 +1889,59 @@ void GuiApplication::applyTheme()
             }
         }
 
+        m_themePalette = newPalette;
+        newPalette     = m_artworkPaletteController->palette(m_themePalette);
         QApplication::setPalette(newPalette);
         QPixmapCache::clear();
 
-        QTimer::singleShot(0, this, [this, newPalette]() {
-            ResolvedAppStyle resolvedStyle;
-            resolvedStyle.palette     = newPalette;
-            resolvedStyle.defaultFont = QApplication::font();
-            resolvedStyle.revision    = ++m_resolvedAppStyleRevision;
-
-            const auto styleFonts = m_themeRegistry->fontEntries();
-            for(const auto& className : styleFonts | std::views::keys) {
-                if(!className.isEmpty()) {
-                    resolvedStyle.classFonts.insert(className, QApplication::font(className.toUtf8().constData()));
-                }
-            }
-
-            m_settings->set<Settings::Gui::ResolvedAppStyle>(QVariant::fromValue(resolvedStyle));
-            m_applyingTheme = false;
-
-            if(std::exchange(m_themeUpdatePending, false)) {
-                scheduleThemeUpdate();
-            }
-        });
+        QMetaObject::invokeMethod(this, [this, newPalette]() { publishAppStyle(newPalette); }, Qt::QueuedConnection);
     });
+}
+
+void GuiApplication::updateArtworkPalette()
+{
+    if(m_applyingTheme) {
+        m_themeUpdatePending = true;
+        return;
+    }
+
+    const auto resolvedStyle = m_settings->value<Settings::Gui::ResolvedAppStyle>().value<ResolvedAppStyle>();
+    if(resolvedStyle.revision == 0) {
+        return;
+    }
+
+    const auto palette = m_artworkPaletteController->palette(m_themePalette);
+    if(palette == resolvedStyle.palette) {
+        return;
+    }
+
+    m_applyingTheme = true;
+    QApplication::setPalette(palette);
+    QPixmapCache::clear();
+
+    QMetaObject::invokeMethod(this, [this, palette]() { publishAppStyle(palette); }, Qt::QueuedConnection);
+}
+
+void GuiApplication::publishAppStyle(const QPalette& palette)
+{
+    ResolvedAppStyle resolvedStyle;
+    resolvedStyle.palette     = palette;
+    resolvedStyle.defaultFont = QApplication::font();
+    resolvedStyle.revision    = ++m_resolvedAppStyleRevision;
+
+    const auto styleFonts = m_themeRegistry->fontEntries();
+    for(const auto& className : styleFonts | std::views::keys) {
+        if(!className.isEmpty()) {
+            resolvedStyle.classFonts.insert(className, QApplication::font(className.toUtf8().constData()));
+        }
+    }
+
+    m_settings->set<Settings::Gui::ResolvedAppStyle>(QVariant::fromValue(resolvedStyle));
+    m_applyingTheme = false;
+
+    if(std::exchange(m_themeUpdatePending, false)) {
+        scheduleThemeUpdate();
+    }
 }
 
 void GuiApplication::handleSystemThemeChanged()

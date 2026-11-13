@@ -280,6 +280,7 @@ set(SOURCES
     guiapplication.h
     guipaths.cpp
     guistyleprovider.cpp
+    guistyleutils.h
     guiutils.cpp
     iconloader.cpp
     internalguisettings.cpp
@@ -648,6 +649,8 @@ set(SOURCES
     statusevent.cpp
     systemtrayicon.cpp
     systemtrayicon.h
+    theme/artworkpalettecontroller.cpp
+    theme/artworkpalettecontroller.h
     theme/fytheme.cpp
     theme/fythemefile.cpp
     theme/themeregistry.cpp
