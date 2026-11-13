@@ -91,6 +91,7 @@ constexpr auto FilterArtworkHoverFrameKey         = u"Filters/ArtworkHoverFrame"
 constexpr auto FilterArtworkSelectionFrameKey     = u"Filters/ArtworkSelectionFrame";
 constexpr auto FilterHighlightHoveredCaptionsKey  = u"Filters/HighlightHoveredCaptions";
 constexpr auto FilterHighlightSelectedCaptionsKey = u"Filters/HighlightSelectedCaptions";
+constexpr auto FilterOverlayCaptionsKey           = u"Filters/OverlayCaptionsOnInteraction";
 constexpr auto FilterOverrideArtworkMarginsKey    = u"Filters/OverrideArtworkMargins";
 constexpr auto FilterArtworkMarginsKey            = u"Filters/ArtworkMargins";
 constexpr auto FilterOverrideGridMarginsKey       = u"Filters/OverrideGridMargins";
@@ -688,6 +689,8 @@ FilterWidget::ConfigData FilterWidget::defaultConfig() const
         = m_settings->fileValue(FilterHighlightHoveredCaptionsKey, config.highlightHoveredCaptions).toBool();
     config.highlightSelectedCaptions
         = m_settings->fileValue(FilterHighlightSelectedCaptionsKey, config.highlightSelectedCaptions).toBool();
+    config.overlayCaptionsOnInteraction
+        = m_settings->fileValue(FilterOverlayCaptionsKey, config.overlayCaptionsOnInteraction).toBool();
     config.artworkMargins = Gui::marginsFromJson(
         QJsonObject::fromVariantMap(m_settings->fileValue(FilterArtworkMarginsKey).toMap()), config.artworkMargins);
     config.overrideArtworkMargins
@@ -801,6 +804,7 @@ void FilterWidget::saveDefaults(const ConfigData& config) const
                         artworkFrameToJson(config.artworkSelectionFrame).toVariantMap());
     m_settings->fileSet(FilterHighlightHoveredCaptionsKey, config.highlightHoveredCaptions);
     m_settings->fileSet(FilterHighlightSelectedCaptionsKey, config.highlightSelectedCaptions);
+    m_settings->fileSet(FilterOverlayCaptionsKey, config.overlayCaptionsOnInteraction);
     m_settings->fileSet(FilterOverrideArtworkMarginsKey, config.overrideArtworkMargins);
     m_settings->fileSet(FilterArtworkMarginsKey, Gui::marginsToJson(config.artworkMargins).toVariantMap());
     m_settings->fileSet(FilterOverrideGridMarginsKey, config.overrideGridMargins);
@@ -874,6 +878,7 @@ void FilterWidget::clearSavedDefaults() const
     m_settings->fileRemove(FilterArtworkSelectionFrameKey);
     m_settings->fileRemove(FilterHighlightHoveredCaptionsKey);
     m_settings->fileRemove(FilterHighlightSelectedCaptionsKey);
+    m_settings->fileRemove(FilterOverlayCaptionsKey);
     m_settings->fileRemove(FilterOverrideArtworkMarginsKey);
     m_settings->fileRemove(FilterArtworkMarginsKey);
     m_settings->fileRemove(FilterOverrideGridMarginsKey);
@@ -973,7 +978,11 @@ void FilterWidget::applyConfig(const ConfigData& config)
     if(!validated.iconSize.isValid()) {
         validated.iconSize = factoryConfig().iconSize;
     }
-    const int minIconSize = Constants::minimumIconSize(validated.viewMode, validated.captionDisplay);
+    const auto captions
+        = validated.captionDisplay == ExpandedTreeView::CaptionDisplay::None && validated.overlayCaptionsOnInteraction
+            ? ExpandedTreeView::CaptionDisplay::Overlay
+            : validated.captionDisplay;
+    const int minIconSize = Constants::minimumIconSize(validated.viewMode, captions);
     const int maxIconSize = Constants::maximumIconSize(validated.viewMode);
     validated.iconSize
         = validated.iconSize.expandedTo({minIconSize, minIconSize}).boundedTo({maxIconSize, maxIconSize});
@@ -996,6 +1005,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
 
     const bool appearanceChanged
         = m_config.viewMode != validated.viewMode || m_config.captionDisplay != validated.captionDisplay
+       || m_config.overlayCaptionsOnInteraction != validated.overlayCaptionsOnInteraction
        || m_config.coverType != validated.coverType || m_config.coverSource != validated.coverSource
        || m_config.showSummary != validated.showSummary || m_config.showHeader != validated.showHeader
        || m_config.showScrollbar != validated.showScrollbar || m_config.alternatingRows != validated.alternatingRows;
@@ -1036,6 +1046,7 @@ void FilterWidget::applyConfig(const ConfigData& config)
        || m_config.artworkSelectionFrame != validated.artworkSelectionFrame
        || m_config.highlightHoveredCaptions != validated.highlightHoveredCaptions
        || m_config.highlightSelectedCaptions != validated.highlightSelectedCaptions
+       || m_config.overlayCaptionsOnInteraction != validated.overlayCaptionsOnInteraction
        || m_config.overrideArtworkMargins != validated.overrideArtworkMargins
        || m_config.artworkMargins != validated.artworkMargins || m_config.expandGroups != validated.expandGroups
        || m_config.expansionAnimated != validated.expansionAnimated
@@ -1174,6 +1185,8 @@ FilterWidget::ConfigData FilterWidget::configFromLayout(const QJsonObject& layou
         = layout.value("HighlightHoveredCaptions"_L1).toBool(config.highlightHoveredCaptions);
     config.highlightSelectedCaptions
         = layout.value("HighlightSelectedCaptions"_L1).toBool(config.highlightSelectedCaptions);
+    config.overlayCaptionsOnInteraction
+        = layout.value("OverlayCaptionsOnInteraction"_L1).toBool(config.overlayCaptionsOnInteraction);
     config.artworkMargins = Gui::marginsFromJson(layout.value("ArtworkMargins"_L1).toObject(), config.artworkMargins);
     config.overrideArtworkMargins
         = layout.value("OverrideArtworkMargins"_L1)
@@ -1278,6 +1291,7 @@ void FilterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& lay
     layout["ArtworkSelectionFrame"_L1]             = artworkFrameToJson(config.artworkSelectionFrame);
     layout["HighlightHoveredCaptions"_L1]          = config.highlightHoveredCaptions;
     layout["HighlightSelectedCaptions"_L1]         = config.highlightSelectedCaptions;
+    layout["OverlayCaptionsOnInteraction"_L1]      = config.overlayCaptionsOnInteraction;
     layout["OverrideArtworkMargins"_L1]            = config.overrideArtworkMargins;
     layout["ArtworkMargins"_L1]                    = Gui::marginsToJson(config.artworkMargins);
     layout["ExpandGroups"_L1]                      = config.expandGroups;
@@ -1651,11 +1665,18 @@ void FilterWidget::updateViewMode(ExpandedTreeView::ViewMode mode)
 
 void FilterWidget::updateCaptions(ExpandedTreeView::CaptionDisplay captions)
 {
+    const bool contextualOverlay = m_view->viewMode() == ExpandedTreeView::ViewMode::Icon
+                                && captions == ExpandedTreeView::CaptionDisplay::None
+                                && m_config.overlayCaptionsOnInteraction;
     if(m_view->viewMode() == ExpandedTreeView::ViewMode::CoverFlow) {
         captions = ExpandedTreeView::CaptionDisplay::Bottom;
     }
+    else if(contextualOverlay) {
+        captions = ExpandedTreeView::CaptionDisplay::Overlay;
+    }
     m_model->setShowLabels(captions != ExpandedTreeView::CaptionDisplay::None);
     m_view->setCaptionDisplay(captions);
+    m_view->setOverlayCaptionsOnInteraction(contextualOverlay);
 }
 
 void FilterWidget::updateArtworkMargins()
@@ -2171,7 +2192,7 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
     sourceDefault->setCheckable(true);
 
     const auto currentMode     = m_view->viewMode();
-    const auto currentCaptions = m_view->captionDisplay();
+    const auto currentCaptions = m_config.captionDisplay;
     const auto currentType     = m_model->coverType();
     const auto currentSource   = m_model->coverSource();
 

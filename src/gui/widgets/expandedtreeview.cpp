@@ -5315,6 +5315,18 @@ void ExpandedTreeView::setCaptionDisplay(CaptionDisplay display)
     viewport()->update();
 }
 
+bool ExpandedTreeView::overlayCaptionsOnInteraction() const
+{
+    return p->m_overlayCaptionsOnInteraction;
+}
+
+void ExpandedTreeView::setOverlayCaptionsOnInteraction(bool enabled)
+{
+    if(std::exchange(p->m_overlayCaptionsOnInteraction, enabled) != enabled) {
+        viewport()->update();
+    }
+}
+
 int ExpandedTreeView::iconItemColumn() const
 {
     return p->m_iconItemColumn;

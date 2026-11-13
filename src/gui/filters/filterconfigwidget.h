@@ -83,6 +83,7 @@ private:
     QRadioButton* m_artworkRightMode;
     QRadioButton* m_artworkOverlayMode;
     QRadioButton* m_artworkNoLabelsMode;
+    QCheckBox* m_overlayCaptionsOnInteraction;
     QComboBox* m_coverType;
     QComboBox* m_coverSource;
     QCheckBox* m_showSummary;

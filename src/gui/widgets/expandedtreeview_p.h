@@ -165,6 +165,7 @@ public:
     CoverFlowSettings m_coverFlow;
     ViewMode m_viewMode{ViewMode::Tree};
     CaptionDisplay m_captionDisplay{CaptionDisplay::Bottom};
+    bool m_overlayCaptionsOnInteraction{false};
     int m_flowColumnGap{16};
     int m_flowMinimumRows{1};
     int m_flowMaximumColumns{0};

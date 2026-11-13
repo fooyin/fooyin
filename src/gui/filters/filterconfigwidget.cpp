@@ -72,6 +72,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     , m_artworkRightMode{new QRadioButton(tr("Artwork (right labels)"), this)}
     , m_artworkOverlayMode{new QRadioButton(tr("Artwork (overlay labels)"), this)}
     , m_artworkNoLabelsMode{new QRadioButton(tr("Artwork (no labels)"), this)}
+    , m_overlayCaptionsOnInteraction{new QCheckBox(tr("Show overlay labels on hover or selection"), this)}
     , m_coverType{new QComboBox(this)}
     , m_coverSource{new QComboBox(this)}
     , m_showSummary{new QCheckBox(tr("Show summary item"), this)}
@@ -168,6 +169,10 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
         displayModeGroup->addButton(button);
     }
 
+    auto* overlayOptions = new QHBoxLayout();
+    overlayOptions->addSpacing(20);
+    overlayOptions->addWidget(m_overlayCaptionsOnInteraction);
+
     auto* viewMode          = new QGroupBox(tr("View mode"), appearanceTab);
     auto* displayModeLayout = new QVBoxLayout(viewMode);
     displayModeLayout->addWidget(m_columnsMode);
@@ -175,6 +180,7 @@ FilterConfigDialog::FilterConfigDialog(FilterWidget* filterWidget, FilterColumnR
     displayModeLayout->addWidget(m_artworkRightMode);
     displayModeLayout->addWidget(m_artworkOverlayMode);
     displayModeLayout->addWidget(m_artworkNoLabelsMode);
+    displayModeLayout->addLayout(overlayOptions);
     displayModeLayout->addWidget(m_coverFlowMode);
     displayModeLayout->addStretch();
 
@@ -417,22 +423,24 @@ FilterWidget::ConfigData FilterConfigDialog::config() const
     const int coverSource = m_coverSource->currentData().toInt();
 
     FilterWidget::ConfigData result{};
-    result.doubleClickAction          = m_doubleClick->currentData().toInt();
-    result.middleClickAction          = m_middleClick->currentData().toInt();
-    result.expansionDoubleClickAction = m_expansionDoubleClick->currentData().toInt();
-    result.expansionMiddleClickAction = m_expansionMiddleClick->currentData().toInt();
-    result.sendPlayback               = m_playbackOnSend->isChecked();
-    result.source                     = static_cast<FilterSource>(m_source->currentData().toInt());
-    result.playlistEnabled            = m_playlistEnabled->isChecked();
-    result.autoSwitch                 = m_autoSwitch->isChecked();
-    result.preservePlaybackPlaylist   = m_preservePlaybackPlaylist->isChecked();
-    result.playlistName               = m_playlistName->text();
-    result.restoreState               = m_restoreState->isChecked();
-    result.viewMode                   = m_columnsMode->isChecked()   ? ExpandedTreeView::ViewMode::Tree
-                                      : m_coverFlowMode->isChecked() ? ExpandedTreeView::ViewMode::CoverFlow
-                                                                     : ExpandedTreeView::ViewMode::Icon;
-    result.captionDisplay             = captions;
-    result.coverType                  = static_cast<Track::Cover>(m_coverType->currentData().toInt());
+
+    result.doubleClickAction            = m_doubleClick->currentData().toInt();
+    result.middleClickAction            = m_middleClick->currentData().toInt();
+    result.expansionDoubleClickAction   = m_expansionDoubleClick->currentData().toInt();
+    result.expansionMiddleClickAction   = m_expansionMiddleClick->currentData().toInt();
+    result.sendPlayback                 = m_playbackOnSend->isChecked();
+    result.source                       = static_cast<FilterSource>(m_source->currentData().toInt());
+    result.playlistEnabled              = m_playlistEnabled->isChecked();
+    result.autoSwitch                   = m_autoSwitch->isChecked();
+    result.preservePlaybackPlaylist     = m_preservePlaybackPlaylist->isChecked();
+    result.playlistName                 = m_playlistName->text();
+    result.restoreState                 = m_restoreState->isChecked();
+    result.viewMode                     = m_columnsMode->isChecked()   ? ExpandedTreeView::ViewMode::Tree
+                                        : m_coverFlowMode->isChecked() ? ExpandedTreeView::ViewMode::CoverFlow
+                                                                       : ExpandedTreeView::ViewMode::Icon;
+    result.captionDisplay               = captions;
+    result.overlayCaptionsOnInteraction = m_overlayCaptionsOnInteraction->isChecked();
+    result.coverType                    = static_cast<Track::Cover>(m_coverType->currentData().toInt());
     result.coverSource
         = coverSource < 0 ? std::nullopt : std::optional{static_cast<ArtworkSourcePreference>(coverSource)};
     result.showSummary         = m_showSummary->isChecked();
@@ -483,6 +491,7 @@ void FilterConfigDialog::setConfig(const FilterWidget::ConfigData& config)
     m_preservePlaybackPlaylist->setChecked(config.preservePlaybackPlaylist);
     m_playlistName->setText(config.playlistName);
     m_restoreState->setChecked(config.restoreState);
+    m_overlayCaptionsOnInteraction->setChecked(config.overlayCaptionsOnInteraction);
 
     if(config.viewMode == ExpandedTreeView::ViewMode::Tree) {
         m_columnsMode->setChecked(true);
@@ -598,13 +607,16 @@ void FilterConfigDialog::mergeExternalConfig(const FilterWidget::ConfigData& pre
         &FilterWidget::ConfigData::expansionArtworkAutoMargins, &FilterWidget::ConfigData::expansionArtworkMargins,
         &FilterWidget::ConfigData::expansionScripts, &FilterWidget::ConfigData::background,
         &FilterWidget::ConfigData::expansionBackground, &FilterWidget::ConfigData::expansionBackgroundColour,
-        &FilterWidget::ConfigData::expansionPlayingRowFont, &FilterWidget::ConfigData::expansionPlayingRowColour);
+        &FilterWidget::ConfigData::expansionPlayingRowFont, &FilterWidget::ConfigData::expansionPlayingRowColour,
+        &FilterWidget::ConfigData::overlayCaptionsOnInteraction);
 }
 
 void FilterConfigDialog::setupConnections()
 {
     const auto updateAutoFitArtwork = [this]() {
-        const bool coverFlow    = m_coverFlowMode->isChecked();
+        const bool coverFlow = m_coverFlowMode->isChecked();
+        const bool contextualOverlay
+            = m_artworkNoLabelsMode->isChecked() && m_overlayCaptionsOnInteraction->isChecked();
         const bool gridArtwork  = m_artworkBottomMode->isChecked() || m_artworkOverlayMode->isChecked()
                                || m_artworkNoLabelsMode->isChecked();
         const bool manualSizing = coverFlow ? !m_coverFlowConfig->settings().autoFitArtwork
@@ -613,7 +625,8 @@ void FilterConfigDialog::setupConnections()
                                 : coverFlow                  ? ExpandedTreeView::ViewMode::CoverFlow
                                                              : ExpandedTreeView::ViewMode::Icon;
         const int minIconSize   = Constants::minimumIconSize(
-            viewMode, m_artworkOverlayMode->isChecked()  ? ExpandedTreeView::CaptionDisplay::Overlay
+            viewMode, (m_artworkOverlayMode->isChecked() || contextualOverlay)
+                          ? ExpandedTreeView::CaptionDisplay::Overlay
                       : m_artworkBottomMode->isChecked() ? ExpandedTreeView::CaptionDisplay::Bottom
                                                          : ExpandedTreeView::CaptionDisplay::None);
 
@@ -631,9 +644,10 @@ void FilterConfigDialog::setupConnections()
         const bool iconMode = !m_columnsMode->isChecked() && !coverFlow;
         m_artworkScaling->setEnabled(iconMode);
         m_artworkFrames->setEnabled(!m_columnsMode->isChecked());
-        const bool hasCaptions = iconMode && !m_artworkNoLabelsMode->isChecked();
+        const bool hasCaptions = iconMode && (!m_artworkNoLabelsMode->isChecked() || contextualOverlay);
         m_highlightHoveredCaptions->setEnabled(hasCaptions);
         m_highlightSelectedCaptions->setEnabled(hasCaptions);
+        m_overlayCaptionsOnInteraction->setEnabled(iconMode && m_artworkNoLabelsMode->isChecked());
         m_overrideGridMargins->setEnabled(iconMode);
         for(auto* margin : {m_gridLeftMargin, m_gridTopMargin, m_gridRightMargin, m_gridBottomMargin}) {
             margin->setEnabled(iconMode && m_overrideGridMargins->isChecked());
@@ -652,6 +666,7 @@ void FilterConfigDialog::setupConnections()
     QObject::connect(m_artworkRightMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_artworkOverlayMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_artworkNoLabelsMode, &QRadioButton::toggled, this, updateAutoFitArtwork);
+    QObject::connect(m_overlayCaptionsOnInteraction, &QCheckBox::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_autoFitArtwork, &QCheckBox::toggled, this, updateAutoFitArtwork);
     QObject::connect(m_coverFlowConfig, &CoverFlowConfigWidget::settingsChanged, this, updateAutoFitArtwork);
     QObject::connect(m_overrideGridMargins, &QCheckBox::toggled, this, updateAutoFitArtwork);

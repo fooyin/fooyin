@@ -223,6 +223,9 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const bool iconMode       = view && view->viewMode() == ExpandedTreeView::ViewMode::Icon;
     const bool hasArtwork     = iconMode && !opt.icon.isNull();
     const bool overlayCaption = iconMode && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay;
+    const bool showCaptions   = !overlayCaption || !view->overlayCaptionsOnInteraction()
+                             || (opt.state & (QStyle::State_MouseOver | QStyle::State_Selected))
+                             || (view->hasFocus() && index.siblingAtColumn(0) == view->currentIndex().siblingAtColumn(0));
     const QIcon artworkIcon   = hasArtwork ? opt.icon : QIcon{};
 
     if(view && view->viewMode() != ExpandedTreeView::ViewMode::Flow) {
@@ -305,7 +308,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     const auto richText     = richTreeMode ? fallbackRichText(opt, index) : RichText{};
 
     IconCaptionLineList richLines;
-    if(!richTreeMode) {
+    if(!richTreeMode && showCaptions) {
         richLines = iconRichLines(index, captionOpt);
     }
 

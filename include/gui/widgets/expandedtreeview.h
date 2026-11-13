@@ -166,6 +166,9 @@ public:
     [[nodiscard]] CaptionDisplay captionDisplay() const;
     void setCaptionDisplay(CaptionDisplay display);
 
+    [[nodiscard]] bool overlayCaptionsOnInteraction() const;
+    void setOverlayCaptionsOnInteraction(bool enabled);
+
     [[nodiscard]] int iconItemColumn() const;
     void setIconItemColumn(int column);
 

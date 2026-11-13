@@ -147,6 +147,7 @@ public:
         bool restoreState{true};
         ExpandedTreeView::ViewMode viewMode{ExpandedTreeView::ViewMode::Tree};
         ExpandedTreeView::CaptionDisplay captionDisplay{ExpandedTreeView::CaptionDisplay::Bottom};
+        bool overlayCaptionsOnInteraction{false};
         Track::Cover coverType{Track::Cover::Front};
         std::optional<ArtworkSourcePreference> coverSource;
         bool showSummary{true};
