@@ -90,7 +90,8 @@ private:
     void paintCoverFlowCaption(QPainter* painter, QStyleOptionViewItem option, const CoverFlowSettings& settings,
                                const QModelIndex& index) const;
 
-    [[nodiscard]] QPixmap coverFlowPixmap(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    [[nodiscard]] QPixmap coverFlowPixmap(const QStyleOptionViewItem& option, const QModelIndex& index,
+                                          CoverStyle style) const;
     void cacheCoverFlowPixmap(const QString& key, const QPixmap& pixmap) const;
 
     int m_artworkCornerRadius;

@@ -24,6 +24,25 @@
 #include <cstdint>
 
 namespace Fooyin {
+enum class CoverStyle : uint8_t
+{
+    Cover = 0,
+    Disc,
+    Vinyl,
+};
+
+constexpr CoverStyle coverStyleFromInt(int value)
+{
+    switch(value) {
+        case static_cast<int>(CoverStyle::Disc):
+            return CoverStyle::Disc;
+        case static_cast<int>(CoverStyle::Vinyl):
+            return CoverStyle::Vinyl;
+        default:
+            return CoverStyle::Cover;
+    }
+}
+
 enum class ArtworkScaling : uint8_t
 {
     Fit = 0,

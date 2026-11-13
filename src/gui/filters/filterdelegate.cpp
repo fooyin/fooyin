@@ -19,6 +19,7 @@
 
 #include "filterdelegate.h"
 
+#include "artwork/discartwork.h"
 #include "filteritem.h"
 #include "internalguisettings.h"
 
@@ -919,7 +920,9 @@ void FilterDelegate::drawRichTextLines(QPainter* painter, const QStyleOptionView
     const bool overlayCaption = coverFlowOverlay
                              || (view && view->viewMode() == ExpandedTreeView::ViewMode::Icon
                                  && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay);
-    const int cornerRadius    = coverFlowOverlay ? view->iconItemCornerRadius() : m_artworkCornerRadius;
+    const int cornerRadius
+        = coverFlowOverlay ? (view->coverFlowSettings().style == CoverStyle::Cover ? view->iconItemCornerRadius() : 100)
+                           : m_artworkCornerRadius;
     const qreal radius = overlayCaption ? std::min(artwork.width(), artwork.height()) * cornerRadius / 200.0 : 0.0;
     const int maxWidth = rect.width();
 
@@ -1082,8 +1085,10 @@ void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::C
     // At 100% fading, each step away from the centre halves the opacity
     const double fadeStrength = std::clamp(settings.backgroundBlending / 100.0, 0.0, 1.0);
     const double opacity      = std::exp2(-fadeStrength * std::max(0.0, option.depth));
-    QPixmap pixmap            = coverFlowPixmap(opt, index);
+    QPixmap pixmap            = coverFlowPixmap(opt, index, settings.style);
     QRectF pixmapRect{opt.rect};
+    const bool disc                = (settings.style != CoverStyle::Cover);
+    const QPainterPath discOutline = disc ? Gui::discArtworkPath(pixmapRect, settings.style) : QPainterPath{};
 
     if(reflection && !pixmap.isNull()) {
         const QString key       = u"fooyin-cover-flow-%1-%2-%3"_s.arg(pixmap.cacheKey())
@@ -1124,6 +1129,9 @@ void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::C
 
     painter->save();
 
+    if(disc) {
+        painter->setRenderHint(QPainter::Antialiasing);
+    }
     painter->setOpacity(painter->opacity() * (reflection ? opacity : 1.0));
 
     const bool inlineCaption = !reflection && settings.showLabels && settings.labelsOnArtwork && option.depth < 0.5;
@@ -1132,22 +1140,37 @@ void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::C
             target->drawPixmap(pixmapRect, pixmap, pixmap.rect());
         }
         else if(!reflection) {
-            target->fillRect(opt.rect, opt.palette.brush(QPalette::AlternateBase));
+            if(disc) {
+                target->fillPath(discOutline, opt.palette.brush(QPalette::AlternateBase));
+            }
+            else {
+                target->fillRect(opt.rect, opt.palette.brush(QPalette::AlternateBase));
+            }
         }
 
         if(!reflection) {
             QColor shade = opt.palette.color(QPalette::Base);
             shade.setAlphaF(static_cast<float>(1.0 - opacity));
-            target->fillRect(opt.rect, shade);
+            if(disc) {
+                target->fillPath(discOutline, shade);
+            }
+            else {
+                target->fillRect(opt.rect, shade);
+            }
         }
 
         if(inlineCaption) {
+            target->save();
+            if(disc) {
+                target->setClipPath(discOutline, Qt::IntersectClip);
+            }
             paintCoverFlowCaption(target, opt, settings, index);
+            target->restore();
         }
     };
 
     if(inlineCaption || (!reflection && artworkFrame(option))) {
-        const auto geometry   = artworkFrameGeometry(option, opt.rect, option.cornerRadius);
+        const auto geometry   = artworkFrameGeometry(option, opt.rect, disc ? 100 : option.cornerRadius);
         const QRect layerRect = geometry.rect.toAlignedRect();
         const qreal dpr       = painter->device()->devicePixelRatioF();
 
@@ -1163,7 +1186,9 @@ void FilterDelegate::paintCoverFlow(QPainter* painter, const ExpandedTreeView::C
         drawArtworkLayer(painter, geometry, layerRect.topLeft(), layer);
     }
     else {
-        Gui::clipRoundedRect(*painter, opt.rect, option.cornerRadius);
+        if(!disc) {
+            Gui::clipRoundedRect(*painter, opt.rect, option.cornerRadius);
+        }
         drawArtwork(painter);
     }
 
@@ -1230,7 +1255,8 @@ void FilterDelegate::paintCoverFlowCaption(QPainter* painter, QStyleOptionViewIt
     drawRichTextLines(painter, option, textRect, lines, {});
 }
 
-QPixmap FilterDelegate::coverFlowPixmap(const QStyleOptionViewItem& option, const QModelIndex& index) const
+QPixmap FilterDelegate::coverFlowPixmap(const QStyleOptionViewItem& option, const QModelIndex& index,
+                                        CoverStyle style) const
 {
     const QVariant decoration = index.data(Qt::DecorationRole);
     qint64 sourceKey{0};
@@ -1251,10 +1277,10 @@ QPixmap FilterDelegate::coverFlowPixmap(const QStyleOptionViewItem& option, cons
     const qreal dpr = option.widget ? option.widget->devicePixelRatioF() : 1.0;
     const auto mode = Gui::itemViewIconMode(option);
     if(sourceKey == 0) {
-        return option.icon.pixmap(option.decorationSize, dpr, mode);
+        sourceKey = option.icon.cacheKey();
     }
 
-    const QString key = u"cover-%1-%2-%3-%4-%5-%6-%7-%8-%9"_s.arg(decoration.userType())
+    const QString key = u"cover-%1-%2-%3-%4-%5-%6-%7-%8-%9-%10"_s.arg(decoration.userType())
                             .arg(sourceKey)
                             .arg(option.decorationSize.width())
                             .arg(option.decorationSize.height())
@@ -1262,12 +1288,16 @@ QPixmap FilterDelegate::coverFlowPixmap(const QStyleOptionViewItem& option, cons
                             .arg(static_cast<int>(mode))
                             .arg(QApplication::palette().cacheKey())
                             .arg(QIcon::themeName())
-                            .arg(reinterpret_cast<quintptr>(QApplication::style()));
+                            .arg(reinterpret_cast<quintptr>(QApplication::style()))
+                            .arg(static_cast<int>(style));
     if(const auto* cached = m_coverFlowPixmaps.object(key)) {
         return *cached;
     }
 
-    const QPixmap pixmap = option.icon.pixmap(option.decorationSize, dpr, mode);
+    QPixmap pixmap = option.icon.pixmap(option.decorationSize, dpr, mode);
+    if(style != CoverStyle::Cover) {
+        pixmap = Gui::renderDiscArtwork(pixmap, option.decorationSize, dpr, style);
+    }
     cacheCoverFlowPixmap(key, pixmap);
     return pixmap;
 }

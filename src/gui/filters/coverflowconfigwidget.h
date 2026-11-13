@@ -70,6 +70,7 @@ private:
     };
 
     ExpandedTreeView* m_preview;
+    QComboBox* m_style;
     QComboBox* m_labelPosition;
     std::vector<IntegerControl> m_integerControls;
     std::vector<BooleanControl> m_booleanControls;

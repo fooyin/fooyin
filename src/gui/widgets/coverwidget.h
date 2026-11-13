@@ -49,13 +49,6 @@ enum class CoverAction : uint8_t
     OpenProperties,
 };
 
-enum class CoverStyle : uint8_t
-{
-    Cover = 0,
-    Disc,
-    Vinyl,
-};
-
 class CoverWidget : public FyWidget
 {
     Q_OBJECT
@@ -122,7 +115,6 @@ private:
     [[nodiscard]] bool coversMatch(const QPixmap& lhs, const QPixmap& rhs) const;
     [[nodiscard]] QPixmap effectiveCover(const QPixmap& cover) const;
     [[nodiscard]] QPixmap scaledCover(const QPixmap& cover) const;
-    [[nodiscard]] QPixmap scaledDiscCover(const QPixmap& cover) const;
     [[nodiscard]] qreal discAngle() const;
     [[nodiscard]] qreal discSpeedRpm() const;
 

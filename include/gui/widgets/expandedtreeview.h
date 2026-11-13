@@ -21,6 +21,8 @@
 
 #include "fygui_export.h"
 
+#include <gui/coverartworktypes.h>
+
 #include <QAbstractItemView>
 
 #include <set>
@@ -32,6 +34,7 @@ class ExpandedTreeViewPrivate;
 
 struct FYGUI_EXPORT CoverFlowSettings
 {
+    CoverStyle style{CoverStyle::Cover};
     bool autoFitArtwork{true};
     int sideArtworkTilt{55};
     int centreSpacing{70};

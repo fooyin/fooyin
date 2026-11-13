@@ -3548,6 +3548,10 @@ QSize CoverFlowView::effectiveIconSize() const
 {
     const auto available = availableIconSize();
     QSize size           = m_view->iconSize().expandedTo({1, 1});
+    if(m_p->m_coverFlow.style != CoverStyle::Cover) {
+        const int diameter = std::min(size.width(), size.height());
+        size               = {diameter, diameter};
+    }
     if(m_p->m_coverFlow.autoFitArtwork || size.width() > available.width() || size.height() > available.height()) {
         size.scale(available, Qt::KeepAspectRatio);
     }
@@ -4969,6 +4973,7 @@ void ExpandedTreeViewPrivate::stopExpansionAnimation()
 
 void CoverFlowSettings::normalise()
 {
+    style              = coverStyleFromInt(static_cast<int>(style));
     sideArtworkTilt    = std::clamp(sideArtworkTilt, -85, 85);
     centreSpacing      = std::clamp(centreSpacing, 20, 200);
     sideSpacing        = std::clamp(sideSpacing, 0, 100);
@@ -4992,6 +4997,7 @@ void CoverFlowSettings::normalise()
 QJsonObject CoverFlowSettings::toJson() const
 {
     return {
+        {"Style"_L1, static_cast<int>(style)},
         {"AutoFitArtwork"_L1, autoFitArtwork},
         {"SideArtworkTilt"_L1, sideArtworkTilt},
         {"CentreSpacing"_L1, centreSpacing},
@@ -5019,6 +5025,7 @@ QJsonObject CoverFlowSettings::toJson() const
 
 void CoverFlowSettings::load(const QJsonObject& object)
 {
+    style                      = coverStyleFromInt(object.value("Style"_L1).toInt(static_cast<int>(style)));
     autoFitArtwork             = object.value("AutoFitArtwork"_L1).toBool(autoFitArtwork);
     sideArtworkTilt            = object.value("SideArtworkTilt"_L1).toInt(sideArtworkTilt);
     centreSpacing              = object.value("CentreSpacing"_L1).toInt(centreSpacing);

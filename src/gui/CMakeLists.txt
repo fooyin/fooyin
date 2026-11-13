@@ -109,6 +109,8 @@ set(SOURCES
     artwork/artworksaveutils.h
     artwork/artworkviewerdialog.cpp
     artwork/artworkviewerdialog.h
+    artwork/discartwork.cpp
+    artwork/discartwork.h
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.cpp
     artwork/sources/artworksource.cpp
