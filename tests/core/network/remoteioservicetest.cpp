@@ -42,22 +42,6 @@
 using namespace Qt::StringLiterals;
 
 namespace {
-QCoreApplication* ensureCoreApplication()
-{
-    QStandardPaths::setTestModeEnabled(true);
-
-    if(auto* app = QCoreApplication::instance()) {
-        return app;
-    }
-
-    static int argc{1};
-    static char appName[]  = "fooyin-remoteioservice-test";
-    static char* argv[]    = {appName, nullptr};
-    static auto* const app = new QCoreApplication{argc, argv};
-    QCoreApplication::setApplicationName(QString::fromLatin1(appName));
-    return app;
-}
-
 bool waitFor(const std::function<bool()>& condition)
 {
     QElapsedTimer timer;
@@ -80,11 +64,6 @@ protected:
     {
         m_settings.createSetting<Settings::Core::Internal::RemoteReadAheadKb>(64, u"ReadAhead"_s);
         m_settings.createSetting<Settings::Core::Internal::RemoteOpenTimeoutMs>(1000, u"OpenTimeout"_s);
-    }
-
-    static void SetUpTestSuite()
-    {
-        ensureCoreApplication();
     }
 
     void TearDown() override
@@ -307,8 +286,8 @@ TEST_F(RemoteIoServiceTest, TimesOutWaitingForStreamPreparation)
 {
     using namespace std::chrono_literals;
 
-    auto network = makeFakeNetworkAccessManager(true);
-    RemoteIoService service{network, &m_settings};
+    const auto network = makeFakeNetworkAccessManager(true);
+    const RemoteIoService service{network, &m_settings};
     auto pending = service.prepareStream(QUrl{u"https://example.com/slow.mp3"_s});
     int completions{0};
     QObject::connect(pending.get(), &PendingRemoteStream::finished, qApp, [&]() { ++completions; });
@@ -414,3 +393,12 @@ TEST_F(RemoteIoServiceTest, PreparesHttpCapabilitiesBeforeExposingDevice)
     EXPECT_EQ(network->requestCount, 2);
 }
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    QStandardPaths::setTestModeEnabled(true);
+    const QCoreApplication application{argc, argv};
+    QCoreApplication::setApplicationName(u"fooyin-remoteioservice-test"_s);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

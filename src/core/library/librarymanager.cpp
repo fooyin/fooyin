@@ -38,7 +38,7 @@ namespace Fooyin {
 namespace {
 void assertMainThread()
 {
-    Q_ASSERT(!QCoreApplication::instance() || QThread::currentThread() == qApp->thread());
+    Q_ASSERT(!QCoreApplication::instance() || QThread::currentThread() == QCoreApplication::instance()->thread());
 }
 
 bool checkNewPath(const QString& path, const LibraryInfoMap& libraries, int libraryId = -1)

@@ -51,7 +51,7 @@ using AlbumTracks = std::vector<int>;
 namespace {
 void assertMainThread()
 {
-    Q_ASSERT(!QCoreApplication::instance() || QThread::currentThread() == qApp->thread());
+    Q_ASSERT(!QCoreApplication::instance() || QThread::currentThread() == QCoreApplication::instance()->thread());
 }
 
 bool readExtraProperties(QDataStream& stream, Playlist::ExtraProperties& out)

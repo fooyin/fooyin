@@ -40,26 +40,6 @@
 using namespace Qt::StringLiterals;
 
 namespace {
-QCoreApplication* ensureCoreApplication()
-{
-    QStandardPaths::setTestModeEnabled(true);
-    QLoggingCategory::setFilterRules(u"fy.db.info=false"_s);
-
-    if(auto* app = QCoreApplication::instance()) {
-        return app;
-    }
-
-    static int argc{1};
-    static char appName[]        = "fooyin-libraryscanner-test";
-    static char* argv[]          = {appName, nullptr};
-    static QCoreApplication* app = []() {
-        auto* instance = new QCoreApplication(argc, argv);
-        QCoreApplication::setApplicationName(QString::fromLatin1(appName));
-        return instance;
-    }();
-    return app;
-}
-
 class DummyScanHost : public Fooyin::LibraryScanHost
 {
 public:
@@ -140,8 +120,6 @@ void sortTracks(Fooyin::TrackList& tracks)
 namespace Fooyin::Testing {
 TEST(LibraryScannerTest, MatchingCuePrefersCueNamedForTargetFile)
 {
-    ensureCoreApplication();
-
     const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
@@ -160,8 +138,6 @@ TEST(LibraryScannerTest, MatchingCuePrefersCueNamedForTargetFile)
 
 TEST(LibraryScannerTest, LocalCueDoesNotBlockEmbeddedCueTracks)
 {
-    ensureCoreApplication();
-
     const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
@@ -209,8 +185,6 @@ TEST(LibraryScannerTest, LocalCueDoesNotBlockEmbeddedCueTracks)
 
 TEST(LibraryScannerTest, DroppingLocalCueAndEmbeddedFileAddsOnlyEmbeddedCueTracks)
 {
-    ensureCoreApplication();
-
     const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
@@ -263,8 +237,6 @@ FILE "album.flac" FLAC
 
 TEST(LibraryScannerTest, DroppingLocalCueAndBackingFileAddsOnlyCueTracks)
 {
-    ensureCoreApplication();
-
     const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
@@ -312,8 +284,6 @@ TEST(LibraryScannerTest, DroppingLocalCueAndBackingFileAddsOnlyCueTracks)
 
 TEST(LibraryScannerTest, DroppingBackingFileBeforeLocalCueAddsOnlyCueTracks)
 {
-    ensureCoreApplication();
-
     const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
@@ -361,8 +331,6 @@ TEST(LibraryScannerTest, DroppingBackingFileBeforeLocalCueAddsOnlyCueTracks)
 
 TEST(LibraryScannerTest, DroppingDirectoryWithLocalCueAndEmbeddedFileAddsOnlyEmbeddedCueTracks)
 {
-    ensureCoreApplication();
-
     const QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
 
@@ -413,3 +381,13 @@ FILE "album.flac" FLAC
     EXPECT_EQ(u"Embedded Two"_s, scannedTracks.at(1).title());
 }
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    QStandardPaths::setTestModeEnabled(true);
+    QLoggingCategory::setFilterRules(u"fy.db.info=false"_s);
+    const QCoreApplication application{argc, argv};
+    QCoreApplication::setApplicationName(u"fooyin-libraryscanner-test"_s);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

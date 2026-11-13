@@ -33,20 +33,6 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::Testing {
 namespace {
-QCoreApplication* ensureCoreApplication()
-{
-    QStandardPaths::setTestModeEnabled(true);
-    if(auto* app = QCoreApplication::instance()) {
-        return app;
-    }
-
-    static int argc{1};
-    static char appName[] = "fooyin-audioverifier-test";
-    static char* argv[]   = {appName, nullptr};
-    static QCoreApplication app{argc, argv};
-    return &app;
-}
-
 struct DecoderState
 {
     AudioDecoder::DecoderOptions options{AudioDecoder::None};
@@ -112,11 +98,6 @@ private:
 class AudioVerifierTest : public ::testing::Test
 {
 protected:
-    static void SetUpTestSuite()
-    {
-        ensureCoreApplication();
-    }
-
     void SetUp() override
     {
         ASSERT_TRUE(m_directory.isValid());
@@ -283,3 +264,12 @@ TEST_F(AudioVerifierTest, RejectsCueSegmentMissingOneFrame)
 }
 } // namespace
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    QStandardPaths::setTestModeEnabled(true);
+    const QCoreApplication application{argc, argv};
+    QCoreApplication::setApplicationName(u"fooyin-audioverifier-test"_s);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

@@ -26,25 +26,10 @@
 namespace Fooyin::Testing {
 namespace {
 using TaskKind = EngineTaskQueue::TaskType;
-
-QCoreApplication* ensureCoreApplication()
-{
-    if(auto* app = QCoreApplication::instance()) {
-        return app;
-    }
-
-    static int argc{1};
-    static char appName[] = "fooyin-enginetaskqueue-test";
-    static char* argv[]   = {appName, nullptr};
-    static QCoreApplication app{argc, argv};
-    return &app;
-}
 } // namespace
 
 TEST(EngineTaskQueueTest, BarrierDefersPipelineWakeAndTimerUntilBarrierClears)
 {
-    ensureCoreApplication();
-
     EngineTaskQueue queue;
 
     int pipelineWakeRuns{0};
@@ -75,8 +60,6 @@ TEST(EngineTaskQueueTest, BarrierDefersPipelineWakeAndTimerUntilBarrierClears)
 
 TEST(EngineTaskQueueTest, BarrierActivationDefersAlreadyQueuedPipelineAndTimerTasks)
 {
-    ensureCoreApplication();
-
     EngineTaskQueue queue;
 
     int pipelineWakeRuns{0};
@@ -106,8 +89,6 @@ TEST(EngineTaskQueueTest, BarrierActivationDefersAlreadyQueuedPipelineAndTimerTa
 
 TEST(EngineTaskQueueTest, BeginShutdownClearsPendingTasksAndRejectsNewTasks)
 {
-    ensureCoreApplication();
-
     EngineTaskQueue queue;
 
     int executed{0};
@@ -127,8 +108,6 @@ TEST(EngineTaskQueueTest, BeginShutdownClearsPendingTasksAndRejectsNewTasks)
 
 TEST(EngineTaskQueueTest, TimerCoalescingRespectsCoalesceKey)
 {
-    ensureCoreApplication();
-
     EngineTaskQueue queue;
 
     int timerKeyOneRuns{0};
@@ -145,3 +124,11 @@ TEST(EngineTaskQueueTest, TimerCoalescingRespectsCoalesceKey)
     EXPECT_EQ(queue.size(), 0U);
 }
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    const QCoreApplication application{argc, argv};
+    QCoreApplication::setApplicationName(QStringLiteral("fooyin-enginetaskqueue-test"));
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

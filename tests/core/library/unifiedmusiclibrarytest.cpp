@@ -70,36 +70,6 @@ using namespace Qt::StringLiterals;
 constexpr auto CurrentSchemaVersion = 23;
 
 namespace {
-QCoreApplication* ensureCoreApplication()
-{
-    QStandardPaths::setTestModeEnabled(true);
-
-    if(auto* app = QCoreApplication::instance()) {
-        return app;
-    }
-
-    static int argc{1};
-    static char appName[]        = "fooyin-unifiedmusiclibrary-test";
-    static char* argv[]          = {appName, nullptr};
-    static QCoreApplication* app = []() {
-        auto* instance = new QCoreApplication(argc, argv);
-        QCoreApplication::setApplicationName(QString::fromLatin1(appName));
-        return instance;
-    }();
-    return app;
-}
-
-void initialiseTestEnvironment()
-{
-    static const bool initialised = []() {
-        ensureCoreApplication();
-        QLoggingCategory::setFilterRules(u"fy.db.info=false\nfy.library.info=false\nfy.scanner.info=false"_s);
-        return true;
-    }();
-
-    static_cast<void>(initialised);
-}
-
 template <typename Predicate>
 bool waitForCondition(Predicate&& predicate, int timeoutMs = 10000)
 {
@@ -473,7 +443,6 @@ class UnifiedMusicLibraryTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        initialiseTestEnvironment();
         resetRatingSettings();
 
         m_context = std::make_unique<LibraryTestContext>();
@@ -1241,3 +1210,13 @@ TEST_F(UnifiedMusicLibraryTest, RestoresStatsWhenUnmanagedTrackIsReadded)
     EXPECT_EQ(tracks.front().lastPlayed(), 500);
 }
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    QStandardPaths::setTestModeEnabled(true);
+    const QCoreApplication application{argc, argv};
+    QCoreApplication::setApplicationName(u"fooyin-unifiedmusiclibrary-test"_s);
+    QLoggingCategory::setFilterRules(u"fy.db.info=false\nfy.library.info=false\nfy.scanner.info=false"_s);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

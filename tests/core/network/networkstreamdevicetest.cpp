@@ -46,24 +46,6 @@
 using namespace Qt::StringLiterals;
 
 namespace {
-QCoreApplication* ensureCoreApplication()
-{
-    QStandardPaths::setTestModeEnabled(true);
-
-    if(auto* app = QCoreApplication::instance()) {
-        return app;
-    }
-
-    // Keep the test application alive until process exit
-    // Qt Network can keep shutdown work queued after the fake replies have been destroyed
-    static int argc{1};
-    static char appName[]  = "fooyin-networkstreamdevice-test";
-    static char* argv[]    = {appName, nullptr};
-    static auto* const app = new QCoreApplication{argc, argv};
-    QCoreApplication::setApplicationName(QString::fromLatin1(appName));
-    return app;
-}
-
 template <typename T>
 T finishNetworkOperation(std::future<T>& operation, std::stop_source& abortSource)
 {
@@ -210,11 +192,6 @@ namespace Fooyin::Testing {
 class NetworkStreamDeviceTest : public ::testing::Test
 {
 protected:
-    static void SetUpTestSuite()
-    {
-        ensureCoreApplication();
-    }
-
     void TearDown() override
     {
         QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
@@ -723,3 +700,12 @@ TEST_F(NetworkStreamDeviceTest, HlsReadsTimedId3MetadataFromEmsg)
     EXPECT_EQ(updatedMetadata->revision, 2);
 }
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    QStandardPaths::setTestModeEnabled(true);
+    const QCoreApplication application{argc, argv};
+    QCoreApplication::setApplicationName(u"fooyin-networkstreamdevice-test"_s);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

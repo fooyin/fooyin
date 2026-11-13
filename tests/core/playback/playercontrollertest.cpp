@@ -52,27 +52,6 @@ constexpr auto LastPlaybackPosition     = "Player/LastPosition"_L1;
 constexpr auto LastPlaybackTimeListened = "Player/LastTimeListened"_L1;
 constexpr auto LastPlaybackState        = "Player/LastState"_L1;
 
-QCoreApplication* ensureCoreApplication()
-{
-    static QTemporaryDir stateDir{QDir::tempPath() + u"/fooyin-playercontroller-state-XXXXXX"_s};
-    qputenv("XDG_STATE_HOME", stateDir.path().toUtf8());
-    QStandardPaths::setTestModeEnabled(true);
-
-    if(auto* app = QCoreApplication::instance()) {
-        return app;
-    }
-
-    static int argc{1};
-    static char appName[]        = "fooyin-playercontroller-test";
-    static char* argv[]          = {appName, nullptr};
-    static QCoreApplication* app = []() {
-        auto* instance = new QCoreApplication(argc, argv);
-        QCoreApplication::setApplicationName(QString::fromLatin1(appName));
-        return instance;
-    }();
-    return app;
-}
-
 void registerControllerSettings(SettingsManager& settings)
 {
     settings.createSetting<Settings::Core::PlayMode>(0, QString::fromLatin1(Settings::Core::PlayModeKey));
@@ -170,7 +149,6 @@ struct PlaylistHandlerHarness
 
 TEST(PlayerControllerTest, ChangeAndCommitTrackUpdatePublicState)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_change_commit_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -202,7 +180,6 @@ TEST(PlayerControllerTest, ChangeAndCommitTrackUpdatePublicState)
 
 TEST(PlayerControllerTest, PlayAndPauseEmitTransportStateChanges)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_play_pause_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -236,7 +213,6 @@ TEST(PlayerControllerTest, PlayAndPauseEmitTransportStateChanges)
 
 TEST(PlayerControllerTest, StopAfterQueueItemArmsWhenSelectedItemCommits)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stop_after_queue_item_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -264,7 +240,6 @@ TEST(PlayerControllerTest, StopAfterQueueItemArmsWhenSelectedItemCommits)
 
 TEST(PlayerControllerTest, RemovingStopAfterQueueItemClearsSelection)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_remove_stop_after_queue_item_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -286,7 +261,6 @@ TEST(PlayerControllerTest, RemovingStopAfterQueueItemClearsSelection)
 
 TEST(PlayerControllerTest, TrackPlayedEmitsOnceAfterCrossingThreshold)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_track_played_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -306,7 +280,6 @@ TEST(PlayerControllerTest, TrackPlayedEmitsOnceAfterCrossingThreshold)
 
 TEST(PlayerControllerTest, TrackPlayedUsesEarlierElapsedThreshold)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_elapsed_track_played_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlayedThreshold>(0.9);
@@ -329,7 +302,6 @@ TEST(PlayerControllerTest, TrackPlayedUsesEarlierElapsedThreshold)
 
 TEST(PlayerControllerTest, RestartingCurrentTrackAfterStoppedCountsListenedTime)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stopped_restart_progress_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -350,7 +322,6 @@ TEST(PlayerControllerTest, RestartingCurrentTrackAfterStoppedCountsListenedTime)
 
 TEST(PlayerControllerTest, StoppedTrackRemainsSeekable)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stopped_seek_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -374,7 +345,6 @@ TEST(PlayerControllerTest, StoppedTrackRemainsSeekable)
 
 TEST(PlayerControllerTest, RuntimeDurationEnablesSeekingWithoutResettingProgress)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_remote_seek_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -404,7 +374,6 @@ TEST(PlayerControllerTest, RuntimeDurationEnablesSeekingWithoutResettingProgress
 
 TEST(PlayerControllerTest, RestartingCurrentTrackWithPendingRequestCountsListenedTime)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_pending_restart_progress_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -431,7 +400,6 @@ TEST(PlayerControllerTest, RestartingCurrentTrackWithPendingRequestCountsListene
 
 TEST(PlayerControllerTest, PendingTrackChangeDoesNotRestartPreviousTrackProgress)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_pending_change_progress_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -453,7 +421,6 @@ TEST(PlayerControllerTest, PendingTrackChangeDoesNotRestartPreviousTrackProgress
 
 TEST(PlayerControllerTest, StartingAnotherTrackAfterStoppingDoesNotReportPreviousTrackAsPlaying)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stopped_track_indicator_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -501,7 +468,6 @@ TEST(PlayerControllerTest, StartingAnotherTrackAfterStoppingDoesNotReportPreviou
 
 TEST(PlayerControllerTest, RestoringPastThresholdDoesNotEmitTrackPlayed)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_restore_threshold_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -517,7 +483,6 @@ TEST(PlayerControllerTest, RestoringPastThresholdDoesNotEmitTrackPlayed)
 
 TEST(PlayerControllerTest, RestoringPartialPlaybackProgressCountsOnlyRemainingListenedTime)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_restore_progress_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -535,7 +500,6 @@ TEST(PlayerControllerTest, RestoringPartialPlaybackProgressCountsOnlyRemainingLi
 
 TEST(PlayerControllerTest, RestoringStartupTrackRequestsEngineLoadWithoutPrecommit)
 {
-    ensureCoreApplication();
     {
         FyStateSettings stateSettings;
         stateSettings.remove(ActiveTrackIndexKey);
@@ -639,7 +603,6 @@ TEST(PlayerControllerTest, PreviousCapabilityIncludesRewindingCurrentTrack)
 
 TEST(PlayerControllerTest, RandomTrackRequestsDifferentTrackWhenPossible)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_random_track_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -671,7 +634,6 @@ TEST(PlayerControllerTest, RandomTrackRequestsDifferentTrackWhenPossible)
 
 TEST(PlayerControllerTest, RepeatTrackPublishesFreshUpcomingOccurrenceAfterEachCommit)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_repeat_occurrence_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlayMode>(static_cast<int>(Playlist::RepeatTrack));
@@ -721,7 +683,6 @@ TEST(PlayerControllerTest, RepeatTrackPublishesFreshUpcomingOccurrenceAfterEachC
 
 TEST(PlayerControllerTest, RandomAlbumRequestsDifferentAlbumWhenPossible)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_random_album_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -754,7 +715,6 @@ TEST(PlayerControllerTest, RandomAlbumRequestsDifferentAlbumWhenPossible)
 
 TEST(PlayerControllerTest, PreviousAlbumRequestsFirstTrackOfPreviousAlbum)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_previous_album_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -788,7 +748,6 @@ TEST(PlayerControllerTest, PreviousAlbumRequestsFirstTrackOfPreviousAlbum)
 
 TEST(PlayerControllerTest, NextAlbumRequestsFirstTrackOfNextAlbum)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_next_album_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -822,7 +781,6 @@ TEST(PlayerControllerTest, NextAlbumRequestsFirstTrackOfNextAlbum)
 
 TEST(PlayerControllerTest, CommittingQueueTrackOnlyRemovesFirstDuplicateQueueEntry)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_duplicate_commit_test.ini"_s};
     registerControllerSettings(settings);
     PlayerController controller{&settings, nullptr};
@@ -877,7 +835,6 @@ TEST(PlayerControllerTest, StopAfterCurrentResetWaitsForEngineStoppedState)
 
 TEST(PlayerControllerTest, StopAfterCurrentNaturalEndAdvancesPlaylistPositionBeforeStopping)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stop_current_advances_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -919,7 +876,6 @@ TEST(PlayerControllerTest, StopAfterCurrentNaturalEndAdvancesPlaylistPositionBef
 
 TEST(PlayerControllerTest, NextAfterStopAfterCurrentAdvancesPastResumeTrack)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stop_current_next_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -960,7 +916,6 @@ TEST(PlayerControllerTest, NextAfterStopAfterCurrentAdvancesPastResumeTrack)
 
 TEST(PlayerControllerTest, QueueAddedAfterStopAfterCurrentTakesPrecedenceOnPlay)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stop_current_queue_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1005,7 +960,6 @@ TEST(PlayerControllerTest, QueueAddedAfterStopAfterCurrentTakesPrecedenceOnPlay)
 
 TEST(PlayerControllerTest, NormalScheduleSupersedesStopAfterCurrentResumeAndQueue)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_stop_current_schedule_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1051,7 +1005,6 @@ TEST(PlayerControllerTest, NormalScheduleSupersedesStopAfterCurrentResumeAndQueu
 
 TEST(PlayerControllerTest, CommitingPlaylistTrackSyncsActivePlaylistIndex)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_sync_active_playlist_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1081,7 +1034,6 @@ TEST(PlayerControllerTest, CommitingPlaylistTrackSyncsActivePlaylistIndex)
 
 TEST(PlayerControllerTest, SyncPlaylistTrackStateEmitsCurrentTrackUpdatedForMetadataChanges)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_sync_metadata_update_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1122,7 +1074,6 @@ TEST(PlayerControllerTest, SyncPlaylistTrackStateEmitsCurrentTrackUpdatedForMeta
 
 TEST(PlayerControllerTest, PlayFromIdleUsesActivePlaylistCurrentTrack)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_play_from_idle_current_track_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1152,7 +1103,6 @@ TEST(PlayerControllerTest, PlayFromIdleUsesActivePlaylistCurrentTrack)
 
 TEST(PlayerControllerTest, CommitingQueueTrackDoesNotSyncActivePlaylistIndex)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_sync_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1182,7 +1132,6 @@ TEST(PlayerControllerTest, CommitingQueueTrackDoesNotSyncActivePlaylistIndex)
 
 TEST(PlayerControllerTest, CommitingNonActivePlaylistTrackDoesNotSyncPlaylistIndex)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_non_active_sync_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1218,7 +1167,6 @@ TEST(PlayerControllerTest, CommitingNonActivePlaylistTrackDoesNotSyncPlaylistInd
 
 TEST(PlayerControllerTest, FollowPlaybackQueueContinuesFromQueuedTrackPlaylist)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_follow_queue_playlist_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::FollowPlaybackQueue>(true);
@@ -1283,7 +1231,6 @@ TEST(PlayerControllerTest, FollowPlaybackQueueContinuesFromQueuedTrackPlaylist)
 
 TEST(PlayerControllerTest, FollowPlaybackQueuePreviousUsesQueuedTrackPlaylist)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_follow_queue_previous_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::FollowPlaybackQueue>(true);
@@ -1351,7 +1298,6 @@ TEST(PlayerControllerTest, FollowPlaybackQueuePreviousUsesQueuedTrackPlaylist)
 
 TEST(PlayerControllerTest, FollowPlaybackQueueDoesNotFallBackAtQueuedTrackBoundaries)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_follow_queue_boundary_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::FollowPlaybackQueue>(true);
@@ -1426,7 +1372,6 @@ TEST(PlayerControllerTest, FollowPlaybackQueueDoesNotFallBackAtQueuedTrackBounda
 
 TEST(PlayerControllerTest, LibraryTrackUpdatesPreserveShuffleHistory)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_preserve_shuffle_history_test.ini"_s};
     registerControllerSettings(settings);
 
@@ -1467,7 +1412,6 @@ TEST(PlayerControllerTest, LibraryTrackUpdatesPreserveShuffleHistory)
 
 TEST(PlayerControllerTest, ReplacingPlayingPlaylistTracksPreservesCurrentEntryAcrossInsertedRows)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_replace_tracks_preserves_entry_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1512,7 +1456,6 @@ TEST(PlayerControllerTest, ReplacingPlayingPlaylistTracksPreservesCurrentEntryAc
 
 TEST(PlayerControllerTest, ReplacingOtherPlaylistTracksDoesNotAffectCurrentPlaybackEntry)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_other_playlist_replace_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1563,7 +1506,6 @@ TEST(PlayerControllerTest, ReplacingOtherPlaylistTracksDoesNotAffectCurrentPlayb
 
 TEST(PlayerControllerTest, ReplacingPlaylistTracksBackToOriginalRestoresCurrentEntryIndex)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_replace_tracks_restore_index_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1609,7 +1551,6 @@ TEST(PlayerControllerTest, ReplacingPlaylistTracksBackToOriginalRestoresCurrentE
 
 TEST(PlayerControllerTest, RestoringRemovedPlayingEntryReattachesPlaylistTrackState)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_restore_removed_playing_entry_test.ini"_s};
     registerControllerSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -1657,7 +1598,6 @@ TEST(PlayerControllerTest, RestoringRemovedPlayingEntryReattachesPlaylistTrackSt
 
 TEST(PlayerControllerTest, QueueSourceStartMaterialisesPlaylistAndRetainsCommittedItem)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_start_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -1694,7 +1634,6 @@ TEST(PlayerControllerTest, QueueSourceStartMaterialisesPlaylistAndRetainsCommitt
 
 TEST(PlayerControllerTest, QueueSourcePreviousUsesDisplayedOccurrence)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_previous_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -1722,7 +1661,6 @@ TEST(PlayerControllerTest, QueueSourcePreviousUsesDisplayedOccurrence)
 
 TEST(PlayerControllerTest, QueueSourceRandomTrackAdvancesFromSelectedQueueItem)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_random_track_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -1766,7 +1704,6 @@ TEST(PlayerControllerTest, QueueSourceRandomTrackAdvancesFromSelectedQueueItem)
 
 TEST(PlayerControllerTest, QueueSourceNextAlbumAdvancesFromSelectedQueueItem)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_next_album_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -1807,7 +1744,6 @@ TEST(PlayerControllerTest, QueueSourceNextAlbumAdvancesFromSelectedQueueItem)
 
 TEST(PlayerControllerTest, QueueSourceRandomAlbumSelectsQueueItem)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_random_album_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -1843,7 +1779,6 @@ TEST(PlayerControllerTest, QueueSourceRandomAlbumSelectsQueueItem)
 
 TEST(PlayerControllerTest, QueueSourceShuffleShowsStableOrder)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_shuffle_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -1877,7 +1812,6 @@ TEST(PlayerControllerTest, QueueSourceShuffleShowsStableOrder)
 
 TEST(PlayerControllerTest, QueueSourceRepeatPlaylistWrapsDisplayedOrder)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_repeat_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -1903,7 +1837,6 @@ TEST(PlayerControllerTest, QueueSourceRepeatPlaylistWrapsDisplayedOrder)
 
 TEST(PlayerControllerTest, QueueSourceIgnoresTransientQueueStopSetting)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_stop_setting_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -1932,7 +1865,6 @@ TEST(PlayerControllerTest, QueueSourceIgnoresTransientQueueStopSetting)
 
 TEST(PlayerControllerTest, QueueSourceStopAfterCurrentResumesAtNextItem)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_stop_after_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -1969,7 +1901,6 @@ TEST(PlayerControllerTest, QueueSourceStopAfterCurrentResumesAtNextItem)
 
 TEST(PlayerControllerTest, QueueSourcePlayModeChangeReordersOnlyUpcomingGeneratedItems)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_mode_change_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -2020,7 +1951,6 @@ TEST(PlayerControllerTest, QueueSourcePlayModeChangeReordersOnlyUpcomingGenerate
 
 TEST(PlayerControllerTest, QueueSourceRestoredDetachedSequenceReturnsToSourceOrder)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_detached_restore_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -2055,7 +1985,6 @@ TEST(PlayerControllerTest, QueueSourceRestoredDetachedSequenceReturnsToSourceOrd
 
 TEST(PlayerControllerTest, QueueSourceRepeatAlbumWrapsWithinDisplayedAlbum)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_source_repeat_album_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -2082,7 +2011,6 @@ TEST(PlayerControllerTest, QueueSourceRepeatAlbumWrapsWithinDisplayedAlbum)
 
 TEST(PlayerControllerTest, RestoringSequenceInOverrideModeKeepsOnlyManualQueueItems)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_mode_restore_test.ini"_s};
     registerControllerSettings(settings);
 
@@ -2114,7 +2042,6 @@ TEST(PlayerControllerTest, RestoringSequenceInOverrideModeKeepsOnlyManualQueueIt
 
 TEST(PlayerControllerTest, ChangingToOverrideModeDropsGeneratedSequenceItems)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_runtime_mode_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -2142,7 +2069,6 @@ TEST(PlayerControllerTest, ChangingToOverrideModeDropsGeneratedSequenceItems)
 
 TEST(PlayerControllerTest, ClearingPlaybackSequenceLeavesPlayingTrackDetached)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_clear_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -2168,7 +2094,6 @@ TEST(PlayerControllerTest, ClearingPlaybackSequenceLeavesPlayingTrackDetached)
 
 TEST(PlayerControllerTest, ChangingHistoryLimitPrunesPlayedSequenceTracks)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_history_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -2196,7 +2121,6 @@ TEST(PlayerControllerTest, ChangingHistoryLimitPrunesPlayedSequenceTracks)
 
 TEST(PlayerControllerTest, AdvancingPlayingTracksPrunesHistory)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playercontroller_queue_history_advance_test.ini"_s};
     registerControllerSettings(settings);
     settings.set<Settings::Core::PlaybackQueueMode>(static_cast<int>(PlaybackQueueMode::QueueAsPlaybackSource));
@@ -2228,3 +2152,14 @@ TEST(PlayerControllerTest, AdvancingPlayingTracksPrunesHistory)
     EXPECT_EQ(controller.playbackQueue().currentIndex(), 1);
 }
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    const QTemporaryDir stateDir{QDir::tempPath() + u"/fooyin-playercontroller-state-XXXXXX"_s};
+    qputenv("XDG_STATE_HOME", stateDir.path().toUtf8());
+    QStandardPaths::setTestModeEnabled(true);
+    const QCoreApplication application{argc, argv};
+    QCoreApplication::setApplicationName(u"fooyin-playercontroller-test"_s);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

@@ -45,25 +45,6 @@ using namespace Qt::StringLiterals;
 
 namespace Fooyin::Testing {
 namespace {
-QCoreApplication* ensureCoreApplication()
-{
-    QStandardPaths::setTestModeEnabled(true);
-
-    if(auto* app = QCoreApplication::instance()) {
-        return app;
-    }
-
-    static int argc{1};
-    static char appName[]        = "fooyin-playlisthandler-test";
-    static char* argv[]          = {appName, nullptr};
-    static QCoreApplication* app = []() {
-        auto* instance = new QCoreApplication(argc, argv);
-        QCoreApplication::setApplicationName(QString::fromLatin1(appName));
-        return instance;
-    }();
-    return app;
-}
-
 void registerCoreSettings(SettingsManager& settings)
 {
     settings.createSetting<Settings::Core::ShuffleAlbumsGroupScript>(u"%album%"_s,
@@ -139,7 +120,6 @@ struct PlaylistHandlerHarness
 
 TEST(PlaylistHandlerTest, RemovingOnlyEmptyDefaultIsNoOp)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_default_recreate_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -171,7 +151,6 @@ TEST(PlaylistHandlerTest, RemovingOnlyEmptyDefaultIsNoOp)
 
 TEST(PlaylistHandlerTest, ReaddingSameNameCancelsPendingRemovedExportOnly)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_pending_removed_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -201,7 +180,6 @@ TEST(PlaylistHandlerTest, ReaddingSameNameCancelsPendingRemovedExportOnly)
 
 TEST(PlaylistHandlerTest, RemovingLastNonEmptyPlaylistKeepsRestoreHistory)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_last_non_empty_restore_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -226,7 +204,6 @@ TEST(PlaylistHandlerTest, RemovingLastNonEmptyPlaylistKeepsRestoreHistory)
 
 TEST(PlaylistHandlerTest, RestoreRemovedPlaylistReaddsSameObjectWithFreshDatabaseRow)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_restore_removed_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -259,7 +236,6 @@ TEST(PlaylistHandlerTest, RestoreRemovedPlaylistReaddsSameObjectWithFreshDatabas
 
 TEST(PlaylistHandlerTest, LockedPlaylistRejectsContentChangesAndPersistsState)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_locked_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -296,7 +272,6 @@ TEST(PlaylistHandlerTest, LockedPlaylistRejectsContentChangesAndPersistsState)
 
 TEST(PlaylistHandlerTest, AutoPlaylistRejectsAppendedTracks)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_auto_append_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -318,7 +293,6 @@ TEST(PlaylistHandlerTest, AutoPlaylistRejectsAppendedTracks)
 
 TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesPlaylistTrackWhenFilepathChanges)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_filepath_update_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -350,7 +324,6 @@ TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesPlaylistTrackWhenFilepathC
 
 TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesAutoPlaylistTrackCustomTags)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_auto_custom_tag_update_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -388,7 +361,6 @@ TEST(PlaylistHandlerTest, TracksMetadataChangedUpdatesAutoPlaylistTrackCustomTag
 
 TEST(PlaylistHandlerTest, AutoPlaylistsOnlyContainLibraryTracks)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_auto_library_tracks_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -424,7 +396,6 @@ TEST(PlaylistHandlerTest, AutoPlaylistsOnlyContainLibraryTracks)
 
 TEST(PlaylistHandlerTest, DeletedTracksAreRemovedFromAllPlaylists)
 {
-    ensureCoreApplication();
     SettingsManager settings{QDir::tempPath() + u"/fooyin_playlisthandler_track_delete_test.ini"_s};
     registerCoreSettings(settings);
     PlaylistHandlerHarness harness{settings};
@@ -446,3 +417,12 @@ TEST(PlaylistHandlerTest, DeletedTracksAreRemovedFromAllPlaylists)
     EXPECT_EQ(secondPlaylist->tracks().front().identityKey(), retainedTrack.identityKey());
 }
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    QStandardPaths::setTestModeEnabled(true);
+    const QCoreApplication application{argc, argv};
+    QCoreApplication::setApplicationName(u"fooyin-playlisthandler-test"_s);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

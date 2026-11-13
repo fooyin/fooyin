@@ -90,24 +90,6 @@ public:
     }
 };
 
-QCoreApplication* ensureCoreApplication()
-{
-    static QTemporaryDir configDir{QDir::tempPath() + u"/fooyin-audioloader-config-XXXXXX"_s};
-    qputenv("XDG_CONFIG_HOME", configDir.path().toUtf8());
-    QStandardPaths::setTestModeEnabled(true);
-
-    if(auto* app = QCoreApplication::instance()) {
-        return app;
-    }
-
-    static int argc{1};
-    static char appName[] = "fooyin-audioloader-test";
-    static char* argv[]   = {appName, nullptr};
-    static QCoreApplication app{argc, argv};
-    QCoreApplication::setApplicationName(QString::fromLatin1(appName));
-    return &app;
-}
-
 void clearLoaderSettings()
 {
     Fooyin::FySettings settings;
@@ -587,11 +569,6 @@ namespace Fooyin::Testing {
 class AudioLoaderTest : public ::testing::Test
 {
 protected:
-    static void SetUpTestSuite()
-    {
-        ensureCoreApplication();
-    }
-
     void SetUp() override
     {
         clearLoaderSettings();
@@ -1353,3 +1330,14 @@ TEST_F(AudioLoaderTest, ResetRestoresDefaultsAndClearsSavedState)
     EXPECT_EQ((std::vector<uint8_t>{1, 1}), entryEnabledStates(restoredLoader.readers()));
 }
 } // namespace Fooyin::Testing
+
+int main(int argc, char* argv[])
+{
+    const QTemporaryDir configDir{QDir::tempPath() + u"/fooyin-audioloader-config-XXXXXX"_s};
+    qputenv("XDG_CONFIG_HOME", configDir.path().toUtf8());
+    QStandardPaths::setTestModeEnabled(true);
+    const QCoreApplication application{argc, argv};
+    QCoreApplication::setApplicationName(u"fooyin-audioloader-test"_s);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
