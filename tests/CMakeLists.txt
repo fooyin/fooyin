@@ -155,6 +155,8 @@ if(TARGET lyrics)
         ${CMAKE_SOURCE_DIR}/src/plugins/lyrics/lyricsparser.cpp
     )
     target_include_directories(test_lyricsparser PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/lyrics)
+    fooyin_add_test(test_lyricsfonts plugins/lyrics/lyricsfontstest.cpp)
+    target_include_directories(test_lyricsfonts PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins/lyrics)
 endif()
 
 fooyin_add_test(test_metadatamatcher gui/metadatalookup/metadatamatchertest.cpp)
