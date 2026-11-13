@@ -47,6 +47,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <ranges>
 
 // clazy:excludeall=returning-void-expression
 
