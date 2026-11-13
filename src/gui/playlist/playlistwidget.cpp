@@ -802,6 +802,10 @@ void PlaylistWidget::changePlaylistLayout(Playlist* previousPlaylist, Playlist* 
 
 bool PlaylistWidget::followCurrentTrack()
 {
+    if(m_playlistView->hasActiveInlineEditor()) {
+        return false;
+    }
+
     const PlaylistTrack playingTrack = m_model->playingTrack();
 
     if(!playingTrack.track.isValid() || playingTrack.playlistId != m_playlistController->currentPlaylistId()) {
