@@ -116,6 +116,7 @@ private:
     void centreRectInView(const QRect& rect);
     void endBulkEditSession(bool commitChanges);
     void showBulkEditor();
+    void hideBulkEditor();
     void updateBulkEditorGeometry();
 
     void queueEditor(const QModelIndex& index);

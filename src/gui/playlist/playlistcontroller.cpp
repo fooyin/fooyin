@@ -842,7 +842,7 @@ void PlaylistController::handlePlaylistUpdated(Playlist* playlist, const std::ve
     bool allNew{false};
     const bool isCurrentPlaylist = m_workspace->isCurrentPlaylist(playlist);
 
-    if(playlist && (indexes.empty() || std::cmp_equal(indexes.size(), playlist->trackCount()))) {
+    if(playlist && indexes.empty()) {
         allNew = true;
         m_workspace->resetPlaylistViewState(playlist);
 
