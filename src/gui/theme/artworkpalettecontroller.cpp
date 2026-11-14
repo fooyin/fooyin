@@ -29,13 +29,17 @@
 #include <QApplication>
 #include <QCryptographicHash>
 #include <QImage>
+#include <QPainter>
 #include <QPixmap>
 #include <QStyle>
+#include <QStyleOptionViewItem>
 
 #include <array>
 #include <cmath>
 #include <initializer_list>
 #include <numbers>
+#include <numeric>
+#include <vector>
 
 namespace Fooyin {
 namespace {
@@ -172,6 +176,140 @@ QColor readableColour(const QColor& colour, std::initializer_list<QColor> backgr
 
     return target;
 }
+
+std::vector<QColor> selectionBackgrounds(const QStyle* style, const QPalette& palette, QPalette::ColorGroup group)
+{
+    QImage image{96, 32, QImage::Format_RGB32};
+
+    QStyleOptionViewItem opt;
+    opt.rect                   = image.rect();
+    opt.palette                = palette;
+    opt.showDecorationSelected = true;
+    opt.viewItemPosition       = QStyleOptionViewItem::OnlyOne;
+    opt.state                  = QStyle::State_Enabled | QStyle::State_Selected;
+    opt.palette.setCurrentColorGroup(group);
+    if(group == QPalette::Active) {
+        opt.state |= QStyle::State_Active | QStyle::State_HasFocus;
+    }
+
+    std::vector colours{palette.color(group, QPalette::Highlight).rgb()};
+    for(const bool hovered : {false, true}) {
+        opt.state.setFlag(QStyle::State_MouseOver, hovered);
+        image.fill(palette.color(group, QPalette::Base));
+        {
+            QPainter painter{&image};
+            style->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, &painter);
+            style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, &painter);
+        }
+
+        for(int y{4}; y < image.height() - 4; ++y) {
+            const auto* pixels = reinterpret_cast<const QRgb*>(image.constScanLine(y));
+            for(int x{8}; x < image.width() - 8; ++x) {
+                if(x == 8 || pixels[x] != pixels[x - 1]) {
+                    colours.push_back(pixels[x]);
+                }
+            }
+        }
+    }
+    std::ranges::sort(colours);
+    colours.erase(std::ranges::unique(colours).begin(), colours.end());
+
+    std::vector<QColor> backgrounds;
+    backgrounds.reserve(colours.size());
+    for(const auto colour : colours) {
+        backgrounds.emplace_back(colour);
+    }
+    return backgrounds;
+}
+
+double selectionContrast(const QColor& foreground, const std::vector<QColor>& backgrounds)
+{
+    const double fgLuminance = luminance(foreground);
+    double contrast{21.0};
+    for(const auto& background : backgrounds) {
+        const double bgLuminance = luminance(background);
+        const double textLuminance
+            = foreground.alpha() == 255 ? fgLuminance : luminance(mix(background, foreground, foreground.alphaF()));
+        contrast = std::min(contrast, (std::max(textLuminance, bgLuminance) + 0.05)
+                                          / (std::min(textLuminance, bgLuminance) + 0.05));
+    }
+    return contrast;
+}
+
+void setSelectionColours(const QStyle* style, const QPalette& base, QPalette& palette, QPalette::ColorGroup group,
+                         const QColor& highlight)
+{
+    palette.setColor(group, QPalette::Highlight, highlight);
+
+    auto backgrounds = selectionBackgrounds(style, palette, group);
+    // Keep selected text at full strength when the view loses focus
+    const auto fgGroup = group == QPalette::Inactive ? QPalette::Active : group;
+    const std::array foregrounds{base.color(fgGroup, QPalette::HighlightedText), base.color(fgGroup, QPalette::Text),
+                                 base.color(fgGroup, QPalette::WindowText), base.color(fgGroup, QPalette::ButtonText)};
+    auto foreground     = foregrounds.front();
+    double bestContrast = selectionContrast(foreground, backgrounds);
+    if(bestContrast >= 4.5) {
+        palette.setColor(group, QPalette::HighlightedText, foreground);
+        return;
+    }
+
+    for(size_t i{1}; i < foregrounds.size(); ++i) {
+        const double contrast = selectionContrast(foregrounds[i], backgrounds);
+        if(contrast > bestContrast) {
+            foreground   = foregrounds[i];
+            bestContrast = contrast;
+        }
+    }
+    if(bestContrast >= 4.5) {
+        palette.setColor(group, QPalette::HighlightedText, foreground);
+        return;
+    }
+
+    const QColor black{Qt::black};
+    const QColor white{Qt::white};
+    const bool darkText          = selectionContrast(black, backgrounds) >= selectionContrast(white, backgrounds);
+    const auto& textTarget       = darkText ? black : white;
+    const auto& backgroundTarget = darkText ? white : black;
+    palette.setColor(group, QPalette::HighlightedText, textTarget);
+
+    for(int step{0}; step <= 100; ++step) {
+        palette.setColor(group, QPalette::Highlight, mix(highlight, backgroundTarget, step / 100.0));
+        backgrounds = selectionBackgrounds(style, palette, group);
+        if(selectionContrast(textTarget, backgrounds) < 4.5) {
+            continue;
+        }
+
+        foreground = darkText ? *std::ranges::min_element(foregrounds, {}, luminance)
+                              : *std::ranges::max_element(foregrounds, {}, luminance);
+        if(selectionContrast(foreground, backgrounds) >= 4.5) {
+            palette.setColor(group, QPalette::HighlightedText, foreground);
+            return;
+        }
+
+        foreground.setAlpha(255);
+        if(selectionContrast(foreground, backgrounds) >= 4.5) {
+            palette.setColor(group, QPalette::HighlightedText, foreground);
+            return;
+        }
+
+        double lower{0.0};
+        double upper{1.0};
+        for(int i{0}; i < 8; ++i) {
+            const double amount = std::midpoint(lower, upper);
+            if(selectionContrast(mix(foreground, textTarget, amount), backgrounds) >= 4.5) {
+                upper = amount;
+            }
+            else {
+                lower = amount;
+            }
+        }
+        palette.setColor(group, QPalette::HighlightedText, mix(foreground, textTarget, upper));
+        return;
+    }
+
+    // Retain the original accent if the style doesn't honour highlight changes
+    palette.setColor(group, QPalette::Highlight, highlight);
+}
 } // namespace
 
 ArtworkPaletteController::ArtworkPaletteController(CoverRepository* covers, PlayerController* player,
@@ -235,18 +373,17 @@ QPalette ArtworkPaletteController::palette(const QPalette& base) const
                         std::pair{QPalette::ButtonText, QPalette::Button},
                         std::pair{QPalette::ToolTipText, QPalette::ToolTipBase},
                     }) {
-                    // Keep text readable when a view loses focus
-                    palette.setColor(group, foreground,
-                                     readableColour(base.color(QPalette::Active, foreground),
-                                                    {palette.color(group, background)}, 4.5));
+                    palette.setColor(
+                        group, foreground,
+                        readableColour(base.color(group, foreground), {palette.color(group, background)}, 4.5));
                 }
                 palette.setColor(group, QPalette::Text,
-                                 readableColour(base.color(QPalette::Active, QPalette::Text),
+                                 readableColour(base.color(group, QPalette::Text),
                                                 {palette.color(group, QPalette::Base),
                                                  palette.color(group, QPalette::AlternateBase)},
                                                 4.5));
                 palette.setColor(group, QPalette::PlaceholderText,
-                                 readableColour(base.color(QPalette::Active, QPalette::PlaceholderText),
+                                 readableColour(base.color(group, QPalette::PlaceholderText),
                                                 {palette.color(group, QPalette::Base)}, 4.5));
             }
         }
@@ -258,12 +395,15 @@ QPalette ArtworkPaletteController::palette(const QPalette& base) const
         auto highlight = readableColour(m_colour, {window, surface, alternate}, 3.0);
         if(group == QPalette::Disabled) {
             highlight = mix(highlight, window, 0.6);
+            palette.setColor(group, QPalette::Highlight, highlight);
+            palette.setColor(group, QPalette::HighlightedText,
+                             readableColour(base.color(group, QPalette::HighlightedText), {highlight}, 4.5));
         }
-        palette.setColor(group, QPalette::Highlight, highlight);
-        palette.setColor(group, QPalette::HighlightedText,
-                         readableColour(base.color(group, QPalette::HighlightedText), {highlight}, 4.5));
+        else {
+            setSelectionColours(style, base, palette, group, highlight);
+        }
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
-        palette.setColor(group, QPalette::Accent, highlight);
+        palette.setColor(group, QPalette::Accent, palette.color(group, QPalette::Highlight));
 #endif
         palette.setColor(group, QPalette::Link, readableColour(m_colour, {window, surface, alternate}, 4.5));
         const auto visited = QColor::fromHslF(hue, m_colour.hslSaturationF() * 0.7F, m_colour.lightnessF());
