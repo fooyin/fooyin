@@ -267,6 +267,9 @@ void WaveSeekBar::stopSeeking()
 
 bool WaveSeekBar::event(QEvent* event)
 {
+    if(event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange) {
+        invalidate();
+    }
     if(isSeeking()
        && (event->type() == QEvent::UngrabMouse || event->type() == QEvent::WindowDeactivate
            || event->type() == QEvent::Hide)) {
