@@ -22,7 +22,7 @@
 #include "logmodel.h"
 
 #include <QBasicTimer>
-#include <QWidget>
+#include <QDialog>
 
 #include <queue>
 
@@ -36,7 +36,7 @@ class ExpandedTreeView;
 class SettingsManager;
 class SignalThrottler;
 
-class LogWidget : public QWidget
+class LogWidget : public QDialog
 {
     Q_OBJECT
 

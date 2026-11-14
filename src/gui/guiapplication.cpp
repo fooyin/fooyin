@@ -301,7 +301,7 @@ GuiApplication::GuiApplication(Application* core)
                          m_coverRepository,
                          &m_playlistInteractor,
                          m_playlistController.get()}
-    , m_logWidget{std::make_unique<LogWidget>(m_settings)}
+    , m_logWidget{std::make_unique<LogWidget>(m_settings, m_mainWindow.get())}
     , m_widgets{new Widgets(m_core, this, m_guiPluginContext, m_mainWindow.get(), &m_playlistInteractor, this)}
     , m_conversionController{new ConversionController(
           m_core->audioLoader(), m_core->audioEncoderRegistry(), m_core->dspRegistry(), m_core->dspChainStore(),
@@ -369,6 +369,7 @@ void GuiApplication::shutdown()
     m_actionManager->saveSettings();
     m_editableLayout->saveLayout();
     m_editableLayout.reset();
+    m_logWidget.reset();
     m_mainWindow.reset();
     m_playlistController.reset();
 }

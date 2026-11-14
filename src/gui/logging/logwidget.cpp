@@ -78,7 +78,7 @@ QModelIndexList allRowIndexes(const QAbstractItemModel* model)
 
 namespace Fooyin {
 LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
-    : QWidget{parent}
+    : QDialog{parent}
     , m_settings{settings}
     , m_view{new ExpandedTreeView(this)}
     , m_model{new LogModel(this)}
@@ -96,10 +96,12 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     auto* saveButton = new QPushButton(tr("&Save Log"), this);
     QObject::connect(saveButton, &QPushButton::clicked, this, &LogWidget::saveLog);
 
-    auto* buttonBox = new QDialogButtonBox(this);
+    auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
     buttonBox->addButton(clearButton, QDialogButtonBox::ResetRole);
     buttonBox->addButton(copyButton, QDialogButtonBox::ActionRole);
-    buttonBox->addButton(saveButton, QDialogButtonBox::ApplyRole);
+    buttonBox->addButton(saveButton, QDialogButtonBox::ActionRole);
+    buttonBox->button(QDialogButtonBox::Close)->setDefault(true);
+    QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     m_level->addItem(tr("Trace"), static_cast<int>(MessageHandler::Level::Trace));
     m_level->addItem(tr("Debug"), static_cast<int>(MessageHandler::Level::Debug));
@@ -197,7 +199,7 @@ QSize LogWidget::sizeHint() const
 
 void LogWidget::changeEvent(QEvent* event)
 {
-    QWidget::changeEvent(event);
+    QDialog::changeEvent(event);
 
     switch(event->type()) {
         case QEvent::ApplicationPaletteChange:
@@ -214,7 +216,7 @@ void LogWidget::changeEvent(QEvent* event)
 void LogWidget::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() != m_flushTimer.timerId()) {
-        QWidget::timerEvent(event);
+        QDialog::timerEvent(event);
         return;
     }
 
@@ -232,7 +234,7 @@ void LogWidget::timerEvent(QTimerEvent* event)
         m_model->addEntries(std::move(entries));
     }
 
-    QWidget::timerEvent(event);
+    QDialog::timerEvent(event);
 }
 
 void LogWidget::copySelectedRows() const
