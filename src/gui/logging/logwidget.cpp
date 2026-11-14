@@ -207,6 +207,10 @@ void LogWidget::changeEvent(QEvent* event)
         case QEvent::StyleChange:
         case QEvent::ThemeChange:
             m_model->refreshIcons();
+            if(event->type() == QEvent::StyleChange || event->type() == QEvent::ThemeChange) {
+                m_view->doItemsLayout();
+            }
+            m_view->viewport()->update();
             break;
         default:
             break;

@@ -50,10 +50,6 @@ void LogModel::refreshIcons()
         m_warningIcon  = {};
         m_criticalIcon = {};
     }
-
-    if(!m_items.empty()) {
-        Q_EMIT dataChanged(index(0, Level), index(rowCount({}) - 1, Level), {Qt::DecorationRole});
-    }
 }
 
 void LogModel::addEntry(ConsoleEntry entry)
