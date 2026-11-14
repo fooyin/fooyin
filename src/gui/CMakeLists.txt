@@ -660,6 +660,8 @@ set(SOURCES
     trackgenerator.h
     trackmimedata.cpp
     trackselectioncontroller.cpp
+    trackstatisticsdialog.cpp
+    trackstatisticsdialog.h
     verification/verificationcontroller.cpp
     verification/verificationcontroller.h
     widgetfilter.cpp

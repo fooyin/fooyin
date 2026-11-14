@@ -22,6 +22,7 @@
 #include <core/scripting/trackqueryfilter.h>
 #include <utils/async.h>
 
+#include <QPromise>
 #include <QStringList>
 
 using namespace Qt::StringLiterals;
@@ -135,6 +136,23 @@ void MusicLibrary::setActiveLibraryFilters(LibraryFilterList filters)
 void MusicLibrary::clearActiveLibraryFilters()
 {
     setActiveLibraryFilters({});
+}
+
+QFuture<PlaybackStatisticsResult> MusicLibrary::managePlaybackStatistics(const PlaybackStatisticsRequest& request)
+{
+    if(auto* provider = dynamic_cast<PlaybackStatisticsProvider*>(this)) {
+        return provider->handlePlaybackStatistics(request);
+    }
+
+    QPromise<PlaybackStatisticsResult> promise;
+    promise.start();
+
+    PlaybackStatisticsResult result;
+    result.error = tr("Playback statistics maintenance is unavailable for this library.");
+    promise.addResult(result);
+    promise.finish();
+
+    return promise.future();
 }
 } // namespace Fooyin
 

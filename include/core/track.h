@@ -128,6 +128,11 @@ public:
      * This is stricter than operator==(), which only compares unique filepath, duration and generated hash.
      */
     [[nodiscard]] bool sameDataAs(const Track& other) const;
+    /*!
+     * Compares date added, played dates, playcount, rating and loved status, excluding statistics identity and
+     *  revision.
+     */
+    [[nodiscard]] bool sameStatisticsAs(const Track& other) const;
 
     /*!
      * Generates and stores the library matching hash.
@@ -164,6 +169,10 @@ public:
     [[nodiscard]] QString hash() const;
     //! Returns a grouping key for album-oriented views; this is not persisted like the track identity hash.
     [[nodiscard]] QString albumHash() const;
+    //! Statistics identity, independent of the metadata hash used for matching files.
+    [[nodiscard]] QString statisticsKey() const;
+    //! Generation of the statistics snapshot, used to discard stale deferred writes after maintenance.
+    [[nodiscard]] uint64_t statisticsRevision() const;
     [[nodiscard]] QString filepath() const;
     //! Returns filepath plus logical segment identity, so multiple entries in one file can be distinguished.
     [[nodiscard]] QString uniqueFilepath() const;
@@ -337,6 +346,10 @@ public:
     void setMetadataWasRead(bool wasRead);
     void setId(int id);
     void setHash(const QString& hash);
+    void setStatisticsKey(const QString& key);
+    void setStatisticsRevision(uint64_t revision);
+    //! Replaces values exactly, including clearing played timestamps.
+    void replaceStatistics(const Track& track, Stats stats);
     //! Sets the physical path and refreshes archive fields when path uses the unpack:// archive URL format.
     void setFilePath(const QString& path);
     void setTitle(const QString& title);

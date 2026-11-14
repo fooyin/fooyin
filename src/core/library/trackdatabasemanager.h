@@ -22,6 +22,7 @@
 #include "database/trackdatabase.h"
 
 #include <core/engine/audioinput.h>
+#include <core/library/playbackstatistics.h>
 #include <core/trackmetadatastore.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/worker.h>
@@ -46,6 +47,8 @@ public:
         TrackList tracks;
         Track::Stats stats;
         bool writeToFiles{false};
+        std::optional<Track::Stats> fileTagStats{};
+        bool statisticsCommitted{false};
     };
 
     explicit TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
@@ -55,10 +58,14 @@ public:
     void initialiseThread() override;
 
     void updateTrackStats(const std::vector<TrackStatsBatch>& batches, std::stop_token workerToken);
+    PlaybackStatisticsDatabase::MaintenanceResult
+    manageStatistics(const PlaybackStatisticsRequest& request, const QString& activeSourceKey,
+                     std::stop_token workerToken, QPromise<PlaybackStatisticsResult>* progress = nullptr);
 
 Q_SIGNALS:
     void gotTracks(const Fooyin::TrackList& tracks);
     void updatedTracks(const Fooyin::TrackList& tracks);
+    void updatedTracksFileProperties(const Fooyin::TrackList& tracks);
     void availabilityChecked(const Fooyin::TrackList& tracks);
     void updatedTracksStats(const Fooyin::TrackList& tracks, Fooyin::Track::Stats stats);
     void removedTracks(const Fooyin::TrackList& tracks);
@@ -79,7 +86,8 @@ public Q_SLOTS:
     void cleanupTracks(std::stop_token workerToken);
 
     void updateTracks(const Fooyin::TrackList& tracks, bool write, int operationId, std::stop_token stopToken,
-                      std::stop_token workerToken);
+                      std::stop_token workerToken, std::optional<Track::Stats> fileTagStats = {},
+                      bool statisticsCommitted = false);
     void writeCovers(const Fooyin::TrackCoverData& tracks, int operationId, std::stop_token stopToken,
                      std::stop_token workerToken);
     void deleteTracks(const Fooyin::TrackList& tracks, int operationId, std::stop_token stopToken,
@@ -88,7 +96,12 @@ public Q_SLOTS:
                                 std::stop_token workerToken);
 
 private:
-    TrackList writeTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles);
+    struct TrackStatsWriteResult
+    {
+        TrackList tracks;
+        int failedTagWrites{0};
+    };
+    TrackStatsWriteResult writeTrackStats(const TrackStatsBatch& batch);
 
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<AudioLoader> m_audioLoader;

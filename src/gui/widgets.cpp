@@ -553,7 +553,7 @@ void Widgets::registerPages()
     new ArtworkSourcesPage(m_artworkFinder, m_settings, this);
     new ArtworkDownloadPage(m_settings, this);
     new LibraryGeneralPage(m_core->libraryManager(), m_core->library(), m_settings, this);
-    new LibraryMetadataPage(m_settings, this);
+    new LibraryMetadataPage(m_core->library(), m_settings, this);
     new LibraryRatingsPage(m_settings, this);
     new LibrarySortingPage(m_core->sortingRegistry(), m_settings, this);
     new Filters::LibraryFilterPage(m_libraryFilterRegistry, m_settings, this);

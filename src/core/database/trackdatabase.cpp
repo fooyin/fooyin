@@ -20,6 +20,7 @@
 #include "trackdatabase.h"
 
 #include "databasehelpers.h"
+#include "library/statisticsutils.h"
 
 #include <core/constants.h>
 #include <core/track.h>
@@ -28,139 +29,16 @@
 #include <utils/database/dbtransaction.h>
 #include <utils/fileutils.h>
 
+#include <QCoreApplication>
 #include <QFileInfo>
 #include <QLoggingCategory>
+
+#include <map>
+#include <set>
 
 Q_LOGGING_CATEGORY(TRK_DB, "fy.trackdb")
 
 using namespace Qt::StringLiterals;
-
-namespace {
-float normaliseTrackRating(float rating)
-{
-    return rating > 0 ? rating : -1.0F;
-}
-
-QString fetchTrackColumns()
-{
-    static const QString columns = u"TrackID,"
-                                   "FilePath,"
-                                   "Subsong,"
-                                   "Title,"
-                                   "TrackNumber,"
-                                   "TrackTotal,"
-                                   "Artists,"
-                                   "AlbumArtist,"
-                                   "Album,"
-                                   "DiscNumber,"
-                                   "DiscTotal,"
-                                   "Date,"
-                                   "Composer,"
-                                   "Performer,"
-                                   "Genres,"
-                                   "Comment,"
-                                   "CuePath,"
-                                   "Offset,"
-                                   "Duration,"
-                                   "FileSize,"
-                                   "BitRate,"
-                                   "SampleRate,"
-                                   "SampleFrames,"
-                                   "Channels,"
-                                   "BitDepth,"
-                                   "Codec,"
-                                   "CodecProfile,"
-                                   "Tool,"
-                                   "TagTypes,"
-                                   "Encoding,"
-                                   "ExtraTags,"
-                                   "ExtraProperties,"
-                                   "ModifiedDate,"
-                                   "LibraryID,"
-                                   "TrackHash,"
-                                   "RGTrackGain,"
-                                   "RGAlbumGain,"
-                                   "RGTrackPeak,"
-                                   "RGAlbumPeak,"
-                                   "CreatedDate,"
-                                   "AddedDate,"
-                                   "FirstPlayed,"
-                                   "LastPlayed,"
-                                   "PlayCount,"
-                                   "Rating,"
-                                   "Loved"_s;
-
-    return columns;
-}
-
-Fooyin::Track readToTrack(const Fooyin::DbQuery& q, const std::shared_ptr<Fooyin::TrackMetadataStore>& store)
-{
-    Fooyin::Track track{store};
-
-    track.setId(q.value(0).toInt());
-    track.setFilePath(q.value(1).toString());
-    track.setSubsong(q.value(2).toInt());
-    track.setTitle(q.value(3).toString());
-    track.setTrackNumber(q.value(4).toString());
-    track.setTrackTotal(q.value(5).toString());
-    track.setArtists(q.value(6).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
-    track.setAlbumArtists(q.value(7).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
-    track.setAlbum(q.value(8).toString());
-    track.setDiscNumber(q.value(9).toString());
-    track.setDiscTotal(q.value(10).toString());
-    track.setDate(q.value(11).toString());
-    track.setComposers(q.value(12).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
-    track.setPerformers(q.value(13).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
-    track.setGenres(q.value(14).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
-    track.setComment(q.value(15).toString());
-    track.setCuePath(q.value(16).toString());
-    track.setOffset(q.value(17).toULongLong());
-    track.setDuration(q.value(18).toULongLong());
-    track.setFileSize(q.value(19).toULongLong());
-    track.setBitrate(q.value(20).toInt());
-    track.setSampleRate(q.value(21).toInt());
-    track.setSampleFrames(q.value(22).toULongLong());
-    track.setChannels(q.value(23).toInt());
-    track.setBitDepth(q.value(24).toInt());
-    track.setCodec(q.value(25).toString());
-    track.setCodecProfile(q.value(26).toString());
-    track.setTool(q.value(27).toString());
-    track.setTagTypes(q.value(28).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
-    track.setEncoding(q.value(29).toString());
-    track.storeExtraTags(q.value(30).toByteArray());
-    track.storeExtraProperties(q.value(31).toByteArray());
-    track.setModifiedTime(q.value(32).toULongLong());
-    track.setLibraryId(q.value(33).toInt());
-    track.setHash(q.value(34).toString());
-
-    bool isValid{false};
-    if(const auto rgTrackGain = q.value(35).toFloat(&isValid); isValid) {
-        track.setRGTrackGain(rgTrackGain);
-    }
-    if(const auto rgAlbumGain = q.value(36).toFloat(&isValid); isValid) {
-        track.setRGAlbumGain(rgAlbumGain);
-    }
-    if(const auto rgTrackPeak = q.value(37).toFloat(&isValid); isValid) {
-        track.setRGTrackPeak(rgTrackPeak);
-    }
-    if(const auto rgAlbumPeak = q.value(38).toFloat(&isValid); isValid) {
-        track.setRGAlbumPeak(rgAlbumPeak);
-    }
-    track.setCreatedTime(q.value(39).toULongLong());
-
-    track.setAddedTime(q.value(40).toULongLong());
-    track.setFirstPlayed(q.value(41).toULongLong());
-    track.setLastPlayed(q.value(42).toULongLong());
-    track.setPlayCount(q.value(43).toInt());
-    track.setRating(q.value(44).toFloat());
-    track.setLoved(q.value(45).toBool());
-
-    track.setMetadataWasRead(true);
-    track.generateHash();
-
-    return track;
-}
-} // namespace
 
 namespace Fooyin {
 void TrackDatabase::setMetadataStore(std::shared_ptr<TrackMetadataStore> store)
@@ -180,7 +58,9 @@ bool TrackDatabase::storeTracks(TrackList& tracks)
         return false;
     }
 
+    const PlaybackStatisticsDatabase statistics{dbProvider()};
     for(auto& track : tracks) {
+        statistics.prepareTrack(track);
         if(track.id() < 0) {
             if(!insertTrack(track, true)) {
                 return false;
@@ -200,45 +80,66 @@ bool TrackDatabase::storeTracks(TrackList& tracks)
                 importedStats |= Track::Stat::Rating;
             }
 
-            StoredTrackStats stats;
-            if(!insertOrUpdateStats(track, &stats, importedStats)) {
+            const auto stats = statistics.updateStats(track, importedStats);
+            if(!stats) {
                 return false;
             }
-
-            track.setAddedTime(stats.added);
-            track.setFirstPlayed(stats.firstPlayed);
-            track.setLastPlayed(stats.lastPlayed);
-            track.setPlayCount(stats.playCount);
-            track.setRating(stats.rating);
-            track.setLoved(stats.loved);
+            stats->applyTo(track);
         }
     }
 
     return transaction.commit();
 }
 
-bool TrackDatabase::updateTracks(TrackList& tracks)
+bool TrackDatabase::updateTracks(TrackList& tracks, bool overwritePlaycount)
+{
+    std::set<std::pair<QString, QString>> migratedGroups;
+    return updateTracks(tracks, overwritePlaycount, migratedGroups);
+}
+
+bool TrackDatabase::updateTracks(TrackList& tracks, bool overwritePlaycount,
+                                 std::set<std::pair<QString, QString>>& migratedGroups)
 {
     if(tracks.empty()) {
         return true;
     }
 
     DbTransaction transaction{db()};
-
     if(!transaction) {
         return false;
     }
 
+    PlaybackStatisticsDatabase statistics{dbProvider()};
+
+    TrackList updated;
+    updated.reserve(tracks.size());
+
     for(const auto& track : tracks) {
-        if(track.id() >= 0 && !updateTrack(track)) {
+        auto result = updateTrack(track, statistics, migratedGroups, true, overwritePlaycount);
+        if(!result) {
             return false;
         }
+        updated.push_back(std::move(*result));
     }
 
-    return transaction.commit();
+    if(!statistics.refreshStatistics(updated) || !transaction.commit()) {
+        return false;
+    }
+
+    tracks = std::move(updated);
+    return true;
 }
 
-std::expected<void, QString> TrackDatabase::writeScanBatch(TrackList& tracksToStore, TrackList& tracksToUpdate)
+std::expected<void, QString> TrackDatabase::writeScanBatch(TrackList& tracksToStore, TrackList& tracksToUpdate,
+                                                           bool overwritePlaycount)
+{
+    std::set<std::pair<QString, QString>> migratedGroups;
+    return writeScanBatch(tracksToStore, tracksToUpdate, overwritePlaycount, migratedGroups);
+}
+
+std::expected<void, QString> TrackDatabase::writeScanBatch(TrackList& tracksToStore, TrackList& tracksToUpdate,
+                                                           bool overwritePlaycount,
+                                                           std::set<std::pair<QString, QString>>& migratedGroups)
 {
     if(tracksToStore.empty() && tracksToUpdate.empty()) {
         return {};
@@ -251,15 +152,13 @@ std::expected<void, QString> TrackDatabase::writeScanBatch(TrackList& tracksToSt
 
     auto storedTracks{tracksToStore};
     auto updatedTracks{tracksToUpdate};
+    auto pendingMigrations{migratedGroups};
 
     if(!storeTracks(storedTracks)) {
         return std::unexpected{tr("Could not store scanned tracks.")};
     }
-    if(!updateTracks(updatedTracks)) {
+    if(!updateTracks(updatedTracks, overwritePlaycount, pendingMigrations)) {
         return std::unexpected{tr("Could not update scanned tracks.")};
-    }
-    if(!updateTrackStats(updatedTracks)) {
-        return std::unexpected{tr("Could not update scanned track statistics.")};
     }
     if(!transaction.commit()) {
         return std::unexpected{tr("Could not commit scanned tracks.")};
@@ -267,12 +166,14 @@ std::expected<void, QString> TrackDatabase::writeScanBatch(TrackList& tracksToSt
 
     tracksToStore  = std::move(storedTracks);
     tracksToUpdate = std::move(updatedTracks);
+    migratedGroups = std::move(pendingMigrations);
     return {};
 }
 
 bool TrackDatabase::reloadTrack(Track& track) const
 {
-    static const QString statement = u"SELECT %1 FROM TracksView WHERE TrackID = :trackId;"_s.arg(fetchTrackColumns());
+    static const QString statement
+        = u"SELECT %1 FROM TracksView WHERE TrackID = :trackId;"_s.arg(Database::trackColumns());
 
     DbQuery query{db(), statement};
 
@@ -283,7 +184,7 @@ bool TrackDatabase::reloadTrack(Track& track) const
     }
 
     if(query.next()) {
-        track = readToTrack(query, m_metadataStore);
+        track = Database::readTrack(query, m_metadataStore);
     }
 
     return true;
@@ -302,7 +203,7 @@ bool TrackDatabase::reloadTracks(TrackList& tracks) const
     }
 
     const QString statement
-        = u"SELECT %1 FROM TracksView WHERE TrackID IN (%2);"_s.arg(fetchTrackColumns(), placeholders.join(u','));
+        = u"SELECT %1 FROM TracksView WHERE TrackID IN (%2);"_s.arg(Database::trackColumns(), placeholders.join(u','));
 
     DbQuery q{db(), statement};
     for(size_t i{0}; i < tracks.size(); ++i) {
@@ -316,7 +217,7 @@ bool TrackDatabase::reloadTracks(TrackList& tracks) const
     tracks.clear();
 
     while(q.next()) {
-        tracks.emplace_back(readToTrack(q, m_metadataStore));
+        tracks.emplace_back(Database::readTrack(q, m_metadataStore));
     }
 
     return true;
@@ -324,7 +225,7 @@ bool TrackDatabase::reloadTracks(TrackList& tracks) const
 
 TrackList TrackDatabase::getAllTracks() const
 {
-    static const QString statement = u"SELECT %1 FROM TracksView"_s.arg(fetchTrackColumns());
+    static const QString statement = u"SELECT %1 FROM TracksView"_s.arg(Database::trackColumns());
 
     DbQuery q{db(), statement};
 
@@ -340,7 +241,7 @@ TrackList TrackDatabase::getAllTracks() const
     }
 
     while(q.next()) {
-        tracks.emplace_back(readToTrack(q, m_metadataStore));
+        tracks.emplace_back(Database::readTrack(q, m_metadataStore));
     }
 
     return tracks;
@@ -349,7 +250,7 @@ TrackList TrackDatabase::getAllTracks() const
 TrackList TrackDatabase::tracksByHash(const QString& hash) const
 {
     static const QString statement
-        = u"SELECT %1 FROM TracksView WHERE TrackHash = :trackHash"_s.arg(fetchTrackColumns());
+        = u"SELECT %1 FROM TracksView WHERE TrackHash = :trackHash"_s.arg(Database::trackColumns());
 
     DbQuery q{db(), statement};
 
@@ -362,7 +263,7 @@ TrackList TrackDatabase::tracksByHash(const QString& hash) const
     }
 
     while(q.next()) {
-        tracks.emplace_back(readToTrack(q, m_metadataStore));
+        tracks.emplace_back(Database::readTrack(q, m_metadataStore));
     }
 
     return tracks;
@@ -390,106 +291,169 @@ int TrackDatabase::idForTrack(Track& track) const
     return -1;
 }
 
-bool TrackDatabase::updateTrack(const Track& track)
+std::expected<QString, QSqlError> TrackDatabase::rawRatingTag(int trackId, const QString& tag) const
 {
-    if(track.id() < 0) {
-        qCWarning(TRK_DB) << "Cannot update track" << track.filepath() << "(Invalid ID)";
-        return false;
+    DbQuery query{db(), u"SELECT ExtraTags FROM Tracks WHERE TrackID = :id"_s};
+
+    query.bindValue(u":id"_s, trackId);
+
+    if(!query.exec()) {
+        return std::unexpected{query.lastError()};
+    }
+    if(!query.next()) {
+        return std::unexpected{QSqlError{u"Track no longer exists"_s, {}, QSqlError::StatementError}};
     }
 
-    static const QString statement = u"UPDATE TRACKS SET "
-                                     "FilePath = :filePath,"
-                                     "Subsong = :subsong,"
-                                     "Title = :title, "
-                                     "TrackNumber = :trackNumber,"
-                                     "TrackTotal = :trackTotal,"
-                                     "Artists = :artists,"
-                                     "AlbumArtist = :albumArtist,"
-                                     "Album = :album,"
-                                     "DiscNumber = :discNumber,"
-                                     "DiscTotal = :discTotal,"
-                                     "Date = :date,"
-                                     "Composer = :composer,"
-                                     "Performer = :performer,"
-                                     "Genres = :genres,"
-                                     "Comment = :comment,"
-                                     "CuePath = :cuePath,"
-                                     "Offset = :offset,"
-                                     "Duration = :duration,"
-                                     "FileSize = :fileSize,"
-                                     "BitRate = :bitRate,"
-                                     "SampleRate = :sampleRate,"
-                                     "SampleFrames = :sampleFrames,"
-                                     "Channels = :channels,"
-                                     "BitDepth = :bitDepth,"
-                                     "Codec = :codec,"
-                                     "CodecProfile = :codecProfile,"
-                                     "Tool = :tool,"
-                                     "TagTypes = :tagTypes,"
-                                     "Encoding = :encoding,"
-                                     "ExtraTags = :extraTags,"
-                                     "ExtraProperties = :extraProperties,"
-                                     "ModifiedDate = :modifiedDate,"
-                                     "TrackHash = :trackHash,"
-                                     "LibraryID = :libraryID,"
-                                     "RGTrackGain = :rgTrackGain,"
-                                     "RGAlbumGain = :rgAlbumGain,"
-                                     "RGTrackPeak = :rgTrackPeak,"
-                                     "RGAlbumPeak = :rgAlbumPeak,"
-                                     "CreatedDate = :createdDate"
-                                     " WHERE TrackID = :trackId;"_s;
+    Track stored;
+    stored.storeExtraTags(query.value(0).toByteArray());
+    return stored.rawRatingTag(tag);
+}
 
-    DbQuery query{db(), statement};
-
-    query.bindValue(u":trackId"_s, track.id());
-
-    const auto bindings = Database::trackBindings(track);
-    for(const auto& [name, value] : bindings) {
-        query.bindValue(name, value);
+TrackDatabase::MetadataUpdateResult TrackDatabase::updateTrackMetadata(const TrackList& tracks)
+{
+    MetadataUpdateResult result;
+    if(tracks.empty()) {
+        return result;
     }
 
-    return query.exec();
+    PlaybackStatisticsDatabase statistics{dbProvider()};
+    std::set<std::pair<QString, QString>> migratedGroups;
+    result.tracks.reserve(tracks.size());
+
+    for(const Track& track : tracks) {
+        if(auto updated = updateTrack(track, statistics, migratedGroups, false)) {
+            result.tracks.push_back(std::move(*updated));
+        }
+        else {
+            qCWarning(TRK_DB) << "Failed to update track metadata:" << updated.error();
+            ++result.failed;
+        }
+    }
+
+    if(!statistics.refreshStatistics(result.tracks)) {
+        result.failed += static_cast<int>(result.tracks.size());
+        result.tracks.clear();
+    }
+
+    return result;
+}
+
+bool TrackDatabase::updateTrackModifiedTime(const Track& track) const
+{
+    DbQuery query{db(), u"UPDATE Tracks SET ModifiedDate = :date WHERE TrackID = :id"_s};
+    query.bindValue(u":date"_s, QVariant::fromValue(track.modifiedTime()));
+    query.bindValue(u":id"_s, track.id());
+    return query.exec() && query.numRowsAffected() == 1;
+}
+
+bool TrackDatabase::updateTrackFileProperties(const Track& track) const
+{
+    DbQuery query{db(), u"UPDATE Tracks SET ModifiedDate = :date, ExtraTags = :tags, "
+                        "ExtraProperties = :properties WHERE TrackID = :id"_s};
+    query.bindValue(u":date"_s, QVariant::fromValue(track.modifiedTime()));
+    query.bindValue(u":tags"_s, track.serialiseExtraTags());
+    query.bindValue(u":properties"_s, track.serialiseExtraProperties());
+    query.bindValue(u":id"_s, track.id());
+    return query.exec() && query.numRowsAffected() == 1;
 }
 
 bool TrackDatabase::updateTrackStats(const Track& track)
 {
-    return insertOrUpdateStats(track);
+    return PlaybackStatisticsDatabase{dbProvider()}.updateStats(track, Track::Stat::All).has_value();
 }
 
 bool TrackDatabase::updateTrackStats(Track& track, Track::Stats updatedStats)
 {
-    StoredTrackStats stats;
-    if(!insertOrUpdateStats(track, &stats, updatedStats)) {
+    const PlaybackStatisticsDatabase statistics{dbProvider()};
+    const auto committed = statistics.updateStats(track, updatedStats);
+    if(!committed) {
         return false;
     }
-
-    track.setAddedTime(stats.added);
-    track.setFirstPlayed(stats.firstPlayed);
-    track.setLastPlayed(stats.lastPlayed);
-    track.setPlayCount(stats.playCount);
-    track.setRating(stats.rating);
-    track.setLoved(stats.loved);
+    statistics.prepareTrack(track);
+    committed->applyTo(track);
     return true;
 }
 
 bool TrackDatabase::updateTrackStats(const TrackList& tracks)
 {
-    if(tracks.empty()) {
-        return true;
-    }
-
     DbTransaction transaction{db()};
     if(!transaction) {
         return false;
     }
 
-    for(const Track& track : tracks) {
-        if(!insertOrUpdateStats(track)) {
+    const PlaybackStatisticsDatabase statistics{dbProvider()};
+    for(const auto& track : tracks) {
+        if(!statistics.updateStats(track, Track::Stat::All)) {
             return false;
         }
     }
 
     return transaction.commit();
+}
+
+bool TrackDatabase::updateTrackStats(TrackList& tracks)
+{
+    DbTransaction transaction{db()};
+    if(!transaction) {
+        return false;
+    }
+
+    const PlaybackStatisticsDatabase statistics{dbProvider()};
+    for(auto& track : tracks) {
+        const auto committed = statistics.updateStats(track, Track::Stat::All);
+        if(!committed) {
+            return false;
+        }
+        statistics.prepareTrack(track);
+        committed->applyTo(track);
+    }
+
+    return statistics.refreshStatistics(tracks) && transaction.commit();
+}
+
+PlaybackStatisticsDatabase::MaintenanceResult
+TrackDatabase::manageStatistics(const PlaybackStatisticsRequest& request, QPromise<PlaybackStatisticsResult>* progress)
+{
+    PlaybackStatisticsDatabase statistics{dbProvider()};
+    return statistics.manageStatistics(request, m_metadataStore, progress);
+}
+
+TrackList TrackDatabase::tracksByStatisticsKeys(const std::set<QString>& uniqueKeys) const
+{
+    TrackList tracks;
+
+    const std::vector<QString> keys{uniqueKeys.begin(), uniqueKeys.end()};
+    static constexpr int BatchSize = 500;
+    for(int start{0}; std::cmp_less(start, keys.size()); start += BatchSize) {
+        const auto end = static_cast<int>(std::min(start + BatchSize, static_cast<int>(keys.size())));
+
+        QStringList placeholders;
+        for(int i{start}; i < end; ++i) {
+            placeholders.push_back(u":key%1"_s.arg(i));
+        }
+        DbQuery query{db(), u"SELECT %1 FROM TracksView WHERE StatisticsKey IN (%2)"_s.arg(Database::trackColumns(),
+                                                                                           placeholders.join(u','))};
+        for(int i{start}; i < end; ++i) {
+            query.bindValue(placeholders.at(i - start), keys.at(i));
+        }
+        if(!query.exec()) {
+            return {};
+        }
+
+        while(query.next()) {
+            tracks.push_back(Database::readTrack(query, m_metadataStore));
+        }
+        if(query.lastError().isValid()) {
+            return {};
+        }
+    }
+
+    return tracks;
+}
+
+bool TrackDatabase::refreshStaleStatistics(Track& track) const
+{
+    return PlaybackStatisticsDatabase{dbProvider()}.refreshStaleStatistics(track);
 }
 
 bool TrackDatabase::deleteTrack(int id)
@@ -575,8 +539,7 @@ std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
 void TrackDatabase::cleanupTracks()
 {
     removeUnmanagedTracks();
-    updateLastSeenStats();
-    deleteExpiredStats();
+    PlaybackStatisticsDatabase{dbProvider()}.cleanupStats();
 }
 
 void TrackDatabase::dropViews(const QSqlDatabase& db)
@@ -590,56 +553,60 @@ void TrackDatabase::dropViews(const QSqlDatabase& db)
 
 void TrackDatabase::insertViews(const QSqlDatabase& db)
 {
-    static const QString statement = u"CREATE VIEW IF NOT EXISTS TracksView AS "
-                                     "SELECT "
-                                     "Tracks.TrackID,"
-                                     "Tracks.FilePath,"
-                                     "Tracks.Subsong,"
-                                     "Tracks.Title,"
-                                     "Tracks.TrackNumber,"
-                                     "Tracks.TrackTotal,"
-                                     "Tracks.Artists,"
-                                     "Tracks.AlbumArtist,"
-                                     "Tracks.Album,"
-                                     "Tracks.DiscNumber,"
-                                     "Tracks.DiscTotal,"
-                                     "Tracks.Date,"
-                                     "Tracks.Composer,"
-                                     "Tracks.Performer,"
-                                     "Tracks.Genres,"
-                                     "Tracks.Comment,"
-                                     "Tracks.CuePath,"
-                                     "Tracks.Offset,"
-                                     "Tracks.Duration,"
-                                     "Tracks.FileSize,"
-                                     "Tracks.BitRate,"
-                                     "Tracks.SampleRate,"
-                                     "Tracks.SampleFrames,"
-                                     "Tracks.Channels,"
-                                     "Tracks.BitDepth,"
-                                     "Tracks.Codec,"
-                                     "Tracks.CodecProfile,"
-                                     "Tracks.Tool,"
-                                     "Tracks.TagTypes,"
-                                     "Tracks.Encoding,"
-                                     "Tracks.ExtraTags,"
-                                     "Tracks.ExtraProperties,"
-                                     "Tracks.ModifiedDate,"
-                                     "Tracks.LibraryID,"
-                                     "Tracks.TrackHash,"
-                                     "Tracks.RGTrackGain,"
-                                     "Tracks.RGAlbumGain,"
-                                     "Tracks.RGTrackPeak,"
-                                     "Tracks.RGAlbumPeak,"
-                                     "Tracks.CreatedDate,"
-                                     "TrackStats.AddedDate,"
-                                     "TrackStats.FirstPlayed,"
-                                     "TrackStats.LastPlayed,"
-                                     "TrackStats.PlayCount,"
-                                     "TrackStats.Rating,"
-                                     "TrackStats.Loved"
-                                     " FROM Tracks "
-                                     "LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;"_s;
+    static const QString statement
+        = u"CREATE VIEW IF NOT EXISTS TracksView AS "
+          "SELECT "
+          "Tracks.TrackID,"
+          "Tracks.FilePath,"
+          "Tracks.Subsong,"
+          "Tracks.Title,"
+          "Tracks.TrackNumber,"
+          "Tracks.TrackTotal,"
+          "Tracks.Artists,"
+          "Tracks.AlbumArtist,"
+          "Tracks.Album,"
+          "Tracks.DiscNumber,"
+          "Tracks.DiscTotal,"
+          "Tracks.Date,"
+          "Tracks.Composer,"
+          "Tracks.Performer,"
+          "Tracks.Genres,"
+          "Tracks.Comment,"
+          "Tracks.CuePath,"
+          "Tracks.Offset,"
+          "Tracks.Duration,"
+          "Tracks.FileSize,"
+          "Tracks.BitRate,"
+          "Tracks.SampleRate,"
+          "Tracks.SampleFrames,"
+          "Tracks.Channels,"
+          "Tracks.BitDepth,"
+          "Tracks.Codec,"
+          "Tracks.CodecProfile,"
+          "Tracks.Tool,"
+          "Tracks.TagTypes,"
+          "Tracks.Encoding,"
+          "Tracks.ExtraTags,"
+          "Tracks.ExtraProperties,"
+          "Tracks.ModifiedDate,"
+          "Tracks.LibraryID,"
+          "Tracks.TrackHash,"
+          "Tracks.StatisticsKey,"
+          "COALESCE((SELECT Value FROM Settings WHERE Name = 'PlaybackStatisticsRevision'), 0) "
+          "AS StatisticsRevision,"
+          "Tracks.RGTrackGain,"
+          "Tracks.RGAlbumGain,"
+          "Tracks.RGTrackPeak,"
+          "Tracks.RGAlbumPeak,"
+          "Tracks.CreatedDate,"
+          "TrackStats.AddedDate,"
+          "TrackStats.FirstPlayed,"
+          "TrackStats.LastPlayed,"
+          "TrackStats.PlayCount,"
+          "TrackStats.Rating,"
+          "TrackStats.Loved"
+          " FROM Tracks "
+          "LEFT JOIN TrackStats ON Tracks.StatisticsKey = TrackStats.StatisticsKey;"_s;
 
     DbQuery query{db, statement};
 
@@ -684,118 +651,139 @@ bool TrackDatabase::insertTrack(Track& track, bool ignoreDuplicates) const
     return true;
 }
 
-std::optional<TrackDatabase::StoredTrackStats> TrackDatabase::existingTrackStats(const QString& hash) const
+std::expected<Track, QSqlError> TrackDatabase::updateTrack(Track track, PlaybackStatisticsDatabase& statistics,
+                                                           std::set<std::pair<QString, QString>>& migratedGroups,
+                                                           bool importStatistics, bool overwritePlaycount)
 {
-    static const QString statement = u"SELECT AddedDate, FirstPlayed, LastPlayed, PlayCount, Rating, Loved "
-                                     "FROM TrackStats WHERE TrackHash = :trackHash;"_s;
+    const auto previous = statistics.trackStatistics(track.id());
+    if(!previous) {
+        return std::unexpected{previous.error()};
+    }
+
+    if(track.statisticsRevision() < statistics.revision()) {
+        track.replaceStatistics(*previous, Track::Stat::All);
+        track.setAddedTime(previous->addedTime());
+    }
+    statistics.prepareTrack(track);
+
+    const auto migration  = std::pair{previous->statisticsKey(), track.statisticsKey()};
+    const bool keyChanged = migration.first != migration.second;
+
+    DbTransaction transaction{db()};
+    if(!transaction) {
+        return std::unexpected{transaction.lastError()};
+    }
+
+    PlaybackStatisticsDatabase::Statistics current{.added       = previous->addedTime(),
+                                                   .firstPlayed = previous->firstPlayed(),
+                                                   .lastPlayed  = previous->lastPlayed(),
+                                                   .playCount   = previous->playCount(),
+                                                   .rating      = previous->rating(),
+                                                   .loved       = previous->isLoved()};
+
+    if(keyChanged) {
+        const auto target = statistics.existingStats(track.statisticsKey());
+        if(!target) {
+            return std::unexpected{target.error()};
+        }
+
+        if(!migratedGroups.contains(migration)) {
+            TrackList contributors{importStatistics ? track : *previous};
+            if(*target) {
+                contributors.push_back((*target)->toTrack());
+            }
+
+            const auto combined = PlaybackStatistics::combineStatistics(contributors, statistics.config());
+            if(!statistics.replaceStats(track.statisticsKey(), combined)) {
+                return std::unexpected{
+                    QSqlError{u"Unable to migrate playback statistics"_s, {}, QSqlError::StatementError}};
+            }
+
+            current = {.added       = combined.addedTime(),
+                       .firstPlayed = combined.firstPlayed(),
+                       .lastPlayed  = combined.lastPlayed(),
+                       .playCount   = combined.playCount(),
+                       .rating      = combined.rating(),
+                       .loved       = combined.isLoved()};
+        }
+        else {
+            current = target->value_or(PlaybackStatisticsDatabase::Statistics{});
+        }
+
+        current.applyTo(track);
+    }
+
+    static const QString statement = u"UPDATE TRACKS SET "
+                                     "FilePath = :filePath,"
+                                     "Subsong = :subsong,"
+                                     "Title = :title, "
+                                     "TrackNumber = :trackNumber,"
+                                     "TrackTotal = :trackTotal,"
+                                     "Artists = :artists,"
+                                     "AlbumArtist = :albumArtist,"
+                                     "Album = :album,"
+                                     "DiscNumber = :discNumber,"
+                                     "DiscTotal = :discTotal,"
+                                     "Date = :date,"
+                                     "Composer = :composer,"
+                                     "Performer = :performer,"
+                                     "Genres = :genres,"
+                                     "Comment = :comment,"
+                                     "CuePath = :cuePath,"
+                                     "Offset = :offset,"
+                                     "Duration = :duration,"
+                                     "FileSize = :fileSize,"
+                                     "BitRate = :bitRate,"
+                                     "SampleRate = :sampleRate,"
+                                     "SampleFrames = :sampleFrames,"
+                                     "Channels = :channels,"
+                                     "BitDepth = :bitDepth,"
+                                     "Codec = :codec,"
+                                     "CodecProfile = :codecProfile,"
+                                     "Tool = :tool,"
+                                     "TagTypes = :tagTypes,"
+                                     "Encoding = :encoding,"
+                                     "ExtraTags = :extraTags,"
+                                     "ExtraProperties = :extraProperties,"
+                                     "ModifiedDate = :modifiedDate,"
+                                     "TrackHash = :trackHash,"
+                                     "StatisticsKey = :statisticsKey,"
+                                     "LibraryID = :libraryID,"
+                                     "RGTrackGain = :rgTrackGain,"
+                                     "RGAlbumGain = :rgAlbumGain,"
+                                     "RGTrackPeak = :rgTrackPeak,"
+                                     "RGAlbumPeak = :rgAlbumPeak,"
+                                     "CreatedDate = :createdDate"
+                                     " WHERE TrackID = :trackId;"_s;
 
     DbQuery query{db(), statement};
-    query.bindValue(u":trackHash"_s, hash);
+
+    query.bindValue(u":trackId"_s, track.id());
+
+    const auto bindings = Database::trackBindings(track);
+    for(const auto& [name, value] : bindings) {
+        query.bindValue(name, value);
+    }
+    query.bindValue(u":statisticsKey"_s, track.statisticsKey());
 
     if(!query.exec()) {
-        return {};
+        return std::unexpected{query.lastError()};
     }
 
-    if(!query.next()) {
-        return StoredTrackStats{};
+    const auto committed = statistics.updateStats(track, Track::Stat::All, current, overwritePlaycount);
+    if(!committed) {
+        return std::unexpected{committed.error()};
+    }
+    committed->applyTo(track);
+
+    if(!transaction.commit()) {
+        return std::unexpected{transaction.lastError()};
     }
 
-    return StoredTrackStats{
-        .added       = query.value(0).toULongLong(),
-        .firstPlayed = query.value(1).toULongLong(),
-        .lastPlayed  = query.value(2).toULongLong(),
-        .playCount   = query.value(3).toInt(),
-        .rating      = normaliseTrackRating(query.value(4).toFloat()),
-        .loved       = query.value(5).toBool(),
-    };
-}
-
-bool TrackDatabase::insertOrUpdateStats(const Track& track, StoredTrackStats* mergedStats,
-                                        Track::Stats updatedStats) const
-{
-    if(track.hash().isEmpty()) {
-        qCWarning(TRK_DB) << "Cannot insert/update track stats (Hash empty)";
-        return false;
+    if(keyChanged) {
+        migratedGroups.insert(migration);
     }
-
-    const auto currentStats = existingTrackStats(track.hash());
-    if(!currentStats) {
-        return false;
-    }
-
-    auto [added, firstPlayed, lastPlayed, playCount, rating, loved] = *currentStats;
-
-    bool dbNeedsUpdate{false};
-
-    const uint64_t trackAdded       = track.addedTime();
-    const uint64_t trackFirstPlayed = track.firstPlayed();
-    const uint64_t trackLastPlayed  = track.lastPlayed();
-    const int trackPlayCount        = track.playCount();
-    const float trackRating         = normaliseTrackRating(track.rating());
-    const bool trackLoved           = track.isLoved();
-
-    if((trackAdded != added) && (added == 0 || (trackAdded > 0 && trackAdded < added))) {
-        added         = trackAdded;
-        dbNeedsUpdate = true;
-    }
-
-    if(updatedStats.testFlag(Track::Stat::Playcount)) {
-        if((trackFirstPlayed != firstPlayed)
-           && (firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed))) {
-            firstPlayed   = trackFirstPlayed;
-            dbNeedsUpdate = true;
-        }
-        if((trackLastPlayed != lastPlayed) && (trackLastPlayed > lastPlayed)) {
-            lastPlayed    = trackLastPlayed;
-            dbNeedsUpdate = true;
-        }
-        if((trackPlayCount != playCount) && (trackPlayCount > playCount)) {
-            playCount     = trackPlayCount;
-            dbNeedsUpdate = true;
-        }
-    }
-    if(updatedStats.testFlag(Track::Stat::Rating) && trackRating != rating) {
-        rating        = trackRating;
-        dbNeedsUpdate = true;
-    }
-    if(updatedStats.testFlag(Track::Stat::Loved) && trackLoved != loved) {
-        loved         = trackLoved;
-        dbNeedsUpdate = true;
-    }
-
-    if(dbNeedsUpdate) {
-        static const QString statement
-            = u"INSERT OR REPLACE INTO TrackStats (TrackHash, AddedDate, FirstPlayed, LastPlayed, "
-              u"PlayCount, Rating, Loved) VALUES "
-              "(:trackHash, :addedDate, :firstPlayed, :lastPlayed, :playCount, :rating, :loved);"_s;
-
-        DbQuery query{db(), statement};
-
-        query.bindValue(u":trackHash"_s, track.hash());
-        query.bindValue(u":addedDate"_s, QVariant::fromValue(added));
-        query.bindValue(u":firstPlayed"_s, QVariant::fromValue(firstPlayed));
-        query.bindValue(u":lastPlayed"_s, QVariant::fromValue(lastPlayed));
-        query.bindValue(u":playCount"_s, playCount);
-        query.bindValue(u":rating"_s, rating);
-        query.bindValue(u":loved"_s, loved);
-
-        if(!query.exec()) {
-            return false;
-        }
-    }
-
-    if(mergedStats) {
-        *mergedStats = {
-            .added       = added,
-            .firstPlayed = firstPlayed,
-            .lastPlayed  = lastPlayed,
-            .playCount   = playCount,
-            .rating      = rating,
-            .loved       = loved,
-        };
-    }
-
-    return true;
+    return track;
 }
 
 void TrackDatabase::removeUnmanagedTracks() const
@@ -818,37 +806,6 @@ void TrackDatabase::removeUnmanagedTracks() const
     )"_s;
 
     DbQuery query{db(), statement};
-    query.exec();
-}
-
-void TrackDatabase::updateLastSeenStats() const
-{
-    static const QString markStatement
-        = u"UPDATE TrackStats SET LastSeen = :lastSeen WHERE LastSeen IS NULL AND TrackHash NOT IN "
-          "(SELECT TrackHash FROM Tracks);"_s;
-
-    DbQuery markQuery{db(), markStatement};
-    markQuery.bindValue(u":lastSeen"_s, QDateTime::currentMSecsSinceEpoch());
-    markQuery.exec();
-
-    static const QString unmarkStatement
-        = u"UPDATE TrackStats SET LastSeen = NULL WHERE LastSeen IS NOT NULL AND TrackHash IN "
-          "(SELECT TrackHash FROM Tracks);"_s;
-
-    DbQuery unmarkQuery{db(), unmarkStatement};
-    unmarkQuery.exec();
-}
-
-void TrackDatabase::deleteExpiredStats() const
-{
-    static const QString statement
-        = u"DELETE FROM TrackStats WHERE LastSeen IS NOT NULL AND LastSeen <= :clearInterval AND "
-          "TrackHash NOT IN (SELECT TrackHash FROM Tracks);"_s;
-
-    DbQuery query{db(), statement};
-
-    query.bindValue(u":clearInterval"_s, QDateTime::currentDateTime().addDays(-28).toMSecsSinceEpoch());
-
     query.exec();
 }
 } // namespace Fooyin

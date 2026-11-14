@@ -23,12 +23,13 @@
 
 namespace Fooyin {
 class SettingsManager;
+class MusicLibrary;
 
 class LibraryMetadataPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    explicit LibraryMetadataPage(SettingsManager* settings, QObject* parent = nullptr);
+    explicit LibraryMetadataPage(MusicLibrary* library, SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

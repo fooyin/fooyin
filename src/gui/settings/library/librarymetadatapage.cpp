@@ -19,6 +19,8 @@
 
 #include "librarymetadatapage.h"
 
+#include "trackstatisticsdialog.h"
+
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
@@ -26,6 +28,7 @@
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QPushButton>
 
 namespace Fooyin {
 class LibraryMetadataPageWidget : public SettingsPageWidget
@@ -33,7 +36,7 @@ class LibraryMetadataPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit LibraryMetadataPageWidget(SettingsManager* settings);
+    explicit LibraryMetadataPageWidget(MusicLibrary* library, SettingsManager* settings);
 
     void load() override;
     void apply() override;
@@ -49,7 +52,7 @@ private:
     QCheckBox* m_overwritePlaycountsOnReload;
 };
 
-LibraryMetadataPageWidget::LibraryMetadataPageWidget(SettingsManager* settings)
+LibraryMetadataPageWidget::LibraryMetadataPageWidget(MusicLibrary* library, SettingsManager* settings)
     : m_settings{settings}
     , m_useVariousCompilations{new QCheckBox(tr("Use ‘Various Artists’ for compilations"), this)}
     , m_saveRatings{new QCheckBox(tr("Save ratings to file tags when possible"), this)}
@@ -63,7 +66,7 @@ LibraryMetadataPageWidget::LibraryMetadataPageWidget(SettingsManager* settings)
     int row{0};
     metadataLayout->addWidget(m_useVariousCompilations, row++, 0);
 
-    auto* playbackStatsGroup  = new QGroupBox(tr("Playback Statistics"), this);
+    auto* playbackStatsGroup  = new QGroupBox(tr("Track Statistics"), this);
     auto* playbackStatsLayout = new QGridLayout(playbackStatsGroup);
 
     m_overwriteRatingsOnReload->setToolTip(tr(
@@ -75,7 +78,10 @@ LibraryMetadataPageWidget::LibraryMetadataPageWidget(SettingsManager* settings)
            "When disabled, playcount uses the higher value, first played uses the earlier non-empty value,\n"
            "and last played uses the later value."));
 
+    auto* rebuild = new QPushButton(tr("Configure statistics grouping…"), this);
+
     row = 0;
+    playbackStatsLayout->addWidget(rebuild, row++, 0);
     playbackStatsLayout->addWidget(m_savePlaycounts, row++, 0);
     playbackStatsLayout->addWidget(m_saveRatings, row++, 0);
     playbackStatsLayout->addWidget(m_overwritePlaycountsOnReload, row++, 0);
@@ -86,6 +92,9 @@ LibraryMetadataPageWidget::LibraryMetadataPageWidget(SettingsManager* settings)
     mainLayout->addWidget(metadataGroup, row++, 0);
     mainLayout->addWidget(playbackStatsGroup, row++, 0);
     mainLayout->setRowStretch(row, 1);
+
+    QObject::connect(rebuild, &QPushButton::clicked, this,
+                     [library, this]() { TrackStatisticsDialog::openRebuild(library, m_settings, this); });
 }
 
 void LibraryMetadataPageWidget::load()
@@ -115,13 +124,13 @@ void LibraryMetadataPageWidget::reset()
     m_settings->reset<Settings::Core::OverwritePlaycountOnReload>();
 }
 
-LibraryMetadataPage::LibraryMetadataPage(SettingsManager* settings, QObject* parent)
+LibraryMetadataPage::LibraryMetadataPage(MusicLibrary* library, SettingsManager* settings, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::LibraryMetadata);
     setName(tr("General"));
     setCategory({tr("Library"), tr("Metadata")});
-    setWidgetCreator([settings] { return new LibraryMetadataPageWidget(settings); });
+    setWidgetCreator([library, settings] { return new LibraryMetadataPageWidget(library, settings); });
 }
 } // namespace Fooyin
 

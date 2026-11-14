@@ -19,7 +19,9 @@
 
 #include "databasehelpers.h"
 
+#include <core/constants.h>
 #include <core/track.h>
+#include <utils/database/dbquery.h>
 
 using namespace Qt::StringLiterals;
 
@@ -60,6 +62,7 @@ const QString& trackInsertStatement(bool ignoreDuplicates)
                                 "ExtraProperties,"
                                 "ModifiedDate,"
                                 "TrackHash,"
+                                "StatisticsKey,"
                                 "LibraryID,"
                                 "RGTrackGain,"
                                 "RGAlbumGain,"
@@ -101,6 +104,7 @@ const QString& trackInsertStatement(bool ignoreDuplicates)
                                 ":extraProperties,"
                                 ":modifiedDate,"
                                 ":trackHash,"
+                                ":statisticsKey,"
                                 ":libraryID,"
                                 ":rgTrackGain,"
                                 ":rgAlbumGain,"
@@ -150,11 +154,135 @@ BindingsMap trackBindings(const Track& track)
             {u":extraProperties"_s, track.serialiseExtraProperties()},
             {u":modifiedDate"_s, static_cast<quint64>(track.modifiedTime())},
             {u":trackHash"_s, track.hash()},
+            {u":statisticsKey"_s, track.statisticsKey()},
             {u":libraryID"_s, track.libraryId()},
             {u":rgTrackGain"_s, track.rgTrackGain()},
             {u":rgAlbumGain"_s, track.rgAlbumGain()},
             {u":rgTrackPeak"_s, track.rgTrackPeak()},
             {u":rgAlbumPeak"_s, track.rgAlbumPeak()},
             {u":createdDate"_s, static_cast<quint64>(track.createdTime())}};
+}
+QString trackColumns()
+{
+    static const QString columns = u"TrackID,"
+                                   "FilePath,"
+                                   "Subsong,"
+                                   "Title,"
+                                   "TrackNumber,"
+                                   "TrackTotal,"
+                                   "Artists,"
+                                   "AlbumArtist,"
+                                   "Album,"
+                                   "DiscNumber,"
+                                   "DiscTotal,"
+                                   "Date,"
+                                   "Composer,"
+                                   "Performer,"
+                                   "Genres,"
+                                   "Comment,"
+                                   "CuePath,"
+                                   "Offset,"
+                                   "Duration,"
+                                   "FileSize,"
+                                   "BitRate,"
+                                   "SampleRate,"
+                                   "SampleFrames,"
+                                   "Channels,"
+                                   "BitDepth,"
+                                   "Codec,"
+                                   "CodecProfile,"
+                                   "Tool,"
+                                   "TagTypes,"
+                                   "Encoding,"
+                                   "ExtraTags,"
+                                   "ExtraProperties,"
+                                   "ModifiedDate,"
+                                   "LibraryID,"
+                                   "TrackHash,"
+                                   "StatisticsKey,"
+                                   "StatisticsRevision,"
+                                   "RGTrackGain,"
+                                   "RGAlbumGain,"
+                                   "RGTrackPeak,"
+                                   "RGAlbumPeak,"
+                                   "CreatedDate,"
+                                   "AddedDate,"
+                                   "FirstPlayed,"
+                                   "LastPlayed,"
+                                   "PlayCount,"
+                                   "Rating,"
+                                   "Loved"_s;
+
+    return columns;
+}
+
+Track readTrack(const DbQuery& q, const std::shared_ptr<TrackMetadataStore>& store)
+{
+    Track track{store};
+
+    track.setId(q.value(0).toInt());
+    track.setFilePath(q.value(1).toString());
+    track.setSubsong(q.value(2).toInt());
+    track.setTitle(q.value(3).toString());
+    track.setTrackNumber(q.value(4).toString());
+    track.setTrackTotal(q.value(5).toString());
+    track.setArtists(q.value(6).toString().split(QLatin1String{Constants::UnitSeparator}));
+    track.setAlbumArtists(q.value(7).toString().split(QLatin1String{Constants::UnitSeparator}));
+    track.setAlbum(q.value(8).toString());
+    track.setDiscNumber(q.value(9).toString());
+    track.setDiscTotal(q.value(10).toString());
+    track.setDate(q.value(11).toString());
+    track.setComposers(q.value(12).toString().split(QLatin1String{Constants::UnitSeparator}));
+    track.setPerformers(q.value(13).toString().split(QLatin1String{Constants::UnitSeparator}));
+    track.setGenres(q.value(14).toString().split(QLatin1String{Constants::UnitSeparator}));
+    track.setComment(q.value(15).toString());
+    track.setCuePath(q.value(16).toString());
+    track.setOffset(q.value(17).toULongLong());
+    track.setDuration(q.value(18).toULongLong());
+    track.setFileSize(q.value(19).toULongLong());
+    track.setBitrate(q.value(20).toInt());
+    track.setSampleRate(q.value(21).toInt());
+    track.setSampleFrames(q.value(22).toULongLong());
+    track.setChannels(q.value(23).toInt());
+    track.setBitDepth(q.value(24).toInt());
+    track.setCodec(q.value(25).toString());
+    track.setCodecProfile(q.value(26).toString());
+    track.setTool(q.value(27).toString());
+    track.setTagTypes(q.value(28).toString().split(QLatin1String{Constants::UnitSeparator}));
+    track.setEncoding(q.value(29).toString());
+    track.storeExtraTags(q.value(30).toByteArray());
+    track.storeExtraProperties(q.value(31).toByteArray());
+    track.setModifiedTime(q.value(32).toULongLong());
+    track.setLibraryId(q.value(33).toInt());
+    track.setHash(q.value(34).toString());
+    track.setStatisticsKey(q.value(35).toString());
+    track.setStatisticsRevision(q.value(36).toULongLong());
+
+    bool isValid{false};
+    if(const auto rgTrackGain = q.value(37).toFloat(&isValid); isValid) {
+        track.setRGTrackGain(rgTrackGain);
+    }
+    if(const auto rgAlbumGain = q.value(38).toFloat(&isValid); isValid) {
+        track.setRGAlbumGain(rgAlbumGain);
+    }
+    if(const auto rgTrackPeak = q.value(39).toFloat(&isValid); isValid) {
+        track.setRGTrackPeak(rgTrackPeak);
+    }
+    if(const auto rgAlbumPeak = q.value(40).toFloat(&isValid); isValid) {
+        track.setRGAlbumPeak(rgAlbumPeak);
+    }
+    track.setCreatedTime(q.value(41).toULongLong());
+
+    track.setAddedTime(q.value(42).toULongLong());
+    track.setFirstPlayed(q.value(43).toULongLong());
+    track.setLastPlayed(q.value(44).toULongLong());
+    track.setPlayCount(q.value(45).toInt());
+    track.setRating(q.value(46).toFloat());
+    track.setLoved(q.value(47).toBool());
+
+    track.setMetadataWasRead(true);
+    track.generateHash();
+
+    return track;
 }
 } // namespace Fooyin::Database

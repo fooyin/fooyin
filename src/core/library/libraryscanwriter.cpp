@@ -25,15 +25,17 @@
 constexpr auto BatchSize = 250;
 
 namespace Fooyin {
-LibraryScanWriter::LibraryScanWriter(TrackDatabase* trackDatabase, FlushHandler flushHandler)
+LibraryScanWriter::LibraryScanWriter(TrackDatabase* trackDatabase, FlushHandler flushHandler, bool overwritePlaycount)
     : m_trackDatabase{trackDatabase}
     , m_flushHandler{std::move(flushHandler)}
+    , m_overwritePlaycount{overwritePlaycount}
 { }
 
 void LibraryScanWriter::reset()
 {
     m_tracksToStore.clear();
     m_tracksToUpdate.clear();
+    m_statisticsMigrations.clear();
 }
 
 void LibraryScanWriter::storeTrack(Track track)
@@ -62,7 +64,9 @@ std::expected<void, QString> LibraryScanWriter::flush()
         return {};
     }
 
-    if(auto result = m_trackDatabase->writeScanBatch(m_tracksToStore, m_tracksToUpdate); !result) {
+    if(auto result = m_trackDatabase->writeScanBatch(m_tracksToStore, m_tracksToUpdate, m_overwritePlaycount,
+                                                     m_statisticsMigrations);
+       !result) {
         return result;
     }
 

@@ -22,13 +22,18 @@
 #include <QVariant>
 
 #include <map>
+#include <memory>
 
 namespace Fooyin {
 class Track;
+class DbQuery;
+class TrackMetadataStore;
 
 namespace Database {
 using BindingsMap = std::map<QString, QVariant>;
 const QString& trackInsertStatement(bool ignoreDuplicates);
 BindingsMap trackBindings(const Track& track);
+QString trackColumns();
+Track readTrack(const DbQuery& query, const std::shared_ptr<TrackMetadataStore>& store);
 } // namespace Database
 } // namespace Fooyin

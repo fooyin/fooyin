@@ -39,7 +39,7 @@ std::vector<LibraryGroupStatistics> libraryGroups(const QSqlDatabase& db, const 
 {
     const QString statement = u"SELECT %1 AS GroupName, COUNT(*), COALESCE(SUM(Tracks.Duration), 0), "
                               "COALESCE(SUM(Tracks.FileSize), 0), COALESCE(SUM(TrackStats.PlayCount), 0) "
-                              "FROM Tracks LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash "
+                              "FROM Tracks LEFT JOIN TrackStats ON Tracks.StatisticsKey = TrackStats.StatisticsKey "
                               "LEFT JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID "
                               "WHERE Tracks.LibraryID >= 0 GROUP BY GroupName ORDER BY %2;"_s.arg(expression, order);
     DbQuery query{db, statement};
@@ -813,7 +813,7 @@ LibraryStatistics PlaybackHistoryDatabase::libraryStatistics() const
                    "COALESCE(SUM(TrackStats.PlayCount), 0), "
                    "AVG(CASE WHEN TrackStats.Rating > 0 AND TrackStats.Rating <= 1 THEN TrackStats.Rating END), "
                    "COALESCE(SUM(CASE WHEN TrackStats.Rating > 0 AND TrackStats.Rating <= 1 THEN 0 ELSE 1 END), 0) "
-                   "FROM Tracks LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash "
+                   "FROM Tracks LEFT JOIN TrackStats ON Tracks.StatisticsKey = TrackStats.StatisticsKey "
                    "WHERE Tracks.LibraryID >= 0;"_s};
     if(totals.exec() && totals.next()) {
         statistics.trackCount      = totals.value(0).toULongLong();

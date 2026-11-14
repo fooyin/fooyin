@@ -30,7 +30,7 @@
 
 using namespace Qt::StringLiterals;
 
-constexpr auto CurrentSchemaVersion = 23;
+constexpr auto CurrentSchemaVersion = 24;
 
 namespace {
 Fooyin::DbConnection::DbParams dbConnectionParams()

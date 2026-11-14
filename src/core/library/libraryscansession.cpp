@@ -205,7 +205,8 @@ LibraryScanSession::LibraryScanSession(TrackDatabase* trackDatabase, PlaylistLoa
     , m_remoteIo{std::move(remoteIo)}
     , m_metadataStore{std::move(metadataStore)}
     , m_state{host}
-    , m_writer{trackDatabase, [this](const ScanResult& result) { handleScanWriterFlush(result); }}
+    , m_writer{trackDatabase, [this](const ScanResult& result) { handleScanWriterFlush(result); },
+               m_config.overwritePlaycountOnReload}
     , m_resolver{nullptr}
     , m_fileScanResult{nullptr}
     , m_onlyModified{true}
