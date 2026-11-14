@@ -21,6 +21,7 @@
 
 #include "librarybreakdownmodel.h"
 #include "listeninghistorymodel.h"
+#include "trackstatisticsdialog.h"
 
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
@@ -312,10 +313,21 @@ StatisticsDialog::StatisticsDialog(PlaybackHistoryService* historyService, Music
         refreshHistory(true);
     });
 
-    auto* buttons                  = new QDialogButtonBox(QDialogButtonBox::Close, this);
-    const auto* clearHistoryButton = buttons->addButton(tr("Clear history…"), QDialogButtonBox::ActionRole);
+    auto* buttons      = new QDialogButtonBox(QDialogButtonBox::Close, this);
+    auto* manageButton = buttons->addButton(tr("Manage"), QDialogButtonBox::ActionRole);
+    auto* manageMenu   = new QMenu(manageButton);
+    manageButton->setMenu(manageMenu);
 
-    QObject::connect(clearHistoryButton, &QPushButton::clicked, this, [this]() {
+    manageMenu->addAction(tr("Configure statistics grouping…"), this,
+                          [library, settings, this]() { TrackStatisticsDialog::openRebuild(library, settings, this); });
+    auto* resetStatistics = manageMenu->addAction(tr("Reset track statistics…"), this, [library, settings, this]() {
+        TrackStatisticsDialog::openReset(library, settings, library->libraryTracks(), this);
+    });
+    resetStatistics->setToolTip(tr("Reset track statistics for all library tracks and their shared statistics groups"));
+    QObject::connect(manageMenu, &QMenu::aboutToShow, this,
+                     [library, resetStatistics]() { resetStatistics->setEnabled(!library->libraryTracks().empty()); });
+    manageMenu->addSeparator();
+    manageMenu->addAction(tr("Clear listening history…"), this, [this]() {
         const auto answer = QMessageBox::question(
             this, tr("Clear listening history"),
             tr("Permanently delete all recorded listening history and listening-time statistics? "

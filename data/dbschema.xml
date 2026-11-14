@@ -502,4 +502,15 @@
             CREATE INDEX IF NOT EXISTS PlaybackDailyTotalsDayIndex ON PlaybackDailyTotals(Day);
         </sql>
     </revision>
+    <revision version="24">
+        <description>
+            Add a separate playback statistics identity.
+        </description>
+        <sql>
+            ALTER TABLE TrackStats RENAME COLUMN TrackHash TO StatisticsKey;
+            ALTER TABLE Tracks ADD COLUMN StatisticsKey TEXT;
+            UPDATE Tracks SET StatisticsKey = TrackHash;
+            CREATE INDEX StatisticsKeyIndex ON Tracks(StatisticsKey);
+        </sql>
+    </revision>
 </schema>

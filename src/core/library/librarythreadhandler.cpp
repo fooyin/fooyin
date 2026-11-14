@@ -90,6 +90,18 @@ Fooyin::WriteRequest completedWriteRequest(QObject* context, int succeeded)
 
 namespace Fooyin {
 namespace {
+Track::Stats configuredFileTagStats(const SettingsManager& settings)
+{
+    Track::Stats stats;
+    if(settings.value<Settings::Core::SavePlaycountToMetadata>()) {
+        stats |= Track::Stat::Playcount;
+    }
+    if(settings.value<Settings::Core::SaveRatingToMetadata>()) {
+        stats |= Track::Stat::Rating;
+    }
+    return stats;
+}
+
 LibraryScanConfig currentScanConfig(SettingsManager* settings)
 {
     using namespace Settings::Core::Internal;
@@ -145,6 +157,8 @@ public:
     {
         Track track;
         Track::Stats stats;
+        Track::Stats fileTagOverrides;
+        Track::Stats fileTagStats;
     };
 
     struct PendingCoverWrite
@@ -207,11 +221,13 @@ public:
     void finishWriteOperation(int operationId, int succeeded, int failed, bool cancelled);
     void cancelWriteOperations();
 
+    void postDatabaseTask(std::function<void()> task);
+    void startStatisticsOperation();
     void queueTrackStatsUpdates(const TrackList& tracks, Track::Stats stats);
     [[nodiscard]] Track applyTrackStatsUpdate(const PendingTrackStatsUpdate& pendingUpdate) const;
     void flushTrackStatsUpdates();
     [[nodiscard]] bool isActiveSource(const Track& track) const;
-    void queuePendingStatWrite(const Track& track, Track::Stats stats);
+    void queuePendingStatWrite(const Track& track, Track::Stats stats, std::optional<Track::Stats> fileTagStats = {});
     void queuePendingMetadataWrite(const Track& track);
     void queuePendingCoverWrite(const Track& track, const TrackCovers& covers);
     void flushPendingWritesForInactiveSources();
@@ -233,6 +249,13 @@ public:
 
     QBasicTimer m_progressTimer;
     QBasicTimer m_statsTimer;
+    QBasicTimer m_statsOperationTimer;
+    bool m_statsMaintenance{false};
+    std::optional<PlaybackStatisticsRequest> m_statsRequest;
+    Track::Stats m_statsFileTagStats;
+    std::shared_ptr<QPromise<LibraryThreadHandler::StatisticsUpdate>> m_statsPromise;
+    std::shared_ptr<QPromise<PlaybackStatisticsResult>> m_statsProgress;
+    std::vector<std::function<void()>> m_deferredDatabaseTasks;
     std::optional<ScanProgress> m_pendingProgress;
     std::unordered_map<QString, PendingTrackStatsUpdate> m_pendingTrackStats;
 
@@ -483,6 +506,10 @@ LibraryScanRequest* LibraryThreadHandlerPrivate::currentRequest()
 
 void LibraryThreadHandlerPrivate::execNextRequest()
 {
+    if(m_statsMaintenance) {
+        return;
+    }
+
     const auto requestIt
         = std::ranges::find_if(m_scanRequests, [](const auto& request) { return !request.scannerFinished; });
     if(requestIt == m_scanRequests.end()) {
@@ -515,6 +542,48 @@ void LibraryThreadHandlerPrivate::execNextRequest()
             scanPlaylist(requestToRun);
             break;
     }
+}
+
+void LibraryThreadHandlerPrivate::setupWatchers(const LibraryInfoMap& libraries, bool monitorDirectories,
+                                                bool monitorTrackFiles)
+{
+    PendingWatcherSetup setup{.libraries          = libraries,
+                              .tracks             = m_library->libraryTracks(),
+                              .monitorDirectories = monitorDirectories,
+                              .monitorTrackFiles  = monitorTrackFiles};
+
+    if((monitorDirectories && (!m_scanRequests.empty() || m_currentRequestId >= 0)) || m_watcherSetupRunning) {
+        m_pendingWatcherSetup = std::move(setup);
+        if(m_watcherSetupRunning) {
+            m_monitor.cancelSetup();
+        }
+        return;
+    }
+
+    m_pendingWatcherSetup.reset();
+    startWatcherSetup(std::move(setup));
+}
+
+void LibraryThreadHandlerPrivate::startWatcherSetup(PendingWatcherSetup setup)
+{
+    m_watcherSetupRunning = true;
+    const auto stopToken  = m_monitor.prepareSetup();
+    QMetaObject::invokeMethod(&m_monitor, [this, setup = std::move(setup), stopToken]() {
+        m_monitor.setupWatchers(setup.libraries, setup.tracks, setup.monitorDirectories, setup.monitorTrackFiles,
+                                stopToken);
+    });
+}
+
+void LibraryThreadHandlerPrivate::applyPendingWatcherSetup()
+{
+    if(!m_pendingWatcherSetup || m_watcherSetupRunning || !m_scanRequests.empty() || m_currentRequestId >= 0) {
+        return;
+    }
+
+    const auto pendingSetup = std::move(*m_pendingWatcherSetup);
+    m_pendingWatcherSetup.reset();
+
+    startWatcherSetup(pendingSetup);
 }
 
 void LibraryThreadHandlerPrivate::updateProgress(const ScanProgress& scannerProgress)
@@ -616,48 +685,6 @@ void LibraryThreadHandlerPrivate::completeScanRequest(const int id)
     }
 }
 
-void LibraryThreadHandlerPrivate::setupWatchers(const LibraryInfoMap& libraries, bool monitorDirectories,
-                                                bool monitorTrackFiles)
-{
-    PendingWatcherSetup setup{.libraries          = libraries,
-                              .tracks             = m_library->libraryTracks(),
-                              .monitorDirectories = monitorDirectories,
-                              .monitorTrackFiles  = monitorTrackFiles};
-
-    if((monitorDirectories && (!m_scanRequests.empty() || m_currentRequestId >= 0)) || m_watcherSetupRunning) {
-        m_pendingWatcherSetup = std::move(setup);
-        if(m_watcherSetupRunning) {
-            m_monitor.cancelSetup();
-        }
-        return;
-    }
-
-    m_pendingWatcherSetup.reset();
-    startWatcherSetup(std::move(setup));
-}
-
-void LibraryThreadHandlerPrivate::startWatcherSetup(PendingWatcherSetup setup)
-{
-    m_watcherSetupRunning = true;
-    const auto stopToken  = m_monitor.prepareSetup();
-    QMetaObject::invokeMethod(&m_monitor, [this, setup = std::move(setup), stopToken]() {
-        m_monitor.setupWatchers(setup.libraries, setup.tracks, setup.monitorDirectories, setup.monitorTrackFiles,
-                                stopToken);
-    });
-}
-
-void LibraryThreadHandlerPrivate::applyPendingWatcherSetup()
-{
-    if(!m_pendingWatcherSetup || m_watcherSetupRunning || !m_scanRequests.empty() || m_currentRequestId >= 0) {
-        return;
-    }
-
-    const auto pendingSetup = std::move(*m_pendingWatcherSetup);
-    m_pendingWatcherSetup.reset();
-
-    startWatcherSetup(pendingSetup);
-}
-
 void LibraryThreadHandlerPrivate::cancelScanRequest(int id)
 {
     auto* request = this->request(id);
@@ -755,13 +782,137 @@ void LibraryThreadHandlerPrivate::cancelWriteOperations()
     m_writeOperations.clear();
 }
 
+void LibraryThreadHandlerPrivate::postDatabaseTask(std::function<void()> task)
+{
+    if(m_statsMaintenance) {
+        m_deferredDatabaseTasks.push_back(std::move(task));
+    }
+    else {
+        QMetaObject::invokeMethod(&m_trackDatabaseManager, std::move(task));
+    }
+}
+
+void LibraryThreadHandlerPrivate::startStatisticsOperation()
+{
+    if(!m_statsRequest || !m_scanRequests.empty() || !m_writeOperations.empty()) {
+        return;
+    }
+
+    m_statsOperationTimer.stop();
+    m_statsTimer.stop();
+    flushTrackStatsUpdates();
+    m_statsMaintenance = true;
+
+    const auto request{*m_statsRequest};
+    const auto promise{m_statsPromise};
+    const auto progress{m_statsProgress};
+    m_statsRequest.reset();
+
+    QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, request, promise, progress,
+                                                        activeSourceKey = m_activeSourceKey,
+                                                        workerToken     = m_trackDatabaseManager.prepareWork()]() {
+        auto result = m_trackDatabaseManager.manageStatistics(request, activeSourceKey, workerToken, progress.get());
+        promise->addResult(std::move(result));
+        promise->finish();
+    });
+}
+
+void LibraryThreadHandlerPrivate::queueTrackStatsUpdates(const TrackList& tracks, Track::Stats stats)
+{
+    for(const Track& track : tracks) {
+        const QString key   = track.id() >= 0 ? QString::number(track.id()) : track.uniqueFilepath();
+        auto [pendingIt, _] = m_pendingTrackStats.try_emplace(key);
+        auto& pendingUpdate = pendingIt->second;
+
+        Track mergedTrack{track};
+        if(pendingUpdate.track.isValid()) {
+            mergeTrackStats(mergedTrack, pendingUpdate.track, pendingUpdate.stats & ~stats);
+        }
+        pendingUpdate.track = mergedTrack;
+        pendingUpdate.stats |= stats;
+
+        qCDebug(LIB_THREAD) << "Queued track stats update:" << "key=" << key << "id=" << track.id()
+                            << "path=" << track.uniqueFilepath() << "rating=" << track.rating()
+                            << "playCount=" << track.playCount() << "firstPlayed=" << track.firstPlayed()
+                            << "lastPlayed=" << track.lastPlayed() << "stats=" << stats.toInt();
+    }
+
+    m_statsTimer.start(StatsUpdateInterval, m_self);
+}
+
+Track LibraryThreadHandlerPrivate::applyTrackStatsUpdate(const PendingTrackStatsUpdate& pendingUpdate) const
+{
+    Track track{pendingUpdate.track};
+
+    if(track.id() >= 0) {
+        if(const Track currentTrack = m_library->trackForId(track.id()); currentTrack.isValid()) {
+            track = currentTrack;
+        }
+    }
+
+    mergeTrackStats(track, pendingUpdate.track, pendingUpdate.stats);
+
+    return track;
+}
+
+void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
+{
+    if(m_statsMaintenance) {
+        return;
+    }
+    if(m_pendingTrackStats.empty()) {
+        return;
+    }
+
+    qCDebug(LIB_THREAD) << "Flushing pending track stats updates:" << m_pendingTrackStats.size();
+
+    std::vector<TrackDatabaseManager::TrackStatsBatch> batches;
+
+    const auto addToBatch = [&batches](const Track& track, Track::Stats stats, bool writeToFiles) {
+        const auto batch = std::ranges::find_if(
+            batches, [stats, writeToFiles](const TrackDatabaseManager::TrackStatsBatch& candidate) {
+                return candidate.stats == stats && candidate.writeToFiles == writeToFiles;
+            });
+        if(batch != batches.end()) {
+            batch->tracks.push_back(track);
+        }
+        else {
+            batches.emplace_back(TrackList{track}, stats, writeToFiles);
+        }
+    };
+
+    for(const auto& pendingUpdate : m_pendingTrackStats | std::views::values) {
+        const Track track = applyTrackStatsUpdate(pendingUpdate);
+
+        qCDebug(LIB_THREAD) << "Resolved track stats update:" << "id=" << track.id()
+                            << "path=" << track.uniqueFilepath() << "rating=" << track.rating()
+                            << "playCount=" << track.playCount() << "firstPlayed=" << track.firstPlayed()
+                            << "lastPlayed=" << track.lastPlayed() << "stats=" << pendingUpdate.stats.toInt();
+
+        if(isActiveSource(track)) {
+            queuePendingStatWrite(track, pendingUpdate.stats);
+            addToBatch(track, pendingUpdate.stats, false);
+        }
+        else {
+            addToBatch(track, pendingUpdate.stats, true);
+        }
+    }
+
+    m_pendingTrackStats.clear();
+
+    postDatabaseTask([this, batches = std::move(batches), workerToken = m_trackDatabaseManager.prepareWork()]() {
+        m_trackDatabaseManager.updateTrackStats(batches, workerToken);
+    });
+}
+
 bool LibraryThreadHandlerPrivate::isActiveSource(const Track& track) const
 {
     const auto sourceKey = Utils::physicalSourceKey(track);
     return sourceKey.has_value() && *sourceKey == m_activeSourceKey;
 }
 
-void LibraryThreadHandlerPrivate::queuePendingStatWrite(const Track& track, Track::Stats stats)
+void LibraryThreadHandlerPrivate::queuePendingStatWrite(const Track& track, Track::Stats stats,
+                                                        std::optional<Track::Stats> fileTagStats)
 {
     const auto sourceKey = Utils::physicalSourceKey(track);
     if(!sourceKey.has_value() || stats == Track::Stats{}) {
@@ -778,6 +929,9 @@ void LibraryThreadHandlerPrivate::queuePendingStatWrite(const Track& track, Trac
 
     pending.track = mergedTrack;
     pending.stats |= stats;
+    // A later ordinary update restores the configured write policy for its fields
+    pending.fileTagOverrides = (pending.fileTagOverrides & ~stats) | (fileTagStats ? stats : Track::Stats{});
+    pending.fileTagStats     = (pending.fileTagStats & ~stats) | (fileTagStats.value_or(Track::Stats{}) & stats);
 }
 
 void LibraryThreadHandlerPrivate::queuePendingMetadataWrite(const Track& track)
@@ -816,6 +970,7 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
         std::optional<Track> statsTrack;
         std::optional<Track> coverTrack;
         Track::Stats stats;
+        std::optional<Track::Stats> fileTagStats;
         TrackCovers covers;
 
         [[nodiscard]] Track writeTrack() const
@@ -872,6 +1027,10 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
             if(const auto it = m_deferredStatWrites.find(sourceKey); it != m_deferredStatWrites.end()) {
                 pendingFlush.statsTrack = it->second.track;
                 pendingFlush.stats      = it->second.stats;
+                if(it->second.fileTagOverrides != Track::Stat::None) {
+                    pendingFlush.fileTagStats = (configuredFileTagStats(*m_settings) & ~it->second.fileTagOverrides)
+                                              | it->second.fileTagStats;
+                }
             }
             if(const auto it = m_deferredCoverWrites.find(sourceKey); it != m_deferredCoverWrites.end()) {
                 pendingFlush.coverTrack = it->second.track;
@@ -900,13 +1059,19 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
     for(const PendingFlush& pendingFlush : pendingFlushes) {
         const Track writeTrack = pendingFlush.writeTrack();
         if(writeTrack.isValid()) {
-            QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, pendingFlush, writeTrack,
-                                                                workerToken = m_trackDatabaseManager.prepareWork()]() {
+            postDatabaseTask([this, pendingFlush, writeTrack, workerToken = m_trackDatabaseManager.prepareWork()]() {
                 if(pendingFlush.metadataTrack.has_value()) {
-                    m_trackDatabaseManager.updateTracks({writeTrack}, true, workerToken);
+                    m_trackDatabaseManager.updateTracks({writeTrack}, true, -1, {}, workerToken,
+                                                        pendingFlush.fileTagStats, true);
                 }
                 if(pendingFlush.stats != Track::Stats{}) {
-                    m_trackDatabaseManager.updateTrackStats({writeTrack}, pendingFlush.stats, true, workerToken);
+                    m_trackDatabaseManager.updateTrackStats(
+                        {{.tracks              = {writeTrack},
+                          .stats               = pendingFlush.stats,
+                          .writeToFiles        = true,
+                          .fileTagStats        = pendingFlush.fileTagStats,
+                          .statisticsCommitted = pendingFlush.metadataTrack.has_value()}},
+                        workerToken);
                 }
                 if(!pendingFlush.covers.empty()) {
                     m_trackDatabaseManager.writeCovers(
@@ -925,110 +1090,6 @@ void LibraryThreadHandlerPrivate::flushPendingWritesForInactiveSources()
     }
 }
 
-TrackCoverData LibraryThreadHandlerPrivate::activeCoverWrites(const TrackCoverData& tracks) const
-{
-    TrackCoverData result;
-    result.coverData = tracks.coverData;
-    std::ranges::copy_if(tracks.tracks, std::back_inserter(result.tracks),
-                         [this](const Track& track) { return isActiveSource(track); });
-    return result;
-}
-
-TrackCoverData LibraryThreadHandlerPrivate::inactiveCoverWrites(const TrackCoverData& tracks) const
-{
-    TrackCoverData result;
-    result.coverData = tracks.coverData;
-    std::ranges::copy_if(tracks.tracks, std::back_inserter(result.tracks),
-                         [this](const Track& track) { return !isActiveSource(track); });
-    return result;
-}
-
-void LibraryThreadHandlerPrivate::queueTrackStatsUpdates(const TrackList& tracks, Track::Stats stats)
-{
-    for(const Track& track : tracks) {
-        const QString key   = track.id() >= 0 ? QString::number(track.id()) : track.uniqueFilepath();
-        auto [pendingIt, _] = m_pendingTrackStats.try_emplace(key);
-        auto& pendingUpdate = pendingIt->second;
-
-        Track mergedTrack{track};
-        if(pendingUpdate.track.isValid()) {
-            mergeTrackStats(mergedTrack, pendingUpdate.track, pendingUpdate.stats & ~stats);
-        }
-        pendingUpdate.track = mergedTrack;
-        pendingUpdate.stats |= stats;
-
-        qCDebug(LIB_THREAD) << "Queued track stats update:" << "key=" << key << "id=" << track.id()
-                            << "path=" << track.uniqueFilepath() << "rating=" << track.rating()
-                            << "playCount=" << track.playCount() << "firstPlayed=" << track.firstPlayed()
-                            << "lastPlayed=" << track.lastPlayed() << "stats=" << stats.toInt();
-    }
-
-    m_statsTimer.start(StatsUpdateInterval, m_self);
-}
-
-Track LibraryThreadHandlerPrivate::applyTrackStatsUpdate(const PendingTrackStatsUpdate& pendingUpdate) const
-{
-    Track track{pendingUpdate.track};
-
-    if(track.id() >= 0) {
-        if(const Track currentTrack = m_library->trackForId(track.id()); currentTrack.isValid()) {
-            track = currentTrack;
-        }
-    }
-
-    mergeTrackStats(track, pendingUpdate.track, pendingUpdate.stats);
-
-    return track;
-}
-
-void LibraryThreadHandlerPrivate::flushTrackStatsUpdates()
-{
-    if(m_pendingTrackStats.empty()) {
-        return;
-    }
-
-    qCDebug(LIB_THREAD) << "Flushing pending track stats updates:" << m_pendingTrackStats.size();
-
-    std::vector<TrackDatabaseManager::TrackStatsBatch> batches;
-
-    const auto addToBatch = [&batches](const Track& track, Track::Stats stats, bool writeToFiles) {
-        const auto batch = std::ranges::find_if(
-            batches, [stats, writeToFiles](const TrackDatabaseManager::TrackStatsBatch& candidate) {
-                return candidate.stats == stats && candidate.writeToFiles == writeToFiles;
-            });
-        if(batch != batches.end()) {
-            batch->tracks.push_back(track);
-        }
-        else {
-            batches.emplace_back(TrackList{track}, stats, writeToFiles);
-        }
-    };
-
-    for(const auto& pendingUpdate : m_pendingTrackStats | std::views::values) {
-        const Track track = applyTrackStatsUpdate(pendingUpdate);
-
-        qCDebug(LIB_THREAD) << "Resolved track stats update:" << "id=" << track.id()
-                            << "path=" << track.uniqueFilepath() << "rating=" << track.rating()
-                            << "playCount=" << track.playCount() << "firstPlayed=" << track.firstPlayed()
-                            << "lastPlayed=" << track.lastPlayed() << "stats=" << pendingUpdate.stats.toInt();
-
-        if(isActiveSource(track)) {
-            queuePendingStatWrite(track, pendingUpdate.stats);
-            addToBatch(track, pendingUpdate.stats, false);
-        }
-        else {
-            addToBatch(track, pendingUpdate.stats, true);
-        }
-    }
-
-    m_pendingTrackStats.clear();
-
-    QMetaObject::invokeMethod(&m_trackDatabaseManager, [this, batches = std::move(batches),
-                                                        workerToken = m_trackDatabaseManager.prepareWork()]() {
-        m_trackDatabaseManager.updateTrackStats(batches, workerToken);
-    });
-}
-
 LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                            std::shared_ptr<PlaylistLoader> playlistLoader,
                                            std::shared_ptr<TrackMetadataStore> metadataStore,
@@ -1044,6 +1105,8 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      &LibraryThreadHandler::gotTracks);
     QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::updatedTracks, this,
                      &LibraryThreadHandler::tracksUpdated);
+    QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::updatedTracksFileProperties, this,
+                     &LibraryThreadHandler::tracksFilePropertiesUpdated);
     QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::availabilityChecked, this,
                      &LibraryThreadHandler::tracksAvailabilityUpdated);
     QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::updatedTracksStats, this,
@@ -1104,7 +1167,7 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      });
 
     QMetaObject::invokeMethod(&p->m_scanner, &Worker::initialiseThread);
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, &Worker::initialiseThread);
+    p->postDatabaseTask([this]() { p->m_trackDatabaseManager.initialiseThread(); });
 }
 
 LibraryThreadHandler::~LibraryThreadHandler()
@@ -1123,11 +1186,28 @@ LibraryThreadHandler::~LibraryThreadHandler()
     p->m_monitorThread.wait();
 }
 
+TrackCoverData LibraryThreadHandlerPrivate::activeCoverWrites(const TrackCoverData& tracks) const
+{
+    TrackCoverData result;
+    result.coverData = tracks.coverData;
+    std::ranges::copy_if(tracks.tracks, std::back_inserter(result.tracks),
+                         [this](const Track& track) { return isActiveSource(track); });
+    return result;
+}
+
+TrackCoverData LibraryThreadHandlerPrivate::inactiveCoverWrites(const TrackCoverData& tracks) const
+{
+    TrackCoverData result;
+    result.coverData = tracks.coverData;
+    std::ranges::copy_if(tracks.tracks, std::back_inserter(result.tracks),
+                         [this](const Track& track) { return !isActiveSource(track); });
+    return result;
+}
+
 void LibraryThreadHandler::getAllTracks()
 {
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, token = p->m_trackDatabaseManager.prepareWork()] {
-        p->m_trackDatabaseManager.getAllTracks(token);
-    });
+    p->postDatabaseTask(
+        [this, token = p->m_trackDatabaseManager.prepareWork()] { p->m_trackDatabaseManager.getAllTracks(token); });
 }
 
 void LibraryThreadHandler::setupWatchers(const LibraryInfoMap& libraries, bool monitorDirectories,
@@ -1185,10 +1265,9 @@ void LibraryThreadHandler::acknowledgeTracksScanned(const int id)
 
 void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks, workerToken = p->m_trackDatabaseManager.prepareWork()]() {
-                                  p->m_trackDatabaseManager.updateTracks(tracks, false, workerToken);
-                              });
+    p->postDatabaseTask([this, tracks, workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+        p->m_trackDatabaseManager.updateTracks(tracks, false, workerToken);
+    });
 }
 
 WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
@@ -1209,10 +1288,9 @@ WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
     }
 
     if(!activeTracks.empty()) {
-        QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                                  [this, activeTracks, workerToken = p->m_trackDatabaseManager.prepareWork()]() {
-                                      p->m_trackDatabaseManager.updateTracks(activeTracks, false, workerToken);
-                                  });
+        p->postDatabaseTask([this, activeTracks, workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+            p->m_trackDatabaseManager.updateTracks(activeTracks, false, workerToken);
+        });
     }
 
     if(inactiveTracks.empty()) {
@@ -1224,9 +1302,8 @@ WriteRequest LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
         operationIt->second.accepted = static_cast<int>(activeTracks.size());
     }
 
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, inactiveTracks, operationId = operation.id,
-                                                           stopToken   = operation.stopToken,
-                                                           workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+    p->postDatabaseTask([this, inactiveTracks, operationId = operation.id, stopToken = operation.stopToken,
+                         workerToken = p->m_trackDatabaseManager.prepareWork()]() {
         p->m_trackDatabaseManager.updateTracks(inactiveTracks, true, operationId, stopToken, workerToken);
     });
 
@@ -1250,9 +1327,8 @@ WriteRequest LibraryThreadHandler::writeTrackCovers(const TrackCoverData& tracks
         operationIt->second.accepted = static_cast<int>(activeWrites.tracks.size());
     }
 
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, inactiveWrites, operationId = operation.id,
-                                                           stopToken   = operation.stopToken,
-                                                           workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+    p->postDatabaseTask([this, inactiveWrites, operationId = operation.id, stopToken = operation.stopToken,
+                         workerToken = p->m_trackDatabaseManager.prepareWork()]() {
         p->m_trackDatabaseManager.writeCovers(inactiveWrites, operationId, stopToken, workerToken);
     });
 
@@ -1291,6 +1367,82 @@ std::optional<PendingTrackCover> LibraryThreadHandler::pendingTrackCover(const T
              : std::optional{PendingTrackCover{.image = coverIt->second, .revision = flushingIt->second.revision}};
 }
 
+QFuture<LibraryThreadHandler::StatisticsUpdate>
+LibraryThreadHandler::manageStatistics(const PlaybackStatisticsRequest& request,
+                                       std::shared_ptr<QPromise<PlaybackStatisticsResult>> progress)
+{
+    auto promise = std::make_shared<QPromise<StatisticsUpdate>>();
+    promise->start();
+    const auto future = promise->future();
+
+    if(p->m_statsPromise) {
+        PlaybackStatisticsResult result;
+        result.error = tr("Another statistics operation is in progress.");
+        promise->addResult(StatisticsUpdate{result, {}, {}});
+        promise->finish();
+        return future;
+    }
+
+    p->m_statsPromise  = std::move(promise);
+    p->m_statsProgress = std::move(progress);
+    p->m_statsRequest  = request;
+    if(!p->m_statsRequest->fileTagStats) {
+        p->m_statsRequest->fileTagStats = configuredFileTagStats(*p->m_settings);
+    }
+    p->m_statsFileTagStats = *p->m_statsRequest->fileTagStats;
+    p->m_statsOperationTimer.start(20, this);
+    p->startStatisticsOperation();
+
+    return future;
+}
+
+void LibraryThreadHandler::finishStatisticsOperation(const StatisticsUpdate& update)
+{
+    {
+        const std::scoped_lock lock{p->m_deferredWritesMutex};
+
+        const auto refresh = [this](Track& track) {
+            const Track current = p->m_library->trackForId(track.id());
+            if(current.isValid()) {
+                track.replaceStatistics(current, Track::Stat::All);
+                track.setStatisticsKey(current.statisticsKey());
+                track.setStatisticsRevision(current.statisticsRevision());
+            }
+        };
+
+        for(auto& pending : p->m_deferredStatWrites | std::views::values) {
+            refresh(pending.track);
+        }
+        for(auto& pending : p->m_deferredMetadataWrites | std::views::values) {
+            refresh(pending);
+        }
+    }
+
+    for(const auto& track : update.tracks) {
+        const auto fields = update.fileTagChanges.find(track.id());
+        if(fields != update.fileTagChanges.end() && p->isActiveSource(track)) {
+            p->queuePendingStatWrite(track, fields->second, p->m_statsFileTagStats);
+        }
+    }
+
+    p->m_statsMaintenance = false;
+    p->m_statsPromise.reset();
+    p->m_statsProgress.reset();
+
+    auto deferred = std::move(p->m_deferredDatabaseTasks);
+    p->m_deferredDatabaseTasks.clear();
+
+    for(auto& task : deferred) {
+        p->postDatabaseTask(std::move(task));
+    }
+
+    p->flushTrackStatsUpdates();
+
+    if(!p->m_scanRequests.empty()) {
+        p->execNextRequest();
+    }
+}
+
 void LibraryThreadHandler::setActivePlaybackTrack(const Track& track)
 {
     const QString previousSourceKey = p->m_activeSourceKey;
@@ -1315,19 +1467,17 @@ void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& tracks, Track:
 
 void LibraryThreadHandler::checkTrackAvailability(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks, workerToken = p->m_trackDatabaseManager.prepareWork()]() {
-                                  p->m_trackDatabaseManager.checkTrackAvailability(tracks, workerToken);
-                              });
+    p->postDatabaseTask([this, tracks, workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+        p->m_trackDatabaseManager.checkTrackAvailability(tracks, workerToken);
+    });
 }
 
 WriteRequest LibraryThreadHandler::removeUnavailbleTracks(const TrackList& tracks)
 {
     const auto operation = p->addWriteOperation();
 
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, tracks, operationId = operation.id,
-                                                           stopToken   = operation.stopToken,
-                                                           workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+    p->postDatabaseTask([this, tracks, operationId = operation.id, stopToken = operation.stopToken,
+                         workerToken = p->m_trackDatabaseManager.prepareWork()]() {
         p->m_trackDatabaseManager.removeUnavailbleTracks(tracks, operationId, stopToken, workerToken);
     });
 
@@ -1338,20 +1488,18 @@ WriteRequest LibraryThreadHandler::deleteTracks(const TrackList& tracks)
 {
     const auto operation = p->addWriteOperation();
 
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks, operationId = operation.id, stopToken = operation.stopToken,
-                               workerToken = p->m_trackDatabaseManager.prepareWork()]() {
-                                  p->m_trackDatabaseManager.deleteTracks(tracks, operationId, stopToken, workerToken);
-                              });
+    p->postDatabaseTask([this, tracks, operationId = operation.id, stopToken = operation.stopToken,
+                         workerToken = p->m_trackDatabaseManager.prepareWork()]() {
+        p->m_trackDatabaseManager.deleteTracks(tracks, operationId, stopToken, workerToken);
+    });
 
     return operation.request;
 }
 
 void LibraryThreadHandler::cleanupTracks()
 {
-    QMetaObject::invokeMethod(&p->m_trackDatabaseManager, [this, token = p->m_trackDatabaseManager.prepareWork()] {
-        p->m_trackDatabaseManager.cleanupTracks(token);
-    });
+    p->postDatabaseTask(
+        [this, token = p->m_trackDatabaseManager.prepareWork()] { p->m_trackDatabaseManager.cleanupTracks(token); });
 }
 
 void LibraryThreadHandler::libraryRemoved(int id)
@@ -1371,7 +1519,10 @@ void LibraryThreadHandler::libraryRemoved(int id)
 
 void LibraryThreadHandler::timerEvent(QTimerEvent* event)
 {
-    if(event->timerId() == p->m_progressTimer.timerId()) {
+    if(event->timerId() == p->m_statsOperationTimer.timerId()) {
+        p->startStatisticsOperation();
+    }
+    else if(event->timerId() == p->m_progressTimer.timerId()) {
         p->flushPendingProgress();
     }
     else if(event->timerId() == p->m_statsTimer.timerId()) {

@@ -30,7 +30,8 @@ class RemoteIoService;
 class SettingsManager;
 class UnifiedMusicLibraryPrivate;
 
-class FYCORE_EXPORT UnifiedMusicLibrary : public MusicLibrary
+class FYCORE_EXPORT UnifiedMusicLibrary : public MusicLibrary,
+                                          public PlaybackStatisticsProvider
 {
     Q_OBJECT
 
@@ -84,6 +85,8 @@ public:
     void cleanupTracks();
     WriteRequest removeUnavailbleTracks() override;
     WriteRequest deleteTracks(const TrackList& tracks) override;
+
+    QFuture<PlaybackStatisticsResult> handlePlaybackStatistics(const PlaybackStatisticsRequest& request) override;
 
 private:
     std::unique_ptr<UnifiedMusicLibraryPrivate> p;

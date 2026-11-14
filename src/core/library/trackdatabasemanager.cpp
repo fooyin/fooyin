@@ -21,20 +21,25 @@
 
 #include "database/trackdatabase.h"
 #include "internalcoresettings.h"
+#include "statisticsutils.h"
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/engine/input/ratingtagpolicy.h>
+#include <core/library/libraryutils.h>
 #include <core/library/musiclibrary.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
+#include <utils/scopeguard.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QFile>
 #include <QFileInfo>
 #include <QLoggingCategory>
 
+#include <map>
 #include <ranges>
+#include <set>
 
 Q_LOGGING_CATEGORY(TRK_DBMAN, "fy.trackdbmanager")
 
@@ -180,7 +185,8 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, std
 }
 
 void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int operationId, std::stop_token stopToken,
-                                        std::stop_token workerToken)
+                                        std::stop_token workerToken, std::optional<Track::Stats> fileTagStats,
+                                        bool statisticsCommitted)
 {
     if(!startWork(workerToken)) {
         Q_EMIT updatedTracks({});
@@ -192,6 +198,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
 
     TrackList tracksToUpdate{tracks};
     TrackList tracksUpdated;
+    std::map<int, Track> writtenTracks;
     int failedCount{0};
     bool cancelled{false};
 
@@ -199,10 +206,12 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
 
     if(write) {
         options |= AudioReader::Metadata;
-        if(m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
+        if(fileTagStats ? fileTagStats->testFlag(Track::Stat::Rating)
+                        : m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
             options |= AudioReader::Rating;
         }
-        if(m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
+        if(fileTagStats ? fileTagStats->testFlag(Track::Stat::Playcount)
+                        : m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
             options |= AudioReader::Playcount;
         }
         if(m_settings->value<Settings::Core::PreserveTimestamps>()) {
@@ -217,6 +226,22 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
         }
 
         Track updatedTrack{track};
+        if(statisticsCommitted) {
+            const auto current
+                = PlaybackStatisticsDatabase{DbConnectionProvider{m_dbPool}}.trackStatistics(updatedTrack.id());
+            if(!current) {
+                ++failedCount;
+                continue;
+            }
+            updatedTrack.replaceStatistics(*current, Track::Stat::All);
+            updatedTrack.setAddedTime(current->addedTime());
+            updatedTrack.setStatisticsKey(current->statisticsKey());
+            updatedTrack.setStatisticsRevision(current->statisticsRevision());
+        }
+        else if(!m_trackDatabase.refreshStaleStatistics(updatedTrack)) {
+            ++failedCount;
+            continue;
+        }
 
         if(write && !updatedTrack.isDatabaseOnlyMetadata()) {
             if(m_audioLoader->writeTrackMetadata(updatedTrack, options)) {
@@ -226,6 +251,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
                 const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
                 updatedTrack.normaliseExtraProperties();
+                writtenTracks.insert_or_assign(updatedTrack.id(), updatedTrack);
             }
             else {
                 qCWarning(TRK_DBMAN) << "Failed to write metadata to file:" << updatedTrack.filepath();
@@ -238,16 +264,59 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write, int
             updatedTrack.generateHash();
         }
 
-        if(m_trackDatabase.updateTrack(updatedTrack) && m_trackDatabase.updateTrackStats(updatedTrack)) {
-            tracksUpdated.push_back(updatedTrack);
+        tracksUpdated.push_back(std::move(updatedTrack));
+    }
+
+    auto committed = m_trackDatabase.updateTrackMetadata(std::move(tracksUpdated));
+    failedCount += committed.failed;
+    tracksUpdated = std::move(committed.tracks);
+
+    Track::Stats enabledTagStats;
+    if(options.testFlag(AudioReader::Rating)) {
+        enabledTagStats |= Track::Stat::Rating;
+    }
+    if(options.testFlag(AudioReader::Playcount)) {
+        enabledTagStats |= Track::Stat::Playcount;
+    }
+
+    std::set<int> failedStatisticsWrites;
+    for(auto& track : tracksUpdated) {
+        const auto written = writtenTracks.find(track.id());
+        if(written == writtenTracks.cend()) {
+            continue;
         }
-        else {
+
+        Track::Stats changedStats;
+        if(track.playCount() != written->second.playCount()) {
+            changedStats |= Track::Stat::Playcount;
+        }
+        if(track.rating() != written->second.rating()) {
+            changedStats |= Track::Stat::Rating;
+        }
+        changedStats &= enabledTagStats;
+        if(changedStats == Track::Stat::None) {
+            continue;
+        }
+
+        const auto corrected = writeTrackStats({.tracks              = {track},
+                                                .stats               = changedStats,
+                                                .writeToFiles        = true,
+                                                .fileTagStats        = enabledTagStats,
+                                                .statisticsCommitted = true});
+        if(!corrected.tracks.empty()) {
+            track = corrected.tracks.front();
+        }
+        if(corrected.failedTagWrites > 0 || corrected.tracks.empty()) {
             ++failedCount;
+            failedStatisticsWrites.insert(track.id());
         }
     }
 
     Q_EMIT updatedTracks(tracksUpdated);
     if(operationId >= 0) {
+        std::erase_if(tracksUpdated, [&failedStatisticsWrites](const Track& track) {
+            return failedStatisticsWrites.contains(track.id());
+        });
         Q_EMIT trackWriteCompleted(operationId, tracksUpdated, failedCount, cancelled);
     }
 
@@ -274,45 +343,148 @@ void TrackDatabaseManager::updateTrackStats(const std::vector<TrackStatsBatch>& 
             break;
         }
 
-        auto updatedTracks = writeTrackStats(batch.tracks, batch.stats, batch.writeToFiles);
-        if(!updatedTracks.empty()) {
+        auto result = writeTrackStats(batch);
+        if(!result.tracks.empty()) {
             updatedStats |= batch.stats;
-            std::ranges::move(updatedTracks, std::back_inserter(tracksUpdated));
+            std::ranges::move(result.tracks, std::back_inserter(tracksUpdated));
         }
     }
 
     if(!tracksUpdated.empty()) {
+        std::set<QString> loadedKeys;
+        for(const auto& track : tracksUpdated) {
+            loadedKeys.emplace(track.statisticsKey());
+        }
+
+        std::map<int, Track> sharedTracks;
+        for(const auto& shared : m_trackDatabase.tracksByStatisticsKeys(loadedKeys)) {
+            sharedTracks.insert_or_assign(shared.id(), shared);
+        }
+
+        for(const auto& updated : tracksUpdated) {
+            const auto shared = sharedTracks.find(updated.id());
+            if(shared != sharedTracks.end()) {
+                Track overlay{updated};
+                overlay.replaceStatistics(shared->second, Track::Stat::All);
+                shared->second = overlay;
+            }
+        }
+
+        tracksUpdated.clear();
+
+        for(auto& track : sharedTracks | std::views::values) {
+            tracksUpdated.push_back(std::move(track));
+        }
+
         Q_EMIT updatedTracksStats(tracksUpdated, updatedStats);
     }
 
     setState(Idle);
 }
 
-TrackList TrackDatabaseManager::writeTrackStats(const TrackList& tracks, Track::Stats updatedStats, bool writeToFiles)
+PlaybackStatisticsDatabase::MaintenanceResult
+TrackDatabaseManager::manageStatistics(const PlaybackStatisticsRequest& request, const QString& activeSourceKey,
+                                       std::stop_token workerToken, QPromise<PlaybackStatisticsResult>* promise)
 {
-    TrackList tracksUpdated;
+    if(!startWork(workerToken)) {
+        PlaybackStatisticsDatabase::MaintenanceResult update;
+        update.result.error = tr("Playback statistics maintenance was cancelled.");
+        return update;
+    }
+
+    const auto resetState = scopeGuard([this]() { setState(Idle); });
+
+    auto update   = m_trackDatabase.manageStatistics(request, promise);
+    auto& result  = update.result;
+    auto& changed = update.tracks;
+    if(!result.error.isEmpty() || changed.empty()) {
+        return update;
+    }
+
+    Track::Stats enabledTagStats;
+    if(request.fileTagStats ? request.fileTagStats->testFlag(Track::Stat::Rating)
+                            : m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
+        enabledTagStats |= Track::Stat::Rating;
+    }
+    if(request.fileTagStats ? request.fileTagStats->testFlag(Track::Stat::Playcount)
+                            : m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
+        enabledTagStats |= Track::Stat::Playcount;
+    }
+
+    std::vector<Track*> tagTracks;
+    for(auto& track : changed) {
+        if(track.isInArchive() || track.isDatabaseOnlyMetadata()) {
+            continue;
+        }
+
+        const auto fields = update.fileTagChanges.find(track.id());
+        if(fields == update.fileTagChanges.cend() || (fields->second & enabledTagStats) == Track::Stat::None) {
+            continue;
+        }
+
+        const auto source = Utils::physicalSourceKey(track);
+        if(!source || *source != activeSourceKey) {
+            tagTracks.push_back(&track);
+        }
+    }
+
+    StatisticsProgress progress{promise};
+    if(!tagTracks.empty()) {
+        progress.start(tr("Writing file tags…"), static_cast<int>(tagTracks.size()));
+    }
+    int processed{0};
+    for(auto* track : tagTracks) {
+        const auto written = writeTrackStats({.tracks              = {*track},
+                                              .stats               = update.fileTagChanges.at(track->id()),
+                                              .writeToFiles        = true,
+                                              .fileTagStats        = request.fileTagStats,
+                                              .statisticsCommitted = true});
+        result.failedTagWrites += written.failedTagWrites;
+        if(!written.tracks.empty()) {
+            *track = written.tracks.front();
+        }
+        progress.update(++processed);
+    }
+
+    return update;
+}
+
+TrackDatabaseManager::TrackStatsWriteResult TrackDatabaseManager::writeTrackStats(const TrackStatsBatch& batch)
+{
+    TrackStatsWriteResult result;
 
     AudioReader::WriteOptions options{AudioReader::None};
-
-    if(m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
+    if(batch.fileTagStats ? batch.fileTagStats->testFlag(Track::Stat::Rating)
+                          : m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
         options |= AudioReader::Rating;
     }
-    if(m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
+    if(batch.fileTagStats ? batch.fileTagStats->testFlag(Track::Stat::Playcount)
+                          : m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
         options |= AudioReader::Playcount;
     }
 
-    const AudioReader::WriteOptions requestedWriteOptions = writeOptionsForStats(updatedStats) & options;
-    AudioReader::WriteOptions writeOptions                = writeToFiles ? requestedWriteOptions : AudioReader::None;
+    const AudioReader::WriteOptions requestedWriteOptions = writeOptionsForStats(batch.stats) & options;
+    AudioReader::WriteOptions writeOptions = batch.writeToFiles ? requestedWriteOptions : AudioReader::None;
     if(writeOptions != AudioReader::None && m_settings->value<Settings::Core::PreserveTimestamps>()) {
         writeOptions |= AudioReader::PreserveTimestamps;
     }
 
-    for(const Track& track : tracks) {
+    for(const Track& track : batch.tracks) {
         if(!mayRun()) {
             break;
         }
 
         Track updatedTrack{track};
+        if(batch.statisticsCommitted) {
+            if(!m_trackDatabase.reloadTrack(updatedTrack)) {
+                ++result.failedTagWrites;
+                continue;
+            }
+        }
+        else if(!m_trackDatabase.refreshStaleStatistics(updatedTrack)) {
+            continue;
+        }
+
         bool needsTrackUpdate{false};
         bool ratingWritten{false};
 
@@ -334,32 +506,37 @@ TrackList TrackDatabaseManager::writeTrackStats(const TrackList& tracks, Track::
             }
             else {
                 qCWarning(TRK_DBMAN) << "Failed to write track playback statistics to file:" << updatedTrack.filepath();
+                ++result.failedTagWrites;
             }
         }
 
-        if(writeToFiles && updatedStats.testFlag(Track::Stat::Rating) && !ratingWritten) {
-            Track storedTrack{track};
+        if(!batch.statisticsCommitted && batch.writeToFiles && batch.stats.testFlag(Track::Stat::Rating)
+           && !ratingWritten) {
             const QString tag = ratingTagPolicy().effectiveWriteTag();
-            if(!tag.isEmpty() && m_trackDatabase.reloadTrack(storedTrack)) {
-                updatedTrack.setRawRatingTag(tag, storedTrack.rawRatingTag(tag));
+            if(!tag.isEmpty()) {
+                const auto storedTag = m_trackDatabase.rawRatingTag(track.id(), tag);
+                if(!storedTag) {
+                    continue;
+                }
+                updatedTrack.setRawRatingTag(tag, *storedTag);
             }
         }
 
-        if((!needsTrackUpdate || m_trackDatabase.updateTrack(updatedTrack))
-           && m_trackDatabase.updateTrackStats(updatedTrack, updatedStats)) {
-            if(!writeToFiles && requestedWriteOptions.testFlag(AudioReader::Rating) && !track.isInArchive()
+        if((!needsTrackUpdate || m_trackDatabase.updateTrackFileProperties(updatedTrack))
+           && (batch.statisticsCommitted || m_trackDatabase.updateTrackStats(updatedTrack, batch.stats))) {
+            if(!batch.writeToFiles && requestedWriteOptions.testFlag(AudioReader::Rating) && !track.isInArchive()
                && !track.isDatabaseOnlyMetadata()) {
                 // Publish the pending value for scripts, but persist the raw tag only after the file write succeeds
                 syncRawRatingTag(updatedTrack);
             }
-            tracksUpdated.push_back(updatedTrack);
+            result.tracks.push_back(updatedTrack);
         }
         else {
             qCWarning(TRK_DBMAN) << "Failed to update track playback statistics:" << updatedTrack.filepath();
         }
     }
 
-    return tracksUpdated;
+    return result;
 }
 
 void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, std::stop_token workerToken)
@@ -404,7 +581,7 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, int operati
             const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
             updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
 
-            if(m_trackDatabase.updateTrack(updatedTrack)) {
+            if(m_trackDatabase.updateTrackModifiedTime(updatedTrack)) {
                 tracksUpdated.push_back(updatedTrack);
             }
             else {
@@ -417,7 +594,7 @@ void TrackDatabaseManager::writeCovers(const TrackCoverData& tracks, int operati
         }
     }
 
-    Q_EMIT updatedTracks(tracksUpdated);
+    Q_EMIT updatedTracksFileProperties(tracksUpdated);
     if(operationId >= 0) {
         Q_EMIT trackCoverWriteCompleted(operationId, tracksUpdated, failedCount, cancelled);
     }

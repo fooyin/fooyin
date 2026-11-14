@@ -278,7 +278,8 @@ void LibraryScanner::scanTracks(const TrackList& tracks, const bool onlyModified
     if(!tracksToAdd.empty() || !tracksToUpdate.empty()) {
         Q_EMIT progressChanged(makeProgress(processedTracks, {}, static_cast<int>(tracks.size()),
                                             ScanProgress::Phase::WritingDatabase, 0));
-        if(auto result = m_trackDatabase.writeScanBatch(tracksToAdd, tracksToUpdate); result) {
+        if(auto result = m_trackDatabase.writeScanBatch(tracksToAdd, tracksToUpdate, config.overwritePlaycountOnReload);
+           result) {
             if(!tracksToAdd.empty()) {
                 Q_EMIT scannedTracks(m_requestId, tracksToAdd);
             }

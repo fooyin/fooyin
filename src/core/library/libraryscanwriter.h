@@ -25,6 +25,7 @@
 
 #include <expected>
 #include <functional>
+#include <set>
 
 namespace Fooyin {
 class TrackDatabase;
@@ -34,7 +35,7 @@ class FYCORE_EXPORT LibraryScanWriter
 public:
     using FlushHandler = std::function<void(const ScanResult&)>;
 
-    LibraryScanWriter(TrackDatabase* trackDatabase, FlushHandler flushHandler);
+    LibraryScanWriter(TrackDatabase* trackDatabase, FlushHandler flushHandler, bool overwritePlaycount = false);
 
     void reset();
     void storeTrack(Track track);
@@ -47,7 +48,9 @@ public:
 private:
     TrackDatabase* m_trackDatabase;
     FlushHandler m_flushHandler;
+    bool m_overwritePlaycount;
     TrackList m_tracksToStore;
     TrackList m_tracksToUpdate;
+    std::set<std::pair<QString, QString>> m_statisticsMigrations;
 };
 } // namespace Fooyin

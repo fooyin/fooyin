@@ -20,6 +20,7 @@
 #include "librarymenu.h"
 
 #include "dialog/statisticsdialog.h"
+#include "trackstatisticsdialog.h"
 
 #include <core/application.h>
 #include <core/database/trackdatabase.h>
@@ -74,6 +75,18 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     removeUnavailable->setStatusTip(tr("Remove unavailable tracks from the database and libraries"));
     dbMenu->addAction(removeUnavailable);
     QObject::connect(removeUnavailable, &QAction::triggered, this, &LibraryMenu::removeUnavailbleTracks);
+
+    dbMenu->addSeparator();
+    auto* resetStatistics        = new QAction(tr("Reset track statistics…"), this);
+    auto* resetStatisticsCommand = actionManager->registerAction(resetStatistics, "Library.ResetPlaybackStatistics");
+    resetStatisticsCommand->setCategories(libraryCategory);
+    resetStatistics->setStatusTip(
+        tr("Reset track statistics for all library tracks and their shared statistics groups"));
+    dbMenu->addAction(resetStatisticsCommand);
+    QObject::connect(resetStatistics, &QAction::triggered, this, [this, core]() {
+        TrackStatisticsDialog::openReset(m_library, core->settingsManager(), m_library->libraryTracks(),
+                                         Utils::getMainWindow());
+    });
 
     auto* refreshLibrary = new QAction(tr("&Scan for changes"), this);
     Gui::setThemeIcon(refreshLibrary, Constants::Icons::RescanLibrary);

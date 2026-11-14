@@ -53,6 +53,7 @@
 #include "search/searchwidget.h"
 #include "systemtrayicon.h"
 #include "theme/artworkpalettecontroller.h"
+#include "trackstatisticsdialog.h"
 #include "verification/verificationcontroller.h"
 #include "widgets.h"
 #include "widgets/globalbackgroundcontroller.h"
@@ -1659,6 +1660,20 @@ void GuiApplication::setupUtilitiesMenu()
     m_selectionController->registerTrackContextSeparator(this, TrackContextMenuArea::Track,
                                                          Constants::Menus::Context::Utilities,
                                                          Constants::Menus::Context::UtilitiesVerifySeparator);
+
+    auto* resetStatistics = new QAction(tr("Reset track statistics…"), m_mainWindow.get());
+    auto* resetCommand    = m_actionManager->registerAction(resetStatistics, "Tracks.ResetPlaybackStatistics");
+    resetCommand->setCategories({tr("Tracks"), tr("Playback Statistics")});
+    QObject::connect(resetStatistics, &QAction::triggered, this, [this]() {
+        TrackStatisticsDialog::openReset(m_core->library(), m_core->settingsManager(),
+                                         m_selectionController->selectedTracks(), m_mainWindow.get());
+    });
+    m_selectionController->registerTrackContextAction(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::Utilities, "Tracks.ResetPlaybackStatistics",
+        resetStatistics->text(), [resetStatistics](QMenu* menu, const TrackSelection& selection) {
+            resetStatistics->setEnabled(!selection.tracks.empty());
+            menu->addAction(resetStatistics);
+        });
 }
 
 void GuiApplication::startConversionPreset(const StoredConversionPreset& stored, const TrackList& tracks)

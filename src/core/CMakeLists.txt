@@ -36,6 +36,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryutils.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/library/pendingtrackcoverprovider.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/playbackstatistics.h
     ${CMAKE_SOURCE_DIR}/include/core/library/tracksort.h
     ${CMAKE_SOURCE_DIR}/include/core/network/networkaccessmanager.h
     ${CMAKE_SOURCE_DIR}/include/core/network/networkutils.h
@@ -91,6 +92,8 @@ set(SOURCES
     database/playbackhistorydatabase.h
     database/playbackqueuedatabase.cpp
     database/playbackqueuedatabase.h
+    database/playbackstatisticsdatabase.cpp
+    database/playbackstatisticsdatabase.h
     database/playlistdatabase.cpp
     database/playlistdatabase.h
     database/settingsdatabase.cpp
@@ -274,6 +277,8 @@ set(SOURCES
     library/musiclibrary.cpp
     library/sortingregistry.cpp
     library/sortingregistry.h
+    library/statisticsutils.cpp
+    library/statisticsutils.h
     library/trackdatabasemanager.cpp
     library/trackdatabasemanager.h
     library/tracksort.cpp

@@ -21,13 +21,18 @@
 
 #include "fycore_export.h"
 
+#include "playbackstatisticsdatabase.h"
+
+#include <core/library/playbackstatistics.h>
 #include <core/track.h>
 #include <utils/database/dbmodule.h>
 
 #include <QCoreApplication>
+#include <QSqlError>
 
 #include <expected>
 #include <memory>
+#include <optional>
 #include <set>
 
 namespace Fooyin {
@@ -41,19 +46,37 @@ public:
     void setMetadataStore(std::shared_ptr<TrackMetadataStore> store);
 
     bool storeTracks(TrackList& tracks);
-    bool updateTracks(TrackList& tracks);
-    std::expected<void, QString> writeScanBatch(TrackList& tracksToStore, TrackList& tracksToUpdate);
+    bool updateTracks(TrackList& tracks, bool overwritePlaycount = false);
+    std::expected<void, QString> writeScanBatch(TrackList& tracksToStore, TrackList& tracksToUpdate,
+                                                bool overwritePlaycount = false);
+    std::expected<void, QString> writeScanBatch(TrackList& tracksToStore, TrackList& tracksToUpdate,
+                                                bool overwritePlaycount,
+                                                std::set<std::pair<QString, QString>>& migratedGroups);
 
-    bool reloadTrack(Track& track) const;
-    bool reloadTracks(TrackList& tracks) const;
+    [[nodiscard]] bool reloadTrack(Track& track) const;
+    [[nodiscard]] bool reloadTracks(TrackList& tracks) const;
     [[nodiscard]] TrackList getAllTracks() const;
     [[nodiscard]] TrackList tracksByHash(const QString& hash) const;
-    int idForTrack(Track& track) const;
+    [[nodiscard]] int idForTrack(Track& track) const;
+    [[nodiscard]] std::expected<QString, QSqlError> rawRatingTag(int trackId, const QString& tag) const;
 
-    bool updateTrack(const Track& track);
+    struct MetadataUpdateResult
+    {
+        TrackList tracks;
+        int failed{0};
+    };
+    MetadataUpdateResult updateTrackMetadata(const TrackList& tracks);
+    [[nodiscard]] bool updateTrackModifiedTime(const Track& track) const;
+    [[nodiscard]] bool updateTrackFileProperties(const Track& track) const;
     bool updateTrackStats(const Track& track);
     bool updateTrackStats(Track& track, Track::Stats updatedStats);
     bool updateTrackStats(const TrackList& tracks);
+    bool updateTrackStats(TrackList& tracks);
+
+    PlaybackStatisticsDatabase::MaintenanceResult
+    manageStatistics(const PlaybackStatisticsRequest& request, QPromise<PlaybackStatisticsResult>* progress = nullptr);
+    [[nodiscard]] TrackList tracksByStatisticsKeys(const std::set<QString>& keys) const;
+    [[nodiscard]] bool refreshStaleStatistics(Track& track) const;
 
     bool deleteTrack(int id);
     bool deleteTracks(const TrackList& tracks);
@@ -65,25 +88,14 @@ public:
     static void insertViews(const QSqlDatabase& db);
 
 private:
+    bool updateTracks(TrackList& tracks, bool overwritePlaycount,
+                      std::set<std::pair<QString, QString>>& migratedGroups);
     [[nodiscard]] int trackCount() const;
-    bool insertTrack(Track& track, bool ignoreDuplicates = false) const;
-
-    struct StoredTrackStats
-    {
-        uint64_t added{0};
-        uint64_t firstPlayed{0};
-        uint64_t lastPlayed{0};
-        int playCount{0};
-        float rating{-1.0F};
-        bool loved{false};
-    };
-    std::optional<StoredTrackStats> existingTrackStats(const QString& hash) const;
-    bool insertOrUpdateStats(const Track& track, StoredTrackStats* mergedStats = nullptr,
-                             Track::Stats updatedStats = Track::Stat::All) const;
-
+    [[nodiscard]] bool insertTrack(Track& track, bool ignoreDuplicates = false) const;
+    std::expected<Track, QSqlError> updateTrack(Track track, PlaybackStatisticsDatabase& statistics,
+                                                std::set<std::pair<QString, QString>>& migratedGroups,
+                                                bool importStatistics, bool overwritePlaycount = false);
     void removeUnmanagedTracks() const;
-    void updateLastSeenStats() const;
-    void deleteExpiredStats() const;
 
     std::shared_ptr<TrackMetadataStore> m_metadataStore;
 };

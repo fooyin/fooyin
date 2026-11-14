@@ -492,6 +492,8 @@ public:
     bool enabled{true};
     int id{-1};
     QString hash;
+    QString statisticsKey;
+    uint64_t statisticsRevision{0};
     StringPool::StringId codec{StringPool::EmptyStringId};
     QString filepath;
     QString title;
@@ -799,6 +801,7 @@ bool Track::sameDataAs(const Track& other) const
         && p->tagTypes == other.p->tagTypes
         && resolveString(*p, StringPool::Domain::Encoding, p->encoding)
                == resolveString(*other.p, StringPool::Domain::Encoding, other.p->encoding)
+        && p->statisticsKey == other.p->statisticsKey && p->statisticsRevision == other.p->statisticsRevision
         && p->loved == other.p->loved && p->rating == other.p->rating && p->playcount == other.p->playcount
         && p->createdTime == other.p->createdTime && p->addedTime == other.p->addedTime
         && p->modifiedTime == other.p->modifiedTime && p->firstPlayed == other.p->firstPlayed
@@ -807,6 +810,13 @@ bool Track::sameDataAs(const Track& other) const
         && p->rgAlbumPeak == other.p->rgAlbumPeak && p->metadataWasRead == other.p->metadataWasRead
         && p->metadataWasModified == other.p->metadataWasModified && p->isInArchive == other.p->isInArchive
         && p->archivePath == other.p->archivePath && p->filepathWithinArchive == other.p->filepathWithinArchive;
+}
+
+bool Track::sameStatisticsAs(const Track& other) const
+{
+    return p->addedTime == other.p->addedTime && p->firstPlayed == other.p->firstPlayed
+        && p->lastPlayed == other.p->lastPlayed && p->playcount == other.p->playcount && p->rating == other.p->rating
+        && p->loved == other.p->loved;
 }
 
 QString Track::generateHash()
@@ -950,6 +960,16 @@ QString Track::albumHash() const
     }
 
     return hash.join("|"_L1);
+}
+
+QString Track::statisticsKey() const
+{
+    return p->statisticsKey.isEmpty() ? p->hash : p->statisticsKey;
+}
+
+uint64_t Track::statisticsRevision() const
+{
+    return p->statisticsRevision;
 }
 
 QString Track::filepath() const
@@ -1844,6 +1864,31 @@ void Track::setId(int id)
 void Track::setHash(const QString& hash)
 {
     p->hash = hash;
+}
+
+void Track::setStatisticsKey(const QString& key)
+{
+    p->statisticsKey = key;
+}
+
+void Track::setStatisticsRevision(uint64_t revision)
+{
+    p->statisticsRevision = revision;
+}
+
+void Track::replaceStatistics(const Track& track, Stats stats)
+{
+    if(stats.testFlag(Stat::Playcount)) {
+        p->playcount   = track.playCount();
+        p->firstPlayed = track.firstPlayed();
+        p->lastPlayed  = track.lastPlayed();
+    }
+    if(stats.testFlag(Stat::Rating)) {
+        p->rating = track.rating();
+    }
+    if(stats.testFlag(Stat::Loved)) {
+        p->loved = track.isLoved();
+    }
 }
 
 void Track::setFilePath(const QString& path)
@@ -2775,9 +2820,7 @@ void mergeTrackStats(Track& track, const Track& updatedTrack, Track::Stats stats
         track.setRating(updatedTrack.rating());
     }
     if(stats.testFlag(Track::Stat::Playcount)) {
-        track.setPlayCount(updatedTrack.playCount());
-        track.setFirstPlayed(updatedTrack.firstPlayed());
-        track.setLastPlayed(updatedTrack.lastPlayed());
+        track.replaceStatistics(updatedTrack, Track::Stat::Playcount);
     }
 }
 } // namespace Fooyin

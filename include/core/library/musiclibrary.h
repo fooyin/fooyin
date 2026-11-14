@@ -23,6 +23,7 @@
 
 #include <core/library/libraryfilter.h>
 #include <core/library/libraryinfo.h>
+#include <core/library/playbackstatistics.h>
 #include <core/track.h>
 
 #include <QFuture>
@@ -232,6 +233,10 @@ public:
     virtual void updateTrackStats(const TrackList& tracks, Track::Stats stats) = 0;
     /** Updates the specified @p stats in the database for @p track. */
     virtual void updateTrackStats(const Track& track, Track::Stats stats) = 0;
+
+    //! Optional statistics maintenance. Unsupported library implementations return an error.
+    // TODO (1.0): Make this a normal virtual method and remove PlaybackStatisticsProvider
+    QFuture<PlaybackStatisticsResult> managePlaybackStatistics(const PlaybackStatisticsRequest& request);
 
     /** Remove unavailable tracks from the library and database. */
     virtual WriteRequest removeUnavailbleTracks() = 0;

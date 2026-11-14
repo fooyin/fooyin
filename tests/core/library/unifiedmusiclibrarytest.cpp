@@ -20,6 +20,7 @@
 #include "testutils.h"
 
 #include "core/database/dbschema.h"
+#include "core/database/playbackstatisticsdatabase.h"
 #include "core/database/trackdatabase.h"
 #include "core/internalcoresettings.h"
 #include "core/library/librarymanager.h"
@@ -63,11 +64,12 @@
 #include <memory>
 #include <mutex>
 #include <ranges>
+#include <set>
 #include <unordered_map>
 
 using namespace Qt::StringLiterals;
 
-constexpr auto CurrentSchemaVersion = 23;
+constexpr auto CurrentSchemaVersion = 24;
 
 namespace {
 template <typename Predicate>
@@ -249,7 +251,13 @@ public:
             return tags != m_extraTags.cend() ? tags->second : std::map<QString, QStringList>{};
         }
 
-        void addWrite(const Fooyin::Track& track, WriteOptions options)
+        void failWritesFor(const QString& path)
+        {
+            const std::scoped_lock lock(m_mutex);
+            m_failedWritePaths.insert(QFileInfo{path}.absoluteFilePath());
+        }
+
+        bool addWrite(const Fooyin::Track& track, WriteOptions options)
         {
             const std::scoped_lock lock(m_mutex);
             m_writes.emplace_back(track, options);
@@ -268,6 +276,8 @@ public:
                     }
                 }
             }
+
+            return !m_failedWritePaths.contains(QFileInfo{track.filepath()}.absoluteFilePath());
         }
 
         [[nodiscard]] std::vector<std::pair<Fooyin::Track, WriteOptions>> writes() const
@@ -281,6 +291,7 @@ public:
         std::unordered_map<QString, QString> m_titles;
         std::map<QString, std::map<QString, QStringList>> m_extraTags;
         std::vector<std::pair<Fooyin::Track, WriteOptions>> m_writes;
+        std::set<QString> m_failedWritePaths;
     };
 
     explicit FakeLibraryReader(std::shared_ptr<State> state)
@@ -298,6 +309,16 @@ public:
     }
 
     bool canWriteMetaData() const override
+    {
+        return true;
+    }
+
+    bool canWriteCover() const override
+    {
+        return true;
+    }
+
+    bool writeCover(const Fooyin::AudioSource&, const Fooyin::Track&, const Fooyin::TrackCovers&, WriteOptions) override
     {
         return true;
     }
@@ -324,8 +345,7 @@ public:
 
     bool writeTrack(const Fooyin::AudioSource& /*source*/, const Fooyin::Track& track, WriteOptions options) override
     {
-        m_state->addWrite(track, options);
-        return true;
+        return m_state->addWrite(track, options);
     }
 
 private:
@@ -487,6 +507,690 @@ protected:
 private:
     std::unique_ptr<LibraryTestContext> m_context;
 };
+
+class StatisticsKeyMigrationTest : public UnifiedMusicLibraryTest
+{
+protected:
+    void SetUp() override
+    {
+        UnifiedMusicLibraryTest::SetUp();
+        if(HasFatalFailure()) {
+            return;
+        }
+
+        createTrackFile(u"statistics_migration.mp3"_s, u"Before"_s);
+        const auto libraryInfo = addLibrary(u"Statistics Migration"_s);
+        waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+        ASSERT_EQ(context().library.tracks().size(), 1);
+
+        Track lovedTrack = context().library.tracks().front();
+        lovedTrack.setLoved(true);
+        context().library.updateTrackStats(lovedTrack, Track::Stat::Loved);
+        ASSERT_TRUE(waitForCondition([&]() { return context().library.trackForId(lovedTrack.id()).isLoved(); }));
+
+        PlaybackStatisticsRequest request;
+        request.operation    = PlaybackStatisticsRequest::Operation::Rebuild;
+        request.config.loved = LovedMergePolicy::All;
+        const auto future    = context().library.managePlaybackStatistics(request);
+        ASSERT_TRUE(waitForCondition([&]() { return future.isFinished(); }));
+        ASSERT_TRUE(future.result().error.isEmpty()) << future.result().error.toStdString();
+
+        m_originalTrack = context().library.trackForId(lovedTrack.id());
+        ASSERT_TRUE(m_originalTrack.isLoved());
+        m_movedTrack = m_originalTrack;
+        m_movedTrack.setTitle(u"After"_s);
+        ASSERT_NE(m_movedTrack.hash(), m_originalTrack.statisticsKey());
+    }
+
+    Track m_originalTrack;
+    Track m_movedTrack;
+};
+
+TEST_F(StatisticsKeyMigrationTest, MissingDestinationKeepsSourceStatistics)
+{
+    const auto write = context().library.writeTrackMetadata({m_movedTrack});
+    ASSERT_TRUE(waitForCondition([&]() { return write.finished.isFinished(); }));
+    ASSERT_EQ(write.finished.result().failed, 0);
+    ASSERT_TRUE(waitForCondition(
+        [&]() { return context().library.trackForId(m_originalTrack.id()).title() == m_movedTrack.title(); }));
+
+    const Track updated = context().library.trackForId(m_originalTrack.id());
+    EXPECT_EQ(updated.statisticsKey(), m_movedTrack.hash());
+    EXPECT_TRUE(updated.isLoved());
+}
+
+TEST_F(StatisticsKeyMigrationTest, ExistingEmptyDestinationParticipatesInLovedMerge)
+{
+    const DbConnectionProvider dbProvider{context().dbPool};
+    DbQuery insert{dbProvider.db(), u"INSERT INTO TrackStats (StatisticsKey, Loved) VALUES (:key, 0)"_s};
+    insert.bindValue(u":key"_s, m_movedTrack.hash());
+    ASSERT_TRUE(insert.exec()) << insert.lastError().text().toStdString();
+
+    const auto write = context().library.writeTrackMetadata({m_movedTrack});
+    ASSERT_TRUE(waitForCondition([&]() { return write.finished.isFinished(); }));
+    ASSERT_EQ(write.finished.result().failed, 0);
+    ASSERT_TRUE(waitForCondition(
+        [&]() { return context().library.trackForId(m_originalTrack.id()).title() == m_movedTrack.title(); }));
+
+    const Track updated = context().library.trackForId(m_originalTrack.id());
+    EXPECT_EQ(updated.statisticsKey(), m_movedTrack.hash());
+    EXPECT_FALSE(updated.isLoved());
+}
+
+TEST_F(StatisticsKeyMigrationTest, StatisticsQueryFailureKeepsOriginalTrack)
+{
+    const DbConnectionProvider dbProvider{context().dbPool};
+    DbQuery rename{dbProvider.db(), u"ALTER TABLE TrackStats RENAME TO UnavailableTrackStats"_s};
+    ASSERT_TRUE(rename.exec()) << rename.lastError().text().toStdString();
+
+    DbQuery readable{dbProvider.db(), u"SELECT StatisticsKey FROM TracksView WHERE TrackID = :id"_s};
+    readable.bindValue(u":id"_s, m_originalTrack.id());
+    ASSERT_TRUE(readable.exec()) << readable.lastError().text().toStdString();
+    ASSERT_TRUE(readable.next());
+    EXPECT_EQ(readable.value(0).toString(), m_originalTrack.statisticsKey());
+    readable = DbQuery{};
+
+    const auto write = context().library.writeTrackMetadata({m_movedTrack});
+    ASSERT_TRUE(waitForCondition([&]() { return write.finished.isFinished(); }));
+    EXPECT_EQ(write.finished.result().failed, 1);
+
+    DbQuery restore{dbProvider.db(), u"ALTER TABLE UnavailableTrackStats RENAME TO TrackStats"_s};
+    ASSERT_TRUE(restore.exec()) << restore.lastError().text().toStdString();
+    DbQuery stored{dbProvider.db(), u"SELECT Title, StatisticsKey FROM Tracks WHERE TrackID = :id"_s};
+    stored.bindValue(u":id"_s, m_originalTrack.id());
+    ASSERT_TRUE(stored.exec()) << stored.lastError().text().toStdString();
+    ASSERT_TRUE(stored.next());
+    EXPECT_EQ(stored.value(0).toString(), m_originalTrack.title());
+    EXPECT_EQ(stored.value(1).toString(), m_originalTrack.statisticsKey());
+    EXPECT_TRUE(context().library.trackForId(m_originalTrack.id()).isLoved());
+}
+
+TEST_F(StatisticsKeyMigrationTest, MetadataMigrationPreservesClearPolicies)
+{
+    PlaybackStatisticsRequest request;
+    request.operation        = PlaybackStatisticsRequest::Operation::Rebuild;
+    request.config.playcount = PlaycountMergePolicy::Clear;
+    request.config.rating    = RatingMergePolicy::Clear;
+
+    auto rebuilt = context().library.managePlaybackStatistics(request);
+    ASSERT_TRUE(waitForCondition([&]() { return rebuilt.isFinished(); }));
+    ASSERT_TRUE(rebuilt.result().error.isEmpty());
+
+    context().library.trackWasPlayed(context().library.trackForId(m_originalTrack.id()));
+    ASSERT_TRUE(
+        waitForCondition([&]() { return context().library.trackForId(m_originalTrack.id()).playCount() == 1; }));
+
+    auto rated = context().library.trackForId(m_originalTrack.id());
+    rated.setRating(0.5F);
+    context().library.updateTrackStats(rated, Track::Stat::Rating);
+    ASSERT_TRUE(waitForCondition([&]() { return context().library.trackForId(rated.id()).rating() == 0.5F; }));
+
+    auto moved = context().library.trackForId(rated.id());
+    moved.setTitle(u"After"_s);
+
+    const auto written = context().library.writeTrackMetadata({moved});
+    ASSERT_TRUE(waitForCondition([&]() { return written.finished.isFinished(); }));
+    ASSERT_EQ(written.finished.result().failed, 0);
+    ASSERT_TRUE(waitForCondition([&]() { return context().library.trackForId(moved.id()).title() == u"After"_s; }));
+
+    const PlaybackStatisticsDatabase statistics{DbConnectionProvider{context().dbPool}};
+    const auto stored = statistics.trackStatistics(moved.id());
+    ASSERT_TRUE(stored.has_value());
+    EXPECT_EQ(stored->playCount(), 0);
+    EXPECT_LE(stored->rating(), 0.0F);
+    EXPECT_EQ(context().library.trackForId(moved.id()).playCount(), 0);
+    EXPECT_LE(context().library.trackForId(moved.id()).rating(), 0.0F);
+}
+
+TEST_F(StatisticsKeyMigrationTest, StaleCoverWritePreservesCurrentMetadataAndStatistics)
+{
+    PlaybackStatisticsRequest request;
+    request.operation  = PlaybackStatisticsRequest::Operation::Reset;
+    request.trackIds   = {m_originalTrack.id()};
+    request.resetStats = Track::Stat::Loved;
+
+    const auto reset = context().library.managePlaybackStatistics(request);
+    ASSERT_TRUE(waitForCondition([&]() { return reset.isFinished(); }));
+    ASSERT_TRUE(reset.result().error.isEmpty());
+
+    auto current = context().library.trackForId(m_originalTrack.id());
+    current.setTitle(u"Current title"_s);
+
+    const auto metadata = context().library.writeTrackMetadata({current});
+    ASSERT_TRUE(waitForCondition([&]() { return metadata.finished.isFinished(); }));
+    ASSERT_EQ(metadata.finished.result().failed, 0);
+    ASSERT_TRUE(
+        waitForCondition([&]() { return context().library.trackForId(current.id()).title() == current.title(); }));
+    current = context().library.trackForId(current.id());
+
+    QSignalSpy changed{&context().library, &MusicLibrary::tracksMetadataChanged};
+    const auto covers = context().library.writeTrackCovers(
+        TrackCoverData{.tracks = {m_originalTrack}, .coverData = {{Track::Cover::Front, {}}}});
+    ASSERT_TRUE(waitForCondition([&]() { return covers.finished.isFinished(); }));
+    ASSERT_EQ(covers.finished.result().failed, 0);
+    ASSERT_EQ(covers.finished.result().succeeded, 1);
+
+    waitForSignal(changed);
+
+    const auto updated = context().library.trackForId(current.id());
+    EXPECT_EQ(updated.title(), current.title());
+    EXPECT_EQ(updated.statisticsKey(), current.statisticsKey());
+    EXPECT_EQ(updated.statisticsRevision(), current.statisticsRevision());
+    EXPECT_FALSE(updated.isLoved());
+
+    QSignalSpy loaded{&context().library, &MusicLibrary::tracksLoaded};
+    context().library.loadAllTracks();
+    waitForSignal(loaded);
+    EXPECT_EQ(context().library.trackForId(current.id()).title(), current.title());
+    EXPECT_FALSE(context().library.trackForId(current.id()).isLoved());
+}
+
+TEST_F(StatisticsKeyMigrationTest, ClearingOnlyPlayedDatesDoesNotWritePlaycountTags)
+{
+    context().library.trackWasPlayed(m_originalTrack);
+    ASSERT_TRUE(
+        waitForCondition([&]() { return context().library.trackForId(m_originalTrack.id()).playCount() == 1; }));
+    const auto before = context().library.trackForId(m_originalTrack.id());
+    ASSERT_GT(before.firstPlayed(), 0);
+    ASSERT_GT(before.lastPlayed(), 0);
+    ASSERT_TRUE(context().readerState->writes().empty());
+
+    PlaybackStatisticsRequest request;
+    request.operation               = PlaybackStatisticsRequest::Operation::Rebuild;
+    request.config.clearFirstPlayed = true;
+    request.config.clearLastPlayed  = true;
+    request.fileTagStats            = Track::Stat::Playcount;
+    context().library.setActivePlaybackTrack(before);
+
+    const auto rebuilt = context().library.managePlaybackStatistics(request);
+    ASSERT_TRUE(waitForCondition([&]() { return rebuilt.isFinished(); }));
+    ASSERT_TRUE(rebuilt.result().error.isEmpty());
+    EXPECT_TRUE(context().readerState->writes().empty());
+
+    const auto updated = context().library.trackForId(before.id());
+    EXPECT_EQ(updated.playCount(), 1);
+    EXPECT_EQ(updated.firstPlayed(), 0);
+    EXPECT_EQ(updated.lastPlayed(), 0);
+
+    context().library.flushPendingWrites();
+    QSignalSpy loaded{&context().library, &MusicLibrary::tracksLoaded};
+    context().library.loadAllTracks();
+    waitForSignal(loaded);
+    EXPECT_TRUE(context().readerState->writes().empty());
+}
+
+class StatisticsMetadataBatchTest : public UnifiedMusicLibraryTest
+{
+protected:
+    void SetUp() override
+    {
+        UnifiedMusicLibraryTest::SetUp();
+        if(HasFatalFailure()) {
+            return;
+        }
+
+        createTrackFile(u"merge_first.mp3"_s, u"A"_s);
+        createTrackFile(u"merge_second.mp3"_s, u"A"_s);
+        createTrackFile(u"merge_third.mp3"_s, u"B"_s);
+
+        const auto library = addLibrary(u"Statistics metadata batch"_s);
+        waitForSuccessfulScan([&]() { return context().library.rescan(library); });
+        ASSERT_EQ(context().library.tracks().size(), 3);
+
+        for(const auto& track : context().library.tracks()) {
+            if(track.title() == u"A"_s) {
+                m_groupA.push_back(track);
+            }
+            else {
+                m_groupB = track;
+            }
+        }
+
+        ASSERT_EQ(m_groupA.size(), 2);
+        ASSERT_EQ(m_groupA.front().statisticsKey(), m_groupA.back().statisticsKey());
+
+        const PlaybackStatisticsDatabase statistics{DbConnectionProvider{context().dbPool}};
+        auto sourceA = m_groupA.front();
+        sourceA.setPlayCount(1);
+        auto sourceB = m_groupB;
+        sourceB.setPlayCount(3);
+        ASSERT_TRUE(statistics.replaceStats(sourceA.statisticsKey(), sourceA));
+        ASSERT_TRUE(statistics.replaceStats(sourceB.statisticsKey(), sourceB));
+
+        PlaybackStatisticsRequest request;
+        request.operation        = PlaybackStatisticsRequest::Operation::Rebuild;
+        request.config.script    = u"%title%"_s;
+        request.config.playcount = PlaycountMergePolicy::Sum;
+
+        const auto rebuilt = context().library.managePlaybackStatistics(request);
+        ASSERT_TRUE(waitForCondition([&]() { return rebuilt.isFinished(); }));
+        ASSERT_TRUE(rebuilt.result().error.isEmpty());
+
+        for(auto& track : m_groupA) {
+            track = context().library.trackForId(track.id());
+        }
+        m_groupB = context().library.trackForId(m_groupB.id());
+    }
+
+    TrackList m_groupA;
+    Track m_groupB;
+};
+
+TEST_F(StatisticsMetadataBatchTest, CountsEachSourceGroupOnceAndPublishesFinalValues)
+{
+    TrackList edited{m_groupA.front(), m_groupB, m_groupA.back()};
+    for(auto& track : edited) {
+        track.setTitle(u"Merged"_s);
+    }
+
+    const auto written = context().library.writeTrackMetadata(edited);
+    ASSERT_TRUE(waitForCondition([&]() { return written.finished.isFinished(); }));
+    ASSERT_EQ(written.finished.result().failed, 0);
+    ASSERT_EQ(written.finished.result().succeeded, 3);
+    ASSERT_TRUE(waitForCondition([&]() {
+        return std::ranges::all_of(context().library.tracks(), [](const Track& track) {
+            return track.title() == u"Merged"_s && track.playCount() == 4;
+        });
+    }));
+
+    QSignalSpy loaded{&context().library, &MusicLibrary::tracksLoaded};
+    context().library.loadAllTracks();
+    waitForSignal(loaded);
+    ASSERT_EQ(context().library.tracks().size(), 3);
+    for(const auto& track : context().library.tracks()) {
+        EXPECT_EQ(track.title(), u"Merged"_s);
+        EXPECT_EQ(track.playCount(), 4);
+    }
+}
+
+TEST_F(StatisticsMetadataBatchTest, FailedMigrationDoesNotConsumeSourceContribution)
+{
+    const DbConnectionProvider provider{context().dbPool};
+    DbQuery reject{provider.db(), u"CREATE TRIGGER RejectMetadata BEFORE UPDATE OF Title ON Tracks "
+                                  "WHEN OLD.TrackID = %1 AND NEW.Title = 'Merged' "
+                                  "BEGIN SELECT RAISE(ABORT, 'Rejected metadata'); END"_s.arg(m_groupA.front().id())};
+    ASSERT_TRUE(reject.exec()) << reject.lastError().text().toStdString();
+
+    TrackList edited = m_groupA;
+    for(auto& track : edited) {
+        track.setTitle(u"Merged"_s);
+    }
+
+    const auto written = context().library.writeTrackMetadata(edited);
+    ASSERT_TRUE(waitForCondition([&]() { return written.finished.isFinished(); }));
+    ASSERT_EQ(written.finished.result().failed, 1);
+    ASSERT_EQ(written.finished.result().succeeded, 1);
+    ASSERT_TRUE(
+        waitForCondition([&]() { return context().library.trackForId(m_groupA.back().id()).title() == u"Merged"_s; }));
+
+    const PlaybackStatisticsDatabase statistics{provider};
+    const auto stored = statistics.trackStatistics(m_groupA.back().id());
+    ASSERT_TRUE(stored.has_value());
+    EXPECT_EQ(stored->playCount(), 1);
+    EXPECT_EQ(context().library.trackForId(m_groupA.back().id()).playCount(), 1);
+    EXPECT_EQ(context().library.trackForId(m_groupA.front().id()).title(), u"A"_s);
+}
+
+TEST_F(UnifiedMusicLibraryTest, StatisticsResetWritesClearedHistoryToFileTags)
+{
+    createTrackFile(u"reset_first.mp3"_s, u"First"_s);
+    createTrackFile(u"reset_second.mp3"_s, u"Second"_s);
+    const auto libraryInfo = addLibrary(u"Statistics Reset"_s);
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+    ASSERT_EQ(context().library.tracks().size(), 2);
+
+    for(const auto& track : context().library.tracks()) {
+        context().library.trackWasPlayed(track);
+    }
+    ASSERT_TRUE(waitForCondition([&]() {
+        return std::ranges::all_of(context().library.tracks(),
+                                   [](const Track& track) { return track.playCount() == 1; });
+    }));
+    ASSERT_TRUE(context().readerState->writes().empty());
+    ASSERT_TRUE(context().settings.set<Settings::Core::SavePlaycountToMetadata>(true));
+
+    PlaybackStatisticsRequest request;
+    request.operation = PlaybackStatisticsRequest::Operation::Reset;
+    for(const auto& track : context().library.tracks()) {
+        request.trackIds.push_back(track.id());
+    }
+    MusicLibrary& library = context().library;
+    const auto future     = library.managePlaybackStatistics(request);
+    ASSERT_TRUE(waitForCondition([&]() { return future.isFinished(); }));
+    const auto result = future.result();
+    ASSERT_TRUE(result.error.isEmpty()) << result.error.toStdString();
+    EXPECT_EQ(result.tracks, 2);
+    EXPECT_EQ(result.failedTagWrites, 0);
+
+    const auto writes = context().readerState->writes();
+    ASSERT_EQ(writes.size(), 2);
+    for(const auto& [track, options] : writes) {
+        EXPECT_EQ(track.playCount(), 0);
+        EXPECT_EQ(track.firstPlayed(), 0);
+        EXPECT_EQ(track.lastPlayed(), 0);
+        EXPECT_EQ(options, AudioReader::Playcount);
+    }
+
+    QSignalSpy loadedSpy{&library, &MusicLibrary::tracksLoaded};
+    library.loadAllTracks();
+    waitForSignal(loadedSpy);
+    ASSERT_EQ(library.tracks().size(), 2);
+    for(const auto& track : library.tracks()) {
+        EXPECT_EQ(track.playCount(), 0);
+        EXPECT_EQ(track.firstPlayed(), 0);
+        EXPECT_EQ(track.lastPlayed(), 0);
+    }
+}
+
+TEST_F(UnifiedMusicLibraryTest, StatisticsResetCountsTagFailuresAndKeepsDatabaseChanges)
+{
+    const auto firstPath = createTrackFile(u"failed_first.mp3"_s, u"First"_s);
+    createTrackFile(u"successful_second.mp3"_s, u"Second"_s);
+    const auto thirdPath   = createTrackFile(u"failed_third.mp3"_s, u"Third"_s);
+    const auto libraryInfo = addLibrary(u"Statistics Write Failures"_s);
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+    ASSERT_EQ(context().library.tracks().size(), 3);
+
+    for(const auto& track : context().library.tracks()) {
+        context().library.trackWasPlayed(track);
+    }
+    ASSERT_TRUE(waitForCondition([&]() {
+        return std::ranges::all_of(context().library.tracks(),
+                                   [](const Track& track) { return track.playCount() == 1; });
+    }));
+    ASSERT_TRUE(context().readerState->writes().empty());
+    context().readerState->failWritesFor(firstPath);
+    context().readerState->failWritesFor(thirdPath);
+    ASSERT_TRUE(context().settings.set<Settings::Core::SavePlaycountToMetadata>(true));
+
+    PlaybackStatisticsRequest request;
+    request.operation = PlaybackStatisticsRequest::Operation::Reset;
+    for(const auto& track : context().library.tracks()) {
+        request.trackIds.push_back(track.id());
+    }
+    MusicLibrary& library = context().library;
+    const auto future     = library.managePlaybackStatistics(request);
+    ASSERT_TRUE(waitForCondition([&]() { return future.isFinished(); }));
+    const auto result = future.result();
+    ASSERT_TRUE(result.error.isEmpty()) << result.error.toStdString();
+    EXPECT_EQ(result.tracks, 3);
+    EXPECT_EQ(result.failedTagWrites, 2);
+    EXPECT_EQ(context().readerState->writes().size(), 3);
+
+    QSignalSpy loadedSpy{&library, &MusicLibrary::tracksLoaded};
+    library.loadAllTracks();
+    waitForSignal(loadedSpy);
+    ASSERT_EQ(library.tracks().size(), 3);
+    for(const auto& track : library.tracks()) {
+        EXPECT_EQ(track.playCount(), 0);
+        EXPECT_EQ(track.firstPlayed(), 0);
+        EXPECT_EQ(track.lastPlayed(), 0);
+    }
+}
+
+TEST_F(UnifiedMusicLibraryTest, StatisticsResetDefersActiveTrackTagWrite)
+{
+    createTrackFile(u"active_first.mp3"_s, u"First"_s);
+    createTrackFile(u"inactive_second.mp3"_s, u"Second"_s);
+    const auto libraryInfo = addLibrary(u"Deferred Statistics Reset"_s);
+    waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+    ASSERT_EQ(context().library.tracks().size(), 2);
+
+    for(const auto& track : context().library.tracks()) {
+        context().library.trackWasPlayed(track);
+    }
+    ASSERT_TRUE(waitForCondition([&]() {
+        return std::ranges::all_of(context().library.tracks(),
+                                   [](const Track& track) { return track.playCount() == 1; });
+    }));
+    ASSERT_TRUE(context().readerState->writes().empty());
+    const Track activeTrack = context().library.tracks().front();
+    context().library.setActivePlaybackTrack(activeTrack);
+    ASSERT_TRUE(context().settings.set<Settings::Core::SavePlaycountToMetadata>(true));
+
+    PlaybackStatisticsRequest request;
+    request.operation = PlaybackStatisticsRequest::Operation::Reset;
+    for(const auto& track : context().library.tracks()) {
+        request.trackIds.push_back(track.id());
+    }
+    MusicLibrary& library = context().library;
+    const auto future     = library.managePlaybackStatistics(request);
+    ASSERT_TRUE(waitForCondition([&]() { return future.isFinished(); }));
+    ASSERT_TRUE(future.result().error.isEmpty()) << future.result().error.toStdString();
+    EXPECT_EQ(future.result().failedTagWrites, 0);
+
+    const auto immediateWrites = context().readerState->writes();
+    ASSERT_EQ(immediateWrites.size(), 1);
+    EXPECT_NE(immediateWrites.front().first.filepath(), activeTrack.filepath());
+    EXPECT_EQ(library.trackForId(activeTrack.id()).playCount(), 0);
+
+    context().library.flushPendingWrites();
+    ASSERT_TRUE(waitForCondition([&]() { return context().readerState->writes().size() == 2; }));
+    const auto writes = context().readerState->writes();
+    EXPECT_EQ(writes.back().first.filepath(), activeTrack.filepath());
+    EXPECT_EQ(writes.back().first.playCount(), 0);
+    EXPECT_EQ(writes.back().first.firstPlayed(), 0);
+    EXPECT_EQ(writes.back().first.lastPlayed(), 0);
+    EXPECT_EQ(writes.back().second, AudioReader::Playcount);
+}
+
+class StatisticsFileTagOptionsTest : public UnifiedMusicLibraryTest,
+                                     public ::testing::WithParamInterface<PlaybackStatisticsRequest::Operation>
+{
+protected:
+    void SetUp() override
+    {
+        UnifiedMusicLibraryTest::SetUp();
+        if(HasFatalFailure()) {
+            return;
+        }
+
+        setTagDefaults(false);
+        createTrackFile(u"tag_options_first.mp3"_s, u"First"_s);
+        createTrackFile(u"tag_options_second.mp3"_s, u"Second"_s);
+
+        const auto libraryInfo = addLibrary(u"Statistics Tag Options"_s);
+        waitForSuccessfulScan([&]() { return context().library.rescan(libraryInfo); });
+        ASSERT_EQ(context().library.tracks().size(), 2);
+
+        for(const auto& track : context().library.tracks()) {
+            context().library.trackWasPlayed(track);
+        }
+        ASSERT_TRUE(waitForCondition([&]() {
+            return std::ranges::all_of(context().library.tracks(),
+                                       [](const Track& track) { return track.playCount() == 1; });
+        }));
+
+        for(auto track : context().library.tracks()) {
+            track.setRating(0.75F);
+            context().library.updateTrackStats(track, Track::Stat::Rating);
+        }
+        ASSERT_TRUE(waitForCondition([&]() {
+            return std::ranges::all_of(context().library.tracks(),
+                                       [](const Track& track) { return track.rating() == 0.75F; });
+        }));
+        ASSERT_TRUE(context().readerState->writes().empty());
+    }
+
+    void setTagDefaults(bool enabled)
+    {
+        context().settings.set<Settings::Core::SavePlaycountToMetadata>(enabled);
+        context().settings.set<Settings::Core::SaveRatingToMetadata>(enabled);
+        ASSERT_EQ(context().settings.value<Settings::Core::SavePlaycountToMetadata>(), enabled);
+        ASSERT_EQ(context().settings.value<Settings::Core::SaveRatingToMetadata>(), enabled);
+    }
+
+    PlaybackStatisticsResult maintain(std::optional<Track::Stats> fileTagStats)
+    {
+        PlaybackStatisticsRequest request;
+        request.operation               = GetParam();
+        request.resetStats              = Track::Stat::Playcount | Track::Stat::Rating;
+        request.config.playcount        = PlaycountMergePolicy::Clear;
+        request.config.rating           = RatingMergePolicy::Clear;
+        request.config.clearFirstPlayed = true;
+        request.config.clearLastPlayed  = true;
+        request.fileTagStats            = fileTagStats;
+        for(const auto& track : context().library.tracks()) {
+            request.trackIds.push_back(track.id());
+        }
+
+        const auto future = context().library.managePlaybackStatistics(request);
+        if(!waitForCondition([&]() { return future.isFinished(); })) {
+            ADD_FAILURE() << "Statistics maintenance did not finish";
+            PlaybackStatisticsResult result;
+            result.error = u"Timed out"_s;
+            return result;
+        }
+
+        return future.result();
+    }
+
+    void expectClearedStatistics()
+    {
+        const DbConnectionProvider dbProvider{context().dbPool};
+        DbQuery query{dbProvider.db(), u"SELECT PlayCount, FirstPlayed, LastPlayed, Rating FROM TracksView"_s};
+        ASSERT_TRUE(query.exec()) << query.lastError().text().toStdString();
+
+        int tracks{0};
+        while(query.next()) {
+            EXPECT_EQ(query.value(0).toInt(), 0);
+            EXPECT_EQ(query.value(1).toULongLong(), 0);
+            EXPECT_EQ(query.value(2).toULongLong(), 0);
+            EXPECT_LE(query.value(3).toFloat(), 0.0F);
+            ++tracks;
+        }
+        EXPECT_EQ(tracks, 2);
+    }
+};
+
+TEST_P(StatisticsFileTagOptionsTest, ExplicitOptionsEnableWritesWithDisabledDefaults)
+{
+    const auto result = maintain(Track::Stat::Playcount | Track::Stat::Rating);
+    ASSERT_TRUE(result.error.isEmpty()) << result.error.toStdString();
+    EXPECT_EQ(result.failedTagWrites, 0);
+
+    const auto writes = context().readerState->writes();
+    ASSERT_EQ(writes.size(), 2);
+    for(const auto& [track, options] : writes) {
+        EXPECT_EQ(track.playCount(), 0);
+        EXPECT_LE(track.rating(), 0.0F);
+        EXPECT_EQ(options, AudioReader::Playcount | AudioReader::Rating);
+    }
+    EXPECT_FALSE(context().settings.value<Settings::Core::SavePlaycountToMetadata>());
+    EXPECT_FALSE(context().settings.value<Settings::Core::SaveRatingToMetadata>());
+
+    expectClearedStatistics();
+}
+
+TEST_P(StatisticsFileTagOptionsTest, ExplicitEmptyOptionsSuppressWritesWithEnabledDefaults)
+{
+    setTagDefaults(true);
+
+    const auto result = maintain(Track::Stat::None);
+    ASSERT_TRUE(result.error.isEmpty()) << result.error.toStdString();
+    EXPECT_TRUE(context().readerState->writes().empty());
+    EXPECT_TRUE(context().settings.value<Settings::Core::SavePlaycountToMetadata>());
+    EXPECT_TRUE(context().settings.value<Settings::Core::SaveRatingToMetadata>());
+
+    expectClearedStatistics();
+}
+
+TEST_P(StatisticsFileTagOptionsTest, WritesOnlySelectedTagFields)
+{
+    setTagDefaults(true);
+
+    const auto result = maintain(Track::Stat::Rating);
+    ASSERT_TRUE(result.error.isEmpty()) << result.error.toStdString();
+
+    const auto writes = context().readerState->writes();
+    ASSERT_EQ(writes.size(), 2);
+    for(const auto& [track, options] : writes) {
+        EXPECT_EQ(options, AudioReader::Rating);
+    }
+
+    expectClearedStatistics();
+}
+
+TEST_P(StatisticsFileTagOptionsTest, DeferredWritesKeepDefaultsCapturedForOperation)
+{
+    setTagDefaults(true);
+
+    const auto active = context().library.tracks().front();
+    context().library.setActivePlaybackTrack(active);
+
+    const auto result = maintain({});
+    ASSERT_TRUE(result.error.isEmpty()) << result.error.toStdString();
+    ASSERT_EQ(context().readerState->writes().size(), 1);
+
+    setTagDefaults(false);
+    context().library.flushPendingWrites();
+    ASSERT_TRUE(waitForCondition([&]() { return context().readerState->writes().size() == 2; }));
+
+    const auto writes = context().readerState->writes();
+    EXPECT_EQ(writes.back().first.filepath(), active.filepath());
+    EXPECT_EQ(writes.back().second, AudioReader::Playcount | AudioReader::Rating);
+
+    expectClearedStatistics();
+}
+
+TEST_P(StatisticsFileTagOptionsTest, DisabledTagsStayDisabledInDeferredMetadataWrites)
+{
+    setTagDefaults(true);
+
+    auto active = context().library.tracks().front();
+    context().library.setActivePlaybackTrack(active);
+    active.setComment(u"Pending metadata"_s);
+
+    const auto write = context().library.writeTrackMetadata({active});
+    ASSERT_TRUE(waitForCondition([&]() { return write.finished.isFinished(); }));
+
+    const auto result = maintain(Track::Stat::None);
+    ASSERT_TRUE(result.error.isEmpty()) << result.error.toStdString();
+    ASSERT_TRUE(context().readerState->writes().empty());
+
+    context().library.flushPendingWrites();
+    ASSERT_TRUE(waitForCondition([&]() { return !context().readerState->writes().empty(); }));
+
+    QSignalSpy loaded{&context().library, &MusicLibrary::tracksLoaded};
+    context().library.loadAllTracks();
+    waitForSignal(loaded);
+    const auto writes = context().readerState->writes();
+    ASSERT_EQ(writes.size(), 1);
+    EXPECT_EQ(writes.front().first.comment(), u"Pending metadata"_s);
+    EXPECT_EQ(writes.front().second, AudioReader::Metadata);
+
+    expectClearedStatistics();
+}
+
+TEST_P(StatisticsFileTagOptionsTest, LaterOrdinaryUpdateRestoresPolicyForItsField)
+{
+    setTagDefaults(true);
+
+    const auto active = context().library.tracks().front();
+    context().library.setActivePlaybackTrack(active);
+
+    const auto result = maintain(Track::Stat::None);
+    ASSERT_TRUE(result.error.isEmpty()) << result.error.toStdString();
+
+    auto rated = context().library.trackForId(active.id());
+    rated.setRating(0.5F);
+    context().library.updateTrackStats(rated, Track::Stat::Rating);
+    ASSERT_TRUE(waitForCondition([&]() { return context().library.trackForId(active.id()).rating() == 0.5F; }));
+    context().library.flushPendingWrites();
+    ASSERT_TRUE(waitForCondition([&]() { return !context().readerState->writes().empty(); }));
+
+    const auto writes = context().readerState->writes();
+    ASSERT_EQ(writes.size(), 1);
+    EXPECT_FLOAT_EQ(writes.front().first.rating(), 0.5F);
+    EXPECT_EQ(writes.front().second, AudioReader::Rating);
+}
+
+INSTANTIATE_TEST_SUITE_P(Maintenance, StatisticsFileTagOptionsTest,
+                         ::testing::Values(PlaybackStatisticsRequest::Operation::Reset,
+                                           PlaybackStatisticsRequest::Operation::Rebuild),
+                         [](const auto& testCase) {
+                             return testCase.param == PlaybackStatisticsRequest::Operation::Reset ? "Reset" : "Rebuild";
+                         });
 
 TEST_F(UnifiedMusicLibraryTest, ScanForChangesMakesTracksVisibleBeforeScanFinished)
 {
@@ -1172,7 +1876,7 @@ TEST_F(UnifiedMusicLibraryTest, RestoresStatsWhenUnmanagedTrackIsReadded)
             dbProvider.db(),
             u"UPDATE TrackStats "
             "SET Loved = 1, PlayCount = 5, FirstPlayed = 100, LastPlayed = 500 "
-            "WHERE TrackHash = :hash;"_s,
+            "WHERE StatisticsKey = :hash;"_s,
         };
         query.bindValue(u":hash"_s, track.hash());
 

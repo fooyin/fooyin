@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "database/playbackstatisticsdatabase.h"
+
 #include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
 #include <core/library/pendingtrackcoverprovider.h>
@@ -73,6 +75,12 @@ public:
     WriteRequest writeTrackCovers(const TrackCoverData& tracks);
     [[nodiscard]] std::optional<PendingTrackCover> pendingTrackCover(const Track& track,
                                                                      Track::Cover type) const override;
+
+    using StatisticsUpdate = PlaybackStatisticsDatabase::MaintenanceResult;
+    QFuture<StatisticsUpdate> manageStatistics(const PlaybackStatisticsRequest& request,
+                                               std::shared_ptr<QPromise<PlaybackStatisticsResult>> progress = {});
+    void finishStatisticsOperation(const StatisticsUpdate& update);
+
     void setActivePlaybackTrack(const Track& track);
     void flushPendingWrites();
     void saveUpdatedTrackStats(const TrackList& tracks, Track::Stats stats);
@@ -92,6 +100,7 @@ Q_SIGNALS:
     void statusChanged(const Fooyin::LibraryInfo& library);
     void scanUpdate(int id, Fooyin::ScanRequest::Type type, const Fooyin::ScanResult& result);
     void tracksUpdated(const Fooyin::TrackList& tracks);
+    void tracksFilePropertiesUpdated(const Fooyin::TrackList& tracks);
     void tracksAvailabilityUpdated(const Fooyin::TrackList& tracks);
     void tracksStatsUpdated(const Fooyin::TrackList& tracks, Fooyin::Track::Stats stats);
     void tracksRemoved(const Fooyin::TrackList& tracks);

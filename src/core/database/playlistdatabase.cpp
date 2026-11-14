@@ -20,6 +20,7 @@
 #include "playlistdatabase.h"
 
 #include "databasehelpers.h"
+#include "playbackstatisticsdatabase.h"
 
 #include <utils/database/dbquery.h>
 #include <utils/database/dbtransaction.h>
@@ -99,6 +100,7 @@ Track PlaylistDatabase::ensureTrack(Track track) const
     }
 
     track.generateHash();
+    PlaybackStatisticsDatabase{dbProvider()}.prepareTrack(track);
 
     DbQuery insertQuery{db(), Database::trackInsertStatement(true)};
 

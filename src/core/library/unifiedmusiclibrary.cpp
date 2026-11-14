@@ -23,6 +23,7 @@
 #include "library/librarymanager.h"
 #include "libraryscanutils.h"
 #include "librarythreadhandler.h"
+#include "statisticsutils.h"
 
 #include <core/coresettings.h>
 #include <core/engine/input/ratingtagpolicy.h>
@@ -41,11 +42,15 @@
 #include <QFuture>
 #include <QLoggingCategory>
 #include <QPointer>
+#include <QPromise>
 
 #include <deque>
 #include <functional>
+#include <limits>
+#include <map>
 #include <optional>
 #include <ranges>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -60,6 +65,7 @@ enum class LibraryTrackUpdateType : uint8_t
 {
     Availability = 0,
     Stats,
+    FileProperties,
 };
 
 int updatedTrackCount(const TrackList& tracks)
@@ -99,10 +105,16 @@ Track mergeTrackUpdate(const Track& currentTrack, const Track& updatedTrack, Lib
     Track mergedTrack{currentTrack};
 
     switch(updateType) {
+        case LibraryTrackUpdateType::FileProperties:
+            mergedTrack.setModifiedTime(updatedTrack.modifiedTime());
+            break;
         case LibraryTrackUpdateType::Availability:
             mergedTrack.setIsEnabled(updatedTrack.isEnabled());
             break;
         case LibraryTrackUpdateType::Stats:
+            mergedTrack.setStatisticsKey(updatedTrack.statisticsKey());
+            mergedTrack.setStatisticsRevision(updatedTrack.statisticsRevision());
+            mergedTrack.setAddedTime(updatedTrack.addedTime());
             mergeTrackStats(mergedTrack, updatedTrack, Track::Stat::All);
             mergedTrack.setModifiedTime(updatedTrack.modifiedTime());
             if(updatedStats.testFlag(Track::Stat::Rating)) {
@@ -236,6 +248,7 @@ public:
     QCoro::Task<TrackList> sortTracks(QString sort, TrackList tracks);
     QFuture<TrackList> sortTracksFuture(const QString& sort, TrackList tracks);
     void attachMetadataStore(TrackList& tracks) const;
+    void expandSharedStatistics(TrackList& tracks) const;
     void setTracks(TrackList tracks);
     QCoro::Task<> resortLibraryTracks(TrackList tracks);
 
@@ -247,6 +260,8 @@ public:
     void changeSort(const QString& sort);
     void setupLibraryWatchers();
 
+    QCoro::Task<> commitStatisticsUpdate(LibraryThreadHandler::StatisticsUpdate update,
+                                         std::shared_ptr<QPromise<PlaybackStatisticsResult>> promise);
     QCoro::Task<> commitLoadTracks(TrackList tracksToLoad);
     QCoro::Task<> commitChangeSort(QString sort);
     QCoro::Task<> commitAddTracks(TrackList newTracks);
@@ -290,6 +305,8 @@ public:
 
     TrackList m_tracks;
     std::unordered_map<int, size_t> m_trackIndices;
+    bool m_statisticsMaintenance{false};
+    std::vector<std::pair<int, uint64_t>> m_deferredPlays;
     std::deque<CommitOperation> m_commitQueue;
     std::optional<QCoro::Task<>> m_activeCommitTask;
     std::unordered_map<int, ScanSummaryCounts> m_scanSummaries;
@@ -362,6 +379,32 @@ void UnifiedMusicLibraryPrivate::attachMetadataStore(TrackList& tracks) const
 {
     for(auto& track : tracks) {
         track.setMetadataStore(m_metadataStore);
+    }
+}
+
+void UnifiedMusicLibraryPrivate::expandSharedStatistics(TrackList& tracks) const
+{
+    std::map<QString, Track> groups;
+    std::set<int> ids;
+    for(const auto& track : tracks) {
+        groups.insert_or_assign(track.statisticsKey(), track);
+        ids.insert(track.id());
+    }
+
+    for(const auto& existing : m_tracks) {
+        const auto group = groups.find(existing.statisticsKey());
+        if(group == groups.end() || ids.contains(existing.id())) {
+            continue;
+        }
+
+        Track shared{existing};
+        shared.replaceStatistics(group->second, Track::Stat::All);
+        shared.setAddedTime(group->second.addedTime());
+        shared.setStatisticsRevision(group->second.statisticsRevision());
+
+        if(!shared.sameDataAs(existing)) {
+            tracks.push_back(std::move(shared));
+        }
     }
 }
 
@@ -467,6 +510,66 @@ void UnifiedMusicLibraryPrivate::changeSort(const QString& sort)
     enqueueCommit([this, sort]() mutable { return commitChangeSort(std::move(sort)); });
 }
 
+QCoro::Task<>
+UnifiedMusicLibraryPrivate::commitStatisticsUpdate(LibraryThreadHandler::StatisticsUpdate update,
+                                                   std::shared_ptr<QPromise<PlaybackStatisticsResult>> promise)
+{
+    const QPointer lifetime{m_self};
+
+    StatisticsProgress progress{promise.get()};
+    progress.start(UnifiedMusicLibrary::tr("Finalising…"));
+
+    if(update.result.error.isEmpty() && !update.tracks.empty()) {
+        co_await commitUpdateTracksStats(update.tracks, Track::Stat::All);
+    }
+
+    if(!lifetime) {
+        co_return;
+    }
+
+    m_threadHandler.finishStatisticsOperation(update);
+    m_statisticsMaintenance = false;
+    const auto plays        = std::move(m_deferredPlays);
+    m_deferredPlays.clear();
+
+    struct DeferredHistory
+    {
+        int count{0};
+        uint64_t first{0};
+        uint64_t last{0};
+    };
+    std::map<QString, DeferredHistory> counts;
+
+    for(const auto& [id, time] : plays) {
+        const auto current = m_self->trackForId(id);
+        if(current.isValid()) {
+            auto& [count, first, last] = counts[current.statisticsKey()];
+            ++count;
+            first = first == 0 ? time : std::min(first, time);
+            last  = std::max(last, time);
+        }
+    }
+
+    TrackList playedTracks;
+    for(const auto& track : m_tracks) {
+        const auto count = counts.find(track.statisticsKey());
+        if(count != counts.end()) {
+            Track played{track};
+            played.setPlayCount(track.playCount() + count->second.count);
+            played.setFirstPlayed(count->second.first);
+            played.setLastPlayed(count->second.last);
+            playedTracks.push_back(played);
+        }
+    }
+
+    if(!playedTracks.empty()) {
+        m_threadHandler.saveUpdatedTrackStats(playedTracks, Track::Stat::Playcount);
+    }
+
+    promise->addResult(update.result);
+    promise->finish();
+}
+
 QCoro::Task<> UnifiedMusicLibraryPrivate::commitLoadTracks(TrackList tracksToLoad)
 {
     const QPointer lifetime{m_self};
@@ -506,6 +609,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitAddTracks(TrackList newTracks)
 {
     const QPointer lifetime{m_self};
 
+    expandSharedStatistics(newTracks);
     attachMetadataStore(newTracks);
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(newTracks));
@@ -607,6 +711,7 @@ QCoro::Task<> UnifiedMusicLibraryPrivate::commitUpdateTracksMetadata(TrackList t
         co_return;
     }
 
+    expandSharedStatistics(tracksToUpdate);
     attachMetadataStore(tracksToUpdate);
 
     const TrackList sortedTracks = co_await sortTracks(librarySortScript(), std::move(tracksToUpdate));
@@ -979,6 +1084,13 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
                      [this](int id, TrackList tracks) { p->playlistLoaded(id, std::move(tracks)); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksUpdated, this,
                      [this](const TrackList& tracks) { p->updateTracksMetadata(tracks); });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksFilePropertiesUpdated, this,
+                     [this](const TrackList& tracks) {
+                         p->enqueueCommit([this, tracks]() {
+                             return p->commitUpdateTracksMetadata(
+                                 p->mergeTrackUpdates(tracks, LibraryTrackUpdateType::FileProperties));
+                         });
+                     });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksAvailabilityUpdated, this,
                      [this](const TrackList& tracks) { p->updateTracksAvailability(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksStatsUpdated, this,
@@ -1165,16 +1277,23 @@ void UnifiedMusicLibrary::updateTrackStats(const Track& track, Track::Stats stat
 
 void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
 {
-    const QString hash  = track.hash();
+    if(p->m_statisticsMaintenance) {
+        p->m_deferredPlays.emplace_back(track.id(), QDateTime::currentMSecsSinceEpoch());
+        return;
+    }
+
+    const Track current = trackForId(track.id());
+    const Track& played = current.isValid() ? current : track;
+    const QString hash  = played.statisticsKey();
     const auto currTime = QDateTime::currentMSecsSinceEpoch();
-    const int playCount = track.playCount() + 1;
+    const int playCount = played.playCount() + 1;
 
     qCDebug(LIBRARY) << "Track played event received:" << "id=" << track.id() << "path=" << track.uniqueFilepath()
                      << "hash=" << hash << "currentPlayCount=" << track.playCount() << "nextPlayCount=" << playCount;
 
     TrackList tracksToUpdate;
     for(const auto& libraryTrack : p->m_tracks) {
-        if(libraryTrack.hash() == hash) {
+        if(libraryTrack.statisticsKey() == hash) {
             Track sameHashTrack{libraryTrack};
             sameHashTrack.setFirstPlayed(currTime);
             sameHashTrack.setLastPlayed(currTime);
@@ -1215,6 +1334,34 @@ WriteRequest UnifiedMusicLibrary::removeUnavailbleTracks()
 WriteRequest UnifiedMusicLibrary::deleteTracks(const TrackList& tracks)
 {
     return p->m_threadHandler.deleteTracks(tracks);
+}
+
+QFuture<PlaybackStatisticsResult>
+UnifiedMusicLibrary::handlePlaybackStatistics(const PlaybackStatisticsRequest& request)
+{
+    auto promise = std::make_shared<QPromise<PlaybackStatisticsResult>>();
+    promise->start();
+
+    const auto future = promise->future();
+    if(p->m_statisticsMaintenance) {
+        PlaybackStatisticsResult result;
+        result.error = tr("Another statistics operation is in progress.");
+        promise->addResult(result);
+        promise->finish();
+        return future;
+    }
+
+    p->m_statisticsMaintenance = true;
+    StatisticsProgress progress{promise.get()};
+    progress.start(tr("Waiting for current operations…"));
+
+    p->m_threadHandler.manageStatistics(request, promise)
+        .then(this, [this, promise](LibraryThreadHandler::StatisticsUpdate update) {
+            p->enqueueCommit([this, promise, update = std::move(update)]() mutable {
+                return p->commitStatisticsUpdate(std::move(update), promise);
+            });
+        });
+    return future;
 }
 } // namespace Fooyin
 
