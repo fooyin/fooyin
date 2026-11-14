@@ -1,5 +1,35 @@
 # Changelog
 
+## Unreleased
+
+### New Features
+
+- **Interface**
+  - Add spinning CD and vinyl styles to the Cover widget and Cover Flow
+  - Add Accent and Tonal application colour modes derived from the playing track’s artwork
+- **Library & Metadata:** Add library statistics and listening history with custom breakdowns and stream metadata ([#984](https://github.com/fooyin/fooyin/issues/984))
+- **Scrobbling:** Add radio scrobbling ([#1899](https://github.com/fooyin/fooyin/issues/1899))
+
+### Improvements
+
+- **Interface**
+  - Unify browsing actions and clarify current, playing, and results playlist destinations ([#1893](https://github.com/fooyin/fooyin/issues/1893))
+  - Add optional contextual overlays to no-label Filter artwork views
+  - Make the Log window a dialog with a close button ([#1900](https://github.com/fooyin/fooyin/issues/1900))
+- **Scrobbling:** Improve account isolation, metadata handling, Last.fm responses, rate limits, and retry behaviour
+
+### Fixes
+
+- **Audio & Playback:** Fix fades at end of file and while buffering
+- **Metadata:** Preserve MP4 metadata when updating tags ([#1904](https://github.com/fooyin/fooyin/issues/1904))
+- **Playlists:** Prevent following the current track during inline editing
+
+### Dev/API
+
+- **Playback:** Add listening history, library statistics, and live listening tracker APIs
+- **Track Selection:** Add shared browsing action and results playlist APIs
+
+
 ## [0.15.1](https://github.com/fooyin/fooyin/releases/tag/v0.15.1) (2026-11-10)
 
 ### Improvements
