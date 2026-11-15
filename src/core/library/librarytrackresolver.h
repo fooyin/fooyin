@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include "libraryexclusions.h"
 #include "libraryscanutils.h"
 
 #include <core/library/libraryinfo.h>
@@ -61,6 +62,7 @@ public:
                          TrackReloadOptions reloadOptions, FlushWritesHandler flushWrites);
 
     void setReadCancellationToken(std::stop_token token);
+    void setExclusions(LibraryExclusions exclusions);
 
     [[nodiscard]] TrackList readTracks(const QString& filepath);
     Track readUrlTrack(const Track& track);
@@ -99,6 +101,7 @@ private:
     LibraryScanState* m_state;
     LibraryScanWriter* m_writer;
     TrackReloadOptions m_reloadOptions;
+    LibraryExclusions m_exclusions;
 
     FlushWritesHandler m_flushWrites;
     std::stop_token m_readCancellationToken;

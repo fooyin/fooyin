@@ -254,6 +254,7 @@ bool LibraryScanSession::scanLibrary(const LibraryInfo& library, const TrackList
     LibraryFileEnumerator enumerator{&m_state, [this](const QFileInfo& info, const EnumeratedFileType type) {
                                          return handleEnumeratedFile(info, type);
                                      }};
+    enumerator.setExclusions(m_config.exclusions);
 
     const bool completed = enumerator.enumerateFiles({library.path}, restrictExtensions, {});
     m_resolver           = nullptr;
@@ -297,6 +298,7 @@ bool LibraryScanSession::scanDirectories(const LibraryInfo& library, const QStri
     LibraryFileEnumerator enumerator{&m_state, [this](const QFileInfo& info, const EnumeratedFileType type) {
                                          return handleEnumeratedFile(info, type);
                                      }};
+    enumerator.setExclusions(m_config.exclusions);
 
     const bool completed = enumerator.enumerateFiles(dirs, restrictExtensions, {});
     m_resolver           = nullptr;
@@ -537,6 +539,7 @@ LibraryTrackResolver LibraryScanSession::makeResolver()
                                    .overwritePlaycountOnReload = m_config.overwritePlaycountOnReload},
                                   flushWrites};
     resolver.setReadCancellationToken(m_config.readCancellationToken);
+    resolver.setExclusions(m_config.exclusions);
     return resolver;
 }
 
@@ -670,7 +673,10 @@ void LibraryScanSession::finaliseUnseenTracks()
 
         Track disabledTrack{track};
         disabledTrack.setLibraryId(-1);
-        disabledTrack.setIsEnabled(false);
+        if(!m_config.exclusions.contains(physicalTrackPath(track))
+           && !(track.hasCue() && m_config.exclusions.contains(track.cuePath()))) {
+            disabledTrack.setIsEnabled(false);
+        }
         m_writer.updateTrack(disabledTrack);
     }
 }

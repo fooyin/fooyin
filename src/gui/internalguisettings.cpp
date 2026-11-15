@@ -19,6 +19,7 @@
 
 #include "internalguisettings.h"
 
+#include "contextmenuids.h"
 #include "nowplayingoutput/nowplayingoutputservice.h"
 #include "playlist/playlistsearchcontroller.h"
 #include "search/searchwidget.h"
@@ -235,7 +236,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                     QString::fromLatin1(Constants::Actions::CopyDirectoryPath),
                     QString::fromLatin1(Constants::Actions::ToggleLove),
                     QString::fromLatin1(Constants::Actions::LoveTracks),
-                    QString::fromLatin1(Constants::Actions::UnloveTracks)},
+                    QString::fromLatin1(Constants::Actions::UnloveTracks),
+                    QString::fromLatin1(ContextMenuIds::TrackSelection::Library)},
         u"Interface/ContextMenuTrackDisabledSections"_s);
     m_settings->createSetting<Internal::ContextMenuPlaylistDisabledSections>(
         QStringList{QString::fromLatin1(Constants::Actions::AddToPlaylist)},

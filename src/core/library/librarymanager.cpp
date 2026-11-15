@@ -124,9 +124,9 @@ int LibraryManager::addLibrary(const QString& path, const QString& name)
     const QString libraryName = p->findUniqueName(name);
 
     const auto id = p->m_libraryConnector.insertLibrary(path, libraryName);
-
     if(id > 0) {
-        LibraryInfo& info = p->m_libraries.emplace(id, LibraryInfo{libraryName, path, id}).first->second;
+        LibraryInfo& info
+            = p->m_libraries.emplace(id, LibraryInfo{.name = libraryName, .path = path, .id = id}).first->second;
         Q_EMIT libraryAdded(info);
         info.status = LibraryInfo::Status::Initialised;
         Q_EMIT librariesChanged();
@@ -209,9 +209,9 @@ std::optional<LibraryInfo> LibraryManager::findLibraryByPath(const QString& path
 {
     assertMainThread();
 
-    auto it = std::ranges::find_if(std::as_const(p->m_libraries),
-                                   [path](const auto& info) { return info.second.path == path; });
-    if(it != p->m_libraries.end()) {
+    const auto it = std::ranges::find_if(std::as_const(p->m_libraries),
+                                         [path](const auto& info) { return info.second.path == path; });
+    if(it != p->m_libraries.cend()) {
         return it->second;
     }
     return {};
@@ -225,6 +225,18 @@ std::optional<LibraryInfo> LibraryManager::libraryInfo(int id) const
         return p->m_libraries.at(id);
     }
     return {};
+}
+
+std::optional<LibraryExclusions> LibraryManager::exclusions(int id) const
+{
+    assertMainThread();
+    return hasLibrary(id) ? p->m_libraryConnector.exclusions(id) : std::nullopt;
+}
+
+bool LibraryManager::setExclusions(int id, const LibraryExclusions& exclusions)
+{
+    assertMainThread();
+    return hasLibrary(id) && p->m_libraryConnector.setExclusions(id, exclusions);
 }
 } // namespace Fooyin
 

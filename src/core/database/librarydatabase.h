@@ -19,8 +19,12 @@
 
 #pragma once
 
+#include "core/library/libraryexclusions.h"
+
 #include <core/library/libraryinfo.h>
 #include <utils/database/dbmodule.h>
+
+#include <optional>
 
 namespace Fooyin {
 class LibraryDatabase : public DbModule
@@ -32,5 +36,8 @@ public:
 
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
+
+    [[nodiscard]] std::optional<LibraryExclusions> exclusions(int id) const;
+    bool setExclusions(int id, const LibraryExclusions& exclusions);
 };
 } // namespace Fooyin

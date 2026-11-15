@@ -32,6 +32,11 @@ LibraryFileEnumerator::LibraryFileEnumerator(LibraryScanState* state, Enumerated
     , m_handler{std::move(handler)}
 { }
 
+void LibraryFileEnumerator::setExclusions(LibraryExclusions exclusions)
+{
+    m_exclusions = std::move(exclusions);
+}
+
 bool LibraryFileEnumerator::enumerateFiles(const QStringList& paths, const QStringList& trackExtensions,
                                            const QStringList& playlistExtensions)
 {
@@ -54,9 +59,12 @@ bool LibraryFileEnumerator::enumerateFiles(const QStringList& paths, const QStri
         return {};
     };
 
-    auto emitFile = [this, &fileType](const QFileInfo& info) -> bool {
+    const auto emitFile = [this, &fileType](const QFileInfo& info) -> bool {
         if(!m_state->mayRun()) {
             return false;
+        }
+        if(m_exclusions.contains(info.absoluteFilePath())) {
+            return true;
         }
 
         if(const auto type = fileType(info)) {
@@ -83,6 +91,10 @@ bool LibraryFileEnumerator::enumerateFiles(const QStringList& paths, const QStri
         }
 
         const QString normalisedPath = normalisePath(info.absoluteFilePath());
+        if(m_exclusions.contains(normalisedPath)) {
+            continue;
+        }
+
         if(info.isDir()) {
             if(!processDirectory(normalisedPath, trackExtensions, playlistExtensions, visitedDirs)) {
                 return false;
@@ -112,6 +124,9 @@ bool LibraryFileEnumerator::processDirectory(const QString& path, const QStringL
     if(!m_state->mayRun()) {
         return false;
     }
+    if(m_exclusions.contains(path)) {
+        return true;
+    }
 
     const QFileInfo dirInfo{path};
     const QString canonicalPath = dirInfo.canonicalFilePath().isEmpty() ? path : dirInfo.canonicalFilePath();
@@ -125,12 +140,12 @@ bool LibraryFileEnumerator::processDirectory(const QString& path, const QStringL
     QFileInfoList cueFiles;
     for(const auto& entry : entries) {
         if(entry.isFile() && entry.suffix().compare(u"cue"_s, Qt::CaseInsensitive) == 0
-           && trackExtensions.contains(u"cue"_s)) {
+           && trackExtensions.contains(u"cue"_s) && !m_exclusions.contains(entry.absoluteFilePath())) {
             cueFiles.push_back(entry);
         }
     }
 
-    auto emitTypedFile = [this](const QFileInfo& info, const EnumeratedFileType type) {
+    const auto emitTypedFile = [this](const QFileInfo& info, const EnumeratedFileType type) {
         const QString filepath = normalisePath(info.absoluteFilePath());
         if(!m_state->rememberDiscoveredPath(filepath)) {
             return true;
@@ -147,6 +162,10 @@ bool LibraryFileEnumerator::processDirectory(const QString& path, const QStringL
     }
 
     for(const auto& entry : entries) {
+        if(m_exclusions.contains(entry.absoluteFilePath())) {
+            continue;
+        }
+
         if(entry.isDir()) {
             if(!processDirectory(normalisePath(entry.absoluteFilePath()), trackExtensions, playlistExtensions,
                                  visitedDirs)) {

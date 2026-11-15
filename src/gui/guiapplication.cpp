@@ -27,6 +27,7 @@
 #include "contextmenuids.h"
 #include "conversion/conversioncontroller.h"
 #include "conversion/convertersettingsstore.h"
+#include "dialog/libraryexclusionsdialog.h"
 #include "dialog/saveplaylistsdialog.h"
 #include "dialog/searchdialog.h"
 #include "filters/filterscripting.h"
@@ -1342,6 +1343,54 @@ void GuiApplication::registerActions()
     m_selectionController->registerTrackContextSeparator(this, TrackContextMenuArea::Track,
                                                          Constants::Menus::Context::Tagging,
                                                          Constants::Menus::Context::TaggingLookupSeparator);
+
+    m_selectionController->registerTrackContextSubmenu(
+        this, TrackContextMenuArea::Track, Constants::Menus::Context::TrackSelection,
+        ContextMenuIds::TrackSelection::Library, tr("Library"), Constants::Menus::Context::TrackFinalSeparator);
+
+    const auto canExclude = [](const TrackSelection& selection) {
+        return std::ranges::any_of(selection.tracks, &Track::isInLibrary);
+    };
+
+    const auto registerExclusion
+        = [this, canExclude](const QString& text, const QString& description, const Id& id, bool folders) {
+              auto* exclude = new QAction(text, this);
+              exclude->setStatusTip(description);
+
+              Context context{Constants::Context::TrackSelection};
+              context.append(Constants::Context::Global);
+
+              auto* command = m_actionManager->registerAction(exclude, id, context);
+              command->setCategories({tr("Tracks"), tr("Library")});
+              command->setDescription(description);
+
+              m_selectionController->setSelectionActionValidator(exclude, canExclude);
+
+              const auto updateExclude = [this, exclude, canExclude]() {
+                  const auto* selection = m_selectionController->selectedSelection();
+                  exclude->setEnabled(selection && canExclude(*selection));
+              };
+
+              updateExclude();
+              QObject::connect(m_selectionController.get(), &TrackSelectionController::selectionChanged, exclude,
+                               updateExclude);
+              QObject::connect(exclude, &QAction::triggered, this, [this, folders]() {
+                  LibraryExclusionsDialog::excludeTracks(m_selectionController->selectedTracks(), m_core->library(),
+                                                         m_core->libraryManager(), m_mainWindow.get(), folders);
+              });
+              m_selectionController->registerTrackContextAction(
+                  this, TrackContextMenuArea::Track, ContextMenuIds::TrackSelection::Library, id, text,
+                  [exclude, canExclude](QMenu* menu, const TrackSelection& selection) {
+                      if(canExclude(selection)) {
+                          menu->addAction(exclude);
+                      }
+                  });
+          };
+    registerExclusion(tr("Exclude files…"), tr("Exclude the selected files from their libraries"),
+                      Constants::Actions::ExcludeFromLibrary, false);
+    registerExclusion(tr("Exclude containing folders…"),
+                      tr("Exclude the selected tracks’ folders and their subfolders"),
+                      Constants::Actions::ExcludeFoldersFromLibrary, true);
 }
 
 void GuiApplication::rescanTracks(const TrackList& tracks, bool onlyModified) const

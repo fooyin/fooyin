@@ -187,6 +187,8 @@ set(SOURCES
     dialog/importlayoutdialog.h
     dialog/librarybreakdownmodel.cpp
     dialog/librarybreakdownmodel.h
+    dialog/libraryexclusionsdialog.cpp
+    dialog/libraryexclusionsdialog.h
     dialog/listeninghistorymodel.cpp
     dialog/listeninghistorymodel.h
     dialog/playbackpropertiestab.cpp

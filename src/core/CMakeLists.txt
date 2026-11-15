@@ -246,6 +246,8 @@ set(SOURCES
     internalcoresettings.h
     library/librarycuetrackreloader.cpp
     library/librarycuetrackreloader.h
+    library/libraryexclusions.cpp
+    library/libraryexclusions.h
     library/libraryfileenumerator.cpp
     library/libraryfileenumerator.h
     library/libraryfilter.cpp

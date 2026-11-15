@@ -21,6 +21,8 @@
 
 #include "fycore_export.h"
 
+#include "libraryexclusions.h"
+
 #include <core/library/libraryinfo.h>
 #include <core/track.h>
 
@@ -50,6 +52,7 @@ struct FYCORE_EXPORT LibraryScanConfig
     bool overwriteRatingOnReload{false};
     bool overwritePlaycountOnReload{false};
     std::stop_token readCancellationToken{};
+    LibraryExclusions exclusions{};
 };
 
 struct FYCORE_EXPORT LibraryScanFilesResult

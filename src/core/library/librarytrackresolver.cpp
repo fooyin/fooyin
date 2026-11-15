@@ -118,6 +118,11 @@ void LibraryTrackResolver::setReadCancellationToken(std::stop_token token)
     m_readCancellationToken = std::move(token);
 }
 
+void LibraryTrackResolver::setExclusions(LibraryExclusions exclusions)
+{
+    m_exclusions = std::move(exclusions);
+}
+
 TrackList LibraryTrackResolver::readTracks(const QString& filepath)
 {
     if(m_audioLoader->isArchive(filepath)) {
@@ -133,7 +138,7 @@ TrackList LibraryTrackResolver::readTracks(const QString& filepath)
     }
 
     TrackList tracks;
-    AudioSource source     = loadedReader.input.source;
+    const AudioSource source{loadedReader.input.source};
     const int subsongCount = std::max(loadedReader.reader->subsongCount(), 1);
 
     for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
@@ -170,12 +175,11 @@ Track LibraryTrackResolver::readUrlTrack(const Track& track)
 
     Track readTrack{track};
     readTrack.setMetadataStore(m_metadataStore);
-    if(m_state->mayRun()) {
+    if(m_state->mayRun() && !m_audioLoader->readTrackMetadata(readTrack, m_readCancellationToken)) {
         // An unavailable server shouldn't prevent a URL from being added
-        if(!m_audioLoader->readTrackMetadata(readTrack, m_readCancellationToken)) {
-            qCDebug(LIB_SCANNER) << "Could not read metadata from URL:" << key;
-        }
+        qCDebug(LIB_SCANNER) << "Could not read metadata from URL:" << key;
     }
+
     readTrack.generateHash();
     m_remoteTracks.emplace(key, readTrack);
     m_state->progressScanned(readTrack.prettyFilepath());
@@ -522,10 +526,16 @@ void LibraryTrackResolver::readCue(const QFileInfo& info, const bool onlyModifie
     const uint64_t lastModified
         = lastModifiedTime.isValid() ? static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch()) : 0;
 
-    const TrackList cueTracks = readPlaylistTracks(cuePath);
+    TrackList cueTracks = readPlaylistTracks(cuePath);
+    std::erase_if(cueTracks, [this](const Track& track) { return m_exclusions.contains(physicalTrackPath(track)); });
     if(cueTracks.empty()) {
         if(m_state->existingCueTracks().contains(cuePath)) {
-            m_state->markTracksSeen(m_state->existingCueTracks().at(cuePath));
+            const auto existingTracks = m_state->existingCueTracks().at(cuePath);
+            for(const auto& track : existingTracks) {
+                if(!m_exclusions.contains(physicalTrackPath(track))) {
+                    m_state->markTrackSeen(track);
+                }
+            }
         }
         return;
     }
@@ -536,7 +546,11 @@ void LibraryTrackResolver::readCue(const QFileInfo& info, const bool onlyModifie
     }
 
     if(m_state->existingCueTracks().contains(cuePath) && onlyModified
-       && m_state->existingCueTracks().at(cuePath).front().modifiedTime() >= lastModified) {
+       && m_state->existingCueTracks().at(cuePath).front().modifiedTime() >= lastModified
+       && std::ranges::all_of(m_state->existingCueTracks().at(cuePath), [this](const Track& track) {
+              return track.libraryId() == m_currentLibrary.id && track.isEnabled()
+                  && !m_exclusions.contains(physicalTrackPath(track));
+          })) {
         m_state->markTracksSeen(m_state->existingCueTracks().at(cuePath));
         for(const auto& track : m_state->existingCueTracks().at(cuePath)) {
             m_state->cueFilesScanned().emplace(normalisePath(track.filepath()));

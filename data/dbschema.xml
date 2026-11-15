@@ -513,4 +513,13 @@
             CREATE INDEX StatisticsKeyIndex ON Tracks(StatisticsKey);
         </sql>
     </revision>
+    <revision version="25" minCompatVersion="24">
+        <description>
+            Store library file and folder exclusions.
+        </description>
+        <sql>
+            ALTER TABLE Libraries ADD COLUMN ExcludedFiles BLOB;
+            ALTER TABLE Libraries ADD COLUMN ExcludedFolders BLOB;
+        </sql>
+    </revision>
 </schema>

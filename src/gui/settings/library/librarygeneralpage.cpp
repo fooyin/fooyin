@@ -19,15 +19,15 @@
 
 #include "librarygeneralpage.h"
 
+#include "core/internalcoresettings.h"
+#include "gui/dialog/libraryexclusionsdialog.h"
 #include "librarymodel.h"
 
-#include "core/internalcoresettings.h"
-#include <gui/iconloader.h>
-
-#include "core/library/libraryinfo.h"
 #include <core/coresettings.h>
+#include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
 #include <gui/guiconstants.h>
+#include <gui/iconloader.h>
 #include <gui/widgets/extendabletableview.h>
 #include <gui/widgets/hintlabel.h>
 #include <utils/fypaths.h>
@@ -63,6 +63,7 @@ Q_SIGNALS:
     void refreshLibrary(const Fooyin::LibraryInfo& info);
     void rescanLibrary(const Fooyin::LibraryInfo& info);
     void cancelLibraryScan(int id);
+    void manageExclusions(const Fooyin::LibraryInfo& info);
 };
 
 void LibraryTableView::setupContextActions(QMenu* menu, const QPoint& pos)
@@ -95,6 +96,13 @@ void LibraryTableView::setupContextActions(QMenu* menu, const QPoint& pos)
         menu->addSeparator();
         menu->addAction(cancel);
     }
+
+    if(library.id >= 0 && !isPending) {
+        menu->addSeparator();
+        const auto* exclusions = menu->addAction(tr("Exclusions…"));
+        QObject::connect(exclusions, &QAction::triggered, this,
+                         [this, library]() { Q_EMIT manageExclusions(library); });
+    }
 }
 
 class LibraryGeneralPageWidget : public SettingsPageWidget
@@ -110,6 +118,8 @@ public:
 
 private:
     void addLibrary() const;
+    [[nodiscard]] LibraryInfo selectedLibrary() const;
+    void manageExclusions(const LibraryInfo& info) const;
 
     LibraryManager* m_libraryManager;
     MusicLibrary* m_library;
@@ -117,6 +127,7 @@ private:
 
     LibraryTableView* m_libraryView;
     LibraryModel* m_model;
+    QToolButton* m_manageExclusions;
 
     QLineEdit* m_restrictTypes;
     QLineEdit* m_excludeTypes;
@@ -135,6 +146,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManage
     , m_settings{settings}
     , m_libraryView{new LibraryTableView(this)}
     , m_model{new LibraryModel(m_libraryManager, this)}
+    , m_manageExclusions{new QToolButton(this)}
     , m_restrictTypes{new QLineEdit(this)}
     , m_excludeTypes{new QLineEdit(this)}
     , m_autoRefresh{new QCheckBox(tr("Auto refresh on startup"), this)}
@@ -151,6 +163,20 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(LibraryManager* libraryManage
     m_libraryView->setExtendableColumn(1);
     m_libraryView->verticalHeader()->hide();
     m_libraryView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    m_manageExclusions->setText(tr("Exclusions…"));
+    m_manageExclusions->setToolTip(tr("Manage excluded files and folders for the selected library"));
+    m_manageExclusions->setEnabled(false);
+    m_libraryView->addCustomTool(m_manageExclusions);
+
+    QObject::connect(m_libraryView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
+        const auto info = selectedLibrary();
+        m_manageExclusions->setEnabled(info.id >= 0 && info.status != LibraryInfo::Status::Pending);
+    });
+    QObject::connect(m_manageExclusions, &QToolButton::clicked, this,
+                     [this]() { manageExclusions(selectedLibrary()); });
+    QObject::connect(m_libraryView, &LibraryTableView::manageExclusions, this,
+                     &LibraryGeneralPageWidget::manageExclusions);
 
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
     m_monitorLibraryDirectories->setToolTip(
@@ -287,6 +313,25 @@ void LibraryGeneralPageWidget::addLibrary() const
     const QString name = info.fileName();
 
     m_model->markForAddition({.name = name, .path = dir});
+}
+
+LibraryInfo LibraryGeneralPageWidget::selectedLibrary() const
+{
+    const auto indexes = m_libraryView->selectionModel()->selectedIndexes();
+    if(indexes.empty() || std::ranges::any_of(indexes, [&indexes](const QModelIndex& index) {
+           return index.row() != indexes.front().row();
+       })) {
+        return {};
+    }
+    return indexes.front().data(LibraryModel::Info).value<LibraryInfo>();
+}
+
+void LibraryGeneralPageWidget::manageExclusions(const LibraryInfo& info) const
+{
+    if(info.id >= 0 && m_library->libraryInfo(info.id)) {
+        LibraryExclusionsDialog dialog{info, m_library, m_libraryManager, m_libraryView};
+        dialog.exec();
+    }
 }
 
 LibraryGeneralPage::LibraryGeneralPage(LibraryManager* libraryManager, MusicLibrary* library, SettingsManager* settings,

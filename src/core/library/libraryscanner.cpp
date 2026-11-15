@@ -19,6 +19,7 @@
 
 #include "libraryscanner.h"
 
+#include "database/librarydatabase.h"
 #include "database/trackdatabase.h"
 #include "librarycuetrackreloader.h"
 #include "libraryscansession.h"
@@ -100,7 +101,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
 
     const Timer timer;
 
-    if(m_currentLibrary.id >= 0 && QFileInfo::exists(m_currentLibrary.path)) {
+    if(m_session->error().isEmpty() && m_currentLibrary.id >= 0 && QFileInfo::exists(m_currentLibrary.path)) {
         m_session->scanLibrary(library, tracks, onlyModified);
     }
 
@@ -134,7 +135,9 @@ void LibraryScanner::scanLibraryDirectoies(const LibraryInfo& library, const QSt
     startSession(config, library);
     changeLibraryStatus(LibraryInfo::Status::Scanning);
 
-    m_session->scanDirectories(library, dirs, tracks);
+    if(m_session->error().isEmpty()) {
+        m_session->scanDirectories(library, dirs, tracks);
+    }
 
     if(state() == Paused && m_session->error().isEmpty()) {
         changeLibraryStatus(LibraryInfo::Status::Pending);
@@ -430,8 +433,21 @@ void LibraryScanner::startSession(const LibraryScanConfig& config, const Library
     m_currentLibrary = library;
     LibraryScanConfig scanConfig{config};
     scanConfig.readCancellationToken = stopToken();
+
+    std::optional<LibraryExclusions> exclusions;
+    if(library.id >= 0) {
+        LibraryDatabase libraries;
+        libraries.initialise(DbConnectionProvider{m_dbPool});
+        exclusions = libraries.exclusions(library.id);
+        if(exclusions) {
+            scanConfig.exclusions = std::move(*exclusions);
+        }
+    }
     m_session = std::make_unique<LibraryScanSession>(&m_trackDatabase, m_playlistLoader.get(), m_audioLoader.get(),
                                                      m_remoteIo, m_metadataStore, std::move(scanConfig), this);
+    if(library.id >= 0 && !exclusions) {
+        m_session->fail(tr("Could not load library exclusions."));
+    }
 }
 
 void LibraryScanner::finishSession()

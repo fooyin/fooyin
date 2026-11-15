@@ -37,6 +37,8 @@ public:
 
     LibraryFileEnumerator(LibraryScanState* state, EnumeratedFileHandler handler);
 
+    void setExclusions(LibraryExclusions exclusions);
+
     [[nodiscard]] bool enumerateFiles(const QStringList& paths, const QStringList& trackExtensions,
                                       const QStringList& playlistExtensions);
 
@@ -46,5 +48,6 @@ private:
 
     LibraryScanState* m_state;
     EnumeratedFileHandler m_handler;
+    LibraryExclusions m_exclusions;
 };
 } // namespace Fooyin

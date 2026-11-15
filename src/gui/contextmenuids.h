@@ -33,6 +33,7 @@ namespace TrackSelection {
 constexpr auto ArtworkSearchSeparator = "Fooyin.Menu.Artwork.SearchSeparator";
 constexpr auto ArtworkAttachSeparator = "Fooyin.Menu.Artwork.AttachSeparator";
 constexpr auto FileActionsSeparator   = "Fooyin.Menu.Track.FileActionsSeparator";
+constexpr auto Library                = "Fooyin.Menu.Track.Library";
 } // namespace TrackSelection
 
 namespace LayoutEditing {

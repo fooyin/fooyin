@@ -279,6 +279,8 @@ constexpr auto ToggleMenubar             = "View.ToggleMenubar";
 constexpr auto LookupMetadata            = "Tracks.LookupMetadata";
 constexpr auto LookupMetadataByDiscToc   = "Tracks.LookupMetadataByDiscToc";
 constexpr auto LookupMetadataById        = "Tracks.LookupMetadataById";
+constexpr auto ExcludeFromLibrary        = "Library.ExcludeFromLibrary";
+constexpr auto ExcludeFoldersFromLibrary = "Library.ExcludeFoldersFromLibrary";
 } // namespace Actions
 
 namespace Mime {

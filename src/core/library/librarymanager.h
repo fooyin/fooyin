@@ -21,6 +21,8 @@
 
 #include "fycore_export.h"
 
+#include "libraryexclusions.h"
+
 #include <core/library/libraryinfo.h>
 #include <utils/database/dbconnectionpool.h>
 
@@ -55,6 +57,9 @@ public:
 
     [[nodiscard]] std::optional<LibraryInfo> findLibraryByPath(const QString& path) const;
     [[nodiscard]] std::optional<LibraryInfo> libraryInfo(int id) const;
+
+    [[nodiscard]] std::optional<LibraryExclusions> exclusions(int id) const;
+    bool setExclusions(int id, const LibraryExclusions& exclusions);
 
 Q_SIGNALS:
     void librariesChanged();

@@ -19,11 +19,48 @@
 
 #include "librarydatabase.h"
 
+#include "core/library/libraryscanutils.h"
+
 #include <utils/database/dbquery.h>
+
+#include <QDataStream>
+#include <QIODevice>
+#include <QStringList>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+namespace {
+QByteArray serialisePaths(const std::set<QString>& paths)
+{
+    QByteArray data;
+    QDataStream stream{&data, QIODevice::WriteOnly};
+    stream.setVersion(QDataStream::Qt_6_0);
+    stream << QStringList{paths.cbegin(), paths.cend()};
+    return data;
+}
+
+bool readPaths(const QByteArray& data, std::set<QString>& paths)
+{
+    if(data.isEmpty()) {
+        return true;
+    }
+
+    QDataStream stream{data};
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    QStringList storedPaths;
+    stream >> storedPaths;
+    if(stream.status() != QDataStream::Ok || !stream.atEnd()) {
+        return false;
+    }
+
+    const auto normalised = normalisePaths(storedPaths);
+    paths.insert(normalised.cbegin(), normalised.cend());
+    return true;
+}
+} // namespace
+
 bool LibraryDatabase::getAllLibraries(LibraryInfoMap& libraries)
 {
     static const QString statement = u"SELECT LibraryID, Name, Path FROM Libraries;"_s;
@@ -94,5 +131,31 @@ bool LibraryDatabase::renameLibrary(int id, const QString& name)
     query.bindValue(u":id"_s, id);
 
     return query.exec();
+}
+
+std::optional<LibraryExclusions> LibraryDatabase::exclusions(int id) const
+{
+    DbQuery query{db(), u"SELECT ExcludedFiles, ExcludedFolders FROM Libraries WHERE LibraryID = :id;"_s};
+    query.bindValue(u":id"_s, id);
+    if(!query.exec() || !query.next()) {
+        return {};
+    }
+
+    LibraryExclusions exclusions;
+    if(!readPaths(query.value(0).toByteArray(), exclusions.files)
+       || !readPaths(query.value(1).toByteArray(), exclusions.folders)) {
+        return {};
+    }
+    return exclusions;
+}
+
+bool LibraryDatabase::setExclusions(int id, const LibraryExclusions& exclusions)
+{
+    DbQuery query{db(), u"UPDATE Libraries SET ExcludedFiles = :files, ExcludedFolders = :folders "
+                        "WHERE LibraryID = :id;"_s};
+    query.bindValue(u":id"_s, id);
+    query.bindValue(u":files"_s, serialisePaths(exclusions.files));
+    query.bindValue(u":folders"_s, serialisePaths(exclusions.folders));
+    return query.exec() && query.numRowsAffected() == 1;
 }
 } // namespace Fooyin
