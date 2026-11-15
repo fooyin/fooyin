@@ -582,12 +582,14 @@ void PlaylistHandlerPrivate::savePlaylists()
     PlaylistList playlistsToSave;
 
     for(const auto& playlist : m_playlists) {
-        if(playlist->modified() || playlist->tracksModified()) {
+        if(!playlist->isTemporary() && (playlist->modified() || playlist->tracksModified())) {
             playlistsToSave.emplace_back(playlist.get());
         }
     }
 
-    m_playlistConnector.saveModifiedPlaylists(playlistsToSave);
+    if(!m_playlistConnector.saveModifiedPlaylists(playlistsToSave)) {
+        qCWarning(PL_HANDLER) << "Failed to save modified playlists";
+    }
 
     if(!m_activePlaylist) {
         return;
@@ -1475,9 +1477,11 @@ void PlaylistHandler::savePlaylists()
 
 void PlaylistHandler::savePlaylist(const UId& id)
 {
-    if(auto* playlistToSave = playlistById(id)) {
+    if(auto* playlistToSave = playlistById(id); playlistToSave && !playlistToSave->isTemporary()) {
         p->updateIndices();
-        p->m_playlistConnector.savePlaylist(*playlistToSave);
+        if(!p->m_playlistConnector.savePlaylist(*playlistToSave)) {
+            qCWarning(PL_HANDLER) << "Failed to save playlist" << playlistToSave->name();
+        }
     }
 }
 
