@@ -191,22 +191,45 @@ void WidgetBackground::clearDelegateBackground(QStyleOptionViewItem& option)
 void WidgetBackground::drawItemBackground(QPainter* painter, const QStyleOptionViewItem& option)
 {
     const auto* style      = option.widget ? option.widget->style() : QApplication::style();
+    const bool windows11   = style->name().compare(QStringLiteral("windows11"), Qt::CaseInsensitive) == 0;
+    const bool accent      = windows11 && option.widget && option.widget->property("accent_item_selection").toBool();
     const bool hoverColour = option.backgroundBrush.style() != Qt::NoBrush
                           && option.state.testFlag(QStyle::State_MouseOver)
                           && !option.state.testFlag(QStyle::State_Selected);
+
+    const auto drawPanel = [&](QStyleOptionViewItem panel) {
+        if(accent && panel.state.testFlag(QStyle::State_Selected)) {
+            painter->save();
+            painter->setRenderHint(QPainter::Antialiasing);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(panel.palette.brush(QPalette::Highlight));
+            painter->drawRoundedRect(panel.rect.adjusted(2, 2, -2, -2), 4, 4);
+            painter->restore();
+        }
+        else if(windows11 && panel.state.testFlag(QStyle::State_MouseOver)
+                && !panel.state.testFlag(QStyle::State_Selected)) {
+            panel.text.clear();
+            panel.icon = {};
+            panel.features.setFlag(QStyleOptionViewItem::HasCheckIndicator, false);
+            style->drawControl(QStyle::CE_ItemViewItem, &panel, painter, nullptr);
+        }
+        else {
+            style->drawPrimitive(QStyle::PE_PanelItemViewItem, &panel, painter, option.widget);
+        }
+    };
 
     QStyleOptionViewItem background{option};
     if(hoverColour) {
         background.state.setFlag(QStyle::State_MouseOver, false);
     }
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &background, painter, option.widget);
+    drawPanel(background);
 
     if(hoverColour) {
         background.state           = option.state;
         background.backgroundBrush = Qt::NoBrush;
         background.palette.setBrush(QPalette::Base, Qt::NoBrush);
         background.features.setFlag(QStyleOptionViewItem::Alternate, false);
-        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &background, painter, option.widget);
+        drawPanel(background);
     }
 }
 

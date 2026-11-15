@@ -22,6 +22,7 @@
 #include "playlistdelegate.h"
 #include "playlistmodel.h"
 
+#include <gui/guiutils.h>
 #include <gui/widgets/widgetbackground.h>
 #include <utils/heartdelegate.h>
 #include <utils/hearteditor.h>
@@ -94,6 +95,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     , m_bulkWriteInProgress{false}
 {
     setObjectName(u"PlaylistView"_s);
+    setProperty("accent_item_selection", true);
 
     setSelectionBehavior(SelectRows);
     setSelectionMode(ExtendedSelection);
@@ -1442,7 +1444,8 @@ void PlaylistView::drawStickyHeader(QPainter& painter) const
         painter.setClipRect(stickyHeaderPaintRect(pinnedHeader), Qt::IntersectClip);
         painter.fillRect(opt.rect, opt.palette.brush(QPalette::Base));
         style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, &painter, this);
-        itemDelegate()->paint(&painter, opt, pinnedHeader.index);
+        const auto textOption = Gui::itemViewPanelTextOption(opt);
+        itemDelegate()->paint(&painter, textOption, pinnedHeader.index);
 
         painter.restore();
     }

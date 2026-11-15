@@ -79,14 +79,14 @@ ElidedHeaderText elideText(const RichText& text, const QFont& baseFont, int avai
 void drawText(QPainter* painter, const QStyleOptionViewItem& option, const RichText& text, int x, int baseline,
               const QIcon& playingIcon)
 {
-    const bool selected = option.state & QStyle::State_Selected;
+    const bool highlighted = Gui::itemViewUsesSelectionText(option);
 
     for(const auto& block : text.blocks) {
         const QFont font = resolvedRichTextFont(block.format, option.font);
         painter->setFont(font);
-        painter->setPen(selected ? option.palette.color(Gui::itemViewSelectionTextRole(option))
-                                 : resolvedRichTextColour(block.format, option.palette.color(QPalette::Text),
-                                                          option.palette.color(QPalette::Link)));
+        painter->setPen(highlighted ? option.palette.color(Gui::itemViewSelectionTextRole(option))
+                                    : resolvedRichTextColour(block.format, option.palette.color(QPalette::Text),
+                                                             option.palette.color(QPalette::Link)));
         const QFontMetrics metrics{font};
         if(block.type == RichTextBlock::Type::PlayingIcon) {
             const int extent = metrics.height();

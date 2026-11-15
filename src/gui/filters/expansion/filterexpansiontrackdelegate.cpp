@@ -21,6 +21,7 @@
 
 #include "filterexpansionmodel.h"
 
+#include <gui/guiutils.h>
 #include <gui/widgets/widgetbackground.h>
 
 #include <QAbstractItemView>
@@ -38,6 +39,7 @@ void ExpansionTrackDelegate::paint(QPainter* painter, const QStyleOptionViewItem
     WidgetBackground::clearDelegateBackground(opt);
 
     WidgetBackground::drawItemBackground(painter, opt);
+    opt = Gui::itemViewPanelTextOption(opt);
 
     if(index.data(Filters::ExpansionTrackModel::SubheaderRole).toBool()
        || index.data(Filters::ExpansionTrackModel::HeaderRole).toBool()) {

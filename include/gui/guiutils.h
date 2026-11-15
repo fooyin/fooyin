@@ -99,7 +99,11 @@ FYGUI_EXPORT QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette
 FYGUI_EXPORT bool styleSupportsCustomPalette(const QString& styleName);
 FYGUI_EXPORT bool styleSupportsDarkMode(const QString& styleName);
 FYGUI_EXPORT bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool alternatingRows = false);
+/*! Whether custom-painted text should use the selection colour, including native accent hover. */
+FYGUI_EXPORT bool itemViewUsesSelectionText(const QStyleOptionViewItem& option);
 FYGUI_EXPORT QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option);
+/*! Text colours for backgrounds painted with native item panels rather than CE_ItemViewItem. */
+FYGUI_EXPORT QStyleOptionViewItem itemViewPanelTextOption(const QStyleOptionViewItem& option);
 FYGUI_EXPORT QIcon::Mode itemViewIconMode(const QStyleOptionViewItem& option);
 
 /*! Returns the style-provided size hint for custom-painted item text. */

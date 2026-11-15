@@ -27,7 +27,6 @@
 #include <gui/scripting/richtext.h>
 #include <gui/widgets/widgetbackground.h>
 
-#include <QAbstractItemView>
 #include <QApplication>
 #include <QPainter>
 
@@ -48,14 +47,6 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) + 1;
     const QRect textRect = Gui::itemViewTextRect(opt);
 
-    QStyleOptionViewItem textOpt{opt};
-    const auto* view = qobject_cast<const QAbstractItemView*>(opt.widget);
-    if(opt.state.testFlag(QStyle::State_Selected) && view && view->alternatingRowColors()
-       && style->name().compare(QStringLiteral("windows11"), Qt::CaseInsensitive) == 0) {
-        textOpt.palette.setColor(
-            QPalette::Text, QApplication::palette().color(opt.palette.currentColorGroup(), QPalette::HighlightedText));
-    }
-
     const auto leftRichText  = index.data(QueueViewerItem::RichTitle).value<RichText>();
     const auto rightRichText = index.data(QueueViewerItem::RightRichTitle).value<RichText>();
     const QSize rightSize    = Utils::richTextNaturalSize(opt, rightRichText);
@@ -72,8 +63,8 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     QRect rightRect{textRect};
     rightRect.setLeft(textRect.right() - rightWidth + 1);
 
-    const auto leftLines  = Utils::prepareTextLines(textOpt, leftRect.width(), leftRichText);
-    const auto rightLines = Utils::prepareTextLines(textOpt, rightRect.width(), rightRichText);
+    const auto leftLines  = Utils::prepareTextLines(opt, leftRect.width(), leftRichText);
+    const auto rightLines = Utils::prepareTextLines(opt, rightRect.width(), rightRichText);
 
     const bool isStatusIcon
         = index.data(QueueViewerItem::IsPlaybackIcon).toBool() || index.data(QueueViewerItem::IsExcluded).toBool();

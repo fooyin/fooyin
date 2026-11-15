@@ -260,7 +260,8 @@ DrawTrackTextResult drawTrackTextBlocks(QPainter* painter, const QStyleOptionVie
         painter->setClipRect(rect, Qt::IntersectClip);
     }
 
-    const auto selected         = option.state & QStyle::State_Selected;
+    const bool selected         = option.state & QStyle::State_Selected;
+    const bool highlighted      = Gui::itemViewUsesSelectionText(option);
     const QColor defaultColour  = option.palette.color(QPalette::Text);
     const QColor selectedColour = option.palette.color(Gui::itemViewSelectionTextRole(option));
     const QColor linkColour     = option.palette.color(QPalette::Link);
@@ -321,7 +322,7 @@ DrawTrackTextResult drawTrackTextBlocks(QPainter* painter, const QStyleOptionVie
             }
 
             QColor blockColour = resolvedRichTextColour(block.format, defaultColour, linkColour);
-            if(selected) {
+            if(highlighted) {
                 blockColour = selectedColour;
             }
 

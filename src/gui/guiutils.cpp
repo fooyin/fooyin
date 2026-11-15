@@ -426,9 +426,21 @@ bool styleSupportsDarkMode(const QString& styleName)
 #endif
 }
 
-bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool /*alternatingRows*/)
+bool styleUsesNormalItemViewSelectionText(const QString& styleName, bool alternatingRows)
 {
-    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0;
+    return styleName.compare("windows11"_L1, Qt::CaseInsensitive) == 0 && !alternatingRows;
+}
+
+bool itemViewUsesSelectionText(const QStyleOptionViewItem& option)
+{
+    if(option.state & QStyle::State_Selected) {
+        return true;
+    }
+
+    const auto* view    = qobject_cast<const QAbstractItemView*>(option.widget);
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    return (option.state & QStyle::State_MouseOver) && view && view->alternatingRowColors() && style
+        && style->name().compare("windows11"_L1, Qt::CaseInsensitive) == 0;
 }
 
 QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option)
@@ -439,6 +451,20 @@ QPalette::ColorRole itemViewSelectionTextRole(const QStyleOptionViewItem& option
         = style && styleUsesNormalItemViewSelectionText(style->name(), view && view->alternatingRowColors());
 
     return normalSelectionText ? QPalette::Text : QPalette::HighlightedText;
+}
+
+QStyleOptionViewItem itemViewPanelTextOption(const QStyleOptionViewItem& option)
+{
+    QStyleOptionViewItem textOption{option};
+    const QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    if(style && style->name().compare("windows11"_L1, Qt::CaseInsensitive) == 0) {
+        // Windows 11 paints accent backgrounds in CE_ItemViewItem, but not in its panel primitives.
+        // Keep selection and hover text on the normal palette for those panel backgrounds.
+        const auto group = option.palette.currentColorGroup();
+        textOption.palette.setBrush(group, QPalette::HighlightedText, option.palette.brush(group, QPalette::Text));
+        textOption.state.setFlag(QStyle::State_MouseOver, false);
+    }
+    return textOption;
 }
 
 QIcon::Mode itemViewIconMode(const QStyleOptionViewItem& option)
@@ -590,7 +616,8 @@ void refreshItemViewPalette(QAbstractItemView* view, const QPalette& palette)
 
     QPalette itemViewPalette{palette};
     if(const auto* style = view->style();
-       style && styleUsesNormalItemViewSelectionText(style->name(), view->alternatingRowColors())) {
+       style && styleUsesNormalItemViewSelectionText(style->name(), view->alternatingRowColors())
+       && !view->property("accent_item_selection").toBool()) {
         for(const auto group : {QPalette::Active, QPalette::Disabled, QPalette::Inactive}) {
             itemViewPalette.setBrush(group, QPalette::HighlightedText, itemViewPalette.brush(group, QPalette::Text));
         }

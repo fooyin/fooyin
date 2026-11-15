@@ -133,7 +133,15 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& opt, const QM
 void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
                 int cornerRadiusPercent, const PlaylistDelegate::ReflectionOptions& reflectionOptions)
 {
-    QStyleOptionViewItem opt{option};
+    QStyleOptionViewItem opt = Gui::itemViewPanelTextOption(option);
+    const QStyle* style      = opt.widget ? opt.widget->style() : QApplication::style();
+    if(style->name().compare(QStringLiteral("windows11"), Qt::CaseInsensitive) == 0
+       && opt.state.testFlag(QStyle::State_Selected)) {
+        // Track selection always uses the accent colour, including when alternating rows are off
+        const auto foreground = option.palette.brush(QPalette::HighlightedText);
+        opt.palette.setBrush(QPalette::Text, foreground);
+        opt.palette.setBrush(QPalette::HighlightedText, foreground);
+    }
 
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
     const QIcon playingIcon{index.data(PlaylistItem::Role::PlayingIcon).value<QPixmap>()};

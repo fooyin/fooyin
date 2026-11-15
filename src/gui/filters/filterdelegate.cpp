@@ -95,7 +95,10 @@ QColor selectionTextColour(const QStyleOptionViewItem& option)
     if(view && view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
         const QStyle* style = view->style();
         if(style && style->name().compare("windows11"_L1, Qt::CaseInsensitive) == 0) {
-            return QApplication::palette().color(option.palette.currentColorGroup(), QPalette::HighlightedText);
+            if(view->alternatingRowColors() || view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay) {
+                return QApplication::palette().color(option.palette.currentColorGroup(), QPalette::HighlightedText);
+            }
+            return option.palette.color(QPalette::Text);
         }
         if(style && style->name().compare("windowsvista"_L1, Qt::CaseInsensitive) == 0) {
             return option.palette.color(QPalette::Text);
@@ -107,6 +110,19 @@ QColor selectionTextColour(const QStyleOptionViewItem& option)
     return option.palette.color(Gui::itemViewSelectionTextRole(option));
 }
 
+bool hasAccentHover(const QStyleOptionViewItem& option)
+{
+    const auto* view = qobject_cast<const ExpandedTreeView*>(option.widget);
+    if(!view
+       || (view->viewMode() != ExpandedTreeView::ViewMode::Icon && view->viewMode() != ExpandedTreeView::ViewMode::Tree)
+       || (view->viewMode() == ExpandedTreeView::ViewMode::Icon
+           && view->captionDisplay() == ExpandedTreeView::CaptionDisplay::Overlay)) {
+        return false;
+    }
+
+    return (option.state & QStyle::State_MouseOver) && Gui::itemViewUsesSelectionText(option);
+}
+
 PreparedTextLine prepareTextBlocks(const QStyleOptionViewItem& option, int maxWidth,
                                    const std::vector<RichTextBlock>& blocks)
 {
@@ -116,6 +132,7 @@ PreparedTextLine prepareTextBlocks(const QStyleOptionViewItem& option, int maxWi
     const auto selectedColour = selectionTextColour(option);
     const auto defaultColour  = option.palette.color(QPalette::Text);
     const auto linkColour     = option.palette.color(QPalette::Link);
+    const bool highlighted    = (option.state & QStyle::State_Selected) || hasAccentHover(option);
     int remainingWidth        = maxWidth;
 
     for(const auto& block : blocks) {
@@ -125,7 +142,7 @@ PreparedTextLine prepareTextBlocks(const QStyleOptionViewItem& option, int maxWi
 
         const QFont font = resolvedRichTextFont(block.format, option.font);
         QColor colour    = resolvedRichTextColour(block.format, defaultColour, linkColour);
-        if(option.state & QStyle::State_Selected) {
+        if(highlighted) {
             colour = selectedColour;
         }
 

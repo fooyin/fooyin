@@ -47,6 +47,7 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
     const QColor selectedColour = option.palette.color(Gui::itemViewSelectionTextRole(option));
     const QColor defaultColour  = option.palette.color(QPalette::Text);
     const QColor linkColour     = option.palette.color(QPalette::Link);
+    const bool highlighted      = Gui::itemViewUsesSelectionText(option);
 
     const auto richLines = splitRichTextLines(richText);
     result.reserve(richLines.size());
@@ -63,7 +64,7 @@ PreparedTextLines prepareTextLines(const QStyleOptionViewItem& option, int maxWi
 
             const QFont font = resolvedRichTextFont(block.format, option.font);
             QColor colour    = resolvedRichTextColour(block.format, defaultColour, linkColour);
-            if(option.state & QStyle::State_Selected) {
+            if(highlighted) {
                 colour = selectedColour;
             }
 

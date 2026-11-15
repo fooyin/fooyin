@@ -113,6 +113,7 @@ void paintTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRec
     const auto defaultColour  = option.palette.color(QPalette::Text);
     const auto selectedColour = option.palette.color(Gui::itemViewSelectionTextRole(option));
     const auto linkColour     = option.palette.color(QPalette::Link);
+    const bool highlighted    = Gui::itemViewUsesSelectionText(option);
 
     int x = rect.x();
     if(measured.totalWidth < rect.width() && option.displayAlignment & Qt::AlignHCenter) {
@@ -131,7 +132,7 @@ void paintTextBlocks(QPainter* painter, const QStyleOptionViewItem& option, QRec
         painter->setFont(font);
 
         QColor colour = resolvedRichTextColour(block.format, defaultColour, linkColour);
-        if(option.state & QStyle::State_Selected) {
+        if(highlighted) {
             colour = selectedColour;
         }
         painter->setPen(colour);
