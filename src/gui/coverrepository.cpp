@@ -250,7 +250,7 @@ QString evaluateThumbnailGroupScript(const QString& script, const Track& track)
     return parser.evaluate(script, track);
 }
 
-QImage readImage(const QString& path, int requestedSize, const QString& hintType)
+QImage readImage(const QString& path, int requestedSize, const QString& hintType, double dpr)
 {
     const QMimeDatabase mimeDb;
     const auto mimeType   = mimeDb.mimeTypeForFile(path, QMimeDatabase::MatchContent);
@@ -271,7 +271,6 @@ QImage readImage(const QString& path, int requestedSize, const QString& hintType
 
     const auto size    = reader.size();
     const auto maxSize = requestedSize == 0 ? MaxSize : requestedSize;
-    const auto dpr     = Utils::windowDpr();
 
     if(size.width() > maxSize || size.height() > maxSize || dpr > 1.0) {
         const auto scaledSize = calculateScaledSize(size, static_cast<int>(maxSize * dpr));
@@ -373,6 +372,7 @@ struct CoverLoader
     bool isThumb{false};
     ThumbnailSize size{ThumbnailSize::None};
     bool originalSize{false};
+    double dpr{1.0};
     QImage cover;
 };
 
@@ -381,7 +381,7 @@ QImage loadCachedThumbnail(const CoverLoader& loader)
     if(loader.isThumb) {
         const QString cachePath = coverThumbnailPath(loader.key);
         if(QFileInfo::exists(cachePath)) {
-            return readImage(cachePath, coverThumbnailPixelSize(loader.size), u"cached"_s);
+            return readImage(cachePath, coverThumbnailPixelSize(loader.size), u"cached"_s, loader.dpr);
         }
     }
     return {};
@@ -429,7 +429,7 @@ QImage loadImageFromDirectory(const CoverLoader& loader)
     }
 
     return loader.originalSize ? readImageOriginal(dirPath, u"directory"_s)
-                               : readImage(dirPath, coverThumbnailPixelSize(loader.size), u"directory"_s);
+                               : readImage(dirPath, coverThumbnailPixelSize(loader.size), u"directory"_s, loader.dpr);
 }
 
 bool hasEmbeddedCover(const CoverLoader& loader)
@@ -462,7 +462,7 @@ QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath
         if(!QFileInfo::exists(cachePath) && !saveThumbnail(cover, loader.key)) {
             qCInfo(COV_REPO) << "Failed to save cover thumbnail for track:" << loader.track.filepath();
         }
-        cover = Utils::scaleImage(cover, coverThumbnailPixelSize(loader.size), Utils::windowDpr());
+        cover = Utils::scaleImage(cover, coverThumbnailPixelSize(loader.size), loader.dpr);
     }
 
     return cover;
@@ -487,7 +487,7 @@ QImage loadImageFromRemoteArtworkData(const CoverLoader& loader, const QString& 
         if(!QFileInfo::exists(cachePath) && !saveThumbnail(cover, loader.key)) {
             qCInfo(COV_REPO) << "Failed to save remote cover thumbnail for track:" << loader.track.filepath();
         }
-        cover = Utils::scaleImage(cover, coverThumbnailPixelSize(loader.size), Utils::windowDpr());
+        cover = Utils::scaleImage(cover, coverThumbnailPixelSize(loader.size), loader.dpr);
     }
 
     return cover;
@@ -769,7 +769,7 @@ QPixmap CoverRepositoryPrivate::loadNoCover(Track::Cover type, const ThumbnailSi
 {
     const int coverSize    = size == ThumbnailSize::None ? MaxSize : coverThumbnailPixelSize(size);
     const QString cacheKey = noCoverCacheKey(type, coverSize);
-    if(auto* cover = m_coverCache.object(cacheKey)) {
+    if(const auto* cover = m_coverCache.object(cacheKey)) {
         return cover->cover;
     }
 
@@ -784,10 +784,11 @@ QPixmap CoverRepositoryPrivate::loadNoCover(Track::Cover type, const ThumbnailSi
         placeholder = m_paths.frontPlaceholder;
     }
 
+    const auto dpr = Utils::windowDpr();
     if(!placeholder.isEmpty()) {
-        if(const QImage image = readImage(placeholder, coverSize, u"placeholder"_s); !image.isNull()) {
+        if(const QImage image = readImage(placeholder, coverSize, u"placeholder"_s, dpr); !image.isNull()) {
             QPixmap cover = QPixmap::fromImage(image);
-            cover.setDevicePixelRatio(Utils::windowDpr());
+            cover.setDevicePixelRatio(dpr);
             cachePixmap(cacheKey, cover);
             return cover;
         }
@@ -797,7 +798,7 @@ QPixmap CoverRepositoryPrivate::loadNoCover(Track::Cover type, const ThumbnailSi
         = Gui::iconFromTheme(type == Track::Cover::Artist ? Constants::Icons::NoArtist : Constants::Icons::NoCover);
     const QSize requestedSize{coverSize, coverSize};
 
-    auto* cover = new CachedCover{.cover = icon.pixmap(requestedSize, Utils::windowDpr()), .pendingCoverRevision = {}};
+    auto* cover    = new CachedCover{.cover = icon.pixmap(requestedSize, dpr), .pendingCoverRevision = {}};
     const int cost = cover->cover.width() * cover->cover.height() * cover->cover.depth() / 8;
 
     if(m_coverCache.insert(cacheKey, cover, cost)) {
@@ -824,7 +825,7 @@ QPixmap CoverRepositoryPrivate::processLoadResult(const CoverLoader& loader)
     }
 
     QPixmap cover = QPixmap::fromImage(loader.cover);
-    cover.setDevicePixelRatio(Utils::windowDpr());
+    cover.setDevicePixelRatio(loader.dpr);
 
     if(loader.isThumb) {
         pinLoadedThumbnail(pendingCoverKey(loader.key, loader.isThumb, loader.size), cover, loader.pendingCover);
@@ -898,6 +899,7 @@ QFuture<QPixmap> CoverRepositoryPrivate::requestPixmap(const CoverRequestKey& re
     QueuedPixmapRequest request{
         .key = requestKey, .loader = loader, .priority = priority, .sequence = pendingRequest.sequence};
     request.loader.requestSequence = request.sequence;
+    request.loader.dpr             = Utils::windowDpr();
     m_pendingPixmapRequests.emplace(requestKey, std::move(pendingRequest));
 
     if(loader.isThumb) {
