@@ -334,7 +334,8 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
         QStyleOptionViewItem backgroundOpt{opt};
         if(opt.state & QStyle::State_Selected) {
-            backgroundOpt.state &= ~QStyle::State_Selected;
+            // ExpandedTreeView has already painted the selected row, including its hover state
+            backgroundOpt.state &= ~(QStyle::State_Selected | QStyle::State_MouseOver);
             backgroundOpt.backgroundBrush = Qt::NoBrush;
         }
 
