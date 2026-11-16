@@ -147,24 +147,25 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     m_playedTimeSlider->setSingleStep(30);
     m_playedTimeSlider->setSuffix(u" s"_s);
 
+    generalGroupLayout->addItem(new QSpacerItem(10, 0, QSizePolicy::Fixed), 1, 0);
+    generalGroupLayout->addItem(new QSpacerItem(10, 0, QSizePolicy::Fixed), 1, 3);
+
     int row{0};
-    generalGroupLayout->addWidget(m_restoreActivePlaylistState, row, 0, 1, 2);
-    generalGroupLayout->addWidget(m_stopAfterCurrent, row++, 2, 1, 2);
-    generalGroupLayout->addItem(new QSpacerItem(10, 0), row, 0);
-    generalGroupLayout->addWidget(m_restorePlaybackState, row, 1);
-    generalGroupLayout->addItem(new QSpacerItem(10, 0), row, 2);
-    generalGroupLayout->addWidget(m_resetStopAfterCurrent, row++, 3);
-    generalGroupLayout->addWidget(m_cursorFollowsPlayback, row, 0, 1, 2);
-    generalGroupLayout->addWidget(m_rewindPrevious, row++, 2, 1, 2);
-    generalGroupLayout->addWidget(m_playbackFollowsCursor, row, 0, 1, 2);
-    generalGroupLayout->addWidget(m_skipUnavailable, row++, 2, 1, 2);
-    generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 4);
-    generalGroupLayout->addWidget(new QLabel(tr("Listening statistics") + u":"_s, this), row, 0);
-    generalGroupLayout->addWidget(m_listeningHistoryMode, row++, 1, 1, 3);
-    generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 4);
-    generalGroupLayout->addWidget(m_playedTimeSlider, row++, 0, 1, 4);
-    generalGroupLayout->setColumnStretch(1, 1);
-    generalGroupLayout->setColumnStretch(3, 1);
+    generalGroupLayout->addWidget(m_restoreActivePlaylistState, row, 0, 1, 3);
+    generalGroupLayout->addWidget(m_stopAfterCurrent, row++, 3, 1, 3);
+    generalGroupLayout->addWidget(m_restorePlaybackState, row, 1, 1, 2);
+    generalGroupLayout->addWidget(m_resetStopAfterCurrent, row++, 4, 1, 2);
+    generalGroupLayout->addWidget(m_cursorFollowsPlayback, row, 0, 1, 3);
+    generalGroupLayout->addWidget(m_rewindPrevious, row++, 3, 1, 3);
+    generalGroupLayout->addWidget(m_playbackFollowsCursor, row, 0, 1, 3);
+    generalGroupLayout->addWidget(m_skipUnavailable, row++, 3, 1, 3);
+    generalGroupLayout->addWidget(m_stopIfActiveDeleted, row++, 0, 1, 6);
+    generalGroupLayout->addWidget(new QLabel(tr("Listening statistics") + u":"_s, this), row, 0, 1, 2);
+    generalGroupLayout->addWidget(m_listeningHistoryMode, row++, 2, 1, 4, Qt::AlignLeft);
+    generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 6);
+    generalGroupLayout->addWidget(m_playedTimeSlider, row++, 0, 1, 6);
+    generalGroupLayout->setColumnStretch(2, 1);
+    generalGroupLayout->setColumnStretch(5, 1);
 
     auto* controlsGroup  = new QGroupBox(tr("Controls"), this);
     auto* controlsLayout = new QGridLayout(controlsGroup);
@@ -220,6 +221,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     repeatLayout->addWidget(m_abRepeatMarkerColourA, row++, 0, 1, 2);
     repeatLayout->addWidget(m_abRepeatMarkerColourB, row++, 0, 1, 2);
     repeatLayout->setColumnStretch(2, 1);
+    repeatLayout->setRowStretch(row, 1);
 
     auto* shuffleGroup       = new QGroupBox(tr("Shuffle"), this);
     auto* shuffleGroupLayout = new QGridLayout(shuffleGroup);
@@ -232,8 +234,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 
     row = 0;
     layout->addWidget(generalGroup, row++, 0, 1, 2);
-    layout->addWidget(controlsGroup, row, 0, Qt::AlignTop);
-    layout->addWidget(repeatGroup, row++, 1, Qt::AlignTop);
+    layout->addWidget(controlsGroup, row, 0);
+    layout->addWidget(repeatGroup, row++, 1);
     layout->addWidget(shuffleGroup, row++, 0, 1, 2);
     layout->setColumnStretch(0, 1);
     layout->setColumnStretch(1, 1);
