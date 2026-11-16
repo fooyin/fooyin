@@ -2022,6 +2022,7 @@ public:
     [[nodiscard]] QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
     [[nodiscard]] ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
     [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding) const override;
+    [[nodiscard]] QModelIndex nearestSelectionIndex(const QPoint& point) const override;
     [[nodiscard]] QModelIndexList visibleIndexes(int margin) const override;
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) override;
     [[nodiscard]] int sizeHintForColumn(int column) const override;
@@ -2284,6 +2285,12 @@ QModelIndex IconView::findIndexAt(const QPoint& point, bool /*includeSpans*/, bo
     }
 
     return {};
+}
+
+QModelIndex IconView::nearestSelectionIndex(const QPoint& point) const
+{
+    const int item = itemAtCoordinate(point, true);
+    return item >= 0 ? iconItemIndex(viewItem(item).index) : QModelIndex{};
 }
 
 QModelIndexList IconView::visibleIndexes(int margin) const
