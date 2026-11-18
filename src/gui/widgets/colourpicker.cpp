@@ -172,7 +172,7 @@ ColourHistory::ColourHistory(QObject* parent)
     const auto saved = settings.value(RecentColours).toStringList();
     for(const auto& text : saved) {
         const QColor colour{text};
-        if(colour.isValid() && !std::ranges::contains(m_colours, colour)) {
+        if(colour.isValid() && std::ranges::find(m_colours, colour) == m_colours.cend()) {
             m_colours.push_back(colour);
             if(m_colours.size() == HistorySize) {
                 break;
