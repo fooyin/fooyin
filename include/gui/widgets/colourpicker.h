@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <luket@pm.me>
+ * Copyright © 2026, Luke Taylor <luket@pm.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,42 +21,33 @@
 
 #include "fygui_export.h"
 
-#include <gui/widgets/expandableinputbox.h>
+#include <QColor>
+#include <QWidget>
+
+#include <memory>
 
 namespace Fooyin {
-class CustomisableInputPrivate;
+class ColourPickerPrivate;
 
-class FYGUI_EXPORT CustomisableInput : public ExpandableInput
+class FYGUI_EXPORT ColourPicker : public QWidget
 {
     Q_OBJECT
 
 public:
-    enum StateFlag
-    {
-        FontChanged   = 1 << 0,
-        ColourChanged = 1 << 1,
-    };
-    Q_DECLARE_FLAGS(State, StateFlag)
+    explicit ColourPicker(QWidget* parent = nullptr);
+    ~ColourPicker() override;
 
-    explicit CustomisableInput(QWidget* parent = nullptr);
-    explicit CustomisableInput(Attributes attributes, QWidget* parent = nullptr);
-    ~CustomisableInput() override;
-
-    [[nodiscard]] QString text() const override;
-    [[nodiscard]] QFont font() const;
     [[nodiscard]] QColor colour() const;
-    [[nodiscard]] State state() const;
 
-    void setText(const QString& text) override;
-    void setFont(const QFont& font);
     void setColour(const QColor& colour);
-    void setState(State state);
+    void setOriginalColour(const QColor& colour);
 
-    void setReadOnly(bool readOnly) override;
+    static void addToHistory(const QColor& colour);
 
-    void resetState();
+Q_SIGNALS:
+    void colourChanged(const QColor& colour);
 
 private:
-    std::unique_ptr<CustomisableInputPrivate> p;
+    std::unique_ptr<ColourPickerPrivate> p;
 };
 } // namespace Fooyin

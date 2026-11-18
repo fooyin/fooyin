@@ -26,13 +26,14 @@
 
 #include <concepts>
 #include <initializer_list>
+#include <memory>
 #include <ranges>
 
-class QCheckBox;
 class QIcon;
-class QPushButton;
 
 namespace Fooyin {
+class FontButtonPrivate;
+
 class FYGUI_EXPORT FontButton : public QWidget
 {
     Q_OBJECT
@@ -43,6 +44,7 @@ public:
     explicit FontButton(const QString& text, bool checkable, QWidget* parent = nullptr);
     explicit FontButton(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
     explicit FontButton(const QIcon& icon, const QString& text, bool checkable, QWidget* parent = nullptr);
+    ~FontButton() override;
 
     [[nodiscard]] QFont buttonFont() const;
     [[nodiscard]] bool fontChanged() const;
@@ -65,6 +67,7 @@ public:
     {
         return alignLabels<std::initializer_list<FontButton*>>(std::move(buttons), minimumWidth);
     }
+
     template <std::ranges::forward_range R>
         requires std::convertible_to<std::ranges::range_reference_t<R>, FontButton*>
     static int alignLabels(R&& buttons, int minimumWidth = 0)
@@ -84,13 +87,6 @@ Q_SIGNALS:
     void toggled(bool checked);
 
 private:
-    void pickFont();
-    void updateText();
-    void updateButtonState();
-
-    QFont m_font;
-    bool m_changed;
-    QCheckBox* m_checkBox;
-    QPushButton* m_button;
+    std::unique_ptr<FontButtonPrivate> p;
 };
 } // namespace Fooyin

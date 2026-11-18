@@ -57,7 +57,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/checkboxdelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/clickablelabel.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/colourbutton.h
-    ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/colourpicker.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/colourpickerdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/doubleslidereditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/editabletabbar.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/editabletabwidget.h
@@ -683,11 +684,12 @@ set(SOURCES
     widgets/checkboxdelegate.cpp
     widgets/clickablelabel.cpp
     widgets/colourbutton.cpp
+    widgets/colourpicker.cpp
+    widgets/colourpickerdialog.cpp
     widgets/coverwidget.cpp
     widgets/coverwidget.h
     widgets/coverwidgetconfigwidget.cpp
     widgets/coverwidgetconfigwidget.h
-    widgets/customisableinput.cpp
     widgets/doubleslidereditor.cpp
     widgets/dummy.cpp
     widgets/dummy.h

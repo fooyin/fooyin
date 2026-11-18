@@ -26,12 +26,11 @@
 
 #include <concepts>
 #include <initializer_list>
+#include <memory>
 #include <ranges>
 
-class QCheckBox;
-
 namespace Fooyin {
-class ColourSwatch;
+class ColourButtonPrivate;
 
 class FYGUI_EXPORT ColourButton : public QWidget
 {
@@ -44,15 +43,18 @@ public:
     explicit ColourButton(const QString& text, const QColor& colour, QWidget* parent = nullptr);
     explicit ColourButton(const QString& text, bool checkable, QWidget* parent = nullptr);
     explicit ColourButton(const QString& text, const QColor& colour, bool checkable, QWidget* parent = nullptr);
+    ~ColourButton() override;
 
     [[nodiscard]] QColor colour() const;
     [[nodiscard]] bool colourChanged() const;
+    [[nodiscard]] bool choosingColour() const;
 
     [[nodiscard]] bool isCheckable() const;
     [[nodiscard]] bool isChecked() const;
 
     [[nodiscard]] int labelWidthHint() const;
     [[nodiscard]] QString text() const;
+    [[nodiscard]] QSize swatchSize() const;
 
     void setColour(const QColor& colour);
     void setCheckable(bool checkable);
@@ -60,6 +62,7 @@ public:
     void setLabelWidth(int width);
     void setText(const QString& text);
     void setToolTip(const QString& text);
+    void setSwatchSize(const QSize& size);
 
     static int alignLabels(std::initializer_list<ColourButton*> buttons, int minimumWidth = 0)
     {
@@ -83,13 +86,10 @@ Q_SIGNALS:
     void clicked();
     void colourUpdated(const QColor& colour);
     void toggled(bool checked);
+    // Emitted on picker acceptance even if the chosen colour is unchanged
+    void colourSelected(const QColor& colour);
 
 private:
-    void pickColour();
-    void updateButtonState();
-
-    bool m_changed;
-    QCheckBox* m_checkBox;
-    ColourSwatch* m_swatch;
+    std::unique_ptr<ColourButtonPrivate> p;
 };
 } // namespace Fooyin

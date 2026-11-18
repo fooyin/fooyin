@@ -22,11 +22,54 @@
 #include <QCheckBox>
 #include <QFontDialog>
 #include <QHBoxLayout>
+#include <QPointer>
 #include <QPushButton>
 
 using namespace Qt::StringLiterals;
 
 namespace Fooyin {
+class FontButtonPrivate
+{
+public:
+    FontButtonPrivate(FontButton* self, const QIcon& icon, const QString& text)
+        : m_self{self}
+        , m_checkBox{new QCheckBox(text, m_self)}
+        , m_button{new QPushButton(icon, {}, m_self)}
+    { }
+
+    void pickFont();
+    void updateText();
+    void updateButtonState();
+
+    FontButton* m_self;
+    QFont m_font;
+    bool m_changed{false};
+    QCheckBox* m_checkBox;
+    QPushButton* m_button;
+};
+
+void FontButtonPrivate::pickFont()
+{
+    const QPointer guard{m_self};
+
+    bool ok;
+    const QFont chosenFont = QFontDialog::getFont(&ok, m_font, m_self, FontButton::tr("Select Font"));
+    if(guard && ok && chosenFont != m_font) {
+        m_changed = true;
+        m_self->setButtonFont(chosenFont);
+    }
+}
+
+void FontButtonPrivate::updateText()
+{
+    m_button->setText(u"%1 (%2)"_s.arg(m_font.family()).arg(m_font.pointSize()));
+}
+
+void FontButtonPrivate::updateButtonState()
+{
+    m_button->setEnabled(m_self->isChecked());
+}
+
 FontButton::FontButton(QWidget* parent)
     : FontButton{{}, {}, false, parent}
 { }
@@ -45,62 +88,62 @@ FontButton::FontButton(const QIcon& icon, const QString& text, QWidget* parent)
 
 FontButton::FontButton(const QIcon& icon, const QString& text, bool checkable, QWidget* parent)
     : QWidget{parent}
-    , m_changed{false}
-    , m_checkBox{new QCheckBox(text, this)}
-    , m_button{new QPushButton(icon, {}, this)}
+    , p{std::make_unique<FontButtonPrivate>(this, icon, text)}
 {
-    m_checkBox->setVisible(checkable);
+    p->m_checkBox->setVisible(checkable);
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
-    layout->addWidget(m_checkBox);
-    layout->addWidget(m_button, 1);
+    layout->addWidget(p->m_checkBox);
+    layout->addWidget(p->m_button, 1);
 
-    QObject::connect(m_button, &QPushButton::clicked, this, &FontButton::pickFont);
-    QObject::connect(m_checkBox, &QCheckBox::toggled, this, [this](bool checked) {
-        updateButtonState();
+    QObject::connect(p->m_button, &QPushButton::clicked, this, [this]() { p->pickFont(); });
+    QObject::connect(p->m_checkBox, &QCheckBox::toggled, this, [this](bool checked) {
+        p->updateButtonState();
         Q_EMIT toggled(checked);
     });
 
-    updateButtonState();
+    p->updateButtonState();
 }
+
+FontButton::~FontButton() = default;
 
 QFont FontButton::buttonFont() const
 {
-    return m_font;
+    return p->m_font;
 }
 
 bool FontButton::fontChanged() const
 {
-    return m_changed;
+    return p->m_changed;
 }
 
 bool FontButton::isCheckable() const
 {
-    return !m_checkBox->isHidden();
+    return !p->m_checkBox->isHidden();
 }
 
 bool FontButton::isChecked() const
 {
-    return !isCheckable() || m_checkBox->isChecked();
+    return !isCheckable() || p->m_checkBox->isChecked();
 }
 
 int FontButton::labelWidthHint() const
 {
-    return m_checkBox->sizeHint().width();
+    return p->m_checkBox->sizeHint().width();
 }
 
 QString FontButton::labelText() const
 {
-    return m_checkBox->text();
+    return p->m_checkBox->text();
 }
 
 void FontButton::setButtonFont(const QFont& font)
 {
-    const bool changed = std::exchange(m_font, font) != font;
+    const bool changed = std::exchange(p->m_font, font) != font;
 
-    m_button->setFont(m_font);
-    updateText();
+    p->m_button->setFont(p->m_font);
+    p->updateText();
 
     if(changed) {
         Q_EMIT fontUpdated(font);
@@ -118,53 +161,34 @@ void FontButton::setButtonFont(const QString& font)
 
 void FontButton::setCheckable(bool checkable)
 {
-    m_checkBox->setToolTip(toolTip());
-    m_checkBox->setVisible(checkable);
-    updateButtonState();
+    p->m_checkBox->setToolTip(toolTip());
+    p->m_checkBox->setVisible(checkable);
+    p->updateButtonState();
     updateGeometry();
 }
 
 void FontButton::setChecked(bool checked)
 {
-    m_checkBox->setChecked(checked);
+    p->m_checkBox->setChecked(checked);
 }
 
 void FontButton::setLabelText(const QString& text)
 {
-    m_checkBox->setText(text);
+    p->m_checkBox->setText(text);
     updateGeometry();
 }
 
 void FontButton::setLabelWidth(int width)
 {
-    m_checkBox->setMinimumWidth(std::max(width, labelWidthHint()));
+    p->m_checkBox->setMinimumWidth(std::max(width, labelWidthHint()));
     updateGeometry();
 }
 
 void FontButton::setToolTip(const QString& text)
 {
     QWidget::setToolTip(text);
-    m_checkBox->setToolTip(text);
-    m_button->setToolTip(text);
+    p->m_checkBox->setToolTip(text);
+    p->m_button->setToolTip(text);
 }
 
-void FontButton::pickFont()
-{
-    bool ok;
-    const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, tr("Select Font"));
-    if(ok && chosenFont != m_font) {
-        setButtonFont(chosenFont);
-        m_changed = true;
-    }
-}
-
-void FontButton::updateText()
-{
-    m_button->setText(u"%1 (%2)"_s.arg(m_font.family()).arg(m_font.pointSize()));
-}
-
-void FontButton::updateButtonState()
-{
-    m_button->setEnabled(isChecked());
-}
 } // namespace Fooyin

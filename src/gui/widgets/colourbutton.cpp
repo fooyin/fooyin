@@ -19,14 +19,17 @@
 
 #include <gui/widgets/colourbutton.h>
 
+#include <gui/widgets/colourpickerdialog.h>
+
 #include <QCheckBox>
-#include <QColorDialog>
 #include <QHBoxLayout>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPointer>
 #include <QPushButton>
 
 namespace Fooyin {
+namespace {
 class ColourSwatch : public QPushButton
 {
 public:
@@ -61,9 +64,17 @@ public:
 protected:
     void paintEvent(QPaintEvent* event) override
     {
-        QWidget::paintEvent(event);
+        QPushButton::paintEvent(event);
 
         QPainter painter{this};
+        if(m_colour.alpha() < 255) {
+            for(int y{0}; y < height(); y += 4) {
+                for(int x{0}; x < width(); x += 4) {
+                    painter.fillRect(QRect{x, y, 4, 4},
+                                     ((x + y) / 4) % 2 ? QColor{160, 160, 160} : QColor{220, 220, 220});
+                }
+            }
+        }
         painter.fillRect(rect(), m_colour);
 
         if(!isEnabled()) {
@@ -80,6 +91,67 @@ protected:
 private:
     QColor m_colour;
 };
+} // namespace
+
+class ColourButtonPrivate
+{
+public:
+    ColourButtonPrivate(ColourButton* self, const QString& text, const QColor& colour)
+        : m_self{self}
+        , m_checkBox{new QCheckBox(text, m_self)}
+        , m_swatch{new ColourSwatch(colour, m_self)}
+        , m_dialog{nullptr}
+    { }
+
+    void pickColour();
+    void updateButtonState();
+
+    ColourButton* m_self;
+    bool m_changed{false};
+    QCheckBox* m_checkBox;
+    ColourSwatch* m_swatch;
+    QPointer<ColourPickerDialog> m_dialog;
+};
+
+void ColourButtonPrivate::pickColour()
+{
+    if(m_dialog) {
+        return;
+    }
+
+    auto* dialog = new ColourPickerDialog(m_self->colour(), m_self);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_dialog = dialog;
+
+    QObject::connect(
+        dialog, &ColourPickerDialog::colourSelected, m_self,
+        [this](const QColor& chosenColour) {
+            const QPointer guard{m_self};
+            if(chosenColour != m_self->colour()) {
+                m_changed = true;
+                m_self->setColour(chosenColour);
+            }
+            if(guard) {
+                Q_EMIT m_self->colourSelected(chosenColour);
+            }
+        },
+        Qt::QueuedConnection);
+    QObject::connect(
+        dialog, &QDialog::finished, m_self,
+        [this, picker = QPointer{dialog}] {
+            if(m_dialog == picker) {
+                m_dialog = nullptr;
+                m_swatch->setFocus();
+            }
+        },
+        Qt::QueuedConnection);
+    dialog->open();
+}
+
+void ColourButtonPrivate::updateButtonState()
+{
+    m_swatch->setEnabled(m_self->isChecked());
+}
 
 ColourButton::ColourButton(QWidget* parent)
     : ColourButton{{}, {}, false, parent}
@@ -103,116 +175,121 @@ ColourButton::ColourButton(const QString& text, bool checkable, QWidget* parent)
 
 ColourButton::ColourButton(const QString& text, const QColor& colour, bool checkable, QWidget* parent)
     : QWidget{parent}
-    , m_changed{false}
-    , m_checkBox{new QCheckBox(text, this)}
-    , m_swatch{new ColourSwatch(colour, this)}
+    , p{std::make_unique<ColourButtonPrivate>(this, text, colour)}
 {
-    m_checkBox->setVisible(checkable);
+    p->m_checkBox->setVisible(checkable);
+    setFocusProxy(p->m_swatch);
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
-    layout->addWidget(m_checkBox);
-    layout->addWidget(m_swatch, 1);
+    layout->addWidget(p->m_checkBox);
+    layout->addWidget(p->m_swatch, 1);
 
-    QObject::connect(m_swatch, &QPushButton::clicked, this, [this]() {
+    QObject::connect(p->m_swatch, &QPushButton::clicked, this, [this]() {
+        const QPointer guard{this};
         Q_EMIT clicked();
-        pickColour();
+        if(guard) {
+            p->pickColour();
+        }
     });
-    QObject::connect(m_checkBox, &QCheckBox::toggled, this, [this](bool checked) {
-        updateButtonState();
+    QObject::connect(p->m_checkBox, &QCheckBox::toggled, this, [this](bool checked) {
+        p->updateButtonState();
         Q_EMIT toggled(checked);
     });
 
-    updateButtonState();
+    p->updateButtonState();
 }
+
+ColourButton::~ColourButton() = default;
 
 QColor ColourButton::colour() const
 {
-    return m_swatch->colour();
+    return p->m_swatch->colour();
 }
 
 bool ColourButton::colourChanged() const
 {
-    return m_changed;
+    return p->m_changed;
+}
+
+bool ColourButton::choosingColour() const
+{
+    return !p->m_dialog.isNull();
 }
 
 bool ColourButton::isCheckable() const
 {
-    return !m_checkBox->isHidden();
+    return !p->m_checkBox->isHidden();
 }
 
 bool ColourButton::isChecked() const
 {
-    return !isCheckable() || m_checkBox->isChecked();
+    return !isCheckable() || p->m_checkBox->isChecked();
 }
 
 int ColourButton::labelWidthHint() const
 {
-    return m_checkBox->sizeHint().width();
+    return p->m_checkBox->sizeHint().width();
 }
 
 QString ColourButton::text() const
 {
-    return m_checkBox->text();
+    return p->m_checkBox->text();
+}
+
+QSize ColourButton::swatchSize() const
+{
+    return p->m_swatch->size();
+}
+
+void ColourButton::setSwatchSize(const QSize& size)
+{
+    p->m_swatch->setFixedSize(size);
+    updateGeometry();
 }
 
 void ColourButton::setColour(const QColor& colour)
 {
-    if(m_swatch->colour() == colour) {
+    if(p->m_swatch->colour() == colour) {
         return;
     }
 
-    m_swatch->setColour(colour);
+    p->m_swatch->setColour(colour);
     Q_EMIT colourUpdated(colour);
 }
 
 void ColourButton::setCheckable(bool checkable)
 {
-    m_checkBox->setToolTip(toolTip());
-    m_checkBox->setVisible(checkable);
-    updateButtonState();
+    p->m_checkBox->setToolTip(toolTip());
+    p->m_checkBox->setVisible(checkable);
+    p->updateButtonState();
     updateGeometry();
 }
 
 void ColourButton::setChecked(bool checked)
 {
-    m_checkBox->setChecked(checked);
+    p->m_checkBox->setChecked(checked);
 }
 
 void ColourButton::setLabelWidth(int width)
 {
-    m_checkBox->setMinimumWidth(std::max(width, labelWidthHint()));
+    p->m_checkBox->setMinimumWidth(std::max(width, labelWidthHint()));
     updateGeometry();
 }
 
 void ColourButton::setText(const QString& text)
 {
-    m_checkBox->setText(text);
+    p->m_checkBox->setText(text);
     updateGeometry();
 }
 
 void ColourButton::setToolTip(const QString& text)
 {
     QWidget::setToolTip(text);
-    m_checkBox->setToolTip(text);
-    m_swatch->setToolTip(text);
+    p->m_checkBox->setToolTip(text);
+    p->m_swatch->setToolTip(text);
 }
 
-void ColourButton::pickColour()
-{
-    // TODO: Implement our own colour dialog
-    const QColor chosenColour = QColorDialog::getColor(
-        colour(), this, tr("Select Colour"), QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
-    if(chosenColour.isValid() && chosenColour != colour()) {
-        setColour(chosenColour);
-        m_changed = true;
-    }
-}
-
-void ColourButton::updateButtonState()
-{
-    m_swatch->setEnabled(isChecked());
-}
 } // namespace Fooyin
 
 #include "gui/widgets/moc_colourbutton.cpp"
