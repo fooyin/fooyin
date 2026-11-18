@@ -24,6 +24,7 @@
 #include <QColor>
 #include <QDataStream>
 #include <QFont>
+#include <QJsonObject>
 #include <QMap>
 #include <QPalette>
 #include <QString>
@@ -60,10 +61,11 @@ struct FYGUI_EXPORT FyTheme
     bool isDefault{false};
     QMap<PaletteKey, QColor> colours;
     QMap<QString, QFont> fonts;
+    QJsonObject appearance;
 
     [[nodiscard]] bool isValid() const
     {
-        return !colours.empty() || !fonts.empty();
+        return !colours.empty() || !fonts.empty() || !appearance.isEmpty();
     }
 
     bool operator==(const FyTheme& other) const = default;

@@ -52,6 +52,7 @@
 #include "scripting/scriptcommandhandler.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
+#include "style/fooyinstyle.h"
 #include "systemtrayicon.h"
 #include "theme/artworkpalettecontroller.h"
 #include "trackstatisticsdialog.h"
@@ -322,6 +323,7 @@ GuiApplication::GuiApplication(Application* core)
     , m_lookupIdAction{nullptr}
     , m_titleSubscription{nullptr}
     , m_coverProvider{m_coverRepository}
+    , m_selectedStyle{nullptr}
     , m_themeUpdatePending{false}
     , m_refreshSystemBaseline{false}
     , m_applyingTheme{false}
@@ -922,6 +924,12 @@ void GuiApplication::setupConnections()
     m_settings->subscribe<Settings::Gui::ApplicationIcon>(this, &GuiApplication::updateApplicationIcon);
     m_settings->subscribe<Settings::Gui::CustomApplicationIcon>(this, &GuiApplication::updateApplicationIcon);
     m_settings->subscribe<Settings::Gui::CustomTheme>(this, [this]() {
+        const auto theme      = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+        const auto appearance = resolveThemeAppearance(theme.appearance).value_or(ThemeAppearance{});
+        if(const auto* style = qobject_cast<const FooyinStyle*>(QApplication::style());
+           style && style->appearance() != appearance) {
+            setStyle();
+        }
         scheduleThemeUpdate();
         if(setIconTheme()) {
             QPixmapCache::clear();
@@ -1877,14 +1885,31 @@ void GuiApplication::mute() const
     }
 }
 
-void GuiApplication::setStyle() const
+void GuiApplication::setStyle()
 {
     const auto currStyle = m_settings->value<Settings::Gui::Style>();
-    if(auto* style = QStyleFactory::create(currStyle)) {
-        QApplication::setStyle(style);
+
+    QStyle* style{nullptr};
+    if(currStyle.compare("Fooyin"_L1, Qt::CaseInsensitive) == 0) {
+        const auto theme      = m_settings->value<Settings::Gui::CustomTheme>().value<FyTheme>();
+        const auto appearance = resolveThemeAppearance(theme.appearance);
+        if(!appearance) {
+            qCWarning(GUI_APP) << "Invalid theme appearance:" << appearance.error();
+        }
+        style = new FooyinStyle(appearance.value_or(ThemeAppearance{}));
     }
-    else if(auto* systemStyle = QStyleFactory::create(m_settings->value<Settings::Gui::Internal::SystemStyle>())) {
-        QApplication::setStyle(systemStyle);
+    else {
+        style = QStyleFactory::create(currStyle);
+    }
+
+    if(!style) {
+        style = QStyleFactory::create(m_settings->value<Settings::Gui::Internal::SystemStyle>());
+    }
+
+    if(style) {
+        m_selectedStyle = style;
+        QApplication::setStyle(style);
+        m_selectedStyle = QApplication::style();
     }
 }
 
@@ -1917,7 +1942,12 @@ void GuiApplication::applyTheme()
         return;
     }
 
-    const bool refreshSystemBaseline = std::exchange(m_refreshSystemBaseline, false);
+    bool refreshSystemBaseline = std::exchange(m_refreshSystemBaseline, false);
+    if(!m_settings->value<Settings::Gui::Style>().isEmpty() && QApplication::style() != m_selectedStyle) {
+        setStyle();
+        refreshSystemBaseline = true;
+    }
+
     if(refreshSystemBaseline) {
         QApplication::setFont(QFont{});
         QApplication::setPalette(QPalette{});
@@ -2017,7 +2047,8 @@ void GuiApplication::publishAppStyle(const QPalette& palette)
 
 void GuiApplication::handleSystemThemeChanged()
 {
-    if(m_applyingTheme) {
+    if(m_applyingTheme
+       && (m_settings->value<Settings::Gui::Style>().isEmpty() || QApplication::style() == m_selectedStyle)) {
         return;
     }
 

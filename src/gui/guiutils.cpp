@@ -494,22 +494,10 @@ QSize itemViewTextSizeHint(const QStyleOptionViewItem& option, const QSize& text
 
 QRect itemViewTextRect(const QStyleOptionViewItem& option)
 {
-    const QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
-    QRect textRect          = style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget);
-    const int textMargin    = itemViewTextMargin(option.widget, &option);
-    const int frameWidth    = style->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, option.widget);
-    const int leadingInset  = textMargin + frameWidth + 1;
-    const bool leadingCell  = option.viewItemPosition == QStyleOptionViewItem::Beginning
-                           || option.viewItemPosition == QStyleOptionViewItem::OnlyOne
-                           || option.viewItemPosition == QStyleOptionViewItem::Invalid;
-    const int leadingMargin = leadingCell ? leadingInset : textMargin;
-
-    if(option.direction == Qt::RightToLeft) {
-        textRect.adjust(textMargin, 0, -leadingMargin, 0);
-    }
-    else {
-        textRect.adjust(leadingMargin, 0, -textMargin, 0);
-    }
+    const QStyle* style  = option.widget ? option.widget->style() : QApplication::style();
+    QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &option, option.widget);
+    const int textMargin = itemViewTextMargin(option.widget, &option);
+    textRect.adjust(textMargin, 0, -textMargin, 0);
 
     return textRect;
 }

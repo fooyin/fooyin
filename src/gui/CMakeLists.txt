@@ -655,13 +655,128 @@ set(SOURCES
     splitters/tabstackwidget.cpp
     splitters/tabstackwidget.h
     statusevent.cpp
+    style/buttonstyle.cpp
+    style/buttonstyle.h
+    style/checkstyle.cpp
+    style/checkstyle.h
+    style/dockstyle.cpp
+    style/dockstyle.h
+    style/fooyinstyle.cpp
+    style/fooyinstyle.h
+    style/framestyle.cpp
+    style/framestyle.h
+    style/headerstyle.cpp
+    style/headerstyle.h
+    style/inputstyle.cpp
+    style/inputstyle.h
+    style/itemviewstyle.cpp
+    style/itemviewstyle.h
+    style/menustyle.cpp
+    style/menustyle.h
+    style/progressstyle.cpp
+    style/progressstyle.h
+    style/scrollbarstyle.cpp
+    style/scrollbarstyle.h
+    style/sliderstyle.cpp
+    style/sliderstyle.h
+    style/splitterstyle.cpp
+    style/splitterstyle.h
+    style/styleanimation.cpp
+    style/styleanimation.h
+    style/styleutils.cpp
+    style/styleutils.h
+    style/tabstyle.cpp
+    style/tabstyle.h
+    style/toolbarstyle.cpp
+    style/toolbarstyle.h
+    style/tooltipstyle.cpp
+    style/tooltipstyle.h
     systemtrayicon.cpp
     systemtrayicon.h
+    theme/appearanceutils.cpp
+    theme/appearanceutils.h
     theme/artworkpalettecontroller.cpp
     theme/artworkpalettecontroller.h
+    theme/buttonappearance.cpp
+    theme/buttonappearance.h
+    theme/checkappearance.cpp
+    theme/checkappearance.h
+    theme/editor/appearanceproperty.h
+    theme/editor/appearancepropertydelegate.cpp
+    theme/editor/appearancepropertydelegate.h
+    theme/editor/appearancepropertymodel.cpp
+    theme/editor/appearancepropertymodel.h
+    theme/editor/appearancepropertypage.cpp
+    theme/editor/appearancepropertypage.h
+    theme/editor/appearancepropertypanel.cpp
+    theme/editor/appearancepropertypanel.h
+    theme/editor/buttonappearanceeditor.cpp
+    theme/editor/buttonappearanceeditor.h
+    theme/editor/checkappearanceeditor.cpp
+    theme/editor/checkappearanceeditor.h
+    theme/editor/componentappearanceeditor.cpp
+    theme/editor/componentappearanceeditor.h
+    theme/editor/groupboxappearanceeditor.cpp
+    theme/editor/groupboxappearanceeditor.h
+    theme/editor/headerappearanceeditor.cpp
+    theme/editor/headerappearanceeditor.h
+    theme/editor/inputappearanceeditor.cpp
+    theme/editor/inputappearanceeditor.h
+    theme/editor/itemviewappearanceeditor.cpp
+    theme/editor/itemviewappearanceeditor.h
+    theme/editor/menuappearanceeditor.cpp
+    theme/editor/menuappearanceeditor.h
+    theme/editor/progressbarappearanceeditor.cpp
+    theme/editor/progressbarappearanceeditor.h
+    theme/editor/pushbuttonappearanceeditor.cpp
+    theme/editor/pushbuttonappearanceeditor.h
+    theme/editor/scrollbarappearanceeditor.cpp
+    theme/editor/scrollbarappearanceeditor.h
+    theme/editor/sliderappearanceeditor.cpp
+    theme/editor/sliderappearanceeditor.h
+    theme/editor/splitterappearanceeditor.cpp
+    theme/editor/splitterappearanceeditor.h
+    theme/editor/tabappearanceeditor.cpp
+    theme/editor/tabappearanceeditor.h
+    theme/editor/themeappearancedialog.cpp
+    theme/editor/themeappearancedialog.h
+    theme/editor/toolbuttonappearanceeditor.cpp
+    theme/editor/toolbuttonappearanceeditor.h
+    theme/editor/tooltipappearanceeditor.cpp
+    theme/editor/tooltipappearanceeditor.h
     theme/fytheme.cpp
     theme/fythemefile.cpp
+    theme/groupboxappearance.cpp
+    theme/groupboxappearance.h
+    theme/headerappearance.cpp
+    theme/headerappearance.h
+    theme/inputappearance.cpp
+    theme/inputappearance.h
+    theme/itemviewappearance.cpp
+    theme/itemviewappearance.h
+    theme/menuappearance.cpp
+    theme/menuappearance.h
+    theme/progressbarappearance.cpp
+    theme/progressbarappearance.h
+    theme/pushbuttonappearance.cpp
+    theme/pushbuttonappearance.h
+    theme/scrollbarappearance.cpp
+    theme/scrollbarappearance.h
+    theme/sliderappearance.cpp
+    theme/sliderappearance.h
+    theme/splitterappearance.cpp
+    theme/splitterappearance.h
+    theme/tabappearance.cpp
+    theme/tabappearance.h
+    theme/themeappearance.cpp
+    theme/themeappearance.h
+    theme/themepreset.cpp
+    theme/themepreset.h
     theme/themeregistry.cpp
+    theme/toolbuttonappearance.cpp
+    theme/toolbuttonappearance.h
+    theme/tooltipappearance.cpp
+    theme/tooltipappearance.h
     toolbarmanager.cpp
     toolbarmanager.h
     trackgenerator.cpp

@@ -19,7 +19,7 @@
 
 #include <gui/theme/fytheme.h>
 
-constexpr auto ThemeVersion = 1;
+constexpr auto ThemeVersion = 2;
 
 namespace Fooyin {
 QDataStream& operator<<(QDataStream& stream, const PaletteKey& key)
@@ -45,6 +45,7 @@ QDataStream& operator<<(QDataStream& stream, const FyTheme& scheme)
     stream << scheme.isDefault;
     stream << scheme.colours;
     stream << scheme.fonts;
+    stream << scheme.appearance;
     return stream;
 }
 
@@ -52,12 +53,24 @@ QDataStream& operator>>(QDataStream& stream, FyTheme& scheme)
 {
     int version{0};
     stream >> version;
+
+    if(version < 1 || version > ThemeVersion) {
+        stream.setStatus(QDataStream::ReadCorruptData);
+        return stream;
+    }
+
     stream >> scheme.id;
     stream >> scheme.index;
     stream >> scheme.name;
     stream >> scheme.isDefault;
     stream >> scheme.colours;
     stream >> scheme.fonts;
+
+    scheme.appearance = {};
+    if(version >= 2) {
+        stream >> scheme.appearance;
+    }
+
     return stream;
 }
 } // namespace Fooyin

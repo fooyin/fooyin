@@ -921,7 +921,7 @@ QGridLayout* ColourPickerPrivate::createChannelControls()
         editor.spin->setSuffix(rgb ? QString{} : (channel == Channel::Hue ? u"°"_s : u" %"_s));
         editor.spin->setAlignment(Qt::AlignRight);
 
-        auto* label = new QLabel(names[index], m_self);
+        auto* label = new QLabel(names[index] + u":"_s, m_self);
         layout->addWidget(label, row, 0);
         layout->addWidget(editor.slider, row, 1);
         layout->addWidget(editor.spin, row++, 2);
@@ -943,7 +943,7 @@ QGridLayout* ColourPickerPrivate::createChannelControls()
     m_hex->setPlaceholderText(u"#AARRGGBB"_s);
     m_hex->setToolTip(ColourPicker::tr("Enter #AARRGGBB, or #RRGGBB to keep the current opacity"));
 
-    layout->addWidget(new QLabel(ColourPicker::tr("Hex (ARGB)"), m_self), row, 0);
+    layout->addWidget(new QLabel(ColourPicker::tr("Hex (ARGB)") + u":"_s, m_self), row, 0);
     layout->addWidget(m_hex, row, 1, 1, 2);
     layout->setColumnStretch(1, 1);
 
