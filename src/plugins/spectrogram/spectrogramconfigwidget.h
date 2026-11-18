@@ -29,7 +29,7 @@ class QSpinBox;
 
 namespace Fooyin {
 class ColourButton;
-class GradientEditor;
+class BrushSourceButton;
 
 namespace Spectrogram {
 class SpectrogramConfigDialog : public WidgetConfigDialog<SpectrogramWidget, SpectrogramConfig>
@@ -62,7 +62,7 @@ private:
     QComboBox* m_windowFunction;
     QSpinBox* m_minDb;
     QSpinBox* m_maxDb;
-    GradientEditor* m_colours;
+    BrushSourceButton* m_colours;
     ColourButton* m_cursorColour;
     ColourButton* m_seekingCursorColour;
     ColourButton* m_playedOverlayColour;

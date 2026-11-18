@@ -19,8 +19,8 @@
 
 #include "spectrogramconfigwidget.h"
 
+#include <gui/widgets/brushsourcebutton.h>
 #include <gui/widgets/colourbutton.h>
-#include <gui/widgets/gradienteditor.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -52,11 +52,11 @@ SpectrogramConfigDialog::SpectrogramConfigDialog(SpectrogramWidget* widget, QWid
     , m_windowFunction{new QComboBox(this)}
     , m_minDb{new QSpinBox(this)}
     , m_maxDb{new QSpinBox(this)}
-    , m_colours{new GradientEditor(this)}
-    , m_cursorColour{new ColourButton(tr("Playing"), true, this)}
-    , m_seekingCursorColour{new ColourButton(tr("Seeking"), true, this)}
-    , m_playedOverlayColour{new ColourButton(tr("Played"), true, this)}
-    , m_unplayedOverlayColour{new ColourButton(tr("Unplayed"), true, this)}
+    , m_colours{new BrushSourceButton(this, true)}
+    , m_cursorColour{new ColourButton(tr("Playing") + u":"_s, true, this)}
+    , m_seekingCursorColour{new ColourButton(tr("Seeking") + u":"_s, true, this)}
+    , m_playedOverlayColour{new ColourButton(tr("Played") + u":"_s, true, this)}
+    , m_unplayedOverlayColour{new ColourButton(tr("Unplayed") + u":"_s, true, this)}
 {
     auto* generalGroup  = new QGroupBox(tr("General"), this);
     auto* generalLayout = new QGridLayout(generalGroup);
@@ -74,7 +74,7 @@ SpectrogramConfigDialog::SpectrogramConfigDialog(SpectrogramWidget* widget, QWid
     m_presentationMode->addItem(tr("Stationary"), static_cast<int>(PresentationMode::Stationary));
     m_presentationMode->addItem(tr("Full Track (Seekbar)"), static_cast<int>(PresentationMode::FullTrack));
 
-    auto* trackPreferenceLabel = new QLabel(tr("Track preference") + ":"_L1, this);
+    auto* trackPreferenceLabel = new QLabel(tr("Track preference") + u":"_s, this);
 
     m_trackPreference->addItem(tr("Playing track"), static_cast<int>(TrackDisplayPreference::PlayingTrack));
     m_trackPreference->addItem(tr("Selected track"), static_cast<int>(TrackDisplayPreference::SelectedTrack));
@@ -97,9 +97,9 @@ SpectrogramConfigDialog::SpectrogramConfigDialog(SpectrogramWidget* widget, QWid
     int row = 0;
     generalLayout->addWidget(m_logFrequency, row++, 0, 1, 2);
     generalLayout->addWidget(m_clearOnTrackChange, row++, 0, 1, 2);
-    generalLayout->addWidget(new QLabel(tr("Channels") + ":"_L1, this), row, 0);
+    generalLayout->addWidget(new QLabel(tr("Channels") + u":"_s, this), row, 0);
     generalLayout->addWidget(m_channelMode, row++, 1);
-    generalLayout->addWidget(new QLabel(tr("Style") + ":"_L1, this), row, 0);
+    generalLayout->addWidget(new QLabel(tr("Style") + u":"_s, this), row, 0);
     generalLayout->addWidget(m_presentationMode, row++, 1);
     generalLayout->addWidget(trackPreferenceLabel, row, 0);
     generalLayout->addWidget(m_trackPreference, row++, 1);
@@ -123,7 +123,7 @@ SpectrogramConfigDialog::SpectrogramConfigDialog(SpectrogramWidget* widget, QWid
 
     row = 0;
     cursorLayout->addWidget(m_showCursor, row++, 0, 1, 2);
-    cursorLayout->addWidget(new QLabel(tr("Cursor width") + ":"_L1, this), row, 0);
+    cursorLayout->addWidget(new QLabel(tr("Cursor width") + u":"_s, this), row, 0);
     cursorLayout->addWidget(m_cursorWidth, row++, 1);
     cursorLayout->setColumnStretch(2, 1);
 
@@ -133,15 +133,15 @@ SpectrogramConfigDialog::SpectrogramConfigDialog(SpectrogramWidget* widget, QWid
     m_timeColumns->setToolTip(
         tr("Number of time columns for Full Track analysis.\nHigher values increase detail and memory usage."));
 
-    auto* timeColumnsLabel = new QLabel(tr("Time resolution") + ":"_L1, this);
+    auto* timeColumnsLabel = new QLabel(tr("Time resolution") + u":"_s, this);
 
     auto* analysisGroup  = new QGroupBox(tr("Analysis"), this);
     auto* analysisLayout = new QGridLayout(analysisGroup);
 
     row = 0;
-    analysisLayout->addWidget(new QLabel(tr("FFT size") + ":"_L1, this), row, 0);
+    analysisLayout->addWidget(new QLabel(tr("FFT size") + u":"_s, this), row, 0);
     analysisLayout->addWidget(m_fftSize, row++, 1);
-    analysisLayout->addWidget(new QLabel(tr("Window function") + ":"_L1, this), row, 0);
+    analysisLayout->addWidget(new QLabel(tr("Window function") + u":"_s, this), row, 0);
     analysisLayout->addWidget(m_windowFunction, row++, 1);
     analysisLayout->addWidget(timeColumnsLabel, row, 0);
     analysisLayout->addWidget(m_timeColumns, row++, 1);
@@ -156,11 +156,11 @@ SpectrogramConfigDialog::SpectrogramConfigDialog(SpectrogramWidget* widget, QWid
     auto* scaleLayout = new QGridLayout(scaleGroup);
 
     row = 0;
-    scaleLayout->addWidget(new QLabel(tr("Minimum level") + ":"_L1, this), row, 0);
+    scaleLayout->addWidget(new QLabel(tr("Minimum level") + u":"_s, this), row, 0);
     scaleLayout->addWidget(m_minDb, row++, 1);
-    scaleLayout->addWidget(new QLabel(tr("Maximum level") + ":"_L1, this), row, 0);
+    scaleLayout->addWidget(new QLabel(tr("Maximum level") + u":"_s, this), row, 0);
     scaleLayout->addWidget(m_maxDb, row++, 1);
-    scaleLayout->addWidget(new QLabel(tr("Channel spacing") + ":"_L1, this), row, 0);
+    scaleLayout->addWidget(new QLabel(tr("Channel spacing") + u":"_s, this), row, 0);
     scaleLayout->addWidget(m_channelSpacing, row++, 1);
     scaleLayout->setColumnStretch(2, 1);
 
@@ -177,12 +177,15 @@ SpectrogramConfigDialog::SpectrogramConfigDialog(SpectrogramWidget* widget, QWid
     generalPageLayout->setColumnStretch(1, 1);
     generalPageLayout->setRowStretch(3, 1);
 
-    m_colours->setOrientationControlVisible(false);
+    m_colours->setSwatchOnly(true);
+    m_colours->setDirectionControlVisible(false);
 
     auto* spectrogramColoursGroup  = new QGroupBox(tr("Spectrogram"), this);
     auto* spectrogramColoursLayout = new QGridLayout(spectrogramColoursGroup);
 
-    spectrogramColoursLayout->addWidget(m_colours, 0, 0);
+    spectrogramColoursLayout->addWidget(new QLabel(tr("Colour gradient") + u":"_s, this), 0, 0);
+    spectrogramColoursLayout->addWidget(m_colours, 0, 1);
+    spectrogramColoursLayout->setColumnStretch(1, 1);
 
     ColourButton::alignLabels({m_cursorColour, m_seekingCursorColour, m_playedOverlayColour, m_unplayedOverlayColour});
 
@@ -207,7 +210,7 @@ SpectrogramConfigDialog::SpectrogramConfigDialog(SpectrogramWidget* widget, QWid
     coloursPageLayout->addWidget(spectrogramColoursGroup, row++, 0);
     coloursPageLayout->addWidget(overlayGroup, row++, 0);
     coloursPageLayout->addWidget(cursorColoursGroup, row++, 0);
-    coloursPageLayout->setRowStretch(0, 1);
+    coloursPageLayout->setRowStretch(row, 1);
 
     auto* tabs = new QTabWidget(this);
     tabs->addTab(generalPage, tr("General"));
@@ -263,7 +266,7 @@ SpectrogramConfig SpectrogramConfigDialog::config() const
         .minDb                 = m_minDb->value(),
         .maxDb                 = m_maxDb->value(),
         .windowFunction        = m_windowFunction->currentData().toInt(),
-        .colours               = m_colours->colours(),
+        .gradient              = m_colours->value(),
     };
 }
 
@@ -325,7 +328,7 @@ void SpectrogramConfigDialog::setConfig(const SpectrogramConfig& config)
 
     m_minDb->setValue(config.minDb);
     m_maxDb->setValue(config.maxDb);
-    m_colours->setColours(config.colours);
+    m_colours->setValue(config.gradient, widget()->palette(), QPalette::Active);
 }
 
 void SpectrogramConfigDialog::mergeExternalConfig(const SpectrogramConfig& previous, const SpectrogramConfig& current)
@@ -339,6 +342,6 @@ void SpectrogramConfigDialog::mergeExternalConfig(const SpectrogramConfig& previ
                         &SpectrogramConfig::seekingCursorColour, &SpectrogramConfig::playedOverlayColour,
                         &SpectrogramConfig::unplayedOverlayColour, &SpectrogramConfig::channelSpacing,
                         &SpectrogramConfig::fftSize, &SpectrogramConfig::timeColumns, &SpectrogramConfig::minDb,
-                        &SpectrogramConfig::maxDb, &SpectrogramConfig::windowFunction, &SpectrogramConfig::colours);
+                        &SpectrogramConfig::maxDb, &SpectrogramConfig::windowFunction, &SpectrogramConfig::gradient);
 }
 } // namespace Fooyin::Spectrogram

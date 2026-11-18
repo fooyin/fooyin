@@ -92,19 +92,30 @@ float sampleMagnitude(const VisualisationSession::SpectrumWindow& spectrum, bool
 }
 } // namespace
 
-QColor colourForLevel(double level, const std::vector<QColor>& colours)
+QGradientStops resolvedGradientStops(const BrushSource& source, const QPalette& palette)
 {
-    if(colours.size() == 1) {
-        return colours.front();
+    const auto brush = resolveBrush(source, palette, QPalette::Active, QRectF{0, 0, 1, 1});
+    if(const auto* gradient = brush.gradient()) {
+        return gradient->stops();
+    }
+    return {{0.0, brush.color()}, {1.0, brush.color()}};
+}
+
+QColor colourForLevel(double level, const QGradientStops& stops)
+{
+    const auto next = std::ranges::upper_bound(stops, level, {}, &QGradientStop::first);
+    if(next == stops.begin()) {
+        return stops.front().second;
+    }
+    if(next == stops.end()) {
+        return stops.back().second;
     }
 
-    const double position = std::clamp(level, 0.0, 1.0) * static_cast<double>(colours.size() - 1);
-    const auto first      = static_cast<size_t>(std::floor(position));
-    const size_t second   = std::min(first + 1, colours.size() - 1);
-    const auto fraction   = static_cast<float>(position - static_cast<double>(first));
+    const auto previous = std::prev(next);
+    const auto fraction = static_cast<float>((level - previous->first) / (next->first - previous->first));
 
-    const QColor& from = colours[first];
-    const QColor& to   = colours[second];
+    const QColor& from = previous->second;
+    const QColor& to   = next->second;
 
     return QColor::fromRgbF(
         std::lerp(from.redF(), to.redF(), fraction), std::lerp(from.greenF(), to.greenF(), fraction),

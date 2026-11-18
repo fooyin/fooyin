@@ -32,7 +32,7 @@ namespace Fooyin {
 class BackgroundConfigWidget;
 class ColourButton;
 class FontButton;
-class GradientEditor;
+class BrushSourceButton;
 
 namespace Spectrum {
 class SpectrumConfigDialog : public WidgetConfigDialog<SpectrumWidget, SpectrumWidget::ConfigData>
@@ -90,7 +90,7 @@ private:
     QCheckBox* m_barGradientEnabled;
     ColourButton* m_textColour;
     ColourButton* m_backgroundColour;
-    GradientEditor* m_barGradient;
+    BrushSourceButton* m_barGradient;
     ColourButton* m_peaksColour;
     ColourButton* m_horizontalGridColour;
     ColourButton* m_verticalGridColour;
@@ -98,6 +98,7 @@ private:
     ColourButton* m_whiteKeyColour;
     ColourButton* m_blackKeyColour;
     BackgroundConfigWidget* m_background;
+    GradientOrientation m_gradientOrientation;
 };
 } // namespace Spectrum
 } // namespace Fooyin

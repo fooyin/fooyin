@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <gui/brushsource.h>
 #include <utils/datastream.h>
 
 #include <QApplication>
@@ -27,19 +28,21 @@
 #include <QMetaType>
 #include <QPalette>
 
+#include <optional>
 #include <vector>
 
 namespace Fooyin::VuMeter {
 struct Colours
 {
     static constexpr qint32 Magic   = 0x5655434F;
-    static constexpr qint32 Version = 1;
+    static constexpr qint32 Version = 2;
 
     enum class Type : uint8_t
     {
         Background = 0,
         Peak,
         Legend,
+        // Retained for reading legacy binary colour maps
         Gradient1,
         Gradient2,
         Gridlines,
@@ -54,15 +57,11 @@ struct Colours
                 return {190, 40, 10};
             case Type::Legend:
                 return palette.text().color();
-            case Type::Gradient1:
-                return defaultGradient(palette).front();
-            case Type::Gradient2:
-                return defaultGradient(palette).back();
             case Type::Gridlines:
                 return defaultGridColour(palette);
+            default:
+                return {};
         }
-
-        return {};
     }
 
     static QColor defaultGridColour(const QPalette& palette)
@@ -72,58 +71,43 @@ struct Colours
         return colour;
     }
 
-    static std::vector<QColor> defaultGradient(const QPalette& palette = QApplication::palette())
+    static BrushSource defaultGradient()
     {
-        return {{65, 65, 65}, palette.color(QPalette::Active, QPalette::Highlight)};
+        return LinearGradientSource{.direction = LinearGradientSource::Direction::AlongControl,
+                                    .stops     = {{.position = 0.0, .colour = QColor{65, 65, 65}},
+                                                  {.position = 1.0, .colour = QPalette::Highlight}}};
     }
 
     QMap<Type, QColor> meterColours;
-    std::vector<QColor> barGradient;
+    std::optional<BrushSource> barGradient;
 
     [[nodiscard]] QColor colour(Type type, const QPalette& palette = QApplication::palette()) const
     {
-        switch(type) {
-            case Type::Gradient1:
-                return gradient(palette).front();
-            case Type::Gradient2:
-                return gradient(palette).back();
-            default:
-                return meterColours.value(type, defaultColour(type, palette));
-        }
+        return meterColours.value(type, defaultColour(type, palette));
     }
 
     [[nodiscard]] bool hasOverride(Type type) const
     {
-        return type == Type::Gradient1 || type == Type::Gradient2 ? !barGradient.empty() : meterColours.contains(type);
+        return meterColours.contains(type);
     }
 
     [[nodiscard]] bool isEmpty() const
     {
-        return meterColours.isEmpty() && barGradient.empty();
+        return meterColours.isEmpty() && !barGradient.has_value();
     }
 
-    [[nodiscard]] std::vector<QColor> gradient(const QPalette& palette = QApplication::palette()) const
+    [[nodiscard]] BrushSource gradient() const
     {
-        return barGradient.empty() ? defaultGradient(palette) : barGradient;
+        return barGradient ? *barGradient : defaultGradient();
     }
 
-    [[nodiscard]] const std::vector<QColor>& customGradient() const
+    [[nodiscard]] const std::optional<BrushSource>& customGradient() const
     {
         return barGradient;
     }
 
     void setColour(Type type, const QColor& colour)
     {
-        if(type == Type::Gradient1 || type == Type::Gradient2) {
-            std::vector<QColor> colours = gradient();
-            if(colours.size() < 2) {
-                colours = defaultGradient();
-            }
-            colours.at(type == Type::Gradient1 ? 0 : colours.size() - 1) = colour;
-            setGradient(colours);
-            return;
-        }
-
         if(colour.isValid()) {
             meterColours[type] = colour;
         }
@@ -132,13 +116,32 @@ struct Colours
         }
     }
 
-    void setGradient(const std::vector<QColor>& colours)
+    void setGradient(const BrushSource& brush)
     {
-        barGradient.clear();
-        for(const QColor& colour : colours) {
+        barGradient = brush;
+    }
+
+    void setLegacyGradient(const std::vector<QColor>& colours)
+    {
+        barGradient.reset();
+
+        LinearGradientSource gradient;
+        gradient.stops.clear();
+
+        for(const auto& colour : colours) {
             if(colour.isValid()) {
-                barGradient.push_back(colour);
+                gradient.stops.emplace_back(0.0, colour);
             }
+        }
+        if(gradient.stops.size() == 1) {
+            barGradient = std::get<QColor>(gradient.stops.front().colour);
+        }
+        else if(!gradient.stops.empty()) {
+            for(size_t index{0}; index < gradient.stops.size(); ++index) {
+                gradient.stops[index].position
+                    = static_cast<double>(index) / static_cast<double>(gradient.stops.size() - 1);
+            }
+            barGradient = gradient;
         }
     }
 
@@ -149,7 +152,7 @@ struct Colours
         stream << Magic;
         stream << Version;
         stream << colours.meterColours;
-        DataStream::writeContainer(stream, colours.barGradient);
+        stream << (colours.barGradient ? brushSourceToJson(*colours.barGradient) : QJsonObject{});
         return stream;
     }
 
@@ -162,14 +165,44 @@ struct Colours
         stream >> magic;
         stream >> version;
 
-        if(magic == Magic && version == Version) {
+        if(magic == Magic && (version == 1 || version == Version)) {
             stream >> colours.meterColours;
-            DataStream::readContainer(stream, colours.barGradient);
-            stream.commitTransaction();
+
+            if(version == 1) {
+                std::vector<QColor> legacy;
+                DataStream::readContainer(stream, legacy);
+                colours.setLegacyGradient(legacy);
+            }
+            else {
+                QJsonObject source;
+                stream >> source;
+
+                colours.barGradient.reset();
+
+                if(!source.isEmpty()) {
+                    if(const auto brush = readBrushSource(source, QString{})) {
+                        colours.barGradient = *brush;
+                    }
+                    else {
+                        stream.setStatus(QDataStream::ReadCorruptData);
+                    }
+                }
+            }
+
+            if(!stream.commitTransaction()) {
+                colours = {};
+            }
             return stream;
         }
 
         stream.rollbackTransaction();
+        stream.resetStatus();
+
+        if(magic == Magic) {
+            colours = {};
+            stream.setStatus(QDataStream::ReadCorruptData);
+            return stream;
+        }
 
         QMap<Type, QColor> legacyColours;
         stream >> legacyColours;
@@ -184,8 +217,8 @@ struct Colours
             legacyColours.remove(Type::Gradient2);
         }
 
-        colours.meterColours = legacyColours;
-        colours.setGradient(legacyGradient);
+        colours.meterColours = std::move(legacyColours);
+        colours.setLegacyGradient(legacyGradient);
         return stream;
     }
 };

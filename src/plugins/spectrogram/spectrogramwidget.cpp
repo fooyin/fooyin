@@ -31,6 +31,7 @@
 #include <QApplication>
 #include <QContextMenuEvent>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QMenu>
 #include <QVBoxLayout>
@@ -61,44 +62,50 @@ constexpr auto FftSizeKey               = u"Spectrogram/FftSize";
 constexpr auto MinDbKey                 = u"Spectrogram/MinDb";
 constexpr auto MaxDbKey                 = u"Spectrogram/MaxDb";
 constexpr auto WindowFunctionKey        = u"Spectrogram/WindowFunction";
+constexpr auto GradientKey              = u"Spectrogram/Gradient";
 constexpr auto ColoursKey               = u"Spectrogram/Colours";
 
 namespace Fooyin::Spectrogram {
 namespace {
-std::vector<QColor> defaultColours()
+BrushSource defaultGradient()
 {
-    return {{0, 0, 0}, {0, 32, 100}, {0, 148, 160}, {128, 255, 120}, {255, 255, 0}, {255, 128, 0}, {255, 0, 0}};
+    return LinearGradientSource{.direction = LinearGradientSource::Direction::AlongControl,
+                                .stops     = {{.position = 0.0, .colour = QColor{0, 0, 0}},
+                                              {.position = 1.0 / 6.0, .colour = QColor{0, 32, 100}},
+                                              {.position = 2.0 / 6.0, .colour = QColor{0, 148, 160}},
+                                              {.position = 0.5, .colour = QColor{128, 255, 120}},
+                                              {.position = 4.0 / 6.0, .colour = QColor{255, 255, 0}},
+                                              {.position = 5.0 / 6.0, .colour = QColor{255, 128, 0}},
+                                              {.position = 1.0, .colour = QColor{255, 0, 0}}}};
 }
 
-std::vector<QColor> normaliseColours(const std::vector<QColor>& colours)
+BrushSource normaliseGradient(const BrushSource& gradient)
 {
-    std::vector<QColor> result;
-    std::ranges::copy_if(colours, std::back_inserter(result), [](const QColor& colour) { return colour.isValid(); });
-    return result.empty() ? defaultColours() : result;
+    return readBrushSource(brushSourceToJson(gradient), QString{}).value_or(defaultGradient());
 }
 
-QStringList serialiseColours(const std::vector<QColor>& colours)
+BrushSource legacyGradient(const QStringList& values, const BrushSource& fallback)
 {
-    QStringList result;
-    for(const QColor& colour : normaliseColours(colours)) {
-        result.push_back(colour.name(QColor::HexArgb));
-    }
-    return result;
-}
+    LinearGradientSource gradient;
+    gradient.stops.clear();
 
-std::vector<QColor> deserialiseColours(const QStringList& values, const std::vector<QColor>& fallback)
-{
-    std::vector<QColor> colours;
-    colours.reserve(static_cast<size_t>(values.size()));
-
-    for(const QString& value : values) {
+    for(const auto& value : values) {
         const QColor colour{value};
         if(colour.isValid()) {
-            colours.push_back(colour);
+            gradient.stops.emplace_back(0.0, colour);
         }
     }
+    if(gradient.stops.empty()) {
+        return fallback;
+    }
+    if(gradient.stops.size() == 1) {
+        return std::get<QColor>(gradient.stops.front().colour);
+    }
+    for(size_t index{0}; index < gradient.stops.size(); ++index) {
+        gradient.stops[index].position = static_cast<qreal>(index) / static_cast<qreal>(gradient.stops.size() - 1);
+    }
 
-    return colours.empty() ? fallback : colours;
+    return gradient;
 }
 
 int normaliseFftSize(int fftSize)
@@ -184,7 +191,7 @@ void SpectrogramWidget::loadLayoutData(const QJsonObject& layout)
 SpectrogramConfig SpectrogramWidget::factoryConfig() const
 {
     SpectrogramConfig config{};
-    config.colours          = defaultColours();
+    config.gradient         = defaultGradient();
     config.presentationMode = normalisePresentationMode(config.presentationMode);
     return config;
 }
@@ -216,8 +223,16 @@ SpectrogramConfig SpectrogramWidget::defaultConfig() const
     config.minDb                 = m_settings->fileValue(MinDbKey, config.minDb).toInt();
     config.maxDb                 = m_settings->fileValue(MaxDbKey, config.maxDb).toInt();
     config.windowFunction        = m_settings->fileValue(WindowFunctionKey, config.windowFunction).toInt();
-    config.colours               = deserialiseColours(
-        m_settings->fileValue(ColoursKey, serialiseColours(config.colours)).toStringList(), config.colours);
+
+    if(const auto savedGradient = m_settings->fileValue(GradientKey); savedGradient.isValid()) {
+        if(const auto parsed
+           = readBrushSource(QJsonDocument::fromJson(savedGradient.toByteArray()).object(), QString{})) {
+            config.gradient = *parsed;
+        }
+    }
+    else {
+        config.gradient = legacyGradient(m_settings->fileValue(ColoursKey).toStringList(), config.gradient);
+    }
 
     return config;
 }
@@ -248,7 +263,7 @@ void SpectrogramWidget::saveDefaults(const SpectrogramConfig& config) const
     }
 
     validated.windowFunction = normaliseWindowFunction(validated.windowFunction);
-    validated.colours        = normaliseColours(validated.colours);
+    validated.gradient       = normaliseGradient(validated.gradient);
 
     m_settings->fileSet(TrackPreferenceKey, validated.trackPreference);
     m_settings->fileSet(ChannelModeKey, static_cast<int>(validated.channelMode));
@@ -278,7 +293,9 @@ void SpectrogramWidget::saveDefaults(const SpectrogramConfig& config) const
     m_settings->fileSet(MinDbKey, validated.minDb);
     m_settings->fileSet(MaxDbKey, validated.maxDb);
     m_settings->fileSet(WindowFunctionKey, validated.windowFunction);
-    m_settings->fileSet(ColoursKey, serialiseColours(validated.colours));
+    m_settings->fileSet(GradientKey,
+                        QJsonDocument{brushSourceToJson(validated.gradient)}.toJson(QJsonDocument::Compact));
+    m_settings->fileRemove(ColoursKey);
 }
 
 void SpectrogramWidget::clearSavedDefaults() const
@@ -305,6 +322,7 @@ void SpectrogramWidget::clearSavedDefaults() const
     m_settings->fileRemove(MaxDbKey);
     m_settings->fileRemove(WindowFunctionKey);
     m_settings->fileRemove(ColoursKey);
+    m_settings->fileRemove(GradientKey);
 }
 
 void SpectrogramWidget::applyConfig(const SpectrogramConfig& config)
@@ -328,7 +346,7 @@ void SpectrogramWidget::applyConfig(const SpectrogramConfig& config)
     }
 
     validated.windowFunction = normaliseWindowFunction(validated.windowFunction);
-    validated.colours        = normaliseColours(validated.colours);
+    validated.gradient       = normaliseGradient(validated.gradient);
 
     const bool fullTrack    = validated.presentationMode == PresentationMode::FullTrack;
     const bool wasFullTrack = m_config.presentationMode == PresentationMode::FullTrack;
@@ -392,7 +410,12 @@ SpectrogramConfig SpectrogramWidget::configFromLayout(const QJsonObject& layout)
     config.maxDb          = layout.value("MaxDb"_L1).toInt(config.maxDb);
     config.windowFunction = layout.value("WindowFunction"_L1).toInt(config.windowFunction);
 
-    if(layout.contains("Colours"_L1) && layout.value("Colours"_L1).isArray()) {
+    if(layout.contains("Gradient"_L1)) {
+        if(const auto gradient = readBrushSource(layout.value("Gradient"_L1), QString{})) {
+            config.gradient = *gradient;
+        }
+    }
+    else if(layout.contains("Colours"_L1) && layout.value("Colours"_L1).isArray()) {
         QStringList values;
         const auto colours = layout.value("Colours"_L1).toArray();
         for(const auto& value : colours) {
@@ -400,7 +423,7 @@ SpectrogramConfig SpectrogramWidget::configFromLayout(const QJsonObject& layout)
                 values.push_back(value.toString());
             }
         }
-        config.colours = deserialiseColours(values, config.colours);
+        config.gradient = legacyGradient(values, config.gradient);
     }
 
     return config;
@@ -433,12 +456,8 @@ void SpectrogramWidget::saveConfigToLayout(const SpectrogramConfig& config, QJso
     layout["MaxDb"_L1]          = config.maxDb;
     layout["WindowFunction"_L1] = config.windowFunction;
 
-    QJsonArray colours;
-    const auto configColours = serialiseColours(config.colours);
-    for(const QString& colour : configColours) {
-        colours.push_back(colour);
-    }
-    layout["Colours"_L1] = colours;
+    layout["Gradient"_L1] = brushSourceToJson(config.gradient);
+    layout.remove("Colours"_L1);
 }
 
 QSize SpectrogramWidget::minimumSizeHint() const

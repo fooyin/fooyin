@@ -19,13 +19,44 @@
 
 #include <utils/jsonutils.h>
 
+#include <QCoreApplication>
 #include <QJsonArray>
 #include <QJsonObject>
 
 #include <set>
 #include <unordered_map>
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin::Utils {
+QString errorWithPath(const QString& message, const QString& path)
+{
+    //: %1 is a translated error; %2 is a JSON property path.
+    return QCoreApplication::translate("JsonUtils", "%1\nProperty: %2").arg(message, path);
+}
+
+std::expected<QJsonObject, QString> readObject(const QJsonValue& value, const QString& path,
+                                               std::initializer_list<QLatin1StringView> keys)
+{
+    if(value.isUndefined()) {
+        return QJsonObject{};
+    }
+
+    if(!value.isObject()) {
+        return std::unexpected{
+            errorWithPath(QCoreApplication::translate("JsonUtils", "This section must be an object."), path)};
+    }
+
+    auto object = value.toObject();
+    for(auto it = object.constBegin(); it != object.constEnd(); ++it) {
+        if(std::ranges::find(keys, it.key()) == keys.end()) {
+            return std::unexpected{
+                errorWithPath(QCoreApplication::translate("JsonUtils", "Unknown property."), path + u'.' + it.key())};
+        }
+    }
+    return object;
+}
+
 QJsonValue mergeJsonThreeWay(const QJsonValue& base, const QJsonValue& first, const QJsonValue& second,
                              const JsonArrayItemIdentity& arrayItemIdentity)
 {

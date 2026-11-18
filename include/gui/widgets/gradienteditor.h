@@ -22,22 +22,14 @@
 #include "fygui_export.h"
 
 #include <QColor>
+#include <QVariant>
 #include <QWidget>
 
+#include <functional>
 #include <memory>
 #include <vector>
 
-class QGradient;
-class QLinearGradient;
-class QScrollArea;
-class QVBoxLayout;
-
 namespace Fooyin {
-FYGUI_EXPORT void setGradientColours(QGradient& gradient, const std::vector<QColor>& colours);
-FYGUI_EXPORT QLinearGradient linearGradient(const QRectF& rect, Qt::Orientation orientation,
-                                            const std::vector<QColor>& colours);
-
-class ColourButton;
 class GradientEditorPrivate;
 
 class FYGUI_EXPORT GradientEditor : public QWidget
@@ -45,20 +37,31 @@ class FYGUI_EXPORT GradientEditor : public QWidget
     Q_OBJECT
 
 public:
+    struct ColourStop
+    {
+        double position;
+        QColor colour;
+        QVariant data;
+    };
+
+    using ColourEditorFactory = std::function<QWidget*(int, const ColourStop&, QWidget*)>;
+
     explicit GradientEditor(QWidget* parent = nullptr);
     ~GradientEditor() override;
 
-    [[nodiscard]] std::vector<QColor> colours() const;
-    [[nodiscard]] Qt::Orientation orientation() const;
-    [[nodiscard]] bool isOrientationControlVisible() const;
+    [[nodiscard]] int selectedStop() const;
+    [[nodiscard]] int colourEditorIndex(const QWidget* editor) const;
+    [[nodiscard]] std::vector<ColourStop> colourStops() const;
 
-    void setColours(const std::vector<QColor>& colours);
-    void setOrientation(Qt::Orientation orientation);
-    void setOrientationControlVisible(bool visible);
+    void setColourStops(const std::vector<ColourStop>& stops);
+    void setColourEditorFactory(ColourEditorFactory factory);
+    void updateColourStop(int index, const ColourStop& stop);
+    void setSelectedStop(int index);
+    void spaceStopsEvenly();
 
 Q_SIGNALS:
-    void coloursChanged();
-    void orientationChanged(Qt::Orientation orientation);
+    void stopsChanged();
+    void selectedStopChanged(int index);
 
 private:
     std::unique_ptr<GradientEditorPrivate> p;

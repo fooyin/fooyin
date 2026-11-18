@@ -21,7 +21,7 @@
 
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
-#include <gui/widgets/gradienteditor.h>
+#include <gui/brushsource.h>
 #include <gui/widgets/widgetbackground.h>
 #include <utils/timeconstants.h>
 
@@ -566,12 +566,12 @@ void SpectrumView::paint(QPainter& painter, const QRect& rect, const QPalette& p
 
     painter.setPen(Qt::NoPen);
 
-    const QLinearGradient gradient = linearGradient(
-        m_plotRect, m_config.gradientOrientation == GradientOrientation::Vertical ? Qt::Vertical : Qt::Horizontal,
-        customColours.gradient(palette));
+    const auto gradient
+        = resolveBrush(customColours.gradient(palette), palette, QPalette::Active, m_plotRect,
+                       m_config.gradientOrientation == GradientOrientation::Vertical ? Qt::Vertical : Qt::Horizontal);
 
     if(m_config.drawStyle == DrawStyle::Curve) {
-        drawCurveSpectrum(painter, QBrush{gradient});
+        drawCurveSpectrum(painter, gradient);
     }
     else {
         for(size_t index{0}; index < m_barRects.size() && index < m_barHeights.size(); ++index) {
@@ -579,10 +579,10 @@ void SpectrumView::paint(QPainter& painter, const QRect& rect, const QPalette& p
             const int barHeight   = m_barHeights[index];
 
             if(m_config.fillSpectrum) {
-                drawBar(painter, barRect, barHeight, QBrush{gradient});
+                drawBar(painter, barRect, barHeight, gradient);
             }
             else {
-                drawBarOutline(painter, barRect, barHeight, QPen{QBrush{gradient}, 1.0});
+                drawBarOutline(painter, barRect, barHeight, QPen{gradient, 1.0});
             }
         }
     }

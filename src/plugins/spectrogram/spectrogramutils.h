@@ -22,7 +22,8 @@
 #include "spectrogramconfig.h"
 
 namespace Fooyin::Spectrogram {
-QColor colourForLevel(double level, const std::vector<QColor>& colours);
+QGradientStops resolvedGradientStops(const BrushSource& brush, const QPalette& palette);
+QColor colourForLevel(double level, const QGradientStops& stops);
 void fillSpectrumSection(std::vector<float>& levels, int top, int height,
                          const VisualisationSession::SpectrumWindow& spectrum, const SpectrogramConfig& config);
 } // namespace Fooyin::Spectrogram

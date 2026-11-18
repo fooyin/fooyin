@@ -205,6 +205,10 @@ void SpectrogramSeekBar::stopSeeking()
 
 bool SpectrogramSeekBar::event(QEvent* event)
 {
+    if(event->type() == QEvent::PaletteChange) {
+        rebuildImage();
+        update();
+    }
     if((event->type() == QEvent::UngrabMouse || event->type() == QEvent::WindowDeactivate
         || event->type() == QEvent::Hide)
        && isSeeking()) {
@@ -224,7 +228,7 @@ void SpectrogramSeekBar::paintEvent(QPaintEvent* /*event*/)
     painter.fillRect(rect(), palette().window());
 
     const QRect plot = plotRect();
-    painter.fillRect(plot, m_config.colours.front());
+    painter.fillRect(plot, colourForLevel(0.0, resolvedGradientStops(m_config.gradient, palette())));
 
     if(!m_image.isNull()) {
         painter.drawImage(plot, m_image);
@@ -503,9 +507,12 @@ void SpectrogramSeekBar::rebuildImage(int firstColumn)
     const int imageHeight = resizing ? m_image.height() : targetImageHeight();
     const QSize size{static_cast<int>(m_columns.size()), imageHeight};
 
+    const auto gradient   = resolvedGradientStops(m_config.gradient, palette());
+    const auto background = colourForLevel(0.0, gradient);
+
     if(m_image.size() != size || !qFuzzyCompare(m_imageDpr, dpr) || firstColumn == 0) {
-        m_image = QImage{size, QImage::Format_RGB32};
-        m_image.fill(m_config.colours.front());
+        m_image = QImage{size, QImage::Format_ARGB32_Premultiplied};
+        m_image.fill(background);
         firstColumn = 0;
     }
     m_imageDpr = dpr;
@@ -518,9 +525,10 @@ void SpectrogramSeekBar::rebuildImage(int firstColumn)
 
     std::vector levels(static_cast<size_t>(imageHeight), -1.0F);
     std::array<QRgb, 256> colours;
+    const QRgb bgPixel = qPremultiply(background.rgba());
 
     for(size_t i{0}; i < colours.size(); ++i) {
-        colours[i] = colourForLevel(static_cast<double>(i) / 255.0, m_config.colours).rgb();
+        colours[i] = qPremultiply(colourForLevel(static_cast<double>(i) / 255.0, gradient).rgba());
     }
 
     for(int column{firstColumn}; column < m_completedColumns; ++column) {
@@ -535,8 +543,7 @@ void SpectrogramSeekBar::rebuildImage(int firstColumn)
         for(int row{0}; row < imageHeight; ++row) {
             const float level = levels[row];
             auto* pixels      = reinterpret_cast<QRgb*>(m_image.scanLine(row));
-            pixels[column]    = level < 0.0F ? m_config.colours.front().rgb()
-                                             : colours[std::clamp(std::lround(level * 255.0F), 0L, 255L)];
+            pixels[column]    = level < 0.0F ? bgPixel : colours[std::clamp(std::lround(level * 255.0F), 0L, 255L)];
         }
     }
 }

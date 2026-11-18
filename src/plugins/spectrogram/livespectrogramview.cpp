@@ -163,7 +163,7 @@ void LiveSpectrogramView::paintEvent(QPaintEvent* /*event*/)
 
     QPainter painter{this};
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    painter.fillRect(rect(), m_config.colours.front());
+    painter.fillRect(rect(), colourForLevel(0.0, resolvedGradientStops(m_config.gradient, palette())));
 
     if(m_config.presentationMode == PresentationMode::Stationary) {
         if(!m_image.isNull() && m_historyPixelCount > 0) {
@@ -606,7 +606,7 @@ bool LiveSpectrogramView::analyseColumn(uint64_t endTimeMs)
     }
 
     std::vector<float> levels(static_cast<size_t>(m_image.height()), -1.0F);
-    const auto& colours = m_config.colours;
+    const auto gradient = resolvedGradientStops(m_config.gradient, palette());
 
     if(splitStereo && m_image.height() >= 2) {
         const int requestedSpacing
@@ -631,7 +631,7 @@ bool LiveSpectrogramView::analyseColumn(uint64_t endTimeMs)
 
     std::array<QRgb, 256> colourTable;
     for(size_t index{0}; index < colourTable.size(); ++index) {
-        colourTable[index] = qPremultiply(colourForLevel(static_cast<double>(index) / 255.0, colours).rgba());
+        colourTable[index] = qPremultiply(colourForLevel(static_cast<double>(index) / 255.0, gradient).rgba());
     }
 
     for(int row{0}; row < m_image.height(); ++row) {

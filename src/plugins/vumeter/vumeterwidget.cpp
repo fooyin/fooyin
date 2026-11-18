@@ -22,12 +22,12 @@
 #include "vumetercolours.h"
 
 #include <core/player/playercontroller.h>
+#include <gui/brushsource.h>
 #include <gui/configdialog.h>
 #include <gui/coverprovider.h>
 #include <gui/frametimer.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/backgroundimagesource.h>
-#include <gui/widgets/gradienteditor.h>
 #include <gui/widgets/widgetbackground.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/timeconstants.h>
@@ -197,7 +197,7 @@ public:
     bool m_stopping{false};
 
     Colours m_colours;
-    QLinearGradient m_gradient;
+    QBrush m_gradient;
     QPixmap m_staticLayer;
     QSize m_staticLayerSize;
     qreal m_staticLayerDpr{1.0};
@@ -446,18 +446,9 @@ QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel)
 
 void VuMeterWidgetPrivate::createGradient()
 {
-    QLinearGradient pattern;
-
-    if(m_orientation == Qt::Horizontal) {
-        pattern = {m_meterX, 0, m_meterX + m_meterWidth, 0};
-    }
-    else {
-        pattern = {0, m_meterY + m_meterHeight, 0, m_meterY};
-    }
-
-    setGradientColours(pattern, m_colours.gradient(m_self->palette()));
-
-    m_gradient = pattern;
+    const QRectF bounds{m_meterX, m_meterY, m_meterWidth, m_meterHeight};
+    m_gradient = resolveBrush(m_colours.gradient(), m_self->palette(), QPalette::Active, bounds, m_orientation,
+                              m_orientation == Qt::Vertical);
 }
 
 void VuMeterWidgetPrivate::setUpdateFps(int fps)
@@ -834,12 +825,7 @@ VuMeterWidget::VuMeterWidget(Type type, PlayerController* playerController, Cove
                      &WidgetBackground::setPixmap);
 
     auto updateThemeColours = [this]() {
-        if(m_config.meterColours.isValid() && m_config.meterColours.canConvert<Colours>()
-           && !m_config.meterColours.value<Colours>().isEmpty()) {
-            return;
-        }
-
-        p->m_colours = Colours{};
+        p->m_colours = m_config.meterColours.canConvert<Colours>() ? m_config.meterColours.value<Colours>() : Colours{};
         p->createGradient();
         p->invalidateStaticLayer();
         update();
@@ -1288,7 +1274,12 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
             setColour(u"LegendColour"_s, Colours::Type::Legend);
             setColour(u"GridlinesColour"_s, Colours::Type::Gridlines);
 
-            if(const QJsonValue value = layout.value("BarGradientColours"_L1); value.isArray()) {
+            if(layout.contains("BarGradient"_L1)) {
+                if(const auto brush = readBrushSource(layout.value("BarGradient"_L1), QString{})) {
+                    colours.setGradient(*brush);
+                }
+            }
+            else if(const QJsonValue value = layout.value("BarGradientColours"_L1); value.isArray()) {
                 std::vector<QColor> gradient;
                 const QJsonArray array = value.toArray();
                 for(const auto& colourValue : array) {
@@ -1297,7 +1288,7 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
                         gradient.push_back(colour);
                     }
                 }
-                colours.setGradient(gradient);
+                colours.setLegacyGradient(gradient);
             }
             else {
                 std::vector<QColor> gradient;
@@ -1309,7 +1300,7 @@ VuMeterWidget::ConfigData VuMeterWidget::configFromLayout(const QJsonObject& lay
                 if(secondColour.isValid()) {
                     gradient.push_back(secondColour);
                 }
-                colours.setGradient(gradient);
+                colours.setLegacyGradient(gradient);
             }
 
             if(!colours.isEmpty()) {
@@ -1367,17 +1358,13 @@ void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
         saveColour(u"LegendColour"_s, Colours::Type::Legend);
         saveColour(u"GridlinesColour"_s, Colours::Type::Gridlines);
 
-        const std::vector<QColor>& customGradient = colours.customGradient();
-        if(customGradient.empty()) {
-            layout.remove("BarGradientColours"_L1);
+        if(const auto& customGradient = colours.customGradient()) {
+            layout["BarGradient"_L1] = brushSourceToJson(*customGradient);
         }
         else {
-            QJsonArray gradientColours;
-            for(const QColor& colour : customGradient) {
-                gradientColours.append(colour.name(QColor::HexArgb));
-            }
-            layout["BarGradientColours"_L1] = gradientColours;
+            layout.remove("BarGradient"_L1);
         }
+        layout.remove("BarGradientColours"_L1);
 
         layout.remove("Gradient1Colour"_L1);
         layout.remove("Gradient2Colour"_L1);
@@ -1386,6 +1373,7 @@ void VuMeterWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& la
         layout.remove("BackgroundColour"_L1);
         layout.remove("PeakColour"_L1);
         layout.remove("LegendColour"_L1);
+        layout.remove("BarGradient"_L1);
         layout.remove("BarGradientColours"_L1);
         layout.remove("Gradient1Colour"_L1);
         layout.remove("Gradient2Colour"_L1);

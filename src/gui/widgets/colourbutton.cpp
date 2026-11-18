@@ -19,25 +19,26 @@
 
 #include <gui/widgets/colourbutton.h>
 
+#include "swatchbutton.h"
+
 #include <gui/widgets/colourpickerdialog.h>
 
 #include <QCheckBox>
+#include <QEvent>
 #include <QHBoxLayout>
-#include <QPaintEvent>
-#include <QPainter>
 #include <QPointer>
-#include <QPushButton>
+#include <QResizeEvent>
 
 namespace Fooyin {
 namespace {
-class ColourSwatch : public QPushButton
+class ColourSwatch : public SwatchButton
 {
 public:
     explicit ColourSwatch(const QColor& colour, QWidget* parent = nullptr)
-        : QPushButton{parent}
+        : SwatchButton{parent}
         , m_colour{colour}
     {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        updateIcon();
     }
 
     [[nodiscard]] QColor colour() const
@@ -48,47 +49,32 @@ public:
     void setColour(const QColor& colour)
     {
         m_colour = colour;
-        update();
-    }
-
-    [[nodiscard]] QSize sizeHint() const override
-    {
-        return {20, 20};
-    }
-
-    [[nodiscard]] QSize minimumSizeHint() const override
-    {
-        return {20, 20};
+        updateIcon();
     }
 
 protected:
-    void paintEvent(QPaintEvent* event) override
+    void resizeEvent(QResizeEvent* event) override
     {
-        QPushButton::paintEvent(event);
+        SwatchButton::resizeEvent(event);
+        updateIcon();
+    }
 
-        QPainter painter{this};
-        if(m_colour.alpha() < 255) {
-            for(int y{0}; y < height(); y += 4) {
-                for(int x{0}; x < width(); x += 4) {
-                    painter.fillRect(QRect{x, y, 4, 4},
-                                     ((x + y) / 4) % 2 ? QColor{160, 160, 160} : QColor{220, 220, 220});
-                }
-            }
+    bool event(QEvent* event) override
+    {
+        const bool handled = SwatchButton::event(event);
+        if(event->type() == QEvent::PaletteChange || event->type() == QEvent::DevicePixelRatioChange) {
+            updateIcon();
         }
-        painter.fillRect(rect(), m_colour);
-
-        if(!isEnabled()) {
-            QColor overlay = palette().color(QPalette::Window);
-            overlay.setAlpha(160);
-            painter.fillRect(rect(), overlay);
-        }
-
-        const auto colourGroup = isEnabled() ? QPalette::Active : QPalette::Disabled;
-        painter.setPen({palette().color(colourGroup, QPalette::Text), 2});
-        painter.drawRect(rect().adjusted(0, 0, -1, -1));
+        return handled;
     }
 
 private:
+    void updateIcon()
+    {
+        const QSize size = (this->size() - QSize{8, 4}).expandedTo(QSize{16, 12});
+        setIcon(brushSourceIcon(m_colour, palette(), QPalette::Active, devicePixelRatioF(), size));
+    }
+
     QColor m_colour;
 };
 } // namespace
@@ -185,7 +171,7 @@ ColourButton::ColourButton(const QString& text, const QColor& colour, bool check
     layout->addWidget(p->m_checkBox);
     layout->addWidget(p->m_swatch, 1);
 
-    QObject::connect(p->m_swatch, &QPushButton::clicked, this, [this]() {
+    QObject::connect(p->m_swatch, &QAbstractButton::clicked, this, [this]() {
         const QPointer guard{this};
         Q_EMIT clicked();
         if(guard) {

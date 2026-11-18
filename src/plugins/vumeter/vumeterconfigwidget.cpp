@@ -23,8 +23,8 @@
 
 #include <gui/framerate.h>
 #include <gui/widgets/backgroundconfigwidget.h>
+#include <gui/widgets/brushsourcebutton.h>
 #include <gui/widgets/colourbutton.h>
-#include <gui/widgets/gradienteditor.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -67,7 +67,7 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     , m_peakColour{new ColourButton(tr("Peak colour") + ":"_L1, true, this)}
     , m_legendColour{new ColourButton(tr("Legend colour") + ":"_L1, true, this)}
     , m_gridlinesColour{new ColourButton(tr("Gridlines") + ":"_L1, true, this)}
-    , m_barGradient{new GradientEditor(this)}
+    , m_barGradient{new BrushSourceButton(this, true)}
     , m_background{new BackgroundConfigWidget(this)}
 {
     m_peakHold->setRange(0, 5000);
@@ -80,7 +80,7 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     m_peakFalloff->setSingleStep(10);
     m_peakFalloff->setSuffix(u" dB/s"_s);
 
-    m_barGradient->setOrientationControlVisible(false);
+    m_barGradient->setSwatchOnly(true);
 
     m_updateFps->setEditable(true);
     m_updateFps->setValidator(new QIntValidator(Gui::FrameRate::minFps(), Gui::FrameRate::maxFps(), m_updateFps));
@@ -159,8 +159,8 @@ VuMeterConfigDialog::VuMeterConfigDialog(VuMeter::VuMeterWidget* vuMeter, QWidge
     coloursLayout->addWidget(m_peakColour, row++, 0, 1, 3);
     coloursLayout->addWidget(m_legendColour, row++, 0, 1, 3);
     coloursLayout->addWidget(m_gridlinesColour, row++, 0, 1, 3);
-    coloursLayout->addWidget(m_barGradientEnabled, row, 0, Qt::AlignTop);
-    coloursLayout->addWidget(m_barGradient, row++, 1);
+    coloursLayout->addWidget(m_barGradientEnabled, row, 0);
+    coloursLayout->addWidget(m_barGradient, row++, 1, 1, 2);
     coloursLayout->setColumnStretch(2, 1);
 
     QObject::connect(m_barGradientEnabled, &QCheckBox::toggled, m_barGradient, &QWidget::setEnabled);
@@ -236,7 +236,7 @@ VuMeterWidget::ConfigData VuMeterConfigDialog::config() const
         colours.setColour(Colours::Type::Gridlines, m_gridlinesColour->colour());
     }
     if(m_barGradientEnabled->isChecked()) {
-        colours.setGradient(m_barGradient->colours());
+        colours.setGradient(m_barGradient->value());
     }
     if(!colours.isEmpty()) {
         config.meterColours = QVariant::fromValue(colours);
@@ -283,10 +283,9 @@ void VuMeterConfigDialog::setConfig(const VuMeterWidget::ConfigData& config)
     m_legendColour->setColour(colours.colour(Colours::Type::Legend, palette()));
     m_gridlinesColour->setChecked(colours.hasOverride(Colours::Type::Gridlines));
     m_gridlinesColour->setColour(colours.colour(Colours::Type::Gridlines, palette()));
-    m_barGradientEnabled->setChecked(!colours.customGradient().empty());
-    m_barGradient->setColours(colours.gradient(palette()));
+    m_barGradientEnabled->setChecked(colours.customGradient().has_value());
+    m_barGradient->setValue(colours.gradient(), widget()->palette(), QPalette::Active);
     m_barGradient->setEnabled(m_barGradientEnabled->isChecked());
-    m_barGradient->setOrientation(widget()->orientation());
 }
 
 void VuMeterConfigDialog::mergeExternalConfig(const VuMeterWidget::ConfigData& previous,

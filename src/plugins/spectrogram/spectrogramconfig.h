@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/engine/visualisationservice.h>
+#include <gui/brushsource.h>
 #include <gui/trackdisplay.h>
 
 #include <QColor>
@@ -70,7 +71,7 @@ struct SpectrogramConfig
     int minDb{-70};
     int maxDb{0};
     int windowFunction{static_cast<int>(VisualisationSession::SpectrumWindowFunction::BlackmanHarris)};
-    std::vector<QColor> colours;
+    BrushSource gradient{LinearGradientSource{}};
 };
 
 } // namespace Fooyin::Spectrogram

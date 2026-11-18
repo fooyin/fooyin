@@ -26,9 +26,9 @@
 #include <gui/framerate.h>
 #include <gui/guiutils.h>
 #include <gui/widgets/backgroundconfigwidget.h>
+#include <gui/widgets/brushsourcebutton.h>
 #include <gui/widgets/colourbutton.h>
 #include <gui/widgets/fontbutton.h>
-#include <gui/widgets/gradienteditor.h>
 
 #include <QAbstractSpinBox>
 #include <QCheckBox>
@@ -184,7 +184,7 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     , m_barGradientEnabled{new QCheckBox(tr("Bar gradient") + ":"_L1, this)}
     , m_textColour{new ColourButton(tr("Text colour") + ":"_L1, true, this)}
     , m_backgroundColour{new ColourButton(tr("Background colour") + ":"_L1, true, this)}
-    , m_barGradient{new GradientEditor(this)}
+    , m_barGradient{new BrushSourceButton(this, true)}
     , m_peaksColour{new ColourButton(tr("Peaks colour") + ":"_L1, true, this)}
     , m_horizontalGridColour{new ColourButton(tr("Horizontal gridlines") + ":"_L1, true, this)}
     , m_verticalGridColour{new ColourButton(tr("Vertical gridlines") + ":"_L1, true, this)}
@@ -192,6 +192,7 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     , m_whiteKeyColour{new ColourButton(tr("White keys") + ":"_L1, true, this)}
     , m_blackKeyColour{new ColourButton(tr("Black keys") + ":"_L1, true, this)}
     , m_background{new BackgroundConfigWidget(this)}
+    , m_gradientOrientation{GradientOrientation::Vertical}
 {
     auto* spectrumGroup    = new QGroupBox(tr("Scale"), this);
     auto* spectrumLayout   = new QGridLayout(spectrumGroup);
@@ -313,7 +314,8 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
                                 m_verticalGridColour, m_octaveGridColour, m_whiteKeyColour, m_blackKeyColour}) {
         button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
-    m_barGradient->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_barGradient->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_barGradient->setSwatchOnly(true);
 
     auto* frequencyRange  = new QWidget(this);
     auto* frequencyLayout = new QHBoxLayout(frequencyRange);
@@ -456,11 +458,11 @@ SpectrumConfigDialog::SpectrumConfigDialog(SpectrumWidget* spectrum, QWidget* pa
     leftColoursLayout->addWidget(m_blackKeyColour, 9, 0, 1, 2);
 
     addGridSection(rightColoursLayout, 0, 0, tr("Bars"), this);
-    rightColoursLayout->addWidget(m_barGradientEnabled, 1, 0, Qt::AlignTop);
+    rightColoursLayout->addWidget(m_barGradientEnabled, 1, 0);
     rightColoursLayout->addWidget(m_barGradient, 1, 1);
     rightColoursLayout->addWidget(m_peaksColour, 2, 0, 1, 2);
     QObject::connect(m_barGradientEnabled, &QCheckBox::toggled, m_barGradient, &QWidget::setEnabled);
-    rightColoursLayout->setRowStretch(1, 1);
+    rightColoursLayout->setRowStretch(3, 1);
 
     const int coloursColumnWidth
         = std::max(leftColoursColumn->sizeHint().width(), rightColoursColumn->sizeHint().width());
@@ -547,8 +549,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
         .fftDurationMs       = m_fftDuration->value(),
         .fftSizingMode       = static_cast<FftSizingMode>(m_fftSizingMode->currentData().toInt()),
         .windowFunction      = static_cast<WindowFunction>(m_windowFunction->currentData().toInt()),
-        .gradientOrientation = m_barGradient->orientation() == Qt::Vertical ? GradientOrientation::Vertical
-                                                                            : GradientOrientation::Horizontal,
+        .gradientOrientation = m_gradientOrientation,
         .labelMode           = static_cast<LabelMode>(m_labelMode->currentData().toInt()),
         .drawStyle           = static_cast<DrawStyle>(m_drawStyle->currentData().toInt()),
         .showTopLabels       = m_showTopLabels->isChecked(),
@@ -577,7 +578,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
     applyColour(m_textColour, Colours::Type::Text);
     applyColour(m_backgroundColour, Colours::Type::Background);
     if(m_barGradientEnabled->isChecked()) {
-        colours.setGradient(m_barGradient->colours());
+        colours.setGradient(m_barGradient->value());
     }
     applyColour(m_peaksColour, Colours::Type::Peaks);
     applyColour(m_horizontalGridColour, Colours::Type::HorizontalGrid);
@@ -595,6 +596,7 @@ SpectrumWidget::ConfigData SpectrumConfigDialog::config() const
 
 void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
 {
+    m_gradientOrientation = config.gradientOrientation;
     m_background->setConfig(config.background);
     m_bandCount->setValue(config.bandCount);
     m_barSpacing->setValue(config.barSpacing);
@@ -687,11 +689,11 @@ void SpectrumConfigDialog::setConfig(const SpectrumWidget::ConfigData& config)
 
     loadColour(m_textColour, Colours::Type::Text);
     loadColour(m_backgroundColour, Colours::Type::Background);
-    m_barGradientEnabled->setChecked(!colours.customGradient().empty());
-    m_barGradient->setColours(colours.gradient(widget()->palette()));
+
+    m_barGradientEnabled->setChecked(colours.customGradient().has_value());
+    m_barGradient->setValue(colours.gradient(widget()->palette()), widget()->palette(), QPalette::Active);
     m_barGradient->setEnabled(m_barGradientEnabled->isChecked());
-    m_barGradient->setOrientation(config.gradientOrientation == GradientOrientation::Vertical ? Qt::Vertical
-                                                                                              : Qt::Horizontal);
+
     loadColour(m_peaksColour, Colours::Type::Peaks);
     loadColour(m_horizontalGridColour, Colours::Type::HorizontalGrid);
     loadColour(m_verticalGridColour, Colours::Type::VerticalGrid);

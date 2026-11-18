@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <gui/brushsource.h>
 #include <utils/datastream.h>
 
 #include <QColor>
@@ -27,12 +28,14 @@
 #include <QMetaType>
 #include <QPalette>
 
+#include <optional>
+
 namespace Fooyin::Spectrum {
 class Colours
 {
 public:
     static constexpr qint32 Magic   = 0x5350434F;
-    static constexpr qint32 Version = 1;
+    static constexpr qint32 Version = 2;
 
     enum class Type : uint8_t
     {
@@ -54,7 +57,12 @@ public:
                 m_background = colour;
                 break;
             case Type::BarGradient:
-                setGradient({colour});
+                if(colour.isValid()) {
+                    setGradient(BrushSource{colour});
+                }
+                else {
+                    m_barGradient.reset();
+                }
                 break;
             case Type::Peaks:
                 m_peaks = colour;
@@ -80,32 +88,54 @@ public:
         }
     }
 
-    void setGradient(const std::vector<QColor>& colours)
+    void setGradient(const BrushSource& brush)
     {
-        m_barGradient.clear();
-        for(const QColor& colour : colours) {
+        m_barGradient = brush;
+    }
+
+    void setLegacyGradient(const std::vector<QColor>& colours)
+    {
+        m_barGradient.reset();
+
+        LinearGradientSource gradient;
+        gradient.stops.clear();
+
+        for(const auto& colour : colours) {
             if(colour.isValid()) {
-                m_barGradient.push_back(colour);
+                gradient.stops.emplace_back(0.0, colour);
             }
+        }
+        if(gradient.stops.size() == 1) {
+            m_barGradient = std::get<QColor>(gradient.stops.front().colour);
+        }
+        else if(!gradient.stops.empty()) {
+            for(size_t index{0}; index < gradient.stops.size(); ++index) {
+                gradient.stops[index].position
+                    = static_cast<double>(index) / static_cast<double>(gradient.stops.size() - 1);
+            }
+            m_barGradient = gradient;
         }
     }
 
-    static std::vector<QColor> defaultGradient(const QPalette& palette)
+    static BrushSource defaultGradient(const QPalette& palette)
     {
         const QColor highlight       = palette.color(QPalette::Active, QPalette::Highlight);
         const QColor highlightedText = palette.color(QPalette::Active, QPalette::HighlightedText);
         const QColor window          = palette.color(QPalette::Active, QPalette::Window);
         const QColor low             = blendColours(highlight, window, 0.55);
 
-        return {blendColours(highlight, highlightedText, 0.25), highlight, low};
+        return LinearGradientSource{LinearGradientSource::Direction::AlongControl,
+                                    {{.position = 0.0, .colour = blendColours(highlight, highlightedText, 0.25)},
+                                     {.position = 0.5, .colour = QPalette::Highlight},
+                                     {.position = 1.0, .colour = low}}};
     }
 
-    [[nodiscard]] std::vector<QColor> gradient(const QPalette& palette) const
+    [[nodiscard]] BrushSource gradient(const QPalette& palette) const
     {
-        return m_barGradient.empty() ? defaultGradient(palette) : m_barGradient;
+        return m_barGradient ? *m_barGradient : defaultGradient(palette);
     }
 
-    [[nodiscard]] const std::vector<QColor>& customGradient() const
+    [[nodiscard]] const std::optional<BrushSource>& customGradient() const
     {
         return m_barGradient;
     }
@@ -116,7 +146,7 @@ public:
             case Type::Background:
                 return m_background;
             case Type::BarGradient:
-                return m_barGradient.empty() ? QColor{} : m_barGradient.front();
+                return m_barGradient ? colour(type, QPalette{}) : QColor{};
             case Type::Peaks:
                 return m_peaks;
             case Type::Text:
@@ -162,8 +192,10 @@ public:
         switch(type) {
             case Type::Background:
                 return m_background.isValid() ? m_background : palette.color(QPalette::Window);
-            case Type::BarGradient:
-                return gradient(palette).front();
+            case Type::BarGradient: {
+                const auto brush = resolveBrush(gradient(palette), palette, QPalette::Active, QRectF{0, 0, 1, 1});
+                return brush.gradient() ? brush.gradient()->stops().front().second : brush.color();
+            }
             case Type::Peaks:
                 return m_peaks.isValid() ? m_peaks : QColor{190, 40, 10};
             case Type::Text:
@@ -185,7 +217,7 @@ public:
 
     [[nodiscard]] bool isEmpty() const
     {
-        return !m_background.isValid() && m_barGradient.empty() && !m_peaks.isValid() && !m_text.isValid()
+        return !m_background.isValid() && !m_barGradient.has_value() && !m_peaks.isValid() && !m_text.isValid()
             && !m_horizontalGrid.isValid() && !m_verticalGrid.isValid() && !m_octaveGrid.isValid()
             && !m_whiteKey.isValid() && !m_blackKey.isValid();
     }
@@ -195,7 +227,7 @@ public:
         stream << Magic;
         stream << Version;
         stream << colours.m_background;
-        DataStream::writeContainer(stream, colours.m_barGradient);
+        stream << (colours.m_barGradient ? brushSourceToJson(*colours.m_barGradient) : QJsonObject{});
         stream << colours.m_peaks;
         stream << colours.m_text;
         stream << colours.m_horizontalGrid;
@@ -215,14 +247,34 @@ public:
         stream >> magic;
         stream >> version;
 
-        if(magic != Magic || version != Version) {
+        if(magic != Magic || (version != 1 && version != Version)) {
             stream.rollbackTransaction();
             colours = {};
             return stream;
         }
 
         stream >> colours.m_background;
-        DataStream::readContainer(stream, colours.m_barGradient);
+
+        if(version == 1) {
+            std::vector<QColor> legacy;
+            DataStream::readContainer(stream, legacy);
+            colours.setLegacyGradient(legacy);
+        }
+        else {
+            QJsonObject source;
+            stream >> source;
+
+            colours.m_barGradient.reset();
+
+            if(!source.isEmpty()) {
+                if(const auto brush = readBrushSource(source, QString{})) {
+                    colours.m_barGradient = *brush;
+                }
+                else {
+                    stream.setStatus(QDataStream::ReadCorruptData);
+                }
+            }
+        }
         stream >> colours.m_peaks;
         stream >> colours.m_text;
         stream >> colours.m_horizontalGrid;
@@ -250,7 +302,7 @@ private:
     }
 
     QColor m_background;
-    std::vector<QColor> m_barGradient;
+    std::optional<BrushSource> m_barGradient;
     QColor m_peaks;
     QColor m_text;
     QColor m_horizontalGrid;

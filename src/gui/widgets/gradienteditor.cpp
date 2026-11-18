@@ -19,219 +19,258 @@
 
 #include <gui/widgets/gradienteditor.h>
 
+#include <gui/guiconstants.h>
+#include <gui/iconloader.h>
 #include <gui/widgets/colourbutton.h>
 
-#include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QEvent>
 #include <QFrame>
-#include <QGradient>
-#include <QHBoxLayout>
-#include <QLinearGradient>
-#include <QPainter>
+#include <QGridLayout>
+#include <QLabel>
 #include <QPushButton>
+#include <QScopedValueRollback>
 #include <QScrollArea>
+#include <QSignalBlocker>
 #include <QSizePolicy>
+#include <QToolButton>
 #include <QVBoxLayout>
 
-constexpr auto PreviewWidth  = 36;
-constexpr auto PreviewHeight = 120;
+#include <cmath>
+
+constexpr auto MinListHeight = 120;
 constexpr auto MinStopHeight = 20;
 
+using namespace Qt::StringLiterals;
+
 namespace Fooyin {
-void setGradientColours(QGradient& gradient, const std::vector<QColor>& colours)
-{
-    if(colours.empty()) {
-        gradient.setColorAt(0.0, Qt::transparent);
-        gradient.setColorAt(1.0, Qt::transparent);
-        return;
-    }
-    if(colours.size() == 1) {
-        gradient.setColorAt(0.0, colours.front());
-        gradient.setColorAt(1.0, colours.front());
-        return;
-    }
-
-    const double step = 1.0 / static_cast<double>(colours.size() - 1);
-
-    for(qsizetype index{0}; std::cmp_less(index, colours.size()); ++index) {
-        gradient.setColorAt(static_cast<double>(index) * step, colours.at(index));
-    }
-}
-
-QLinearGradient linearGradient(const QRectF& rect, Qt::Orientation orientation, const std::vector<QColor>& colours)
-{
-    QLinearGradient gradient = orientation == Qt::Vertical ? QLinearGradient{0.0, rect.top(), 0.0, rect.bottom()}
-                                                           : QLinearGradient{rect.left(), 0.0, rect.right(), 0.0};
-    setGradientColours(gradient, colours);
-    return gradient;
-}
-
-class GradientEditorPreview : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit GradientEditorPreview(QWidget* parent = nullptr)
-        : QWidget{parent}
-    {
-        setFixedWidth(PreviewWidth);
-        setMinimumHeight(PreviewHeight);
-        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    }
-
-    void setColours(const std::vector<QColor>& colours)
-    {
-        m_colours = colours;
-        update();
-    }
-
-    void setOrientation(Qt::Orientation orientation)
-    {
-        m_orientation = orientation;
-        update();
-    }
-
-protected:
-    void paintEvent(QPaintEvent* event) override
-    {
-        QWidget::paintEvent(event);
-
-        QPainter painter{this};
-        const QRectF bounds = rect().adjusted(1, 1, -1, -1);
-        painter.fillRect(bounds, linearGradient(bounds, m_orientation, m_colours));
-        painter.setPen(palette().mid().color());
-        painter.drawRect(rect().adjusted(0, 0, -1, -1));
-    }
-
-private:
-    std::vector<QColor> m_colours;
-    Qt::Orientation m_orientation{Qt::Vertical};
-};
-
-class GradientEditorPrivate
+class GradientEditorPrivate : public QObject
 {
 public:
+    struct StopRow
+    {
+        QWidget* editor;
+        QDoubleSpinBox* position;
+        QToolButton* remove;
+    };
+
     explicit GradientEditorPrivate(GradientEditor* self)
         : m_self{self}
         , m_coloursWidget{new QWidget(m_self)}
-        , m_coloursLayout{new QVBoxLayout()}
+        , m_coloursLayout{new QGridLayout()}
         , m_coloursScroll{new QScrollArea(m_self)}
-        , m_preview{new GradientEditorPreview(m_self)}
-        , m_orientation{new QComboBox(m_self)}
     {
         m_coloursWidget->setLayout(m_coloursLayout);
         m_coloursLayout->setContentsMargins({});
+        m_coloursLayout->setSizeConstraint(QLayout::SetMinimumSize);
+        m_coloursLayout->setColumnStretch(0, 1);
+        m_coloursLayout->addWidget(new QLabel(GradientEditor::tr("Colour"), m_coloursWidget), 0, 0);
+        m_coloursLayout->addWidget(new QLabel(GradientEditor::tr("Position"), m_coloursWidget), 0, 1);
 
         m_coloursScroll->setWidget(m_coloursWidget);
         m_coloursScroll->setWidgetResizable(true);
         m_coloursScroll->setFrameShape(QFrame::NoFrame);
         m_coloursScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_coloursScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        m_coloursScroll->setMinimumHeight(PreviewHeight);
+        m_coloursScroll->setMinimumHeight(MinListHeight);
         m_coloursScroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-        m_orientation->addItem(GradientEditor::tr("Vertical"), static_cast<int>(Qt::Vertical));
-        m_orientation->addItem(GradientEditor::tr("Horizontal"), static_cast<int>(Qt::Horizontal));
-        m_orientation->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
 
-    void addColour(const QColor& colour)
+    void addStop()
     {
-        if(colour.isValid()) {
-            m_colours.emplace_back(colour);
+        size_t index{m_stops.size()};
+        double position{1.0};
+        if(!m_stops.empty()) {
+            double start{0.0};
+            double widest{-1.0};
+            for(size_t gap{0}; gap <= m_stops.size(); ++gap) {
+                const double end = gap < m_stops.size() ? m_stops[gap].position : 1.0;
+                if(end - start > widest) {
+                    widest   = end - start;
+                    position = (start + end) / 2.0;
+                    index    = gap;
+                }
+                start = end;
+            }
         }
-        else {
-            m_colours.emplace_back(!m_colours.empty() ? m_colours.back() : m_self->palette().highlight().color());
-        }
+
+        auto stop     = m_stops.empty() ? GradientEditor::ColourStop{.position = 0.0,
+                                                                     .colour   = m_self->palette().highlight().color(),
+                                                                     .data     = {}}
+                                        : m_stops[index > 0 ? index - 1 : 0];
+        stop.position = position;
+        m_stops.insert(m_stops.begin() + static_cast<ptrdiff_t>(index), stop);
+        m_selectedStop = static_cast<int>(index);
 
         rebuildColourButtons();
-        updatePreview();
-        Q_EMIT m_self->coloursChanged();
+        Q_EMIT m_self->stopsChanged();
+        Q_EMIT m_self->selectedStopChanged(m_selectedStop);
     }
 
-    void removeColour()
+    void removeStop(int index)
     {
-        if(m_colours.size() <= 1) {
+        if(m_stops.size() <= 2 || index < 0 || std::cmp_greater_equal(index, m_stops.size())) {
             return;
         }
 
-        m_colours.pop_back();
+        m_stops.erase(m_stops.begin() + index);
+        m_selectedStop -= m_selectedStop > index;
+        m_selectedStop = std::min(m_selectedStop, static_cast<int>(m_stops.size()) - 1);
+
         rebuildColourButtons();
-        updatePreview();
-        Q_EMIT m_self->coloursChanged();
+
+        auto* selectedEditor = m_rows[m_selectedStop].editor;
+        selectedEditor->setFocus();
+        m_coloursScroll->ensureWidgetVisible(selectedEditor);
+
+        Q_EMIT m_self->stopsChanged();
+        Q_EMIT m_self->selectedStopChanged(m_selectedStop);
     }
 
-    void reverseColours()
+    void reverseStops()
     {
-        std::ranges::reverse(m_colours);
+        if(m_stops.empty()) {
+            return;
+        }
+        std::ranges::reverse(m_stops);
+        for(auto& stop : m_stops) {
+            stop.position = 1.0 - stop.position;
+        }
+        m_selectedStop = static_cast<int>(m_stops.size()) - 1 - m_selectedStop;
         rebuildColourButtons();
-        updatePreview();
-        Q_EMIT m_self->coloursChanged();
+        Q_EMIT m_self->stopsChanged();
+        Q_EMIT m_self->selectedStopChanged(m_selectedStop);
+    }
+
+    void spaceStops()
+    {
+        const auto intervals = m_stops.size() > 1 ? m_stops.size() - 1 : 1;
+        for(size_t index{0}; index < m_stops.size(); ++index) {
+            m_stops[index].position = static_cast<qreal>(index) / static_cast<qreal>(intervals);
+            const QSignalBlocker blocker{m_rows[index].position};
+            m_rows[index].position->setValue(m_stops[index].position * 100.0);
+        }
     }
 
     void rebuildColourButtons()
     {
-        m_coloursWidget->setMinimumHeight(0);
+        const QScopedValueRollback guard{m_rebuilding, true};
+        m_coloursLayout->setAlignment(m_factory ? Qt::AlignTop : Qt::Alignment{});
 
-        while(const auto* item = m_coloursLayout->takeAt(0)) {
-            if(QWidget* widget = item->widget()) {
+        for(size_t index{0}; index < m_rows.size(); ++index) {
+            const auto& row = m_rows[index];
+            m_coloursLayout->setRowStretch(static_cast<int>(index) + 1, 0);
+            for(QWidget* widget :
+                {row.editor, static_cast<QWidget*>(row.position), static_cast<QWidget*>(row.remove)}) {
+                m_coloursLayout->removeWidget(widget);
+                widget->hide();
                 widget->deleteLater();
             }
-            delete item;
         }
+        m_rows.clear();
 
-        for(qsizetype index{0}; std::cmp_less(index, m_colours.size()); ++index) {
-            auto* button = new ColourButton(m_colours.at(index), m_coloursWidget);
-            button->setMinimumHeight(MinStopHeight);
-            button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            m_coloursLayout->addWidget(button, 1);
+        for(qsizetype index{0}; std::cmp_less(index, m_stops.size()); ++index) {
+            QWidget* editor = m_factory ? m_factory(static_cast<int>(index), m_stops[index], m_coloursWidget) : nullptr;
+            if(!editor) {
+                auto* button = new ColourButton(m_stops[index].colour, m_coloursWidget);
+                QObject::connect(button, &ColourButton::colourUpdated, m_self, [this, button]() {
+                    const int stopIndex = m_self->colourEditorIndex(button);
+                    if(stopIndex < 0) {
+                        return;
+                    }
+                    auto stop   = m_stops[stopIndex];
+                    stop.colour = button->colour();
+                    m_self->updateColourStop(stopIndex, stop);
+                });
+                button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+                editor = button;
+            }
+            editor->setParent(m_coloursWidget);
+            editor->setFocusPolicy(Qt::StrongFocus);
+            editor->setMinimumHeight(MinStopHeight);
 
-            QObject::connect(button, &ColourButton::colourUpdated, m_self, [this, button, index]() {
-                m_colours[index] = button->colour();
-                updatePreview();
-                Q_EMIT m_self->coloursChanged();
+            auto* position = new QDoubleSpinBox(m_coloursWidget);
+            position->setRange(0.0, 100.0);
+            position->setDecimals(2);
+            position->setSuffix(u" %"_s);
+            position->setKeyboardTracking(false);
+            position->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+            position->setToolTip(GradientEditor::tr("Positions must be distinct. Stops are reordered automatically."));
+            position->setValue(m_stops[index].position * 100.0);
+            position->installEventFilter(this);
+
+            QObject::connect(position, &QDoubleSpinBox::valueChanged, m_self, [this, position](double value) {
+                const int stopIndex = m_self->colourEditorIndex(position);
+                if(stopIndex < 0) {
+                    return;
+                }
+                m_self->setSelectedStop(stopIndex);
+
+                auto stop     = m_stops[stopIndex];
+                stop.position = value / 100.0;
+                m_self->updateColourStop(stopIndex, stop);
+
+                const QSignalBlocker blocker{position};
+                position->setValue(m_stops[m_self->colourEditorIndex(position)].position * 100.0);
             });
+
+            auto* remove = new QToolButton(m_coloursWidget);
+            Gui::setThemeIcon(remove, Constants::Icons::Remove);
+            remove->setToolTip(GradientEditor::tr("Remove"));
+            remove->setFocusPolicy(Qt::StrongFocus);
+            remove->setEnabled(m_stops.size() > 2);
+            QObject::connect(remove, &QToolButton::clicked, m_self,
+                             [this, remove] { removeStop(m_self->colourEditorIndex(remove)); });
+            m_rows.emplace_back(editor, position, remove);
         }
 
-        const auto stopCount    = static_cast<int>(m_colours.size());
-        const int spacing       = stopCount > 1 ? m_coloursLayout->spacing() * (stopCount - 1) : 0;
-        const int contentHeight = (stopCount * MinStopHeight) + spacing;
-        m_coloursWidget->setMinimumHeight(std::max(PreviewHeight, contentHeight));
+        layoutRows();
+        m_coloursLayout->activate();
+        m_coloursWidget->adjustSize();
     }
 
-    void updatePreview() const
+    void layoutRows()
     {
-        m_preview->setColours(m_colours);
+        for(const auto& row : m_rows) {
+            m_coloursLayout->removeWidget(row.editor);
+            m_coloursLayout->removeWidget(row.position);
+            m_coloursLayout->removeWidget(row.remove);
+        }
+
+        for(size_t index{0}; index < m_rows.size(); ++index) {
+            const auto& row   = m_rows[index];
+            const int gridRow = static_cast<int>(index) + 1;
+            m_coloursLayout->addWidget(row.editor, gridRow, 0);
+            m_coloursLayout->addWidget(row.position, gridRow, 1);
+            m_coloursLayout->addWidget(row.remove, gridRow, 2);
+            m_coloursLayout->setRowStretch(gridRow, m_factory ? 0 : 1);
+
+            if(index > 0) {
+                QWidget::setTabOrder(m_rows[index - 1].remove, row.editor);
+            }
+            QWidget::setTabOrder(row.editor, row.position);
+            QWidget::setTabOrder(row.position, row.remove);
+        }
     }
 
-    [[nodiscard]] Qt::Orientation orientation() const
+    bool eventFilter(QObject* watched, QEvent* event) override
     {
-        return static_cast<Qt::Orientation>(m_orientation->currentData().toInt());
-    }
-
-    void setOrientation(Qt::Orientation orientation)
-    {
-        const int index = m_orientation->findData(static_cast<int>(orientation));
-        m_orientation->setCurrentIndex(index >= 0 ? index : m_orientation->findData(static_cast<int>(Qt::Vertical)));
-    }
-
-    void setOrientationControlVisible(bool visible)
-    {
-        m_orientation->setVisible(visible);
-    }
-
-    [[nodiscard]] bool isOrientationControlVisible() const
-    {
-        return m_orientation->isVisible();
+        if(!m_rebuilding && event->type() == QEvent::FocusIn) {
+            m_self->setSelectedStop(m_self->colourEditorIndex(qobject_cast<QWidget*>(watched)));
+        }
+        return QObject::eventFilter(watched, event);
     }
 
     GradientEditor* m_self;
+    bool m_rebuilding{false};
 
-    std::vector<QColor> m_colours;
+    int m_selectedStop{-1};
+    std::vector<GradientEditor::ColourStop> m_stops;
+    std::vector<StopRow> m_rows;
+    GradientEditor::ColourEditorFactory m_factory;
     QWidget* m_coloursWidget;
-    QVBoxLayout* m_coloursLayout;
+    QGridLayout* m_coloursLayout;
     QScrollArea* m_coloursScroll;
-    GradientEditorPreview* m_preview;
-    QComboBox* m_orientation;
 };
 
 GradientEditor::GradientEditor(QWidget* parent)
@@ -239,75 +278,148 @@ GradientEditor::GradientEditor(QWidget* parent)
     , p{std::make_unique<GradientEditorPrivate>(this)}
 {
     auto* addButton     = new QPushButton(tr("Add"), this);
-    auto* removeButton  = new QPushButton(tr("Remove"), this);
     auto* reverseButton = new QPushButton(tr("Reverse"), this);
+    auto* evenSpacing   = new QPushButton(tr("Evenly space stops"), this);
 
-    auto* buttonLayout = new QVBoxLayout();
-    buttonLayout->addWidget(addButton);
-    buttonLayout->addWidget(removeButton);
-    buttonLayout->addWidget(reverseButton);
-    buttonLayout->addStretch();
-    buttonLayout->addWidget(p->m_orientation);
+    auto* buttonLayout = new QGridLayout();
+    buttonLayout->addWidget(addButton, 0, 0, 1, 2);
+    buttonLayout->addWidget(reverseButton, 1, 0);
+    buttonLayout->addWidget(evenSpacing, 1, 1);
+    buttonLayout->setColumnStretch(0, 1);
+    buttonLayout->setColumnStretch(1, 1);
 
-    auto* layout = new QHBoxLayout(this);
+    auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});
-    layout->addWidget(p->m_preview);
-    layout->addWidget(p->m_coloursScroll);
+    layout->addWidget(p->m_coloursScroll, 1);
     layout->addLayout(buttonLayout);
 
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-    QObject::connect(addButton, &QPushButton::clicked, this, [this]() { p->addColour({}); });
-    QObject::connect(removeButton, &QPushButton::clicked, this, [this]() { p->removeColour(); });
-    QObject::connect(reverseButton, &QPushButton::clicked, this, [this]() { p->reverseColours(); });
-    QObject::connect(p->m_orientation, &QComboBox::currentIndexChanged, this, [this]() {
-        const Qt::Orientation orientation = p->orientation();
-        p->m_preview->setOrientation(orientation);
-        Q_EMIT orientationChanged(orientation);
-    });
+    QObject::connect(addButton, &QPushButton::clicked, this, [this]() { p->addStop(); });
+    QObject::connect(reverseButton, &QPushButton::clicked, this, [this]() { p->reverseStops(); });
+    QObject::connect(evenSpacing, &QPushButton::clicked, this, &GradientEditor::spaceStopsEvenly);
 }
 
 GradientEditor::~GradientEditor() = default;
 
-std::vector<QColor> GradientEditor::colours() const
+int GradientEditor::selectedStop() const
 {
-    return p->m_colours;
+    return p->m_selectedStop;
 }
 
-void GradientEditor::setColours(const std::vector<QColor>& colours)
+int GradientEditor::colourEditorIndex(const QWidget* editor) const
 {
-    p->m_colours.clear();
+    while(editor && editor->parentWidget() != p->m_coloursWidget) {
+        editor = editor->parentWidget();
+    }
+    const auto row = std::ranges::find_if(p->m_rows, [editor](const auto& item) {
+        return editor == item.editor || editor == item.position || editor == item.remove;
+    });
+    return row == p->m_rows.end() ? -1 : static_cast<int>(std::distance(p->m_rows.begin(), row));
+}
 
-    for(const QColor& colour : colours) {
-        if(colour.isValid()) {
-            p->m_colours.emplace_back(colour);
+std::vector<GradientEditor::ColourStop> GradientEditor::colourStops() const
+{
+    return p->m_stops;
+}
+
+void GradientEditor::setColourStops(const std::vector<ColourStop>& stops)
+{
+    p->m_stops.clear();
+
+    for(const auto& stop : stops) {
+        if(stop.colour.isValid() && std::isfinite(stop.position) && stop.position >= 0.0 && stop.position <= 1.0) {
+            p->m_stops.push_back(stop);
         }
     }
+    std::ranges::stable_sort(p->m_stops, {}, &ColourStop::position);
 
+    const auto duplicates = std::ranges::unique(p->m_stops, {}, &ColourStop::position);
+    p->m_stops.erase(duplicates.begin(), duplicates.end());
+
+    p->m_selectedStop
+        = p->m_stops.empty() ? -1 : std::clamp(p->m_selectedStop, 0, static_cast<int>(p->m_stops.size()) - 1);
     p->rebuildColourButtons();
-    p->updatePreview();
 }
 
-Qt::Orientation GradientEditor::orientation() const
+void GradientEditor::setColourEditorFactory(ColourEditorFactory factory)
 {
-    return p->orientation();
+    p->m_factory = std::move(factory);
+    p->rebuildColourButtons();
 }
 
-bool GradientEditor::isOrientationControlVisible() const
+void GradientEditor::updateColourStop(int index, const ColourStop& stop)
 {
-    return p->isOrientationControlVisible();
+    if(index < 0 || std::cmp_greater_equal(index, p->m_stops.size()) || !stop.colour.isValid()
+       || !std::isfinite(stop.position) || stop.position < 0.0 || stop.position > 1.0) {
+        return;
+    }
+
+    if(p->m_stops[index].colour == stop.colour && p->m_stops[index].data == stop.data
+       && p->m_stops[index].position == stop.position) {
+        return;
+    }
+
+    const bool moved = p->m_stops[index].position != stop.position;
+    int updatedIndex{index};
+    if(moved) {
+        if(std::ranges::any_of(p->m_stops, [&stop](const auto& other) { return other.position == stop.position; })) {
+            return;
+        }
+
+        p->m_stops.erase(p->m_stops.begin() + index);
+
+        const auto target = std::ranges::lower_bound(p->m_stops, stop.position, {}, &ColourStop::position);
+        updatedIndex      = static_cast<int>(std::distance(p->m_stops.begin(), target));
+        p->m_stops.insert(target, stop);
+
+        if(p->m_selectedStop == index) {
+            p->m_selectedStop = updatedIndex;
+        }
+        else {
+            p->m_selectedStop -= p->m_selectedStop > index;
+            p->m_selectedStop += p->m_selectedStop >= updatedIndex;
+        }
+
+        if(updatedIndex != index) {
+            const auto row = p->m_rows[index];
+            p->m_rows.erase(p->m_rows.begin() + index);
+            p->m_rows.insert(p->m_rows.begin() + updatedIndex, row);
+            p->layoutRows();
+            p->m_coloursScroll->ensureWidgetVisible(row.editor);
+        }
+    }
+    else {
+        const qreal position       = p->m_stops[index].position;
+        p->m_stops[index]          = stop;
+        p->m_stops[index].position = position;
+    }
+
+    {
+        const QSignalBlocker blocker{p->m_rows[updatedIndex].position};
+        p->m_rows[updatedIndex].position->setValue(p->m_stops[updatedIndex].position * 100.0);
+    }
+
+    Q_EMIT stopsChanged();
+    if(moved) {
+        Q_EMIT selectedStopChanged(p->m_selectedStop);
+    }
 }
 
-void GradientEditor::setOrientation(Qt::Orientation orientation)
+void GradientEditor::setSelectedStop(int index)
 {
-    p->setOrientation(orientation);
+    if(index < 0 || std::cmp_greater_equal(index, p->m_stops.size()) || index == p->m_selectedStop) {
+        return;
+    }
+    p->m_selectedStop = index;
+    Q_EMIT selectedStopChanged(index);
 }
 
-void GradientEditor::setOrientationControlVisible(bool visible)
+void GradientEditor::spaceStopsEvenly()
 {
-    p->setOrientationControlVisible(visible);
+    p->spaceStops();
+    Q_EMIT stopsChanged();
 }
 } // namespace Fooyin
 
-#include "gui/widgets/gradienteditor.moc"
 #include "gui/widgets/moc_gradienteditor.cpp"

@@ -678,7 +678,12 @@ SpectrumWidget::ConfigData SpectrumWidget::configFromLayout(const QJsonObject& l
             setColour(u"WhiteKeyColour"_s, Colours::Type::WhiteKey);
             setColour(u"BlackKeyColour"_s, Colours::Type::BlackKey);
 
-            if(const QJsonValue value = layout.value("BarGradientColours"_L1); value.isArray()) {
+            if(layout.contains("BarGradient"_L1)) {
+                if(const auto brush = readBrushSource(layout.value("BarGradient"_L1), QString{})) {
+                    colours.setGradient(*brush);
+                }
+            }
+            else if(const QJsonValue value = layout.value("BarGradientColours"_L1); value.isArray()) {
                 std::vector<QColor> gradient;
                 const QJsonArray array = value.toArray();
                 for(const auto& colourValue : array) {
@@ -687,7 +692,7 @@ SpectrumWidget::ConfigData SpectrumWidget::configFromLayout(const QJsonObject& l
                         gradient.push_back(colour);
                     }
                 }
-                colours.setGradient(gradient);
+                colours.setLegacyGradient(gradient);
             }
             else {
                 std::vector<QColor> gradient;
@@ -699,7 +704,7 @@ SpectrumWidget::ConfigData SpectrumWidget::configFromLayout(const QJsonObject& l
                 if(bottomColour.isValid()) {
                     gradient.push_back(bottomColour);
                 }
-                colours.setGradient(gradient);
+                colours.setLegacyGradient(gradient);
             }
 
             if(!colours.isEmpty()) {
@@ -787,17 +792,13 @@ void SpectrumWidget::saveConfigToLayout(const ConfigData& config, QJsonObject& l
     saveColour(u"WhiteKeyColour"_s, Colours::Type::WhiteKey);
     saveColour(u"BlackKeyColour"_s, Colours::Type::BlackKey);
 
-    const std::vector<QColor>& customGradient = colours.customGradient();
-    if(customGradient.empty()) {
-        layout.remove("BarGradientColours"_L1);
+    if(const auto& customGradient = colours.customGradient()) {
+        layout["BarGradient"_L1] = brushSourceToJson(*customGradient);
     }
     else {
-        QJsonArray gradientColours;
-        for(const QColor& colour : customGradient) {
-            gradientColours.append(colour.name(QColor::HexArgb));
-        }
-        layout["BarGradientColours"_L1] = gradientColours;
+        layout.remove("BarGradient"_L1);
     }
+    layout.remove("BarGradientColours"_L1);
 
     layout.remove("BarTopColour"_L1);
     layout.remove("BarBottomColour"_L1);

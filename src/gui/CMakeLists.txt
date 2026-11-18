@@ -1,5 +1,7 @@
 set(SOURCES
     #[[gersemi: sort]] #
+    ${CMAKE_SOURCE_DIR}/include/gui/brushsource.h
+    ${CMAKE_SOURCE_DIR}/include/gui/coloursource.h
     ${CMAKE_SOURCE_DIR}/include/gui/configdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/contextmenuutils.h
     ${CMAKE_SOURCE_DIR}/include/gui/conversion/conversionservice.h
@@ -54,6 +56,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/backgroundconfig.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/backgroundconfigwidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/backgroundimagesource.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/brushsourcebutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/checkboxdelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/clickablelabel.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/colourbutton.h
@@ -138,6 +141,8 @@ set(SOURCES
     autoplaylist/autoplaylistrulerowwidget.h
     autoplaylist/autoplaylistruleswidget.cpp
     autoplaylist/autoplaylistruleswidget.h
+    brushsource.cpp
+    coloursource.cpp
     contextmenuids.h
     controls/commandbutton.cpp
     controls/commandbutton.h
@@ -681,6 +686,9 @@ set(SOURCES
     widgets/backgroundrenderer.h
     widgets/browsingconfigwidget.cpp
     widgets/browsingconfigwidget.h
+    widgets/brushpickerdialog.cpp
+    widgets/brushpickerdialog.h
+    widgets/brushsourcebutton.cpp
     widgets/checkboxdelegate.cpp
     widgets/clickablelabel.cpp
     widgets/colourbutton.cpp
@@ -729,6 +737,8 @@ set(SOURCES
     widgets/specialvaluespinbox.cpp
     widgets/statuswidget.cpp
     widgets/statuswidget.h
+    widgets/swatchbutton.cpp
+    widgets/swatchbutton.h
     widgets/textinputdialog.cpp
     widgets/titletooltipgroupbox.cpp
     widgets/titletooltipgroupbox.h

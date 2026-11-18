@@ -31,7 +31,7 @@ class QSpinBox;
 namespace Fooyin {
 class BackgroundConfigWidget;
 class ColourButton;
-class GradientEditor;
+class BrushSourceButton;
 
 namespace VuMeter {
 class VuMeterConfigDialog : public WidgetConfigDialog<VuMeterWidget, VuMeterWidget::ConfigData>
@@ -71,7 +71,7 @@ private:
     ColourButton* m_peakColour;
     ColourButton* m_legendColour;
     ColourButton* m_gridlinesColour;
-    GradientEditor* m_barGradient;
+    BrushSourceButton* m_barGradient;
     BackgroundConfigWidget* m_background;
 };
 } // namespace VuMeter

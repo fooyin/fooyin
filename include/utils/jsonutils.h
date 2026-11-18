@@ -21,13 +21,19 @@
 
 #include "fyutils_export.h"
 
-#include <QJsonValue>
+#include <QJsonObject>
 #include <QString>
 
+#include <expected>
 #include <functional>
+#include <initializer_list>
 
 namespace Fooyin::Utils {
 using JsonArrayItemIdentity = std::function<QString(const QJsonValue&)>;
+
+FYUTILS_EXPORT QString errorWithPath(const QString& message, const QString& path);
+FYUTILS_EXPORT std::expected<QJsonObject, QString> readObject(const QJsonValue& value, const QString& path,
+                                                              std::initializer_list<QLatin1StringView> keys);
 
 /**
  * Performs a recursive three-way merge of JSON values.
