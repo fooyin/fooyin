@@ -133,6 +133,8 @@ public:
     [[nodiscard]] bool modified() const;
     /** Returns @c true if this playlist's tracks have been changed. */
     [[nodiscard]] bool tracksModified() const;
+    /** Returns @c true if tracks were added, removed, or reordered in this playlist since the last save. */
+    [[nodiscard]] bool entriesModified() const;
     /** Returns @c true if this playlist does not persist (saved to db). */
     [[nodiscard]] bool isTemporary() const;
     /** Returns @c true if this an autoplaylist (generated from a query). */
@@ -190,7 +192,7 @@ public:
 
     /** Clears the shuffle order history */
     void reset();
-    /** Resets the modified and tracksModified flags. */
+    /** Resets the modified, tracksModified and entriesModified flags. */
     void resetFlags();
 
     static QStringList supportedPlaylistExtensions();

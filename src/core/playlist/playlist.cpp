@@ -246,6 +246,7 @@ public:
     bool m_isTemporary{false};
     bool m_modified{false};
     bool m_tracksModified{false};
+    bool m_entriesModified{false};
     uint64_t m_contentRevision{0};
 
     bool m_isAutoPlaylist{false};
@@ -971,6 +972,13 @@ bool Playlist::tracksModified() const
     return p->m_tracksModified;
 }
 
+bool Playlist::entriesModified() const
+{
+    assertMainThread();
+
+    return p->m_entriesModified;
+}
+
 bool Playlist::isTemporary() const
 {
     assertMainThread();
@@ -1359,8 +1367,9 @@ void Playlist::resetFlags()
 {
     assertMainThread();
 
-    p->m_modified       = false;
-    p->m_tracksModified = false;
+    p->m_modified        = false;
+    p->m_tracksModified  = false;
+    p->m_entriesModified = false;
 }
 
 QStringList Playlist::supportedPlaylistExtensions()
@@ -1472,7 +1481,8 @@ void Playlist::setTracksModified(bool modified)
 {
     assertMainThread();
 
-    p->m_tracksModified = modified;
+    p->m_tracksModified  = modified;
+    p->m_entriesModified = modified;
 }
 
 uint64_t Playlist::contentRevision() const
@@ -1573,7 +1583,8 @@ void Playlist::replaceTracksUnchecked(const PlaylistTrackList& tracks)
 
     p->replacePlaylistTracks(tracks);
     ++p->m_contentRevision;
-    p->m_tracksModified = true;
+    p->m_tracksModified  = true;
+    p->m_entriesModified = true;
     p->m_trackShuffleOrder.clear();
     p->m_albumGroupOrder.clear();
     p->m_albumShuffleOrder.clear();
@@ -1660,7 +1671,8 @@ void Playlist::appendTracks(const TrackList& tracks)
     }
 
     ++p->m_contentRevision;
-    p->m_tracksModified = true;
+    p->m_tracksModified  = true;
+    p->m_entriesModified = true;
     p->m_trackShuffleOrder.clear();
     p->m_albumGroupOrder.clear();
     p->m_albumShuffleOrder.clear();
@@ -1761,7 +1773,8 @@ std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
     if(!removedIndexes.empty()) {
         ++p->m_contentRevision;
     }
-    p->m_tracksModified = true;
+    p->m_tracksModified  = true;
+    p->m_entriesModified = true;
     p->m_albumGroupOrder.clear();
 
     return removedIndexes;

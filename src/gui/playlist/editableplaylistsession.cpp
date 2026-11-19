@@ -546,6 +546,8 @@ void EditablePlaylistSession::applyPlaylistChangeSet(PlaylistWidgetSessionHost& 
         return;
     }
 
+    const EntrySelection selection = selectedPlaylistEntries(sessionHost);
+
     QModelIndexList trackIndexesToRemove;
     for(const UId& entryId : changeSet.removedEntries) {
         const QModelIndex trackIndex = host.playlistModel()->indexAtTrackEntry(entryId);
@@ -555,83 +557,86 @@ void EditablePlaylistSession::applyPlaylistChangeSet(PlaylistWidgetSessionHost& 
         host.playlistModel()->removeTracks(trackIndexesToRemove);
     }
 
-    const auto applyMovesAndUpdates
-        = [model = host.playlistModel(), moves = changeSet.moves, updatedEntries = changeSet.updatedEntries,
-           currentPlaylist, playerController = host.playerController(), this, widget = sessionHost.sessionWidget()] {
-              if(editableHost(widget).playlistController()->currentPlaylist() != currentPlaylist) {
-                  return;
-              }
+    const auto applyMovesAndUpdates = [model = host.playlistModel(), moves = changeSet.moves,
+                                       updatedEntries   = changeSet.updatedEntries, currentPlaylist,
+                                       playerController = host.playerController(), selection, this,
+                                       widget           = sessionHost.sessionWidget()] {
+        if(editableHost(widget).playlistController()->currentPlaylist() != currentPlaylist) {
+            return;
+        }
 
-              std::vector<int> movedIndexes;
-              movedIndexes.reserve(moves.size());
-              std::vector<int> indexesToRefresh;
+        std::vector<int> movedIndexes;
+        movedIndexes.reserve(moves.size());
+        std::vector<int> indexesToRefresh;
 
-              for(const auto& move : moves) {
-                  if(!move.isValid()) {
-                      continue;
-                  }
+        for(const auto& move : moves) {
+            if(!move.isValid()) {
+                continue;
+            }
 
-                  const QModelIndex sourceIndex = model->indexAtTrackEntry(move.entryId);
-                  if(!sourceIndex.isValid()) {
-                      handleTracksChanged(widgetSessionHost(widget), {}, false);
-                      return;
-                  }
+            const QModelIndex sourceIndex = model->indexAtTrackEntry(move.entryId);
+            if(!sourceIndex.isValid()) {
+                handleTracksChanged(widgetSessionHost(widget), {}, false);
+                return;
+            }
 
-                  MoveOperation operation;
-                  const int sourcePlaylistIndex = sourceIndex.data(PlaylistItem::Role::Index).toInt();
-                  operation.emplace_back(move.targetIndex, TrackIndexRangeList{{.first = sourcePlaylistIndex,
-                                                                                .last  = sourcePlaylistIndex}});
-                  model->moveTracks(operation);
-                  const int movedEntryIndex = model->playlistIndexForTrackEntry(move.entryId);
-                  if(movedEntryIndex != move.targetIndex) {
-                      handleTracksChanged(widgetSessionHost(widget), {}, false);
-                      return;
-                  }
+            MoveOperation operation;
+            const int sourcePlaylistIndex = sourceIndex.data(PlaylistItem::Role::Index).toInt();
+            operation.emplace_back(move.targetIndex,
+                                   TrackIndexRangeList{{.first = sourcePlaylistIndex, .last = sourcePlaylistIndex}});
+            model->moveTracks(operation);
+            const int movedEntryIndex = model->playlistIndexForTrackEntry(move.entryId);
+            if(movedEntryIndex != move.targetIndex) {
+                handleTracksChanged(widgetSessionHost(widget), {}, false);
+                return;
+            }
 
-                  movedIndexes.emplace_back(movedEntryIndex);
+            movedIndexes.emplace_back(movedEntryIndex);
 
-                  const auto [firstAffected, lastAffected] = std::minmax(sourcePlaylistIndex, move.targetIndex);
-                  for(int index{firstAffected}; index <= lastAffected; ++index) {
-                      indexesToRefresh.emplace_back(index);
-                  }
-              }
+            const auto [firstAffected, lastAffected] = std::minmax(sourcePlaylistIndex, move.targetIndex);
+            for(int index{firstAffected}; index <= lastAffected; ++index) {
+                indexesToRefresh.emplace_back(index);
+            }
+        }
 
-              std::ranges::sort(movedIndexes);
-              movedIndexes.erase(std::ranges::unique(movedIndexes).begin(), movedIndexes.end());
+        std::ranges::sort(movedIndexes);
+        movedIndexes.erase(std::ranges::unique(movedIndexes).begin(), movedIndexes.end());
 
-              std::ranges::sort(indexesToRefresh);
-              indexesToRefresh.erase(std::ranges::unique(indexesToRefresh).begin(), indexesToRefresh.end());
+        std::ranges::sort(indexesToRefresh);
+        indexesToRefresh.erase(std::ranges::unique(indexesToRefresh).begin(), indexesToRefresh.end());
 
-              if(!indexesToRefresh.empty()) {
-                  model->refreshTracks(indexesToRefresh);
-              }
+        if(!indexesToRefresh.empty()) {
+            model->refreshTracks(indexesToRefresh);
+        }
 
-              std::vector<int> updatedIndexes;
-              updatedIndexes.reserve(updatedEntries.size());
-              for(const UId& entryId : updatedEntries) {
-                  const int index = currentPlaylist ? currentPlaylist->indexOfTrackEntry(entryId) : -1;
-                  updatedIndexes.push_back(index);
-              }
+        std::vector<int> updatedIndexes;
+        updatedIndexes.reserve(updatedEntries.size());
+        for(const UId& entryId : updatedEntries) {
+            const int index = currentPlaylist ? currentPlaylist->indexOfTrackEntry(entryId) : -1;
+            updatedIndexes.push_back(index);
+        }
 
-              if(!updatedIndexes.empty()) {
-                  QObject::connect(
-                      model, &PlaylistModel::trackGroupApplied, widget,
-                      [widget, this]() {
-                          auto& hostRef = editableHost(widget);
-                          handleTrackIndexesChanged(widget, hostRef.playlistModel()->playingTrack().indexInPlaylist);
-                      },
-                      Qt::SingleShotConnection);
-                  model->updateTracks(updatedIndexes);
-              }
-              else {
-                  auto& hostRef = editableHost(widget);
-                  handleTrackIndexesChanged(widget, hostRef.playlistModel()->playingTrack().indexInPlaylist);
-              }
+        if(!updatedIndexes.empty()) {
+            QObject::connect(
+                model, &PlaylistModel::trackGroupApplied, widget,
+                [widget, selection, this]() {
+                    auto& hostRef = editableHost(widget);
+                    restoreSelectedPlaylistEntries(widgetSessionHost(widget), selection);
+                    handleTrackIndexesChanged(widget, hostRef.playlistModel()->playingTrack().indexInPlaylist);
+                },
+                Qt::SingleShotConnection);
+            model->updateTracks(updatedIndexes);
+        }
+        else {
+            auto& hostRef = editableHost(widget);
+            restoreSelectedPlaylistEntries(widgetSessionHost(widget), selection);
+            handleTrackIndexesChanged(widget, hostRef.playlistModel()->playingTrack().indexInPlaylist);
+        }
 
-              model->updateHeader(currentPlaylist);
-              model->playingTrackChanged(playerController->currentPlaylistTrack());
-              refreshActionState(widget);
-          };
+        model->updateHeader(currentPlaylist);
+        model->playingTrackChanged(playerController->currentPlaylistTrack());
+        refreshActionState(widget);
+    };
 
     TrackGroups insertions;
     for(const auto& insertion : changeSet.insertions) {
@@ -776,54 +781,43 @@ void EditablePlaylistSession::handleTracksChanged(PlaylistWidgetSessionHost& ses
     clearSearch();
     Q_EMIT widget->changeSearch({});
 
-    auto restoreViewState
-        = [&host, currentPlaylist, viewState, allNew](int currentIndex, const std::vector<int>& selectedIndexes) {
-              if(host.playlistView()->hasActiveInlineEditor() || !currentPlaylist) {
-                  return;
-              }
+    auto restoreViewState = [&host, currentPlaylist, viewState, allNew](const EntrySelection& selection) {
+        if(host.playlistView()->hasActiveInlineEditor() || !currentPlaylist) {
+            return;
+        }
 
-              QModelIndex topIndex;
-              if(currentPlaylist->trackCount() > 0 && viewState.topIndex >= 0) {
-                  topIndex = host.playlistModel()->indexAtPlaylistIndex(viewState.topIndex, false);
-              }
+        QModelIndex topIndex;
+        if(currentPlaylist->trackCount() > 0 && viewState.topIndex >= 0) {
+            topIndex = host.playlistModel()->indexAtPlaylistIndex(viewState.topIndex, false);
+        }
 
-              if(allNew) {
-                  host.playlistView()->playlistReset();
-                  host.playlistView()->scrollToTop();
-                  return;
-              }
+        if(allNew) {
+            host.playlistView()->playlistReset();
+            host.playlistView()->scrollToTop();
+            return;
+        }
 
-              host.playlistView()->playlistReset();
+        host.playlistView()->playlistReset();
 
-              restoreSelectedPlaylistIndexes(host, selectedIndexes);
-              if(currentIndex >= 0) {
-                  const QModelIndex index = host.playlistModel()->indexAtPlaylistIndex(currentIndex, true);
-                  if(index.isValid()) {
-                      host.playlistView()->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
-                  }
-              }
+        // rows may have moved since, so we restore by entry
+        restoreSelectedPlaylistEntries(host, selection);
 
-              if(topIndex.isValid()) {
-                  host.playlistView()->scrollTo(topIndex, PlaylistView::PositionAtTop);
-                  host.playlistView()->verticalScrollBar()->setValue(viewState.scrollPos);
-              }
-          };
+        if(topIndex.isValid()) {
+            host.playlistView()->scrollTo(topIndex, PlaylistView::PositionAtTop);
+            host.playlistView()->verticalScrollBar()->setValue(viewState.scrollPos);
+        }
+    };
 
-    int currentIndex{-1};
-    if(host.playlistView()->currentIndex().isValid()) {
-        currentIndex = host.playlistView()->currentIndex().data(PlaylistItem::Index).toInt();
-    }
-    const std::vector<int> selectedIndexes = selectedPlaylistIndexes(host);
+    const EntrySelection selection = selectedPlaylistEntries(host);
 
-    auto finishTrackChange
-        = [hostPtr = &host, this, currentPlaylist, currentIndex, selectedIndexes, restoreViewState]() {
-              if(hostPtr->playlistController()->currentPlaylist() != currentPlaylist) {
-                  return;
-              }
+    auto finishTrackChange = [hostPtr = &host, this, currentPlaylist, selection, restoreViewState]() {
+        if(hostPtr->playlistController()->currentPlaylist() != currentPlaylist) {
+            return;
+        }
 
-              restoreViewState(currentIndex, selectedIndexes);
-              syncTrackChangeState(*hostPtr, hostPtr->playlistModel()->playingTrack().indexInPlaylist);
-          };
+        restoreViewState(selection);
+        syncTrackChangeState(*hostPtr, hostPtr->playlistModel()->playingTrack().indexInPlaylist);
+    };
 
     const int changedTrackCount = static_cast<int>(indexes.size());
     if(indexes.empty() || changedTrackCount > 500 || changedTrackCount > (currentPlaylist->trackCount() / 2)) {
