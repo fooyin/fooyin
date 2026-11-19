@@ -101,7 +101,7 @@ QJsonObject brushSourceToJson(const BrushSource& brush)
         stops.append(QJsonObject{{u"position"_s, stop.position}, {u"colour"_s, colourSourceToJson(stop.colour)}});
     }
 
-    const auto* const direction = std::ranges::find_if(
+    const auto direction = std::ranges::find_if(
         gradientDirections, [&gradient](const auto& entry) { return entry.first == gradient.direction; });
     return {{u"linearGradient"_s, QJsonObject{{u"orientation"_s, QString{direction->second}}, {u"stops"_s, stops}}}};
 }
@@ -140,7 +140,7 @@ std::expected<BrushSource, QString> readBrushSource(const QJsonValue& value, con
 
     const auto direction = gradient->value("orientation"_L1);
     if(!direction.isUndefined()) {
-        const auto* const found = std::ranges::find_if(
+        const auto found = std::ranges::find_if(
             gradientDirections, [&direction](const auto& entry) { return entry.second == direction.toString(); });
         if(!direction.isString() || found == gradientDirections.end()) {
             return std::unexpected{
