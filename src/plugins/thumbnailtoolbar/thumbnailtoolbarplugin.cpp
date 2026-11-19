@@ -67,13 +67,14 @@ void ThumbnailToolbarPlugin::initialise(const CorePluginContext& context)
                      &ThumbnailToolbarPlugin::playStateChanged);
     QObject::connect(m_playerController, &PlayerController::positionChanged, this,
                      &ThumbnailToolbarPlugin::updatePosition);
+    QObject::connect(m_playerController, &PlayerController::positionMoved, this,
+                     &ThumbnailToolbarPlugin::updatePosition);
 }
 
 void ThumbnailToolbarPlugin::initialise(const GuiPluginContext& context)
 {
     m_windowController = context.windowController;
     QObject::connect(m_windowController, &WindowController::windowShown, this, &ThumbnailToolbarPlugin::setupToolbar);
-    QObject::connect(m_windowController, &WindowController::windowHidden, this, &ThumbnailToolbarPlugin::cleanupToobar);
 
     // Install native event filter for WM_COMMAND messages
     m_nativeEventFilter = std::make_unique<ThumbnailToolbarNativeEventFilter>(this);
@@ -88,6 +89,8 @@ void ThumbnailToolbarPlugin::initialise(const GuiPluginContext& context)
 
 void ThumbnailToolbarPlugin::shutdown()
 {
+    cleanupToobar();
+
     if(m_nativeEventFilter) {
         QGuiApplication::instance()->removeNativeEventFilter(m_nativeEventFilter.get());
         m_nativeEventFilter.reset();
@@ -116,7 +119,7 @@ void ThumbnailToolbarPlugin::trackChanged(const PlaylistTrack& /*playlistTrack*/
 
 void ThumbnailToolbarPlugin::playStateChanged()
 {
-    if(!m_taskbarList) {
+    if(!m_taskbarList || !m_windowController) {
         return;
     }
 
@@ -130,7 +133,7 @@ void ThumbnailToolbarPlugin::playStateChanged()
             state = TBPF_PAUSED;
             break;
         case(Player::PlayState::Stopped):
-            state = TBPF_ERROR;
+            state = TBPF_NOPROGRESS;
             break;
         default:
             state = TBPF_INDETERMINATE;
@@ -144,7 +147,7 @@ void ThumbnailToolbarPlugin::playStateChanged()
 
 void ThumbnailToolbarPlugin::updateToolbarButtons()
 {
-    if(!m_taskbarList || !m_toolbarReady) {
+    if(!m_taskbarList || !m_toolbarReady || !m_windowController) {
         return;
     }
 
@@ -189,7 +192,13 @@ void ThumbnailToolbarPlugin::updateToolbarButtons()
 
 void ThumbnailToolbarPlugin::setupToolbar()
 {
-    if(!m_taskbarList || m_toolbarReady) {
+    if(!m_taskbarList || !m_windowController) {
+        return;
+    }
+
+    if(m_toolbarReady) {
+        playStateChanged();
+        updatePosition();
         return;
     }
 
@@ -225,7 +234,8 @@ void ThumbnailToolbarPlugin::setupToolbar()
 
     if(SUCCEEDED(hr)) {
         m_toolbarReady = true;
-        updateToolbarButtons();
+        playStateChanged();
+        updatePosition();
     }
     else {
         qCWarning(THUMBNAIL_TOOLBAR) << "ThumbBarAddButtons failed.";
@@ -234,10 +244,9 @@ void ThumbnailToolbarPlugin::setupToolbar()
 
 void ThumbnailToolbarPlugin::cleanupToobar()
 {
-    if(m_taskbarList && m_toolbarReady) {
-        THUMBBUTTON buttons[3] = {};
-        m_taskbarList->ThumbBarUpdateButtons(reinterpret_cast<HWND>(m_windowController->mainWindow()->winId()), 0,
-                                             buttons);
+    if(m_taskbarList && m_toolbarReady && m_windowController) {
+        m_taskbarList->SetProgressState(reinterpret_cast<HWND>(m_windowController->mainWindow()->winId()),
+                                        TBPF_NOPROGRESS);
     }
     m_taskbarList.Reset();
     m_toolbarReady = false;
@@ -245,7 +254,8 @@ void ThumbnailToolbarPlugin::cleanupToobar()
 
 void ThumbnailToolbarPlugin::updatePosition()
 {
-    if(m_taskbarList && m_toolbarReady) {
+    if(m_taskbarList && m_toolbarReady && m_windowController
+       && m_playerController->playState() != Player::PlayState::Stopped) {
         m_taskbarList->SetProgressValue(reinterpret_cast<HWND>(m_windowController->mainWindow()->winId()),
                                         m_playerController->currentPosition(),
                                         m_playerController->currentTrack().duration());
