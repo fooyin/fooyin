@@ -132,6 +132,7 @@ fooyin_add_test(test_filterpipeline gui/filters/filterpipelinetest.cpp)
 
 fooyin_add_test(test_helpers utils/helperstest.cpp)
 fooyin_add_test(test_dbtransaction utils/dbtransactiontest.cpp)
+fooyin_add_test(test_stringutils utils/stringutilstest.cpp)
 
 if(TARGET fileops)
     set(FILEOPS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/plugins/fileops)
