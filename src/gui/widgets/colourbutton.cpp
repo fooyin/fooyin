@@ -62,8 +62,15 @@ protected:
     bool event(QEvent* event) override
     {
         const bool handled = SwatchButton::event(event);
-        if(event->type() == QEvent::PaletteChange || event->type() == QEvent::DevicePixelRatioChange) {
-            updateIcon();
+        switch(event->type()) {
+            case QEvent::PaletteChange:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+            case QEvent::DevicePixelRatioChange:
+#endif
+                updateIcon();
+                break;
+            default:
+                break;
         }
         return handled;
     }
