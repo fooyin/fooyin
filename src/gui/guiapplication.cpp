@@ -398,7 +398,10 @@ void GuiApplication::openFiles(const QList<QUrl>& files)
 
 void GuiApplication::savePlaylist(const UId& playlistId) const
 {
-    savePlaylistToFile(m_playlistHandler->playlistById(playlistId));
+    // Let QMenu finish activating the action before opening a native dialog (QTBUG-106718)
+    QMetaObject::invokeMethod(
+        m_mainWindow.get(), [this, playlistId]() { savePlaylistToFile(m_playlistHandler->playlistById(playlistId)); },
+        Qt::QueuedConnection);
 }
 
 void GuiApplication::setVolume(const double volume) const
