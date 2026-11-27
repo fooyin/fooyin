@@ -460,8 +460,6 @@ OutputState PipeWireOutput::currentState()
         return state;
     }
 
-    const ThreadLoopGuard guard{m_loop.get()};
-
     const int softwareQueuedFrames = softQueuedFrames();
     state.freeFrames               = std::max(0, bufferSize() - softwareQueuedFrames);
     state.queuedFrames             = softwareQueuedFrames;
