@@ -22,6 +22,7 @@
 #include "appearancepropertypanel.h"
 #include "checkappearanceeditor.h"
 #include "componentappearanceeditor.h"
+#include "dockwidgetappearanceeditor.h"
 #include "groupboxappearanceeditor.h"
 #include "headerappearanceeditor.h"
 #include "inputappearanceeditor.h"
@@ -202,6 +203,7 @@ ThemeAppearanceDialog::ThemeAppearanceDialog(QJsonObject appearance, const QPale
     addComponent(std::make_unique<CheckAppearanceEditor>(m_propertyModel, false), palette, font);
     addComponent(std::make_unique<CheckAppearanceEditor>(m_propertyModel, true), palette, font);
     addComponent(std::make_unique<GroupBoxAppearanceEditor>(m_propertyModel), palette, font);
+    addComponent(std::make_unique<DockWidgetAppearanceEditor>(m_propertyModel), palette, font);
     addComponent(std::make_unique<InputAppearanceEditor>(m_propertyModel, InputType::ComboBox), palette, font);
     addComponent(std::make_unique<InputAppearanceEditor>(m_propertyModel, InputType::LineEdit), palette, font);
     auto* itemViews = addComponent(std::make_unique<ItemViewAppearanceEditor>(m_propertyModel), palette, font);

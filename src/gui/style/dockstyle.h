@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "theme/dockwidgetappearance.h"
+
 #include <QCommonStyle>
 
 #include <optional>
@@ -27,7 +29,7 @@ class QStyleOptionDockWidget;
 
 namespace Fooyin::Style::Dock {
 void drawTitle(const QCommonStyle& style, const QStyleOptionDockWidget& option, QPainter& painter,
-               const QWidget* widget);
-void drawFrame(const QStyleOption& option, QPainter& painter);
-std::optional<int> pixelMetric(QStyle::PixelMetric metric);
+               const QWidget* widget, const DockWidgetAppearance& appearance);
+void drawFrame(const QStyleOption& option, QPainter& painter, const DockWidgetAppearance& appearance);
+std::optional<int> pixelMetric(QStyle::PixelMetric metric, const DockWidgetAppearance& appearance);
 } // namespace Fooyin::Style::Dock

@@ -27,22 +27,8 @@
 #include <QToolBar>
 
 #include <array>
-#include <cmath>
 
 namespace Fooyin::Style::Toolbar {
-namespace {
-QColor tintedColour(const QStyleOption& option, const ColourSource& source, const ColourSource& tintSource,
-                    int tintOpacity, int opacity)
-{
-    const auto group  = colourGroup(option);
-    const auto base   = resolveBrush(source, option.palette, group).color();
-    const auto tint   = resolveBrush(tintSource, option.palette, group).color();
-    const auto amount = static_cast<float>(tintOpacity / 100.0) * tint.alphaF();
-    return QColor::fromRgbF(
-        std::lerp(base.redF(), tint.redF(), amount), std::lerp(base.greenF(), tint.greenF(), amount),
-        std::lerp(base.blueF(), tint.blueF(), amount), base.alphaF() * static_cast<float>(opacity / 100.0));
-}
-} // namespace
 
 void drawPanel(const QStyleOptionToolBar& option, QPainter& painter, const ToolBarAppearance& appearance)
 {

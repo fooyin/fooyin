@@ -26,25 +26,39 @@
 
 namespace Fooyin::Style::Dock {
 void drawTitle(const QCommonStyle& style, const QStyleOptionDockWidget& option, QPainter& painter,
-               const QWidget* widget)
+               const QWidget* widget, const DockWidgetAppearance& appearance)
 {
     if(option.rect.isEmpty()) {
         return;
     }
 
-    auto border = outlineColour(option);
-    border.setAlphaF(border.alphaF() * 0.6F);
+    const auto group   = colourGroup(option);
+    const auto& title  = appearance.title;
+    const auto& border = title.border;
 
     painter.save();
     painter.setClipRect(option.rect, Qt::IntersectClip);
-    painter.fillRect(option.rect, option.palette.brush(colourGroup(option), QPalette::Button));
-    painter.setPen(border);
+    const double opacity = painter.opacity();
+    painter.setOpacity(opacity * title.backgroundOpacity / 100.0);
+    painter.fillRect(option.rect, resolveBrush(title.backgroundColour, option.palette, group, option.rect,
+                                               option.verticalTitleBar ? Qt::Vertical : Qt::Horizontal,
+                                               !option.verticalTitleBar && option.direction == Qt::RightToLeft));
+    painter.setOpacity(opacity);
 
-    if(option.verticalTitleBar) {
-        painter.drawLine(option.rect.topRight(), option.rect.bottomRight());
-    }
-    else {
-        painter.drawLine(option.rect.bottomLeft(), option.rect.bottomRight());
+    if(border.width > 0) {
+        const double inset = (border.width - 1) / 2.0;
+        const QRectF rect  = QRectF{option.rect.adjusted(0, 0, -1, -1)}.adjusted(inset, inset, -inset, -inset);
+        if(!rect.isEmpty()) {
+            painter.setPen(
+                QPen{tintedColour(option, border.colour, border.tintColour, border.tintOpacity, border.opacity),
+                     static_cast<double>(border.width)});
+            if(option.verticalTitleBar) {
+                painter.drawLine(rect.topRight(), rect.bottomRight());
+            }
+            else {
+                painter.drawLine(rect.bottomLeft(), rect.bottomRight());
+            }
+        }
     }
 
     QRect text = style.subElementRect(QStyle::SE_DockWidgetTitleBarText, &option, widget);
@@ -57,41 +71,50 @@ void drawTitle(const QCommonStyle& style, const QStyleOptionDockWidget& option, 
     const int margin = style.pixelMetric(QStyle::PM_DockWidgetTitleMargin, &option, widget);
     text.adjust(margin, 0, -margin, 0);
     if(!text.isEmpty()) {
-        const auto title = option.fontMetrics.elidedText(option.title, Qt::ElideRight, text.width());
-        style.drawItemText(&painter, text, Qt::AlignLeading | Qt::AlignVCenter | Qt::TextHideMnemonic, option.palette,
-                           option.state & QStyle::State_Enabled, title, QPalette::WindowText);
+        auto palette{option.palette};
+        palette.setCurrentColorGroup(group);
+        palette.setBrush(group, QPalette::WindowText, resolveBrush(title.foregroundColour, option.palette, group));
+
+        const auto label = option.fontMetrics.elidedText(option.title, Qt::ElideRight, text.width());
+        style.drawItemText(&painter, text, Qt::AlignLeading | Qt::AlignVCenter | Qt::TextHideMnemonic, palette,
+                           option.state & QStyle::State_Enabled, label, QPalette::WindowText);
     }
 
     painter.restore();
 }
 
-void drawFrame(const QStyleOption& option, QPainter& painter)
+void drawFrame(const QStyleOption& option, QPainter& painter, const DockWidgetAppearance& appearance)
 {
     if(option.rect.isEmpty()) {
         return;
     }
 
-    auto border = outlineColour(option);
-    border.setAlphaF(border.alphaF() * 0.6F);
+    const auto& frame  = appearance.frame;
+    const double inset = (frame.width - 1) / 2.0;
+    const QRectF rect  = QRectF{option.rect.adjusted(0, 0, -1, -1)}.adjusted(inset, inset, -inset, -inset);
+    if(frame.width <= 0 || rect.isEmpty()) {
+        return;
+    }
 
     painter.save();
-    painter.setPen(border);
+    painter.setPen(QPen{tintedColour(option, frame.colour, frame.tintColour, frame.tintOpacity, frame.opacity),
+                        static_cast<double>(frame.width)});
     painter.setBrush(Qt::NoBrush);
-    painter.drawRect(option.rect.adjusted(0, 0, -1, -1));
+    painter.drawRect(rect);
     painter.restore();
 }
 
-std::optional<int> pixelMetric(QStyle::PixelMetric metric)
+std::optional<int> pixelMetric(QStyle::PixelMetric metric, const DockWidgetAppearance& appearance)
 {
     switch(metric) {
         case QStyle::PM_DockWidgetTitleMargin:
-            return 4;
+            return appearance.titleMargin;
         case QStyle::PM_DockWidgetTitleBarButtonMargin:
-            return 2;
+            return appearance.buttonMargin;
         case QStyle::PM_DockWidgetFrameWidth:
-            return 1;
+            return appearance.frame.width;
         case QStyle::PM_DockWidgetSeparatorExtent:
-            return 6;
+            return appearance.separatorExtent;
         default:
             return {};
     }

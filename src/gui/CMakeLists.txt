@@ -701,6 +701,8 @@ set(SOURCES
     theme/buttonappearance.h
     theme/checkappearance.cpp
     theme/checkappearance.h
+    theme/dockwidgetappearance.cpp
+    theme/dockwidgetappearance.h
     theme/editor/appearanceproperty.h
     theme/editor/appearancepropertydelegate.cpp
     theme/editor/appearancepropertydelegate.h
@@ -716,6 +718,8 @@ set(SOURCES
     theme/editor/checkappearanceeditor.h
     theme/editor/componentappearanceeditor.cpp
     theme/editor/componentappearanceeditor.h
+    theme/editor/dockwidgetappearanceeditor.cpp
+    theme/editor/dockwidgetappearanceeditor.h
     theme/editor/groupboxappearanceeditor.cpp
     theme/editor/groupboxappearanceeditor.h
     theme/editor/headerappearanceeditor.cpp

@@ -187,7 +187,7 @@ void FooyinStyle::drawPrimitive(PrimitiveElement element, const QStyleOption* op
             Style::Toolbar::drawSeparator(*option, *painter, m_appearance.toolBar);
             return;
         case PE_FrameDockWidget:
-            Style::Dock::drawFrame(*option, *painter);
+            Style::Dock::drawFrame(*option, *painter, m_appearance.dockWidget);
             return;
         case PE_PanelButtonTool:
             if(const auto* button = qstyleoption_cast<const QStyleOptionToolButton*>(option);
@@ -328,7 +328,7 @@ void FooyinStyle::drawControl(ControlElement element, const QStyleOption* option
             break;
         case CE_DockWidgetTitle:
             if(const auto* dock = qstyleoption_cast<const QStyleOptionDockWidget*>(option)) {
-                Style::Dock::drawTitle(*this, *dock, *painter, widget);
+                Style::Dock::drawTitle(*this, *dock, *painter, widget, m_appearance.dockWidget);
                 return;
             }
             break;
@@ -437,7 +437,9 @@ void FooyinStyle::drawControl(ControlElement element, const QStyleOption* option
                     label.icon
                         = Style::tintedIcon(button->icon, button->iconSize, painter->device()->devicePixelRatioF(),
                                             button->state & State_Enabled ? QIcon::Normal : QIcon::Disabled, QIcon::Off,
-                                            button->palette.color(Style::colourGroup(*button), QPalette::WindowText));
+                                            resolveBrush(m_appearance.dockWidget.title.iconColour, button->palette,
+                                                         Style::colourGroup(*button))
+                                                .color());
                     Style::Button::drawToolButtonLabel(*this, label, *painter, widget, m_appearance.toolButton);
                 }
                 else {
@@ -566,7 +568,7 @@ int FooyinStyle::pixelMetric(PixelMetric metric, const QStyleOption* option, con
         default:
             break;
     }
-    if(const auto value = Style::Dock::pixelMetric(metric)) {
+    if(const auto value = Style::Dock::pixelMetric(metric, m_appearance.dockWidget)) {
         return *value;
     }
     if(const auto value = Style::Toolbar::pixelMetric(metric, m_appearance.toolBar)) {

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "checkappearance.h"
+#include "dockwidgetappearance.h"
 #include "groupboxappearance.h"
 #include "headerappearance.h"
 #include "inputappearance.h"
@@ -55,6 +56,7 @@ struct ThemeAppearance
     PushButtonAppearance pushButton{};
     ToolButtonAppearance toolButton{};
     ToolBarAppearance toolBar{};
+    DockWidgetAppearance dockWidget{};
     CheckAppearance checkBox{};
     CheckAppearance radioButton{defaultRadioButtonAppearance()};
     InputAppearance lineEdit{};

@@ -21,6 +21,8 @@
 
 #include "styleanimation.h"
 
+#include <gui/coloursource.h>
+
 #include <QIcon>
 #include <QStyleOption>
 
@@ -49,6 +51,8 @@ QBrush opacityBrush(const QBrush& brush, double opacity);
 QPalette::ColorGroup colourGroup(const QStyleOption& option);
 QColor panelColour(const QStyleOption& option);
 QColor outlineColour(const QStyleOption& option);
+QColor tintedColour(const QStyleOption& option, const ColourSource& source, const ColourSource& tintSource,
+                    int tintOpacity, int opacity);
 QIcon tintedIcon(const QIcon& icon, const QSize& size, double devicePixelRatio, QIcon::Mode mode, QIcon::State state,
                  const QColor& colour);
 void drawChevron(const QStyleOption& option, const QRect& rect, QPainter& painter, bool up, QPalette::ColorRole role);
