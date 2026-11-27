@@ -30,12 +30,15 @@
 #include <QFile>
 
 #include <cfenv>
+#include <chrono>
 #include <limits>
 #include <utility>
 
 Q_LOGGING_CATEGORY(WAVEBAR, "fy.wavebar")
 
 namespace {
+constexpr auto MinUpdateInterval = std::chrono::milliseconds{250};
+
 float convertSampleToFloat(const int16_t inSample)
 {
     return static_cast<float>(inSample) / static_cast<float>(std::numeric_limits<int16_t>::max());
@@ -210,6 +213,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     }
 
     int nextUpdateSample{updateThreshold};
+    auto lastUpdate = std::chrono::steady_clock::now();
     uint64_t processedBytes{0};
     bool generationFailed{false};
 
@@ -265,9 +269,10 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
             break;
         }
 
-        if(render && result != WaveformAccumulator::ProcessResult::Complete
-           && m_data.sampleCount() >= nextUpdateSample) {
+        if(render && result != WaveformAccumulator::ProcessResult::Complete && m_data.sampleCount() >= nextUpdateSample
+           && std::chrono::steady_clock::now() - lastUpdate >= MinUpdateInterval) {
             nextUpdateSample = m_data.sampleCount() + updateThreshold;
+            lastUpdate       = std::chrono::steady_clock::now();
             Q_EMIT waveformGenerated(track, m_data, token);
         }
     }
