@@ -343,7 +343,7 @@ void WaveSeekBar::mousePressEvent(QMouseEvent* event)
         return;
     }
 
-    if(!m_data.empty() && event->button() == Qt::LeftButton) {
+    if(m_data.duration > 0 && event->button() == Qt::LeftButton) {
         m_pressPos = event->position().toPoint();
         updateMousePosition(event->position().toPoint());
     }
