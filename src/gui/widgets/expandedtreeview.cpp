@@ -6860,6 +6860,42 @@ QItemSelectionModel::SelectionFlags ExpandedTreeView::selectionCommand(const QMo
     if(p->m_viewMode == ViewMode::CoverFlow && !index.isValid() && event && event->isPointerEvent()) {
         return QItemSelectionModel::NoUpdate;
     }
+
+    // if we right click on a group header
+    const QModelIndex clicked = index.siblingAtColumn(0);
+    if(event && event->type() == QEvent::MouseButtonPress
+       && static_cast<const QMouseEvent*>(event)->button() == Qt::RightButton && index.isValid() && selectionModel()
+       && model()->hasChildren(clicked)) {
+        QModelIndex first = clicked;
+        QModelIndex last  = clicked;
+        while(model()->rowCount(first) > 0) {
+            first = model()->index(0, 0, first);
+        }
+        while(model()->rowCount(last) > 0) {
+            last = model()->index(model()->rowCount(last) - 1, 0, last);
+        }
+
+        // find the track just before the group header
+        QModelIndex previous;
+        for(QModelIndex node = clicked; node.isValid(); node = node.parent()) {
+            if(node.row() > 0) {
+                previous = node.siblingAtRow(node.row() - 1);
+                while(model()->rowCount(previous) > 0) {
+                    previous = model()->index(model()->rowCount(previous) - 1, 0, previous);
+                }
+                break;
+            }
+        }
+        // keep the selection either:
+        // - if the group header is in the middle of a selection
+        // - if the group header is at the top of a multi-group selection
+        //   (e.g. shift-click multiple albums and right-click at the top)
+        if(selectionModel()->isSelected(first)
+           && (selectionModel()->isSelected(last) || (previous.isValid() && selectionModel()->isSelected(previous)))) {
+            return QItemSelectionModel::NoUpdate;
+        }
+    }
+
     return QAbstractItemView::selectionCommand(index, event);
 }
 
