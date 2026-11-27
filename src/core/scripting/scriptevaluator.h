@@ -24,6 +24,7 @@
 #include <QCoreApplication>
 
 #include <functional>
+#include <optional>
 
 namespace Fooyin {
 QString escapeRichText(const ScriptEvaluationOptions* options, QString value);
@@ -71,11 +72,11 @@ public:
         int trackCount{-1};
         int currentPosition{-1};
         int playlistIndex{-1};
-        QString playtime;
-        QString averageBitrate;
-        QString playlistSize;
-        QString genres;
-        QString playlistElapsed;
+        std::optional<QString> playtime;
+        std::optional<QString> averageBitrate;
+        std::optional<QString> playlistSize;
+        std::optional<QString> genres;
+        std::optional<QString> playlistElapsed;
     };
 
     [[nodiscard]] const ScriptContext& currentContext() const;
@@ -106,7 +107,7 @@ public:
     [[nodiscard]] QString playlistDuration(const TrackList& tracks) const;
 
     void clearTrackListCache();
-    [[nodiscard]] const TrackListAggregateCache& cachedTrackListValues(const TrackList& tracks) const;
+    [[nodiscard]] std::optional<FuncRet> trackListValue(VariableKind kind, const TrackList& tracks) const;
 
     ScriptEvaluationOptions options;
 
