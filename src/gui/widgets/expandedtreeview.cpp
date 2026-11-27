@@ -6977,6 +6977,10 @@ QRegion ExpandedTreeView::visualRegionForSelection(const QItemSelection& selecti
         return selectionRegion;
     }
 
+    if(p->m_delayedPendingLayout) {
+        return viewportRect;
+    }
+
     p->layoutItems();
 
     int firstOffset{0};
