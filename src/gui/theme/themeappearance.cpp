@@ -57,11 +57,27 @@ std::expected<ThemeAppearance::Layout, QString> readLayout(const QJsonValue& val
 
 std::expected<ThemeAppearance, QString> resolveThemeAppearance(const QJsonObject& appearance)
 {
-    const auto controls = Appearance::readObject(
-        appearance, u"appearance"_s,
-        {"slider"_L1, "scrollBar"_L1, "pushButton"_L1, "toolButton"_L1, "checkBox"_L1, "radioButton"_L1, "lineEdit"_L1,
-         "comboBox"_L1, "spinBox"_L1, "progressBar"_L1, "groupBox"_L1, "tab"_L1, "menu"_L1, "header"_L1, "itemView"_L1,
-         "toolTip"_L1, "splitter"_L1, "transitionDuration"_L1, "layout"_L1});
+    const auto controls = Appearance::readObject(appearance, u"appearance"_s,
+                                                 {"slider"_L1,
+                                                  "scrollBar"_L1,
+                                                  "pushButton"_L1,
+                                                  "toolButton"_L1,
+                                                  "toolBar"_L1,
+                                                  "checkBox"_L1,
+                                                  "radioButton"_L1,
+                                                  "lineEdit"_L1,
+                                                  "comboBox"_L1,
+                                                  "spinBox"_L1,
+                                                  "progressBar"_L1,
+                                                  "groupBox"_L1,
+                                                  "tab"_L1,
+                                                  "menu"_L1,
+                                                  "header"_L1,
+                                                  "itemView"_L1,
+                                                  "toolTip"_L1,
+                                                  "splitter"_L1,
+                                                  "transitionDuration"_L1,
+                                                  "layout"_L1});
     if(!controls) {
         return std::unexpected{controls.error()};
     }
@@ -100,6 +116,11 @@ std::expected<ThemeAppearance, QString> resolveThemeAppearance(const QJsonObject
     const auto checkBox = resolveCheckBoxAppearance(*controls);
     if(!checkBox) {
         return std::unexpected{checkBox.error()};
+    }
+
+    const auto toolBar = resolveToolBarAppearance(*controls);
+    if(!toolBar) {
+        return std::unexpected{toolBar.error()};
     }
 
     const auto radioButton = resolveRadioButtonAppearance(*controls);
@@ -166,6 +187,7 @@ std::expected<ThemeAppearance, QString> resolveThemeAppearance(const QJsonObject
                            .scrollBar          = *scrollBar,
                            .pushButton         = *pushButton,
                            .toolButton         = *toolButton,
+                           .toolBar            = *toolBar,
                            .checkBox           = *checkBox,
                            .radioButton        = *radioButton,
                            .lineEdit           = *lineEdit,

@@ -34,6 +34,7 @@
 #include "splitterappearanceeditor.h"
 #include "style/fooyinstyle.h"
 #include "tabappearanceeditor.h"
+#include "toolbarappearanceeditor.h"
 #include "toolbuttonappearanceeditor.h"
 #include "tooltipappearanceeditor.h"
 
@@ -214,6 +215,7 @@ ThemeAppearanceDialog::ThemeAppearanceDialog(QJsonObject appearance, const QPale
     addComponent(std::make_unique<InputAppearanceEditor>(m_propertyModel, InputType::SpinBox), palette, font);
     addComponent(std::make_unique<TabAppearanceEditor>(m_propertyModel), palette, font);
     addComponent(std::make_unique<ToolButtonAppearanceEditor>(m_propertyModel), palette, font);
+    addComponent(std::make_unique<ToolBarAppearanceEditor>(m_propertyModel), palette, font);
     addComponent(std::make_unique<ToolTipAppearanceEditor>(m_propertyModel), palette, font);
 
     m_components->expandAll();

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "theme/toolbarappearance.h"
+
 #include <QStyle>
 
 #include <optional>
@@ -28,10 +30,11 @@ class QStyleOptionToolBar;
 class QStyleOptionToolButton;
 
 namespace Fooyin::Style::Toolbar {
-void drawPanel(const QStyleOptionToolBar& option, QPainter& painter);
-void drawFrame(const QStyleOption& option, QPainter& painter);
-void drawHandle(const QStyleOption& option, QPainter& painter);
-void drawSeparator(const QStyleOption& option, QPainter& painter);
-void drawExtension(const QStyleOptionToolButton& option, QPainter& painter, const QWidget* widget);
-std::optional<int> pixelMetric(QStyle::PixelMetric metric);
+void drawPanel(const QStyleOptionToolBar& option, QPainter& painter, const ToolBarAppearance& appearance);
+void drawFrame(const QStyleOption& option, QPainter& painter, const ToolBarAppearance& appearance);
+void drawHandle(const QStyleOption& option, QPainter& painter, const ToolBarAppearance& appearance);
+void drawSeparator(const QStyleOption& option, QPainter& painter, const ToolBarAppearance& appearance);
+void drawExtension(const QStyleOptionToolButton& option, QPainter& painter, const QWidget* widget,
+                   const ToolBarAppearance& appearance);
+std::optional<int> pixelMetric(QStyle::PixelMetric metric, const ToolBarAppearance& appearance);
 } // namespace Fooyin::Style::Toolbar

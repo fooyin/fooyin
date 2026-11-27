@@ -31,6 +31,7 @@
 #include "sliderappearance.h"
 #include "splitterappearance.h"
 #include "tabappearance.h"
+#include "toolbarappearance.h"
 #include "toolbuttonappearance.h"
 #include "tooltipappearance.h"
 
@@ -53,6 +54,7 @@ struct ThemeAppearance
     ScrollBarAppearance scrollBar{};
     PushButtonAppearance pushButton{};
     ToolButtonAppearance toolButton{};
+    ToolBarAppearance toolBar{};
     CheckAppearance checkBox{};
     CheckAppearance radioButton{defaultRadioButtonAppearance()};
     InputAppearance lineEdit{};

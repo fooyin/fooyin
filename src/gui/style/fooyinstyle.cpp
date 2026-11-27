@@ -176,15 +176,15 @@ void FooyinStyle::drawPrimitive(PrimitiveElement element, const QStyleOption* op
             return;
         case PE_PanelToolBar:
             if(const auto* toolbar = qstyleoption_cast<const QStyleOptionToolBar*>(option)) {
-                Style::Toolbar::drawPanel(*toolbar, *painter);
+                Style::Toolbar::drawPanel(*toolbar, *painter, m_appearance.toolBar);
                 return;
             }
             break;
         case PE_IndicatorToolBarHandle:
-            Style::Toolbar::drawHandle(*option, *painter);
+            Style::Toolbar::drawHandle(*option, *painter, m_appearance.toolBar);
             return;
         case PE_IndicatorToolBarSeparator:
-            Style::Toolbar::drawSeparator(*option, *painter);
+            Style::Toolbar::drawSeparator(*option, *painter, m_appearance.toolBar);
             return;
         case PE_FrameDockWidget:
             Style::Dock::drawFrame(*option, *painter);
@@ -252,7 +252,7 @@ void FooyinStyle::drawPrimitive(PrimitiveElement element, const QStyleOption* op
             return;
         case PE_FrameMenu:
             if(qobject_cast<const QToolBar*>(widget)) {
-                Style::Toolbar::drawFrame(*option, *painter);
+                Style::Toolbar::drawFrame(*option, *painter, m_appearance.toolBar);
             }
             return;
         case PE_PanelMenuBar:
@@ -322,7 +322,7 @@ void FooyinStyle::drawControl(ControlElement element, const QStyleOption* option
             return;
         case CE_ToolBar:
             if(const auto* toolbar = qstyleoption_cast<const QStyleOptionToolBar*>(option)) {
-                Style::Toolbar::drawPanel(*toolbar, *painter);
+                Style::Toolbar::drawPanel(*toolbar, *painter, m_appearance.toolBar);
                 return;
             }
             break;
@@ -430,7 +430,7 @@ void FooyinStyle::drawControl(ControlElement element, const QStyleOption* option
         case CE_ToolButtonLabel:
             if(const auto* button = qstyleoption_cast<const QStyleOptionToolButton*>(option)) {
                 if(widget && widget->inherits("QToolBarExtension")) {
-                    Style::Toolbar::drawExtension(*button, *painter, widget);
+                    Style::Toolbar::drawExtension(*button, *painter, widget, m_appearance.toolBar);
                 }
                 else if(widget && qobject_cast<const QDockWidget*>(widget->parentWidget()) && !button->icon.isNull()) {
                     auto label{*button};
@@ -569,7 +569,7 @@ int FooyinStyle::pixelMetric(PixelMetric metric, const QStyleOption* option, con
     if(const auto value = Style::Dock::pixelMetric(metric)) {
         return *value;
     }
-    if(const auto value = Style::Toolbar::pixelMetric(metric)) {
+    if(const auto value = Style::Toolbar::pixelMetric(metric, m_appearance.toolBar)) {
         return *value;
     }
     if(const auto value = Style::Header::pixelMetric(metric, option, m_appearance.header)) {

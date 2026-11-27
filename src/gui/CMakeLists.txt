@@ -740,6 +740,8 @@ set(SOURCES
     theme/editor/tabappearanceeditor.h
     theme/editor/themeappearancedialog.cpp
     theme/editor/themeappearancedialog.h
+    theme/editor/toolbarappearanceeditor.cpp
+    theme/editor/toolbarappearanceeditor.h
     theme/editor/toolbuttonappearanceeditor.cpp
     theme/editor/toolbuttonappearanceeditor.h
     theme/editor/tooltipappearanceeditor.cpp
@@ -770,6 +772,8 @@ set(SOURCES
     theme/tabappearance.h
     theme/themeappearance.cpp
     theme/themeappearance.h
+    theme/toolbarappearance.cpp
+    theme/toolbarappearance.h
     theme/themepreset.cpp
     theme/themepreset.h
     theme/themeregistry.cpp

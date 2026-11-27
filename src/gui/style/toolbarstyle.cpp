@@ -26,23 +26,51 @@
 #include <QStyleOptionToolButton>
 #include <QToolBar>
 
+#include <array>
+#include <cmath>
+
 namespace Fooyin::Style::Toolbar {
-void drawPanel(const QStyleOptionToolBar& option, QPainter& painter)
+namespace {
+QColor tintedColour(const QStyleOption& option, const ColourSource& source, const ColourSource& tintSource,
+                    int tintOpacity, int opacity)
+{
+    const auto group  = colourGroup(option);
+    const auto base   = resolveBrush(source, option.palette, group).color();
+    const auto tint   = resolveBrush(tintSource, option.palette, group).color();
+    const auto amount = static_cast<float>(tintOpacity / 100.0) * tint.alphaF();
+    return QColor::fromRgbF(
+        std::lerp(base.redF(), tint.redF(), amount), std::lerp(base.greenF(), tint.greenF(), amount),
+        std::lerp(base.blueF(), tint.blueF(), amount), base.alphaF() * static_cast<float>(opacity / 100.0));
+}
+} // namespace
+
+void drawPanel(const QStyleOptionToolBar& option, QPainter& painter, const ToolBarAppearance& appearance)
 {
     if(option.rect.isEmpty()) {
         return;
     }
 
     painter.save();
-    painter.fillRect(option.rect, option.palette.brush(colourGroup(option), QPalette::Window));
+    const double opacity   = painter.opacity();
+    const auto orientation = option.state & QStyle::State_Horizontal ? Qt::Horizontal : Qt::Vertical;
+    painter.setOpacity(opacity * appearance.backgroundOpacity / 100.0);
+    painter.fillRect(option.rect,
+                     resolveBrush(appearance.backgroundColour, option.palette, colourGroup(option), option.rect,
+                                  orientation, orientation == Qt::Horizontal && option.direction == Qt::RightToLeft));
+    painter.setOpacity(opacity);
 
-    if(option.lineWidth > 0) {
-        auto border = outlineColour(option);
-        border.setAlphaF(border.alphaF() * 0.6F);
+    if(option.lineWidth > 0 && appearance.border.width > 0) {
+        const auto& border = appearance.border;
+        const auto colour  = tintedColour(option, border.colour, border.tintColour, border.tintOpacity, border.opacity);
 
-        const QRect rect{option.rect};
+        const double inset = (border.width - 1) / 2.0;
+        const QRectF rect  = QRectF{option.rect.adjusted(0, 0, -1, -1)}.adjusted(inset, inset, -inset, -inset);
+        if(rect.isEmpty()) {
+            painter.restore();
+            return;
+        }
 
-        painter.setPen(QPen{border, 1.0});
+        painter.setPen(QPen{colour, static_cast<double>(border.width)});
         switch(option.toolBarArea) {
             case Qt::BottomToolBarArea:
                 painter.drawLine(rect.topLeft(), rect.topRight());
@@ -67,21 +95,30 @@ void drawPanel(const QStyleOptionToolBar& option, QPainter& painter)
     painter.restore();
 }
 
-void drawFrame(const QStyleOption& option, QPainter& painter)
+void drawFrame(const QStyleOption& option, QPainter& painter, const ToolBarAppearance& appearance)
 {
     if(option.rect.isEmpty()) {
         return;
     }
 
+    const auto& border = appearance.border;
+    const double inset = border.width / 2.0;
+    const QRectF rect  = QRectF{option.rect}.adjusted(inset, inset, -inset, -inset);
+    if(border.width <= 0 || rect.isEmpty()) {
+        return;
+    }
+
     painter.save();
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(QPen{outlineColour(option), 1.0});
+    painter.setPen(
+        QPen{tintedColour(option, border.colour, border.tintColour, border.tintOpacity, border.floatingOpacity),
+             static_cast<double>(border.width)});
     painter.setBrush(Qt::NoBrush);
-    painter.drawRoundedRect(QRectF{option.rect}.adjusted(0.5, 0.5, -0.5, -0.5), 4.0, 4.0);
+    painter.drawRoundedRect(rect, border.floatingRadius, border.floatingRadius);
     painter.restore();
 }
 
-void drawHandle(const QStyleOption& option, QPainter& painter)
+void drawHandle(const QStyleOption& option, QPainter& painter, const ToolBarAppearance& appearance)
 {
     if(option.rect.isEmpty()) {
         return;
@@ -95,24 +132,28 @@ void drawHandle(const QStyleOption& option, QPainter& painter)
     const auto centre     = QRectF{option.rect}.center();
     const bool horizontal = option.state & QStyle::State_Horizontal;
 
-    auto colour = option.palette.color(colourGroup(option), QPalette::WindowText);
-    colour.setAlphaF(colour.alphaF() * 0.45F);
+    const auto& handle = appearance.handle;
+    if(handle.dotRadius <= 0) {
+        return;
+    }
+    auto colour = resolveBrush(handle.colour, option.palette, colourGroup(option)).color();
+    colour.setAlphaF(colour.alphaF() * static_cast<float>(handle.opacity / 100.0));
 
     painter.save();
     painter.setClipRect(option.rect, Qt::IntersectClip);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::NoPen);
     painter.setBrush(colour);
-    for(const double column : {-1.5, 1.5}) {
-        for(const double row : {-4.0, 0.0, 4.0}) {
+    for(const double column : {-handle.columnSpacing / 2.0, handle.columnSpacing / 2.0}) {
+        for(const double row : {-handle.rowSpacing, 0.0, handle.rowSpacing}) {
             const QPointF offset = horizontal ? QPointF{column, row} : QPointF{row, column};
-            painter.drawEllipse(centre + offset, 0.75, 0.75);
+            painter.drawEllipse(centre + offset, handle.dotRadius, handle.dotRadius);
         }
     }
     painter.restore();
 }
 
-void drawSeparator(const QStyleOption& option, QPainter& painter)
+void drawSeparator(const QStyleOption& option, QPainter& painter, const ToolBarAppearance& appearance)
 {
     if(option.rect.isEmpty()) {
         return;
@@ -120,22 +161,25 @@ void drawSeparator(const QStyleOption& option, QPainter& painter)
 
     const QRectF rect{option.rect};
     const bool horizontal = option.state & QStyle::State_Horizontal;
-    const double length   = std::min(16.0, (horizontal ? rect.height() : rect.width()) - 8.0);
-    if(length <= 0.0) {
+    const auto& separator = appearance.separator;
+    const double length
+        = std::min(separator.length, (horizontal ? rect.height() : rect.width()) - 2 * separator.margin);
+    if(length <= 0.0 || separator.width <= 0.0) {
         return;
     }
 
-    auto colour = outlineColour(option);
-    colour.setAlphaF(colour.alphaF() * 0.6F);
+    const auto colour
+        = tintedColour(option, separator.colour, separator.tintColour, separator.tintOpacity, separator.opacity);
     const QPointF offset = horizontal ? QPointF{0.0, length / 2.0} : QPointF{length / 2.0, 0.0};
 
     painter.save();
-    painter.setPen(QPen{colour, 1.0});
+    painter.setPen(QPen{colour, separator.width});
     painter.drawLine(rect.center() - offset, rect.center() + offset);
     painter.restore();
 }
 
-void drawExtension(const QStyleOptionToolButton& option, QPainter& painter, const QWidget* widget)
+void drawExtension(const QStyleOptionToolButton& option, QPainter& painter, const QWidget* widget,
+                   const ToolBarAppearance& appearance)
 {
     if(option.rect.isEmpty()) {
         return;
@@ -143,7 +187,12 @@ void drawExtension(const QStyleOptionToolButton& option, QPainter& painter, cons
 
     const auto* toolbar   = widget ? qobject_cast<const QToolBar*>(widget->parentWidget()) : nullptr;
     const bool horizontal = !toolbar || toolbar->orientation() == Qt::Horizontal;
-    const double extent   = std::min({12, option.rect.width(), option.rect.height()});
+    const auto& extension = appearance.extension;
+    const double extent   = std::min(
+        {extension.glyphSize, static_cast<double>(option.rect.width()), static_cast<double>(option.rect.height())});
+    if(extent <= 0.0 || extension.glyphWidth <= 0.0) {
+        return;
+    }
 
     painter.save();
     painter.setClipRect(option.rect, Qt::IntersectClip);
@@ -152,25 +201,31 @@ void drawExtension(const QStyleOptionToolButton& option, QPainter& painter, cons
         painter.rotate(option.direction == Qt::RightToLeft ? 90.0 : -90.0);
     }
     painter.scale(extent / 12.0, extent / 12.0);
-    drawChevron(option, QRect{-6, -8, 12, 12}, painter, false, QPalette::ButtonText);
-    drawChevron(option, QRect{-6, -4, 12, 12}, painter, false, QPalette::ButtonText);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(QPen{resolveBrush(extension.colour, option.palette, colourGroup(option)), extension.glyphWidth,
+                        Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin});
+    for(const double offset : {-2.0, 2.0}) {
+        const std::array points{QPointF{-3.0, offset - 1.5}, QPointF{0.0, offset + 1.5}, QPointF{3.0, offset - 1.5}};
+        painter.drawPolyline(points.data(), static_cast<int>(points.size()));
+    }
     painter.restore();
 }
 
-std::optional<int> pixelMetric(QStyle::PixelMetric metric)
+std::optional<int> pixelMetric(QStyle::PixelMetric metric, const ToolBarAppearance& appearance)
 {
     switch(metric) {
         case QStyle::PM_ToolBarFrameWidth:
-            return 1;
+            return appearance.border.width;
         case QStyle::PM_ToolBarItemMargin:
+            return appearance.itemMargin;
         case QStyle::PM_ToolBarItemSpacing:
-            return 2;
+            return appearance.itemSpacing;
         case QStyle::PM_ToolBarHandleExtent:
-            return 10;
+            return appearance.handle.extent;
         case QStyle::PM_ToolBarSeparatorExtent:
-            return 8;
+            return appearance.separator.extent;
         case QStyle::PM_ToolBarExtensionExtent:
-            return 22;
+            return appearance.extension.extent;
         default:
             return {};
     }
