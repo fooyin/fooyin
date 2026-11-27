@@ -1519,11 +1519,9 @@ QModelIndexList PlaylistModel::indexesOfTrackId(int id)
         if(m_nodes.contains(parentKey)) {
             auto* parentItem = &m_nodes.at(parentKey);
 
-            if(parentItem->type() == PlaylistItem::Track) {
-                const QModelIndex nodeIndex = indexOfItem(parentItem);
-                if(nodeIndex.isValid()) {
-                    indexes.emplace_back(nodeIndex);
-                }
+            const QModelIndex nodeIndex = indexOfItem(parentItem);
+            if(nodeIndex.isValid()) {
+                indexes.emplace_back(nodeIndex);
             }
         }
     }
@@ -2399,7 +2397,7 @@ bool PlaylistModel::tryUpdateTrackGroupInPlace(const PendingData& data)
     for(PlaylistItem* header : headersToUpdate) {
         header->setState(PlaylistItem::State::Update);
     }
-    updateHeaders();
+    sendHeaderUpdates({headersToUpdate.cbegin(), headersToUpdate.cend()});
 
     return true;
 }
@@ -3250,9 +3248,14 @@ void PlaylistModel::updateHeaders()
         }
     }
 
+    sendHeaderUpdates({items.cbegin(), items.cend()});
+}
+
+void PlaylistModel::sendHeaderUpdates(const std::vector<PlaylistItem*>& headers)
+{
     HeaderUpdateList updatedHeaders;
 
-    for(PlaylistItem* header : items) {
+    for(PlaylistItem* header : headers) {
         updatedHeaders.emplace_back(*header, collectHeaderTracks(header));
     }
 
@@ -3482,14 +3485,27 @@ void PlaylistModel::refreshScriptData(const ScriptChanges& changes)
         refreshTracks(rows, m_columns.empty() ? std::set<int>{} : columns);
     }
 
-    HeaderUpdateList headers;
-    for(const auto& [key, item] : m_nodes) {
-        if(item.type() != PlaylistItem::Header && item.type() != PlaylistItem::Subheader) {
-            continue;
+    // pick only group headers relevant for the changed tracks
+    std::set<PlaylistItem*> candidates;
+    const bool allTrackChanges = std::ranges::all_of(
+        changes, [](const ScriptChange& change) { return change.track.isValid() && change.track.id() >= 0; });
+    if(allTrackChanges) {
+        for(const auto& change : changes) {
+            candidates.merge(currentHeadersOfTrack(change.track.id()));
         }
+    }
+    else {
+        for(auto& [_, item] : m_nodes) {
+            if(item.type() == PlaylistItem::Header || item.type() == PlaylistItem::Subheader) {
+                candidates.insert(&item);
+            }
+        }
+    }
 
-        const auto& header     = std::get<PlaylistContainerItem>(item.data());
-        const auto scriptIndex = item.type() == PlaylistItem::Header ? 0 : header.scriptIndex() + 1;
+    HeaderUpdateList headers;
+    for(PlaylistItem* item : candidates) {
+        const auto& header     = std::get<PlaylistContainerItem>(item->data());
+        const auto scriptIndex = item->type() == PlaylistItem::Header ? 0 : header.scriptIndex() + 1;
         if(scriptIndex < 0 || std::cmp_greater_equal(scriptIndex, m_headerDependencies.size())) {
             continue;
         }
@@ -3500,14 +3516,14 @@ void PlaylistModel::refreshScriptData(const ScriptChanges& changes)
         };
 
         if(std::ranges::any_of(changes, matchesSource)) {
-            const auto tracks = collectHeaderTracks(&m_nodes.at(key));
+            const auto tracks = collectHeaderTracks(item);
             if(std::ranges::any_of(changes, [&tracks, &matchesSource](const ScriptChange& change) {
                    return matchesSource(change)
                        && (!change.track.isValid() || std::ranges::any_of(tracks, [&change](const Track& track) {
                               return track.sameIdentityAs(change.track);
                           }));
                })) {
-                headers.emplace_back(item, tracks);
+                headers.emplace_back(*item, tracks);
             }
         }
     }
@@ -3521,32 +3537,58 @@ void PlaylistModel::refreshScriptData(const ScriptChanges& changes)
 
 void PlaylistModel::coverUpdated(const Track& track)
 {
-    if(!m_trackParents.contains(track.id())) {
+    for(PlaylistItem* header : currentHeadersOfTrack(track.id())) {
+        if(header->type() == PlaylistItem::Header) {
+            const QModelIndex nodeIndex = indexOfItem(header);
+            Q_EMIT dataChanged(nodeIndex, nodeIndex.siblingAtColumn(columnCount(nodeIndex) - 1), {Qt::DecorationRole});
+        }
+    }
+
+    if(m_pixmapColumns.empty()) {
         return;
     }
 
-    const auto parents   = m_trackParents.at(track.id());
-    const bool hasPixmap = !m_pixmapColumns.empty();
-
-    for(const auto& parentKey : parents) {
-        if(m_nodes.contains(parentKey)) {
-            auto* parentItem = &m_nodes.at(parentKey);
-
-            if(parentItem->type() == PlaylistItem::Header) {
-                const QModelIndex nodeIndex = indexOfItem(parentItem);
-                Q_EMIT dataChanged(nodeIndex, nodeIndex.siblingAtColumn(columnCount(nodeIndex) - 1),
-                                   {Qt::DecorationRole});
-            }
-            else if(hasPixmap && parentItem->type() == PlaylistItem::Track) {
-                const QModelIndex nodeIndex = indexOfItem(parentItem);
-                for(const int col : m_pixmapColumns) {
-                    Q_EMIT dataChanged(nodeIndex.siblingAtColumn(col),
-                                       nodeIndex.sibling(rowCount(nodeIndex.parent()) - 1, col),
-                                       {PlaylistItem::Column});
-                }
-            }
+    for(PlaylistItem* item : trackItemsForId(track.id())) {
+        const QModelIndex nodeIndex = indexOfItem(item);
+        for(const int col : m_pixmapColumns) {
+            Q_EMIT dataChanged(nodeIndex.siblingAtColumn(col), nodeIndex.sibling(rowCount(nodeIndex.parent()) - 1, col),
+                               {PlaylistItem::Column});
         }
     }
+}
+
+// which rows show this track?
+std::vector<PlaylistItem*> PlaylistModel::trackItemsForId(int trackId)
+{
+    std::vector<PlaylistItem*> items;
+
+    const auto parents = m_trackParents.find(trackId);
+    if(parents == m_trackParents.end()) {
+        return items;
+    }
+
+    for(const auto& key : parents->second) {
+        if(const auto node = m_nodes.find(key); node != m_nodes.end()) {
+            items.push_back(&node->second);
+        }
+    }
+
+    return items;
+}
+
+// what are the headers for this row?
+std::set<PlaylistItem*> PlaylistModel::currentHeadersOfTrack(int trackId)
+{
+    std::set<PlaylistItem*> headers;
+
+    for(PlaylistItem* item : trackItemsForId(trackId)) {
+        for(PlaylistItem* parent = item->parent(); parent && parent->type() != PlaylistItem::Root;
+            parent               = parent->parent()) {
+            headers.insert(parent);
+        }
+    }
+
+    return headers;
 }
 
 PlaylistTrack PlaylistModel::persistentTrackForIndex(const QModelIndex& index) const

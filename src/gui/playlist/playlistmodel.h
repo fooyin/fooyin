@@ -37,6 +37,7 @@
 
 #include <expected>
 #include <optional>
+#include <set>
 #include <unordered_map>
 
 namespace Fooyin {
@@ -265,7 +266,10 @@ private:
     void removeEmptyHeaders();
     void mergeHeaders();
     [[nodiscard]] TrackList collectHeaderTracks(PlaylistItem* header) const;
+    [[nodiscard]] std::vector<PlaylistItem*> trackItemsForId(int trackId);
+    [[nodiscard]] std::set<PlaylistItem*> currentHeadersOfTrack(int trackId);
     void updateHeaders();
+    void sendHeaderUpdates(const std::vector<PlaylistItem*>& headers);
     void updateTrackIndexes(bool updateItems = true);
     void deleteNodes(PlaylistItem* node);
 

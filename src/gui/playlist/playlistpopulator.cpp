@@ -391,7 +391,6 @@ void PlaylistPopulatorPrivate::iterateHeader(const Track& track, PlaylistItem*& 
     auto& headerState = m_headers.at(key);
     headerState.tracks.emplace_back(track);
     headerState.dirty = true;
-    m_data.trackParents[track.id()].push_back(key);
 
     auto* headerItem = &m_data.items.at(key);
     parent           = headerItem;
@@ -448,7 +447,6 @@ void PlaylistPopulatorPrivate::iterateSubheaders(const Track& track, PlaylistIte
         auto& subheaderState = m_headers.at(key);
         subheaderState.tracks.emplace_back(track);
         subheaderState.dirty = true;
-        m_data.trackParents[track.id()].push_back(key);
 
         auto* subheaderItem = &m_data.items.at(key);
         parent              = subheaderItem;
