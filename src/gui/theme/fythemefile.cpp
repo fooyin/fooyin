@@ -19,6 +19,9 @@
 
 #include <gui/theme/fythemefile.h>
 
+#include "themeappearance.h"
+
+#include <QCoreApplication>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -209,10 +212,11 @@ QJsonObject fontToJson(const QFont& font)
 std::expected<bool, QString> readBool(const QJsonObject& json, QLatin1StringView key)
 {
     if(!json.contains(key)) {
-        return std::unexpected(u"Font property '%1' is missing."_s.arg(key));
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font property ‘%1’ is missing.").arg(key)};
     }
     if(!json.value(key).isBool()) {
-        return std::unexpected(u"Font property '%1' must be a boolean."_s.arg(key));
+        return std::unexpected{
+            QCoreApplication::translate("ThemeFile", "Font property ‘%1’ must be a boolean.").arg(key)};
     }
     return json.value(key).toBool();
 }
@@ -220,12 +224,13 @@ std::expected<bool, QString> readBool(const QJsonObject& json, QLatin1StringView
 std::expected<QFont, QString> fontFromJson(const QJsonValue& value)
 {
     if(!value.isObject()) {
-        return std::unexpected(u"Each font must be an object."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Each font must be an object.")};
     }
 
     const QJsonObject json = value.toObject();
     if(!json.value(u"families"_s).isArray()) {
-        return std::unexpected(u"Font property 'families' must be an array."_s);
+        //: ‘families’ is a JSON property name and must remain untranslated.
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font property ‘families’ must be an array.")};
     }
 
     QStringList families;
@@ -233,13 +238,14 @@ std::expected<QFont, QString> fontFromJson(const QJsonValue& value)
     const auto fontFamilies = json.value(u"families"_s).toArray();
     for(const auto& family : fontFamilies) {
         if(!family.isString() || family.toString().isEmpty()) {
-            return std::unexpected(u"Font families must be non-empty strings."_s);
+            return std::unexpected{
+                QCoreApplication::translate("ThemeFile", "Font families must be non-empty strings.")};
         }
         families.emplace_back(family.toString());
     }
 
     if(families.isEmpty()) {
-        return std::unexpected(u"A font must contain at least one family."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "A font must contain at least one family.")};
     }
 
     QFont font;
@@ -248,92 +254,96 @@ std::expected<QFont, QString> fontFromJson(const QJsonValue& value)
     const bool hasPointSize = json.contains(u"pointSize"_s);
     const bool hasPixelSize = json.contains(u"pixelSize"_s);
     if(hasPointSize == hasPixelSize) {
-        return std::unexpected(u"A font must contain exactly one of 'pointSize' or 'pixelSize'."_s);
+        //: ‘pointSize’ and ‘pixelSize’ are JSON property names and must remain untranslated.
+        return std::unexpected{
+            QCoreApplication::translate("ThemeFile", "A font must contain exactly one of ‘pointSize’ or ‘pixelSize’.")};
     }
 
     if(hasPointSize) {
         const double size = json.value(u"pointSize"_s).toDouble(-1);
         if(size <= 0) {
-            return std::unexpected(u"Font point size must be greater than zero."_s);
+            return std::unexpected{
+                QCoreApplication::translate("ThemeFile", "Font point size must be greater than zero.")};
         }
         font.setPointSizeF(size);
     }
     else {
         const int size = json.value(u"pixelSize"_s).toInt(-1);
         if(size <= 0) {
-            return std::unexpected(u"Font pixel size must be greater than zero."_s);
+            return std::unexpected{
+                QCoreApplication::translate("ThemeFile", "Font pixel size must be greater than zero.")};
         }
         font.setPixelSize(size);
     }
 
     const int weight = json.value(u"weight"_s).toInt(-1);
     if(weight < 1 || weight > 1000) {
-        return std::unexpected(u"Font weight must be between 1 and 1000."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font weight must be between 1 and 1000.")};
     }
     font.setWeight(static_cast<QFont::Weight>(weight));
 
     const auto style = fontStyle(json.value(u"style"_s).toString());
     if(!style) {
-        return std::unexpected(u"Font style is invalid."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font style is invalid.")};
     }
     font.setStyle(*style);
 
     const auto caps = capitalisation(json.value(u"capitalisation"_s).toString());
     if(!caps) {
-        return std::unexpected(u"Font capitalisation is invalid."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font capitalisation is invalid.")};
     }
     font.setCapitalization(*caps);
 
     const auto underline = readBool(json, "underline"_L1);
     if(!underline) {
-        return std::unexpected(underline.error());
+        return std::unexpected{underline.error()};
     }
     font.setUnderline(*underline);
 
     const auto strikeOut = readBool(json, "strikeOut"_L1);
     if(!strikeOut) {
-        return std::unexpected(strikeOut.error());
+        return std::unexpected{strikeOut.error()};
     }
     font.setStrikeOut(*strikeOut);
 
     const auto fixedPitch = readBool(json, "fixedPitch"_L1);
     if(!fixedPitch) {
-        return std::unexpected(fixedPitch.error());
+        return std::unexpected{fixedPitch.error()};
     }
     font.setFixedPitch(*fixedPitch);
 
     const auto kerning = readBool(json, "kerning"_L1);
     if(!kerning) {
-        return std::unexpected(kerning.error());
+        return std::unexpected{kerning.error()};
     }
     font.setKerning(*kerning);
 
     const int stretch = json.value(u"stretch"_s).toInt(-1);
-    if(stretch < 1 || stretch > 4000) {
-        return std::unexpected(u"Font stretch must be between 1 and 4000."_s);
+    if(stretch < 0 || stretch > 4000) {
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font stretch must be between 0 and 4000.")};
     }
     font.setStretch(stretch);
 
     if(!json.value(u"wordSpacing"_s).isDouble()) {
-        return std::unexpected(u"Font word spacing must be a number."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font word spacing must be a number.")};
     }
     font.setWordSpacing(json.value(u"wordSpacing"_s).toDouble());
 
     if(json.contains(u"styleName"_s)) {
         if(!json.value(u"styleName"_s).isString()) {
-            return std::unexpected(u"Font style name must be a string."_s);
+            return std::unexpected{QCoreApplication::translate("ThemeFile", "Font style name must be a string.")};
         }
         font.setStyleName(json.value(u"styleName"_s).toString());
     }
 
     const QJsonValue spacingValue = json.value(u"letterSpacing"_s);
     if(!spacingValue.isObject()) {
-        return std::unexpected(u"Font letter spacing must be an object."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font letter spacing must be an object.")};
     }
 
     const QJsonObject spacing = spacingValue.toObject();
     if(!spacing.value(u"value"_s).isDouble()) {
-        return std::unexpected(u"Font letter spacing value must be a number."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font letter spacing value must be a number.")};
     }
 
     const QString spacingType = spacing.value(u"type"_s).toString();
@@ -344,7 +354,7 @@ std::expected<QFont, QString> fontFromJson(const QJsonValue& value)
         font.setLetterSpacing(QFont::PercentageSpacing, spacing.value(u"value"_s).toDouble());
     }
     else {
-        return std::unexpected(u"Font letter spacing type is invalid."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Font letter spacing type is invalid.")};
     }
 
     return font;
@@ -366,11 +376,14 @@ QByteArray FyThemeFile::toJson(const FyTheme& theme)
         fonts[it.key().isEmpty() ? u"default"_s : it.key()] = fontToJson(it.value());
     }
 
-    const QJsonObject root{{u"format"_s, FormatName},
-                           {u"version"_s, CurrentVersion},
-                           {u"name"_s, theme.name},
-                           {u"colours"_s, colours},
-                           {u"fonts"_s, fonts}};
+    QJsonObject root{{u"format"_s, FormatName},
+                     {u"version"_s, CurrentVersion},
+                     {u"name"_s, theme.name},
+                     {u"colours"_s, colours},
+                     {u"fonts"_s, fonts}};
+    if(!theme.appearance.isEmpty()) {
+        root[u"appearance"_s] = theme.appearance;
+    }
     return QJsonDocument{root}.toJson();
 }
 
@@ -379,54 +392,68 @@ FyThemeFile::ReadResult FyThemeFile::fromJson(const QByteArray& data)
     QJsonParseError parseError;
     const QJsonDocument document = QJsonDocument::fromJson(data, &parseError);
     if(parseError.error != QJsonParseError::NoError) {
-        return std::unexpected(u"Invalid JSON: %1"_s.arg(parseError.errorString()));
+        return std::unexpected{
+            QCoreApplication::translate("ThemeFile", "Invalid JSON: %1").arg(parseError.errorString())};
     }
 
     if(!document.isObject()) {
-        return std::unexpected(u"Theme file root must be an object."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Theme file root must be an object.")};
     }
 
     const QJsonObject root = document.object();
     if(root.value(u"format"_s).toString() != FormatName) {
-        return std::unexpected(u"This is not a fooyin theme file."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "This is not a fooyin theme file.")};
     }
 
     if(!root.value(u"version"_s).isDouble()) {
-        return std::unexpected(u"Theme file version is missing or invalid."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Theme file version is missing or invalid.")};
     }
     const double versionValue = root.value(u"version"_s).toDouble(-1);
-    const int version         = static_cast<int>(versionValue);
-    if(versionValue != version || version != CurrentVersion) {
-        return std::unexpected(u"Theme file version %1 is not supported."_s.arg(versionValue));
+    if(versionValue != 1 && versionValue != CurrentVersion) {
+        return std::unexpected{
+            QCoreApplication::translate("ThemeFile", "Theme file version %1 is not supported.").arg(versionValue)};
     }
 
     const QString name = root.value(u"name"_s).toString().trimmed();
     if(name.isEmpty()) {
-        return std::unexpected(u"Theme name is missing or empty."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Theme name is missing or empty.")};
     }
 
     if(!root.value(u"colours"_s).isObject() || !root.value(u"fonts"_s).isObject()) {
-        return std::unexpected(u"Theme colours and fonts must be objects."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Theme colours and fonts must be objects.")};
     }
 
     FyTheme theme;
     theme.name = name;
+
+    if(root.contains("appearance"_L1)) {
+        if(versionValue < 2 || !root.value("appearance"_L1).isObject()) {
+            return std::unexpected{QCoreApplication::translate(
+                "ThemeFile", "Theme appearance must be an object in a version 2 theme file.")};
+        }
+        theme.appearance = root.value("appearance"_L1).toObject();
+        if(const auto appearance = resolveThemeAppearance(theme.appearance); !appearance) {
+            return std::unexpected{appearance.error()};
+        }
+    }
 
     static const QRegularExpression ColourPattern{u"^#[0-9A-Fa-f]{8}$"_s};
     const QJsonObject colours = root.value(u"colours"_s).toObject();
     for(auto it = colours.begin(); it != colours.end(); ++it) {
         const auto key = paletteKey(it.key());
         if(!key) {
-            return std::unexpected(u"Unknown palette key '%1'."_s.arg(it.key()));
+            return std::unexpected{QCoreApplication::translate("ThemeFile", "Unknown palette key ‘%1’.").arg(it.key())};
         }
 
         if(!it.value().isString() || !ColourPattern.match(it.value().toString()).hasMatch()) {
-            return std::unexpected(u"Colour '%1' must use #AARRGGBB format."_s.arg(it.key()));
+            //: #AARRGGBB is a literal colour format and must remain unchanged.
+            return std::unexpected{
+                QCoreApplication::translate("ThemeFile", "Colour ‘%1’ must use #AARRGGBB format.").arg(it.key())};
         }
 
         const QColor colour{it.value().toString()};
         if(!colour.isValid()) {
-            return std::unexpected(u"Colour '%1' is invalid."_s.arg(it.key()));
+            return std::unexpected{QCoreApplication::translate("ThemeFile", "Colour ‘%1’ is invalid.").arg(it.key())};
         }
         theme.colours[*key] = colour;
     }
@@ -435,13 +462,15 @@ FyThemeFile::ReadResult FyThemeFile::fromJson(const QByteArray& data)
     for(auto it = fonts.begin(); it != fonts.end(); ++it) {
         const auto font = fontFromJson(it.value());
         if(!font) {
-            return std::unexpected(u"Invalid font '%1': %2"_s.arg(it.key(), font.error()));
+            return std::unexpected{
+                QCoreApplication::translate("ThemeFile", "Invalid font ‘%1’: %2").arg(it.key(), font.error())};
         }
         theme.fonts[it.key() == u"default"_s ? QString{} : it.key()] = *font;
     }
 
     if(!theme.isValid()) {
-        return std::unexpected(u"Theme contains no colours or fonts."_s);
+        return std::unexpected{
+            QCoreApplication::translate("ThemeFile", "Theme contains no colours, fonts or appearance overrides.")};
     }
 
     return theme;
@@ -451,11 +480,11 @@ FyThemeFile::ReadResult FyThemeFile::read(const QString& path)
 {
     QFile file{path};
     if(!file.open(QIODevice::ReadOnly)) {
-        return std::unexpected(file.errorString());
+        return std::unexpected{file.errorString()};
     }
 
     if(file.size() > MaxFileSize) {
-        return std::unexpected(u"Theme file is too large."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Theme file is too large.")};
     }
 
     return fromJson(file.readAll());
@@ -464,23 +493,27 @@ FyThemeFile::ReadResult FyThemeFile::read(const QString& path)
 FyThemeFile::WriteResult FyThemeFile::write(const FyTheme& theme, const QString& path)
 {
     if(!theme.isValid() || theme.name.trimmed().isEmpty()) {
-        return std::unexpected(u"Theme is empty or has no name."_s);
+        return std::unexpected{QCoreApplication::translate("ThemeFile", "Theme is empty or has no name.")};
+    }
+
+    if(const auto appearance = resolveThemeAppearance(theme.appearance); !appearance) {
+        return std::unexpected{appearance.error()};
     }
 
     QSaveFile file{path};
     if(!file.open(QIODevice::WriteOnly)) {
-        return std::unexpected(file.errorString());
+        return std::unexpected{file.errorString()};
     }
 
     const QByteArray data = toJson(theme);
     if(file.write(data) != data.size()) {
         const QString error = file.errorString();
         file.cancelWriting();
-        return std::unexpected(error);
+        return std::unexpected{error};
     }
 
     if(!file.commit()) {
-        return std::unexpected(file.errorString());
+        return std::unexpected{file.errorString()};
     }
 
     return {};

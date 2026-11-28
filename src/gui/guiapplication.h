@@ -45,6 +45,7 @@
 
 class QTimerEvent;
 class QAction;
+class QStyle;
 
 namespace Fooyin {
 class ActionManager;
@@ -174,7 +175,7 @@ private:
     void close();
     void changeVolume(double delta) const;
     void mute() const;
-    void setStyle() const;
+    void setStyle();
     void updateColourScheme() const;
     void scheduleThemeUpdate(bool refreshSystemBaseline = false);
     void applyTheme();
@@ -290,6 +291,7 @@ private:
     CoverProvider m_coverProvider;
 
     QBasicTimer m_themeUpdateTimer;
+    QPointer<QStyle> m_selectedStyle;
     QPalette m_themePalette;
     bool m_themeUpdatePending;
     bool m_refreshSystemBaseline;

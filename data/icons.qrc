@@ -61,6 +61,8 @@
         <file>icons/dark/scalable/actions/preferences-desktop.svg</file>
         <file>icons/dark/scalable/actions/preferences-other.svg</file>
         <file>icons/dark/scalable/actions/preferences-system.svg</file>
+        <file>icons/dark/scalable/actions/property-inherited.svg</file>
+        <file>icons/dark/scalable/actions/property-reset.svg</file>
         <file>icons/dark/scalable/actions/randomize.svg</file>
         <file>icons/dark/scalable/actions/rss-symbolic.svg</file>
         <file>icons/dark/scalable/actions/script-expression.svg</file>
@@ -125,6 +127,8 @@
         <file>icons/light/scalable/actions/preferences-desktop.svg</file>
         <file>icons/light/scalable/actions/preferences-other.svg</file>
         <file>icons/light/scalable/actions/preferences-system.svg</file>
+        <file>icons/light/scalable/actions/property-inherited.svg</file>
+        <file>icons/light/scalable/actions/property-reset.svg</file>
         <file>icons/light/scalable/actions/randomize.svg</file>
         <file>icons/light/scalable/actions/rss-symbolic.svg</file>
         <file>icons/light/scalable/actions/script-expression.svg</file>

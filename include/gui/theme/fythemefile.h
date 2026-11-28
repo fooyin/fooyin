@@ -29,7 +29,7 @@ namespace Fooyin {
 class FYGUI_EXPORT FyThemeFile
 {
 public:
-    static constexpr int CurrentVersion{1};
+    static constexpr int CurrentVersion{2};
 
     using ReadResult  = std::expected<FyTheme, QString>;
     using WriteResult = std::expected<void, QString>;

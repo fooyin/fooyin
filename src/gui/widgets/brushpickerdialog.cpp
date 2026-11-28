@@ -321,7 +321,7 @@ BrushPickerDialog::BrushPickerDialog(const BrushSource& brush, const QPalette& p
         return editor;
     });
 
-    m_directionLayout->addRow(tr("Direction:"), m_direction);
+    m_directionLayout->addRow(tr("Direction") + u":"_s, m_direction);
 
     auto* gradientLayout = new QVBoxLayout(m_gradientPanel);
     gradientLayout->setContentsMargins({});

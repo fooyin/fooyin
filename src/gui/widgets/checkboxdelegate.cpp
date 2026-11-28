@@ -39,7 +39,12 @@ void CheckBoxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    if(!(opt.features & QStyleOptionViewItem::HasCheckIndicator) && opt.icon.isNull()) {
+        QStyledItemDelegate::paint(painter, option, index);
+        return;
+    }
+
+    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
 
@@ -76,9 +81,6 @@ void CheckBoxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 
         const QIcon::State state = opt.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
         opt.icon.paint(painter, iconRect, opt.decorationAlignment, mode, state);
-    }
-    else {
-        QStyledItemDelegate::paint(painter, option, index);
     }
 }
 

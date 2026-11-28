@@ -19,6 +19,9 @@
 
 #include <gui/widgets/toolbutton.h>
 
+#include "style/fooyinstyle.h"
+#include "style/styleutils.h"
+
 #include <gui/guisettings.h>
 #include <gui/iconloader.h>
 #include <utils/settings/settingsmanager.h>
@@ -107,11 +110,12 @@ void ToolButton::paintEvent(QPaintEvent* /*event*/)
     QStyleOptionToolButton opt;
     initStyleOption(&opt);
 
-    const bool checked = opt.state & QStyle::State_On;
-    if(autoRaise() && checked) {
+    const bool checked       = (opt.state & QStyle::State_On);
+    const bool highlightIcon = autoRaise() && checked && !qobject_cast<const FooyinStyle*>(style());
+    if(highlightIcon) {
         opt.state &= ~QStyle::State_On;
 
-        const QColor activeColour = opt.palette.color(QPalette::Active, QPalette::Highlight);
+        const QColor activeColour = opt.palette.color(QPalette::Highlight);
         opt.palette.setColor(QPalette::ButtonText, activeColour);
         opt.palette.setColor(QPalette::WindowText, activeColour);
     }
@@ -126,6 +130,14 @@ void ToolButton::paintEvent(QPaintEvent* /*event*/)
         const int baseSize = length - 2 * static_cast<int>((static_cast<double>(m_padding) / 100) * length);
         const int maxSize  = std::clamp(baseSize, m_minimumSize, m_maximumSize);
         opt.iconSize       = {maxSize, maxSize};
+    }
+
+    if(highlightIcon && !opt.icon.isNull()) {
+        const auto mode = !(opt.state & QStyle::State_Enabled) ? QIcon::Disabled
+                        : opt.state & QStyle::State_MouseOver  ? QIcon::Active
+                                                               : QIcon::Normal;
+        opt.icon        = Style::tintedIcon(opt.icon, opt.iconSize, devicePixelRatioF(), mode, QIcon::On,
+                                            opt.palette.color(QPalette::Highlight));
     }
 
     painter.drawComplexControl(QStyle::CC_ToolButton, opt);
