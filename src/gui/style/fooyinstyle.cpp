@@ -58,6 +58,7 @@
 #include <QScrollBar>
 #include <QSlider>
 #include <QSplitterHandle>
+#include <QStyleHints>
 #include <QStyleOptionButton>
 #include <QStyleOptionComboBox>
 #include <QStyleOptionDockWidget>
@@ -839,6 +840,27 @@ QRect FooyinStyle::subControlRect(ComplexControl control, const QStyleOptionComp
     }
 
     return QCommonStyle::subControlRect(control, option, subControl, widget);
+}
+
+void FooyinStyle::polish(QPalette& palette)
+{
+    QCommonStyle::polish(palette);
+
+#ifdef Q_OS_WIN
+    const auto colourScheme = QGuiApplication::styleHints()->colorScheme();
+    if(colourScheme == Qt::ColorScheme::Unknown) {
+        // Qt reports an unknown colour scheme for Windows high-contrast themes
+        return;
+    }
+
+    // Match Windows 11 rather than the accent-based alternate colour in the platform's dark palette
+    const QColor alternateBase = colourScheme == Qt::ColorScheme::Dark ? QColor{255, 255, 255, 15} : QColor{0, 0, 0, 9};
+    for(const auto group : {QPalette::Active, QPalette::Inactive, QPalette::Disabled}) {
+        if(!palette.isBrushSet(group, QPalette::AlternateBase)) {
+            palette.setColor(group, QPalette::AlternateBase, alternateBase);
+        }
+    }
+#endif
 }
 
 void FooyinStyle::polish(QWidget* widget)

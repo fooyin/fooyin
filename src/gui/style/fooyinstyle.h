@@ -60,6 +60,7 @@ public:
     [[nodiscard]] QRect subControlRect(ComplexControl control, const QStyleOptionComplex* option, SubControl subControl,
                                        const QWidget* widget = nullptr) const override;
 
+    void polish(QPalette& palette) override;
     void polish(QWidget* widget) override;
     void unpolish(QWidget* widget) override;
 
