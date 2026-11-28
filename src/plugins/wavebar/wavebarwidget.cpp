@@ -111,8 +111,11 @@ WaveBarWidget::WaveBarWidget(std::shared_ptr<AudioLoader> audioLoader, DbConnect
     m_config = defaultConfig();
     applyConfig(m_config);
 
-    QObject::connect(m_builder.get(), &WaveformBuilder::generatingWaveform, this,
-                     [this]() { m_seekbar->processData({}); });
+    QObject::connect(m_builder.get(), &WaveformBuilder::generatingWaveform, this, [this]() {
+        WaveformData<float> data;
+        data.duration = m_displayedTrack.duration();
+        m_seekbar->processData(data);
+    });
     QObject::connect(m_builder.get(), &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
 
     QObject::connect(playerController, &PlayerController::positionChanged, this, [this](uint64_t position) {

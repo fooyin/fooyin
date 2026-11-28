@@ -340,30 +340,6 @@ std::optional<ScriptEvaluator::FuncRet> trackMetadataValue(const VariableKind ki
     }
 }
 
-std::optional<ScriptEvaluator::FuncRet> trackListValue(const VariableKind kind, const TrackList& tracks,
-                                                       const ScriptEvaluator& registry)
-{
-    const auto& cache = registry.cachedTrackListValues(tracks);
-
-    switch(kind) {
-        case VariableKind::AverageBitrate:
-            return cache.averageBitrate;
-        case VariableKind::TrackCount:
-            return cache.trackCount;
-        case VariableKind::Playtime:
-        case VariableKind::PlaylistDuration:
-            return cache.playtime;
-        case VariableKind::PlaylistSize:
-            return cache.playlistSize;
-        case VariableKind::PlaylistElapsed:
-            return cache.playlistElapsed;
-        case VariableKind::Genres:
-            return cache.genres;
-        default:
-            return {};
-    }
-}
-
 std::optional<QString> playbackVariableValue(const VariableKind kind, const ScriptEvaluator& registry,
                                              const Track& track)
 {
@@ -623,7 +599,7 @@ ScriptResult ScriptEvaluator::valueForTrack(VariableKind kind, const QString& va
 
 ScriptResult ScriptEvaluator::valueForTrackList(VariableKind kind, const QString& var, const TrackList& tracks) const
 {
-    if(const auto value = trackListValue(kind, tracks, *this); value.has_value()) {
+    if(const auto value = trackListValue(kind, tracks); value.has_value()) {
         ScriptResult result = calculateResult(*value);
         applyVariableOutputPolicy(options, kind, result);
         return result;
@@ -966,7 +942,8 @@ void ScriptEvaluator::clearTrackListCache()
     m_trackListCache = {};
 }
 
-const ScriptEvaluator::TrackListAggregateCache& ScriptEvaluator::cachedTrackListValues(const TrackList& tracks) const
+std::optional<ScriptEvaluator::FuncRet> ScriptEvaluator::trackListValue(VariableKind kind,
+                                                                        const TrackList& tracks) const
 {
     const int trackCount      = static_cast<int>(tracks.size());
     const auto* playback      = playbackData(currentContext());
@@ -975,17 +952,46 @@ const ScriptEvaluator::TrackListAggregateCache& ScriptEvaluator::cachedTrackList
 
     if(m_trackListCache.tracks != &tracks || m_trackListCache.trackCount != trackCount
        || m_trackListCache.currentPosition != currentPosition || m_trackListCache.playlistIndex != playlistIndex) {
+        m_trackListCache                 = {};
         m_trackListCache.tracks          = &tracks;
         m_trackListCache.trackCount      = trackCount;
         m_trackListCache.currentPosition = currentPosition;
         m_trackListCache.playlistIndex   = playlistIndex;
-        m_trackListCache.playtime        = Scripting::playtime(tracks);
-        m_trackListCache.averageBitrate  = Scripting::averageBitrate(tracks);
-        m_trackListCache.playlistSize    = Scripting::playlistSize(tracks);
-        m_trackListCache.genres          = Scripting::genres(tracks);
-        m_trackListCache.playlistElapsed = playlistDuration(tracks);
     }
 
-    return m_trackListCache;
+    auto& cache = m_trackListCache;
+
+    switch(kind) {
+        case VariableKind::AverageBitrate:
+            if(!cache.averageBitrate) {
+                cache.averageBitrate = Scripting::averageBitrate(tracks);
+            }
+            return *cache.averageBitrate;
+        case VariableKind::TrackCount:
+            return cache.trackCount;
+        case VariableKind::Playtime:
+        case VariableKind::PlaylistDuration:
+            if(!cache.playtime) {
+                cache.playtime = Scripting::playtime(tracks);
+            }
+            return *cache.playtime;
+        case VariableKind::PlaylistSize:
+            if(!cache.playlistSize) {
+                cache.playlistSize = Scripting::playlistSize(tracks);
+            }
+            return *cache.playlistSize;
+        case VariableKind::PlaylistElapsed:
+            if(!cache.playlistElapsed) {
+                cache.playlistElapsed = playlistDuration(tracks);
+            }
+            return *cache.playlistElapsed;
+        case VariableKind::Genres:
+            if(!cache.genres) {
+                cache.genres = Scripting::genres(tracks);
+            }
+            return *cache.genres;
+        default:
+            return {};
+    }
 }
 } // namespace Fooyin

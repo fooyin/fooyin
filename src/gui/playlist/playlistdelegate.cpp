@@ -34,6 +34,7 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include <QPainter>
+#include <QPixmapCache>
 
 constexpr auto EditorInitialisedProperty = "fy_editor_initialised";
 
@@ -77,6 +78,20 @@ std::vector<InlineTrackEditorHit> drawSingleColumnTrack(QPainter* painter, const
     return left.editors;
 }
 
+QPixmap cachedScaledPixmap(const QPixmap& image, int width, double dpr)
+{
+    const QString key = QStringLiteral("PlaylistScaledPixmap|%1|%2|%3").arg(image.cacheKey()).arg(width).arg(dpr);
+
+    QPixmap pixmap;
+    if(QPixmapCache::find(key, &pixmap)) {
+        return pixmap;
+    }
+
+    pixmap = Utils::scalePixmap(image, width, dpr, true);
+    QPixmapCache::insert(key, pixmap);
+    return pixmap;
+}
+
 void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int cornerRadius)
 {
     QStyleOptionViewItem opt{option};
@@ -118,7 +133,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
         painter->drawRoundedRect(coverFrameRect, frameRadius, frameRadius);
 
         const double dpr = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
-        Gui::drawRoundedPixmap(*painter, coverRect, Qt::AlignCenter, Utils::scalePixmap(cover, coverSize, dpr, true),
+        Gui::drawRoundedPixmap(*painter, coverRect, Qt::AlignCenter, cachedScaledPixmap(cover, coverSize, dpr),
                                cornerRadius);
     }
 }
@@ -168,7 +183,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
                 opt.rect.adjust(imagePadding, imagePaddingTop, -imagePadding, imagePaddingTop);
 
                 const QPixmap scaledImage
-                    = Utils::scalePixmap(image, opt.rect.width(), opt.widget->devicePixelRatioF(), true);
+                    = cachedScaledPixmap(image, opt.rect.width(), opt.widget->devicePixelRatioF());
                 Gui::drawRoundedPixmap(*painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, scaledImage,
                                        cornerRadiusPercent);
 

@@ -2028,13 +2028,14 @@ bool AudioPipeline::handleMixerUnderrun(const OutputState& state, int framesWrit
             m_transitionUnderrunLogActive = false;
         }
 
+        const int concealFrameBudget
+            = std::max(1, static_cast<int>((static_cast<int64_t>(m_renderer.outputFormat().sampleRate())
+                                            * UnderrunConcealMaxMs.count())
+                                           / static_cast<int64_t>(Time::MsPerSecond)));
         const bool shouldConcealUnderrun
-            = (mixerReadStarved || masterChainStarved) && outputStateWithWrites.freeFrames > 0 && !hasPendingOutput();
+            = (mixerReadStarved || masterChainStarved) && outputStateWithWrites.freeFrames > 0
+           && outputStateWithWrites.queuedFrames < concealFrameBudget && !hasPendingOutput();
         if(shouldConcealUnderrun) {
-            const int concealFrameBudget
-                = std::max(1, static_cast<int>((static_cast<int64_t>(m_renderer.outputFormat().sampleRate())
-                                                * UnderrunConcealMaxMs.count())
-                                               / static_cast<int64_t>(Time::MsPerSecond)));
             const int concealFrames  = std::min(outputStateWithWrites.freeFrames, concealFrameBudget);
             const int writtenConceal = writeUnderrunConcealFrames(concealFrames);
 

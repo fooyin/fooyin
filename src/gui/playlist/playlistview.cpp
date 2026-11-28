@@ -1065,9 +1065,7 @@ void PlaylistView::advanceBulkEditColumn(int offset)
         return;
     }
 
-    if(m_bulkEditor) {
-        m_bulkEditor->hide();
-    }
+    hideBulkEditor();
 
     if(commitBulkEdit(m_bulkEditColumnIndex)) {
         return;
@@ -1096,9 +1094,7 @@ void PlaylistView::centreRectInView(const QRect& rect)
 
 void PlaylistView::endBulkEditSession(bool commitChanges)
 {
-    if(m_bulkEditor) {
-        m_bulkEditor->hide();
-    }
+    hideBulkEditor();
 
     if(commitChanges) {
         commitBulkEdit();
@@ -1112,6 +1108,20 @@ void PlaylistView::endBulkEditSession(bool commitChanges)
     m_bulkEditRows.clear();
     m_bulkEditColumns.clear();
     m_bulkEditColumnIndex = -1;
+}
+
+void PlaylistView::hideBulkEditor()
+{
+    if(!m_bulkEditor) {
+        return;
+    }
+
+    // give focus back to the view if the bulk editor still had it
+    const bool hadFocus = m_bulkEditor->hasFocus();
+    m_bulkEditor->hide();
+    if(hadFocus) {
+        setFocus(Qt::OtherFocusReason);
+    }
 }
 
 void PlaylistView::showBulkEditor()
@@ -1128,7 +1138,7 @@ void PlaylistView::showBulkEditor()
         return;
     }
 
-    setCurrentIndex(index);
+    selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
 
     bool mixedValues{false};
     const QString value = bulkEditValueForColumn(column, mixedValues);

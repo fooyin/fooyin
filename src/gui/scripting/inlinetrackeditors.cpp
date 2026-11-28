@@ -316,7 +316,11 @@ DrawTrackTextResult drawTrackTextBlocks(QPainter* painter, const QStyleOptionVie
                 continue;
             }
 
-            const QString text = fm.elidedText(block.text, fromRight ? Qt::ElideLeft : Qt::ElideRight, remainingWidth);
+            const int fullWidth = fm.horizontalAdvance(block.text);
+            const QString text
+                = fullWidth <= remainingWidth
+                    ? block.text
+                    : fm.elidedText(block.text, fromRight ? Qt::ElideLeft : Qt::ElideRight, remainingWidth);
             if(text.isEmpty()) {
                 continue;
             }
@@ -326,7 +330,7 @@ DrawTrackTextResult drawTrackTextBlocks(QPainter* painter, const QStyleOptionVie
                 blockColour = selectedColour;
             }
 
-            const int width = fm.horizontalAdvance(text);
+            const int width = fullWidth <= remainingWidth ? fullWidth : fm.horizontalAdvance(text);
             line.blocks.push_back({.text = text, .font = font, .colour = blockColour, .width = width});
             line.baseline.expand(fm);
             line.width += width;
