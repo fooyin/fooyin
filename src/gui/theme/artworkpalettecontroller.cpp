@@ -28,6 +28,7 @@
 
 #include <QApplication>
 #include <QCryptographicHash>
+#include <QFontMetrics>
 #include <QImage>
 #include <QPainter>
 #include <QPixmap>
@@ -37,9 +38,13 @@
 #include <array>
 #include <cmath>
 #include <initializer_list>
+#include <limits>
 #include <numbers>
 #include <numeric>
+#include <random>
 #include <vector>
+
+using namespace Qt::StringLiterals;
 
 namespace Fooyin {
 namespace {
@@ -57,18 +62,145 @@ ArtworkColourMode colourMode(int value)
     }
 }
 
-ArtworkColours artworkColours(const QImage& image)
+struct OklabColour
 {
-    struct Swatch
-    {
-        int count{0};
-        int red{0};
-        int green{0};
-        int blue{0};
+    double lightness{0.0};
+    double a{0.0};
+    double b{0.0};
+};
+
+struct ColourCluster
+{
+    OklabColour colour;
+    size_t count{0};
+};
+
+double linearSrgb(double channel)
+{
+    return channel <= 0.04045 ? channel / 12.92 : std::pow((channel + 0.055) / 1.055, 2.4);
+}
+
+// OKLAB transforms: https://bottosson.github.io/posts/oklab/
+OklabColour toOklab(QRgb pixel)
+{
+    const double red   = linearSrgb(qRed(pixel) / 255.0);
+    const double green = linearSrgb(qGreen(pixel) / 255.0);
+    const double blue  = linearSrgb(qBlue(pixel) / 255.0);
+
+    const double l = std::cbrt((0.4122214708 * red) + (0.5363325363 * green) + (0.0514459929 * blue));
+    const double m = std::cbrt((0.2119034982 * red) + (0.6806995451 * green) + (0.1073969566 * blue));
+    const double s = std::cbrt((0.0883024619 * red) + (0.2817188376 * green) + (0.6299787005 * blue));
+
+    return {.lightness = (0.2104542553 * l) + (0.7936177850 * m) - (0.0040720468 * s),
+            .a         = (1.9779984951 * l) - (2.4285922050 * m) + (0.4505937099 * s),
+            .b         = (0.0259040371 * l) + (0.7827717662 * m) - (0.8086757660 * s)};
+}
+
+QColor fromOklab(const OklabColour& colour)
+{
+    const auto cube = [](double value) {
+        return value * value * value;
     };
 
-    std::array<Swatch, 512> swatches{};
-    int samples{0};
+    const double l = cube(colour.lightness + (0.3963377774 * colour.a) + (0.2158037573 * colour.b));
+    const double m = cube(colour.lightness - (0.1055613458 * colour.a) - (0.0638541728 * colour.b));
+    const double s = cube(colour.lightness - (0.0894841775 * colour.a) - (1.2914855480 * colour.b));
+
+    const auto toSrgb = [](double channel) {
+        channel = std::clamp(channel, 0.0, 1.0);
+        return channel <= 0.0031308 ? channel * 12.92 : (1.055 * std::pow(channel, 1.0 / 2.4)) - 0.055;
+    };
+
+    return QColor::fromRgbF(toSrgb((4.0767416621 * l) - (3.3077115913 * m) + (0.2309699292 * s)),
+                            toSrgb((-1.2684380046 * l) + (2.6097574011 * m) - (0.3413193965 * s)),
+                            toSrgb((-0.0041960863 * l) - (0.7034186147 * m) + (1.7076147010 * s)));
+}
+
+double colourDistanceSquared(const OklabColour& first, const OklabColour& second)
+{
+    const double lightness = first.lightness - second.lightness;
+    const double a         = first.a - second.a;
+    const double b         = first.b - second.b;
+    return (lightness * lightness) + (a * a) + (b * b);
+}
+
+std::vector<ColourCluster> artworkPalette(const std::vector<OklabColour>& samples)
+{
+    if(samples.empty()) {
+        return {};
+    }
+
+    static constexpr size_t MaxColours = 14;
+
+    // A fixed seed keeps the extracted colours stable when the same artwork is loaded again
+    std::mt19937 random{0};
+    const auto first = std::uniform_int_distribution<size_t>{0, samples.size() - 1}(random);
+    std::vector<ColourCluster> clusters{{.colour = samples[first]}};
+    std::vector distances(samples.size(), std::numeric_limits<double>::max());
+
+    while(clusters.size() < MaxColours) {
+        double totalDistance{0.0};
+        for(size_t i{0}; i < samples.size(); ++i) {
+            distances[i] = std::min(distances[i], colourDistanceSquared(samples[i], clusters.back().colour));
+            totalDistance += distances[i];
+        }
+        if(totalDistance <= 1e-12) {
+            break;
+        }
+
+        const auto next = std::discrete_distribution<size_t>{distances.begin(), distances.end()}(random);
+        clusters.push_back({.colour = samples[next]});
+    }
+
+    std::vector assignments(samples.size(), clusters.size());
+    for(int iteration{0}; iteration < 64; ++iteration) {
+        std::array<ColourCluster, MaxColours> sums{};
+        bool changed{false};
+
+        for(size_t i{0}; i < samples.size(); ++i) {
+            const auto& sample = samples[i];
+
+            size_t nearest{0};
+            double distance = colourDistanceSquared(sample, clusters.front().colour);
+            for(size_t j{1}; j < clusters.size(); ++j) {
+                if(const double candidate = colourDistanceSquared(sample, clusters[j].colour); candidate < distance) {
+                    nearest  = j;
+                    distance = candidate;
+                }
+            }
+
+            changed        = changed || assignments[i] != nearest;
+            assignments[i] = nearest;
+
+            auto& [colour, count] = sums[nearest];
+            colour.lightness += sample.lightness;
+            colour.a += sample.a;
+            colour.b += sample.b;
+
+            ++count;
+        }
+
+        for(size_t i{0}; i < clusters.size(); ++i) {
+            const auto& [colour, count] = sums[i];
+            clusters[i].count           = count;
+            if(count > 0) {
+                const auto c       = static_cast<double>(count);
+                clusters[i].colour = {.lightness = colour.lightness / c, .a = colour.a / c, .b = colour.b / c};
+            }
+        }
+        if(!changed) {
+            break;
+        }
+    }
+
+    return clusters;
+}
+
+ArtworkColours artworkColours(const QImage& image)
+{
+    std::vector<OklabColour> samples;
+    samples.reserve(static_cast<size_t>(image.width()) * image.height());
+
     double lightness{0.0};
     for(int y{0}; y < image.height(); ++y) {
         const auto* pixels = reinterpret_cast<const QRgb*>(image.constScanLine(y));
@@ -83,65 +215,36 @@ ArtworkColours artworkColours(const QImage& image)
             const int blue  = qBlue(pixel);
 
             lightness += (std::max({red, green, blue}) + std::min({red, green, blue})) / (2.0 * 255.0);
-
-            auto& swatch = swatches[((red >> 5) << 6) | ((green >> 5) << 3) | (blue >> 5)];
-            ++swatch.count;
-            swatch.red += red;
-            swatch.green += green;
-            swatch.blue += blue;
-            ++samples;
+            samples.push_back(toOklab(pixel));
         }
     }
 
     QColor result;
     double bestScore{-1.0};
-    for(int red{0}; red < 8; ++red) {
-        for(int green{0}; green < 8; ++green) {
-            for(int blue{0}; blue < 8; ++blue) {
-                if(swatches[(red << 6) | (green << 3) | blue].count == 0) {
-                    continue;
-                }
+    for(const auto& cluster : artworkPalette(samples)) {
+        if(cluster.count < std::max(size_t{1}, samples.size() / 100)) {
+            continue;
+        }
 
-                Swatch candidate;
-                for(int r{std::max(0, red - 1)}; r <= std::min(7, red + 1); ++r) {
-                    for(int g{std::max(0, green - 1)}; g <= std::min(7, green + 1); ++g) {
-                        for(int b{std::max(0, blue - 1)}; b <= std::min(7, blue + 1); ++b) {
-                            const auto& swatch = swatches[(r << 6) | (g << 3) | b];
-                            candidate.count += swatch.count;
-                            candidate.red += swatch.red;
-                            candidate.green += swatch.green;
-                            candidate.blue += swatch.blue;
-                        }
-                    }
-                }
-
-                if(candidate.count < std::max(1, samples / 100)) {
-                    continue;
-                }
-
-                const QColor colour{candidate.red / candidate.count, candidate.green / candidate.count,
-                                    candidate.blue / candidate.count};
-                const double chroma = std::max({colour.redF(), colour.greenF(), colour.blueF()})
-                                    - std::min({colour.redF(), colour.greenF(), colour.blueF()});
-                const double tone   = 0.5 + (0.5 * std::sin(std::numbers::pi * colour.lightnessF()));
-                const double score  = std::sqrt(static_cast<double>(candidate.count)) * (0.15 + chroma) * tone;
-                if(score > bestScore) {
-                    bestScore = score;
-                    result    = colour;
-                }
-            }
+        const QColor colour = fromOklab(cluster.colour);
+        const double chroma = std::max({colour.redF(), colour.greenF(), colour.blueF()})
+                            - std::min({colour.redF(), colour.greenF(), colour.blueF()});
+        const double tone   = 0.5 + (0.5 * std::sin(std::numbers::pi * colour.lightnessF()));
+        const double score  = std::sqrt(static_cast<double>(cluster.count)) * (0.15 + chroma) * tone;
+        if(score > bestScore) {
+            bestScore = score;
+            result    = colour;
         }
     }
 
-    return {.accent = result, .lightness = samples > 0 ? static_cast<float>(lightness / samples) : 0.0F};
+    return {.accent    = result,
+            .lightness = !samples.empty() ? static_cast<float>(lightness / static_cast<double>(samples.size())) : 0.0F};
 }
 
 double luminance(const QColor& colour)
 {
-    const auto linear = [](double channel) {
-        return channel <= 0.04045 ? channel / 12.92 : std::pow((channel + 0.055) / 1.055, 2.4);
-    };
-    return (0.2126 * linear(colour.redF())) + (0.7152 * linear(colour.greenF())) + (0.0722 * linear(colour.blueF()));
+    return (0.2126 * linearSrgb(colour.redF())) + (0.7152 * linearSrgb(colour.greenF()))
+         + (0.0722 * linearSrgb(colour.blueF()));
 }
 
 double minimumContrast(const QColor& colour, std::initializer_list<QColor> backgrounds)
@@ -184,11 +287,19 @@ QColor readableColour(const QColor& colour, std::initializer_list<QColor> backgr
 
 std::vector<QColor> selectionBackgrounds(const QStyle* style, const QPalette& palette, QPalette::ColorGroup group)
 {
-    QImage image{96, 32, QImage::Format_RGB32};
+    const auto font = QApplication::font();
+    const QFontMetrics fontMetrics{font};
+    QImage image{std::max(96, fontMetrics.horizontalAdvance(u"Selection"_s) + 16),
+                 std::max(32, fontMetrics.height() + 8), QImage::Format_RGB32};
 
     QStyleOptionViewItem opt;
     opt.rect                   = image.rect();
     opt.palette                = palette;
+    opt.font                   = font;
+    opt.fontMetrics            = fontMetrics;
+    opt.text                   = u"Selection"_s;
+    opt.features               = QStyleOptionViewItem::HasDisplay;
+    opt.displayAlignment       = Qt::AlignLeft | Qt::AlignVCenter;
     opt.showDecorationSelected = true;
     opt.viewItemPosition       = QStyleOptionViewItem::OnlyOne;
     opt.state                  = QStyle::State_Enabled | QStyle::State_Selected;
@@ -200,17 +311,26 @@ std::vector<QColor> selectionBackgrounds(const QStyle* style, const QPalette& pa
     std::vector colours{palette.color(group, QPalette::Highlight).rgb()};
     for(const bool hovered : {false, true}) {
         opt.state.setFlag(QStyle::State_MouseOver, hovered);
+
+        auto textRect    = style->subElementRect(QStyle::SE_ItemViewItemText, &opt);
+        const int margin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt) + 1;
+        textRect.adjust(margin, 0, -margin, 0);
+        const auto sampleRect
+            = QStyle::alignedRect(opt.direction, opt.displayAlignment,
+                                  {textRect.width(), std::min(fontMetrics.height(), textRect.height())}, textRect)
+                  .intersected(image.rect());
         image.fill(palette.color(group, QPalette::Base));
+
         {
             QPainter painter{&image};
             style->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, &painter);
             style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, &painter);
         }
 
-        for(int y{4}; y < image.height() - 4; ++y) {
+        for(int y{sampleRect.top()}; y <= sampleRect.bottom(); ++y) {
             const auto* pixels = reinterpret_cast<const QRgb*>(image.constScanLine(y));
-            for(int x{8}; x < image.width() - 8; ++x) {
-                if(x == 8 || pixels[x] != pixels[x - 1]) {
+            for(int x{sampleRect.left()}; x <= sampleRect.right(); ++x) {
+                if(x == sampleRect.left() || pixels[x] != pixels[x - 1]) {
                     colours.push_back(pixels[x]);
                 }
             }
@@ -247,52 +367,65 @@ void setSelectionColours(const QStyle* style, const QPalette& base, QPalette& pa
     palette.setColor(group, QPalette::Highlight, highlight);
 
     auto backgrounds = selectionBackgrounds(style, palette, group);
+
+    const QColor black{Qt::black};
+    const QColor white{Qt::white};
+
+    const double blackContrast = selectionContrast(black, backgrounds);
+    const double whiteContrast = selectionContrast(white, backgrounds);
+
+    static constexpr auto DarkTextPreferenceContrast = 4.0;
+
+    const bool darkText          = blackContrast >= DarkTextPreferenceContrast || blackContrast >= whiteContrast;
+    const auto& textTarget       = darkText ? black : white;
+    const auto& backgroundTarget = darkText ? white : black;
+
     // Keep selected text at full strength when the view loses focus
     const auto fgGroup = group == QPalette::Inactive ? QPalette::Active : group;
     const std::array foregrounds{base.color(fgGroup, QPalette::HighlightedText), base.color(fgGroup, QPalette::Text),
                                  base.color(fgGroup, QPalette::WindowText), base.color(fgGroup, QPalette::ButtonText)};
-    auto foreground     = foregrounds.front();
-    double bestContrast = selectionContrast(foreground, backgrounds);
-    if(bestContrast >= 4.5) {
-        palette.setColor(group, QPalette::HighlightedText, foreground);
-        return;
-    }
+    const double highlightLuminance = luminance(highlight);
 
-    for(size_t i{1}; i < foregrounds.size(); ++i) {
-        const double contrast = selectionContrast(foregrounds[i], backgrounds);
-        if(contrast > bestContrast) {
-            foreground   = foregrounds[i];
-            bestContrast = contrast;
+    const auto themeForeground = [&](const std::vector<QColor>& samples) {
+        auto foreground = textTarget;
+        double bestContrast{0.0};
+        for(const auto& candidate : foregrounds) {
+            if((luminance(candidate) < highlightLuminance) != darkText) {
+                continue;
+            }
+            if(const double contrast = selectionContrast(candidate, samples); contrast > bestContrast) {
+                foreground   = candidate;
+                bestContrast = contrast;
+            }
         }
-    }
-    if(bestContrast >= 4.5) {
+        return foreground;
+    };
+
+    static constexpr auto MinContrast = 4.5;
+
+    auto foreground = themeForeground(backgrounds);
+    if(selectionContrast(foreground, backgrounds) >= MinContrast) {
         palette.setColor(group, QPalette::HighlightedText, foreground);
         return;
     }
 
-    const QColor black{Qt::black};
-    const QColor white{Qt::white};
-    const bool darkText          = selectionContrast(black, backgrounds) >= selectionContrast(white, backgrounds);
-    const auto& textTarget       = darkText ? black : white;
-    const auto& backgroundTarget = darkText ? white : black;
     palette.setColor(group, QPalette::HighlightedText, textTarget);
 
     for(int step{0}; step <= 100; ++step) {
         palette.setColor(group, QPalette::Highlight, mix(highlight, backgroundTarget, step / 100.0));
         backgrounds = selectionBackgrounds(style, palette, group);
-        if(selectionContrast(textTarget, backgrounds) < 4.5) {
+        if(selectionContrast(textTarget, backgrounds) < MinContrast) {
             continue;
         }
 
-        foreground = darkText ? *std::ranges::min_element(foregrounds, {}, luminance)
-                              : *std::ranges::max_element(foregrounds, {}, luminance);
-        if(selectionContrast(foreground, backgrounds) >= 4.5) {
+        foreground = themeForeground(backgrounds);
+        if(selectionContrast(foreground, backgrounds) >= MinContrast) {
             palette.setColor(group, QPalette::HighlightedText, foreground);
             return;
         }
 
         foreground.setAlpha(255);
-        if(selectionContrast(foreground, backgrounds) >= 4.5) {
+        if(selectionContrast(foreground, backgrounds) >= MinContrast) {
             palette.setColor(group, QPalette::HighlightedText, foreground);
             return;
         }
@@ -301,7 +434,7 @@ void setSelectionColours(const QStyle* style, const QPalette& base, QPalette& pa
         double upper{1.0};
         for(int i{0}; i < 8; ++i) {
             const double amount = std::midpoint(lower, upper);
-            if(selectionContrast(mix(foreground, textTarget, amount), backgrounds) >= 4.5) {
+            if(selectionContrast(mix(foreground, textTarget, amount), backgrounds) >= MinContrast) {
                 upper = amount;
             }
             else {
