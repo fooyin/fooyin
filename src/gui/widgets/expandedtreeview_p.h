@@ -151,6 +151,7 @@ public:
     void stopExpansionAnimation();
 
     QPoint offset() const;
+    void clearSelectionRubberBand();
     bool isIndexValid(const QModelIndex& index) const;
 
     ExpandedTreeView* m_self;
@@ -207,6 +208,10 @@ public:
 
     mutable QBasicTimer m_delayedLayout;
     QPoint m_pressedPos;
+    std::optional<QPoint> m_selectionOrigin;
+    QPoint m_selectionEnd;
+    bool m_selectionRubberBandEnabled{false};
+    bool m_selectionRubberBandActive{false};
     QPersistentModelIndex m_pressedIndex;
     bool m_canStartDrag{true};
     QPersistentModelIndex m_hoverIndex;

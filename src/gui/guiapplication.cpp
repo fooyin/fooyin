@@ -101,6 +101,7 @@
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/widgets/elapsedprogressdialog.h>
+#include <gui/widgets/expandedtreeview.h>
 #include <gui/widgets/textinputdialog.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
@@ -134,6 +135,7 @@
 #include <QLoggingCategory>
 #include <QMessageBox>
 #include <QMimeDatabase>
+#include <QMouseEvent>
 #include <QPixmapCache>
 #include <QPointer>
 #include <QPushButton>
@@ -674,6 +676,14 @@ CoverRepository* GuiApplication::coverRepository() const
 
 bool GuiApplication::eventFilter(QObject* watched, QEvent* event)
 {
+    if(event->type() == QEvent::MouseButtonPress && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton) {
+        if(auto* view = qobject_cast<ExpandedTreeView*>(watched->parent()); view && watched == view->viewport()) {
+            const FySettings settings;
+            view->setSelectionRubberBandEnabled(
+                settings.value(Settings::Gui::Internal::SelectionRubberBand, true).toBool());
+        }
+    }
+
     if(event->type() == QEvent::Polish) {
         if(auto* editor = qobject_cast<QWidget*>(watched); qobject_cast<QComboBox*>(editor)
                                                            || qobject_cast<QLineEdit*>(editor)

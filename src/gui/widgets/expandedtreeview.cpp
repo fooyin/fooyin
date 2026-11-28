@@ -28,14 +28,17 @@
 #include <utils/treemodel.h>
 #include <utils/utils.h>
 
+#include <QApplication>
 #include <QDrag>
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QRubberBand>
 #include <QScrollBar>
 #include <QSignalBlocker>
 #include <QStack>
+#include <QStyleOptionRubberBand>
 #include <QStylePainter>
 #include <QTimer>
 #include <QWheelEvent>
@@ -5210,6 +5213,7 @@ void ExpandedTreeView::setViewMode(ViewMode mode)
         return;
     }
 
+    p->clearSelectionRubberBand();
     p->stopExpansionAnimation();
     p->interruptDelayedItemsLayout();
     p->clearViewItems();
@@ -5420,6 +5424,19 @@ bool ExpandedTreeView::selectBeforeDrag() const
 void ExpandedTreeView::setSelectBeforeDrag(bool enabled)
 {
     p->m_selectBeforeDrag = enabled;
+}
+
+bool ExpandedTreeView::selectionRubberBandEnabled() const
+{
+    return p->m_selectionRubberBandEnabled;
+}
+
+void ExpandedTreeView::setSelectionRubberBandEnabled(bool enabled)
+{
+    p->m_selectionRubberBandEnabled = enabled;
+    if(!enabled) {
+        p->clearSelectionRubberBand();
+    }
 }
 
 int ExpandedTreeView::iconHorizontalGap() const
@@ -5990,8 +6007,18 @@ QPoint ExpandedTreeViewPrivate::offset() const
             m_self->verticalOffset()};
 }
 
+void ExpandedTreeViewPrivate::clearSelectionRubberBand()
+{
+    m_selectionRubberBandActive = false;
+    if(m_selectionOrigin) {
+        m_selectionOrigin.reset();
+        m_self->viewport()->update();
+    }
+}
+
 void ExpandedTreeView::reset()
 {
+    p->clearSelectionRubberBand();
     p->stopExpansionAnimation();
     p->m_preserveLayoutPosition = false;
     p->interruptDelayedItemsLayout();
@@ -6137,7 +6164,12 @@ void ExpandedTreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex
 
 void ExpandedTreeView::changeEvent(QEvent* event)
 {
+    if(event->type() == QEvent::EnabledChange && !isEnabled()) {
+        p->clearSelectionRubberBand();
+    }
+
     QAbstractItemView::changeEvent(event);
+
     if((p->m_viewMode == ViewMode::Flow || p->m_viewMode == ViewMode::Icon || p->m_viewMode == ViewMode::CoverFlow
         || p->m_wordWrap)
        && (event->type() == QEvent::LayoutDirectionChange || event->type() == QEvent::FontChange
@@ -6150,6 +6182,13 @@ void ExpandedTreeView::changeEvent(QEvent* event)
 bool ExpandedTreeView::viewportEvent(QEvent* event)
 {
     switch(event->type()) {
+        case QEvent::MouseButtonPress:
+        case QEvent::MouseButtonRelease:
+        case QEvent::UngrabMouse:
+        case QEvent::WindowDeactivate:
+        case QEvent::Hide:
+            p->clearSelectionRubberBand();
+            break;
         case QEvent::HoverEnter:
         case QEvent::HoverMove: {
             if(const auto* hoverEvent = static_cast<QHoverEvent*>(event)) {
@@ -6315,6 +6354,13 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
     const QModelIndex index     = indexAt(pos);
     const QModelIndex prevIndex = currentIndex().siblingAtColumn(0);
 
+    if(p->m_selectionRubberBandEnabled && event->button() == Qt::LeftButton && selectionMode() != SingleSelection
+       && selectionMode() != NoSelection) {
+        // Keep the origin in content coordinates and the pointer end in viewport coordinates
+        p->m_selectionOrigin = pos + p->offset();
+        p->m_selectionEnd    = pos;
+    }
+
     if(p->m_viewMode == ViewMode::CoverFlow || (p->m_viewMode == ViewMode::Icon && p->m_expansionWidget)) {
         p->m_pressedIndex = index;
     }
@@ -6362,13 +6408,26 @@ void ExpandedTreeView::mouseMoveEvent(QMouseEvent* event)
 {
     if(p->m_canStartDrag) {
         QAbstractItemView::mouseMoveEvent(event);
-        return;
+    }
+    else {
+        const bool enabled     = dragEnabled();
+        const auto restoreDrag = scopeGuard([this, enabled]() { setDragEnabled(enabled); });
+        setDragEnabled(false);
+        QAbstractItemView::mouseMoveEvent(event);
     }
 
-    const bool enabled     = dragEnabled();
-    const auto restoreDrag = scopeGuard([this, enabled]() { setDragEnabled(enabled); });
-    setDragEnabled(false);
-    QAbstractItemView::mouseMoveEvent(event);
+    if(isEnabled() && (state() == NoState || state() == DragSelectingState) && p->m_selectionOrigin
+       && (event->buttons() & Qt::LeftButton) && selectionMode() != SingleSelection && selectionMode() != NoSelection) {
+        p->m_selectionEnd = event->position().toPoint();
+        if(state() == DragSelectingState
+           || (p->m_selectionEnd + p->offset() - *p->m_selectionOrigin).manhattanLength()
+                  >= QApplication::startDragDistance()) {
+            p->m_selectionRubberBandActive = true;
+        }
+        if(p->m_selectionRubberBandActive) {
+            viewport()->update();
+        }
+    }
 }
 
 void ExpandedTreeView::mouseDoubleClickEvent(QMouseEvent* event)
@@ -6475,6 +6534,19 @@ void ExpandedTreeView::paintEvent(QPaintEvent* event)
                                  ? rect.bottom() + 1 - snapshot.deviceIndependentSize().toSize().height()
                                  : rect.top();
         painter.drawPixmap(QPoint{rect.left(), top}, snapshot);
+        painter.restore();
+    }
+
+    if(isEnabled() && (state() == NoState || state() == DragSelectingState) && p->m_selectionRubberBandActive
+       && p->m_selectionOrigin && selectionMode() != SingleSelection && selectionMode() != NoSelection) {
+        QStyleOptionRubberBand opt;
+        opt.initFrom(this);
+        opt.shape  = QRubberBand::Rectangle;
+        opt.opaque = false;
+        opt.rect   = QRect{*p->m_selectionOrigin - p->offset(), p->m_selectionEnd}.normalized();
+        painter.save();
+        painter.setClipRect(viewport()->rect(), Qt::IntersectClip);
+        style()->drawControl(QStyle::CE_RubberBand, &opt, &painter, this);
         painter.restore();
     }
 
@@ -6627,6 +6699,7 @@ void ExpandedTreeView::rowsRemoved(const QModelIndex& /*parent*/, int /*first*/,
 
 void ExpandedTreeView::startDrag(Qt::DropActions supportedActions)
 {
+    p->clearSelectionRubberBand();
     if(!dragEnabled() || !p->m_canStartDrag) {
         return;
     }
@@ -6870,6 +6943,25 @@ void ExpandedTreeView::setSelection(const QRect& rect, QItemSelectionModel::Sele
     }
 
     p->layoutItems();
+
+    if(state() == DragSelectingState && p->m_selectionOrigin
+       && (p->m_viewMode == ViewMode::Icon || p->m_viewMode == ViewMode::Flow)) {
+        const QRect selectionRect = rect.normalized().translated(p->offset());
+        QItemSelection selection;
+        for(const auto& item : p->m_viewItems) {
+            if(!item.rect().intersects(selectionRect) || (p->m_selectIgnoreParents && item.hasChildren)) {
+                continue;
+            }
+
+            const QModelIndex index = p->m_viewMode == ViewMode::Icon ? p->iconItemIndex(item.index) : item.index;
+            const auto flags        = index.flags();
+            if(flags.testFlag(Qt::ItemIsEnabled) && flags.testFlag(Qt::ItemIsSelectable)) {
+                selection.select(index, index);
+            }
+        }
+        selectionModel()->select(selection, command);
+        return;
+    }
 
     // Icon ranges can wrap onto another row, so keep the original points
     const bool iconMode = (p->m_viewMode != ViewMode::Tree);

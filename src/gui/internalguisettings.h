@@ -179,6 +179,7 @@ constexpr auto LastFilePath          = "Interface/LastFilePath";
 constexpr auto LastPlaylistPath      = "Playlist/LastPlaylistPath";
 constexpr auto ConfirmMetadataWipe   = "MetadataLookup/ConfirmWipeWritableTags";
 constexpr auto ShowLayoutEditingHint = "Interface/ShowLayoutEditingHint";
+constexpr auto SelectionRubberBand   = "Interface/SelectionRubberBand";
 
 constexpr auto DefaultCoverFlowCacheSize = 32;
 

@@ -683,6 +683,26 @@ void Widgets::registerAdvancedSettings()
          .editor      = AdvancedSettingCheckBox{},
          .normalise   = {},
          .validate    = {}});
+    advancedSettingsRegistry->add(
+        {.id           = QString::fromLatin1(Settings::Gui::Internal::SelectionRubberBand),
+         .category     = {tr("Interface"), tr("Selection")},
+         .label        = tr("Show selection rubber band"),
+         .description  = tr("Show a rectangle when dragging to select items."),
+         .defaultValue = false,
+         .editor       = AdvancedSettingCheckBox{},
+         .read =
+             [] {
+                 const FySettings settings;
+                 return settings.value(Settings::Gui::Internal::SelectionRubberBand, false).toBool();
+             },
+         .write =
+             [](const QVariant& value) {
+                 FySettings settings;
+                 settings.setValue(Settings::Gui::Internal::SelectionRubberBand, value.toBool());
+                 return true;
+             },
+         .normalise = {},
+         .validate  = {}});
     advancedSettingsRegistry->add<Settings::Gui::ConfirmPlaylistRemoval>(
         {.category    = {tr("Playlist"), tr("General")},
          .label       = tr("Confirm before removing playlists"),

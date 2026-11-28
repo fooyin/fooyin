@@ -191,6 +191,9 @@ public:
     [[nodiscard]] bool selectBeforeDrag() const;
     void setSelectBeforeDrag(bool enabled);
 
+    [[nodiscard]] bool selectionRubberBandEnabled() const;
+    void setSelectionRubberBandEnabled(bool enabled);
+
     [[nodiscard]] int iconHorizontalGap() const;
     void setIconHorizontalGap(int gap);
     [[nodiscard]] int iconVerticalGap() const;
