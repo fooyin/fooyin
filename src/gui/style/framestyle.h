@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "theme/frameappearance.h"
+
 #include <QStyle>
 
 class QStyleOptionFrame;
@@ -29,16 +31,20 @@ namespace Fooyin {
 struct GroupBoxAppearance;
 
 namespace Style::Frame {
-void draw(const QStyleOptionFrame& option, QPainter& painter);
+void draw(const QStyleOptionFrame& option, QPainter& painter, const FrameAppearance& appearance);
 void drawFocus(const QStyleOption& option, QPainter& painter);
 void drawRubberBand(const QStyleOptionRubberBand& option, QPainter& painter);
-void drawSeparator(const QStyleOptionFrame& option, QPainter& painter);
+void drawSeparator(const QStyleOptionFrame& option, QPainter& painter, const FrameAppearance::Separator& appearance);
 void drawGroupFrame(const QStyleOptionFrame& option, QPainter& painter, const GroupBoxAppearance& appearance);
 void drawGroupBox(const QStyle& style, const QStyleOptionGroupBox& option, QPainter& painter, const QWidget* widget,
                   const GroupBoxAppearance& appearance);
+
 QRect groupBoxSubControlRect(const QStyle& style, const QStyleOptionGroupBox& option, QStyle::SubControl subControl,
                              const QWidget* widget, const GroupBoxAppearance& appearance);
 QSize groupBoxSize(const QStyle& style, const QStyleOptionGroupBox& option, const QSize& contentsSize,
                    const QWidget* widget, const GroupBoxAppearance& appearance);
+
+void polish(QWidget* widget, const FrameAppearance::Separator& appearance);
+void unpolish(QWidget* widget);
 } // namespace Style::Frame
 } // namespace Fooyin

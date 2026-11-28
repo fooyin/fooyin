@@ -80,6 +80,8 @@
 #include <QTreeView>
 #include <QVariant>
 
+#include <cmath>
+
 using namespace Qt::StringLiterals;
 
 constexpr auto HoverAttributesProperty = "_fooyin_style_hover_attributes";
@@ -211,7 +213,7 @@ void FooyinStyle::drawPrimitive(PrimitiveElement element, const QStyleOption* op
                     Style::Input::drawLineEdit(input, *painter, false, m_appearance.lineEdit, widget);
                     return;
                 }
-                Style::Frame::draw(*frame, *painter);
+                Style::Frame::draw(*frame, *painter, m_appearance.frame);
                 return;
             }
             break;
@@ -335,7 +337,7 @@ void FooyinStyle::drawControl(ControlElement element, const QStyleOption* option
         case CE_ShapedFrame:
             if(const auto* frame = qstyleoption_cast<const QStyleOptionFrame*>(option);
                frame && (frame->frameShape == QFrame::HLine || frame->frameShape == QFrame::VLine)) {
-                Style::Frame::drawSeparator(*frame, *painter);
+                Style::Frame::drawSeparator(*frame, *painter, m_appearance.frame.separator);
                 return;
             }
             break;
@@ -565,9 +567,20 @@ int FooyinStyle::pixelMetric(PixelMetric metric, const QStyleOption* option, con
                 return m_appearance.layout.bottomMargin;
             }
             break;
+        case PM_DefaultFrameWidth: {
+            const auto* frame = qobject_cast<const QFrame*>(widget);
+            if(frame && frame->frameShape() == QFrame::StyledPanel && frame->lineWidth() > 0
+               && !qobject_cast<const QTextEdit*>(widget) && !qobject_cast<const QPlainTextEdit*>(widget)
+               && !widget->inherits("QComboBoxPrivateContainer")) {
+                return std::max(QCommonStyle::pixelMetric(metric, option, widget),
+                                static_cast<int>(std::ceil(m_appearance.frame.borderWidth)));
+            }
+            break;
+        }
         default:
             break;
     }
+
     if(const auto value = Style::Dock::pixelMetric(metric, m_appearance.dockWidget)) {
         return *value;
     }
@@ -832,6 +845,7 @@ void FooyinStyle::polish(QWidget* widget)
 {
     QCommonStyle::polish(widget);
     Style::ItemView::polish(widget);
+    Style::Frame::polish(widget, m_appearance.frame.separator);
     Style::ToolTip::polish(widget, m_appearance.toolTip);
     Style::Menu::polish(widget);
     Style::Tab::polish(widget);
@@ -872,6 +886,7 @@ void FooyinStyle::unpolish(QWidget* widget)
     Style::Menu::unpolish(widget);
     Style::ToolTip::unpolish(widget);
     Style::ItemView::unpolish(widget);
+    Style::Frame::unpolish(widget);
 
     m_stateAnimation.remove(widget);
     m_progressAnimation.remove(widget);

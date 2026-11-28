@@ -720,6 +720,8 @@ set(SOURCES
     theme/editor/componentappearanceeditor.h
     theme/editor/dockwidgetappearanceeditor.cpp
     theme/editor/dockwidgetappearanceeditor.h
+    theme/editor/frameappearanceeditor.cpp
+    theme/editor/frameappearanceeditor.h
     theme/editor/groupboxappearanceeditor.cpp
     theme/editor/groupboxappearanceeditor.h
     theme/editor/headerappearanceeditor.cpp
@@ -750,6 +752,8 @@ set(SOURCES
     theme/editor/toolbuttonappearanceeditor.h
     theme/editor/tooltipappearanceeditor.cpp
     theme/editor/tooltipappearanceeditor.h
+    theme/frameappearance.cpp
+    theme/frameappearance.h
     theme/fytheme.cpp
     theme/fythemefile.cpp
     theme/groupboxappearance.cpp

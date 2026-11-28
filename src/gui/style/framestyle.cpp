@@ -31,10 +31,14 @@
 #include <QStyleOptionFrame>
 #include <QStyleOptionGroupBox>
 #include <QStyleOptionRubberBand>
+#include <QVariant>
 
 #include <cmath>
 
 using namespace Qt::StringLiterals;
+
+constexpr auto SeparatorMinimumProperty       = "_fooyin_separator_minimum";
+constexpr auto SeparatorStyledMinimumProperty = "_fooyin_separator_styled_minimum";
 
 namespace {
 int contentPadding(int padding, const Fooyin::GroupBoxAppearance& appearance)
@@ -96,18 +100,21 @@ QSize titleSize(const QStyle& style, const QStyleOptionGroupBox& option, const Q
 } // namespace
 
 namespace Fooyin::Style::Frame {
-void draw(const QStyleOptionFrame& option, QPainter& painter)
+void draw(const QStyleOptionFrame& option, QPainter& painter, const FrameAppearance& appearance)
 {
-    const QRectF rect = QRectF{option.rect}.adjusted(0.5, 0.5, -0.5, -0.5);
-    if(rect.isEmpty() || option.lineWidth <= 0) {
+    const double inset = appearance.borderWidth / 2.0;
+    const QRectF rect  = QRectF{option.rect}.adjusted(inset, inset, -inset, -inset);
+    if(rect.isEmpty() || option.lineWidth <= 0 || appearance.borderWidth <= 0) {
         return;
     }
 
     painter.save();
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(QPen{option.palette.color(colourGroup(option), QPalette::Mid), 1.0});
+    painter.setOpacity(painter.opacity() * appearance.borderOpacity / 100.0);
+    painter.setPen(
+        QPen{resolveBrush(appearance.borderColour, option.palette, colourGroup(option)), appearance.borderWidth});
     painter.setBrush(Qt::NoBrush);
-    painter.drawRoundedRect(rect, 4.0, 4.0);
+    painter.drawRoundedRect(rect, appearance.radius, appearance.radius);
     painter.restore();
 }
 
@@ -162,25 +169,83 @@ void drawRubberBand(const QStyleOptionRubberBand& option, QPainter& painter)
     painter.restore();
 }
 
-void drawSeparator(const QStyleOptionFrame& option, QPainter& painter)
+void drawSeparator(const QStyleOptionFrame& option, QPainter& painter, const FrameAppearance::Separator& appearance)
 {
-    if(option.rect.isEmpty() || option.lineWidth <= 0) {
+    if(option.rect.isEmpty() || option.lineWidth <= 0 || appearance.width <= 0) {
         return;
     }
 
-    const QRectF rect = QRectF{option.rect}.adjusted(0.5, 0.5, -0.5, -0.5);
+    const QRectF rect{option.rect};
+    const bool horizontal = option.frameShape == QFrame::HLine;
+    const double inset    = appearance.inset + (appearance.width / 2.0);
+    if((horizontal ? rect.width() : rect.height()) <= 2 * inset) {
+        return;
+    }
 
     painter.save();
-    painter.setPen(QPen{option.palette.color(colourGroup(option), QPalette::Mid), 1.0});
+    painter.setOpacity(painter.opacity() * appearance.opacity / 100.0);
+    painter.setPen(QPen{resolveBrush(appearance.colour, option.palette, colourGroup(option)), appearance.width});
 
-    if(option.frameShape == QFrame::HLine) {
-        painter.drawLine(QPointF{rect.left(), rect.center().y()}, QPointF{rect.right(), rect.center().y()});
+    if(horizontal) {
+        painter.drawLine(QPointF{rect.left() + inset, rect.center().y()},
+                         QPointF{rect.right() - inset, rect.center().y()});
     }
     else {
-        painter.drawLine(QPointF{rect.center().x(), rect.top()}, QPointF{rect.center().x(), rect.bottom()});
+        painter.drawLine(QPointF{rect.center().x(), rect.top() + inset},
+                         QPointF{rect.center().x(), rect.bottom() - inset});
     }
 
     painter.restore();
+}
+
+void polish(QWidget* widget, const FrameAppearance::Separator& appearance)
+{
+    const int width = static_cast<int>(std::ceil(appearance.width));
+    if(width <= 3) {
+        return;
+    }
+
+    const auto* frame = qobject_cast<QFrame*>(widget);
+    if(!frame || frame->lineWidth() <= 0
+       || (frame->frameShape() != QFrame::HLine && frame->frameShape() != QFrame::VLine)
+       || widget->property(SeparatorMinimumProperty).isValid()) {
+        return;
+    }
+
+    const QSize previous = widget->minimumSize();
+
+    QSize minimum{previous};
+    if(frame->frameShape() == QFrame::HLine) {
+        minimum.setHeight(std::max(previous.height(), std::min(width, widget->maximumHeight())));
+    }
+    else {
+        minimum.setWidth(std::max(previous.width(), std::min(width, widget->maximumWidth())));
+    }
+    if(minimum != previous) {
+        widget->setProperty(SeparatorMinimumProperty, previous);
+        widget->setProperty(SeparatorStyledMinimumProperty, minimum);
+        widget->setMinimumSize(minimum);
+    }
+}
+
+void unpolish(QWidget* widget)
+{
+    if(const auto previous = widget->property(SeparatorMinimumProperty); previous.isValid()) {
+        const auto original{previous.toSize()};
+        const auto styled = widget->property(SeparatorStyledMinimumProperty).toSize();
+
+        auto minimum = widget->minimumSize();
+        if(minimum.width() == styled.width()) {
+            minimum.setWidth(original.width());
+        }
+        if(minimum.height() == styled.height()) {
+            minimum.setHeight(original.height());
+        }
+        widget->setMinimumSize(minimum);
+
+        widget->setProperty(SeparatorMinimumProperty, {});
+        widget->setProperty(SeparatorStyledMinimumProperty, {});
+    }
 }
 
 void drawGroupFrame(const QStyleOptionFrame& option, QPainter& painter, const GroupBoxAppearance& appearance)

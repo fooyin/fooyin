@@ -63,7 +63,7 @@ std::expected<ThemeAppearance, QString> resolveThemeAppearance(const QJsonObject
          "dockWidget"_L1, "checkBox"_L1,    "radioButton"_L1, "lineEdit"_L1,   "comboBox"_L1,
          "spinBox"_L1,    "progressBar"_L1, "groupBox"_L1,    "tab"_L1,        "menu"_L1,
          "header"_L1,     "itemView"_L1,    "toolTip"_L1,     "splitter"_L1,   "transitionDuration"_L1,
-         "layout"_L1});
+         "layout"_L1,     "frame"_L1});
     if(!controls) {
         return std::unexpected{controls.error()};
     }
@@ -112,6 +112,11 @@ std::expected<ThemeAppearance, QString> resolveThemeAppearance(const QJsonObject
     const auto dockWidget = resolveDockWidgetAppearance(*controls);
     if(!dockWidget) {
         return std::unexpected{dockWidget.error()};
+    }
+
+    const auto frame = resolveFrameAppearance(*controls);
+    if(!frame) {
+        return std::unexpected{frame.error()};
     }
 
     const auto radioButton = resolveRadioButtonAppearance(*controls);
@@ -180,6 +185,7 @@ std::expected<ThemeAppearance, QString> resolveThemeAppearance(const QJsonObject
                            .toolButton         = *toolButton,
                            .toolBar            = *toolBar,
                            .dockWidget         = *dockWidget,
+                           .frame              = *frame,
                            .checkBox           = *checkBox,
                            .radioButton        = *radioButton,
                            .lineEdit           = *lineEdit,

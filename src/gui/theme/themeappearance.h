@@ -21,6 +21,7 @@
 
 #include "checkappearance.h"
 #include "dockwidgetappearance.h"
+#include "frameappearance.h"
 #include "groupboxappearance.h"
 #include "headerappearance.h"
 #include "inputappearance.h"
@@ -57,6 +58,7 @@ struct ThemeAppearance
     ToolButtonAppearance toolButton{};
     ToolBarAppearance toolBar{};
     DockWidgetAppearance dockWidget{};
+    FrameAppearance frame{};
     CheckAppearance checkBox{};
     CheckAppearance radioButton{defaultRadioButtonAppearance()};
     InputAppearance lineEdit{};
